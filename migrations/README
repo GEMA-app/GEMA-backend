@@ -1,0 +1,3 @@
+# Migraciones de Base de Datos
+
+Este directorio contiene las migraciones asíncronas gestionadas por Alembic para el backend UNEG-IA-SIGMA.

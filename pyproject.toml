@@ -1,0 +1,51 @@
+[tool.poetry]
+name = "sigma-backend"
+version = "0.1.0"
+description = "UNEGIA - SIGMA Backend"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = {extras = ["standard"], version = "^0.115"}
+uvicorn = {extras = ["standard"], version = "^0.34"}
+sqlalchemy = {extras = ["asyncio"], version = "^2.0"}
+asyncpg = "^0.30"
+alembic = "^1.15"
+pydantic-settings = "^2.8"
+PyJWT = {extras = ["crypto"], version = "^2.9"}
+bcrypt = "^4.2"
+python-multipart = "^0.0.20"
+redis = "^5.0"
+structlog = "^25.0"
+gunicorn = "^23.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
+pytest-asyncio = "^0.25"
+httpx = "^0.28"
+ruff = "^0.11"
+mypy = "^1.15"
+black = "^25.0"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "UP", "B", "SIM", "D"]
+ignore = ["D100", "D104"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+asyncio_default_test_loop_scope = "function"
