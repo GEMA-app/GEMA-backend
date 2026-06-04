@@ -40,10 +40,12 @@ async def register(
     request: RegisterRequest,
     use_case: RegisterUserUseCase = Depends(get_register_user_use_case),
 ) -> TokenDocument:
-    """Registra un nuevo usuario en el sistema y devuelve los tokens de acceso y refresco en formato JSON:API."""
     dto_req = RegisterUserRequest(
         email=request.data.attributes.email,
         password=request.data.attributes.password,
+        nombre=request.data.attributes.nombre,
+        company_name=request.data.attributes.company_name,
+        telefono=request.data.attributes.telefono,
     )
     tokens_dto = await use_case.execute(dto_req)
     return TokenDocument(
@@ -140,6 +142,9 @@ async def get_current_user(
             id=user_resp.id,
             attributes=UserAttributes(
                 email=user_resp.email,
+                nombre=user_resp.nombre,
+                empresa_id=user_resp.empresa_id,
+                telefono=user_resp.telefono,
                 is_active=user_resp.is_active,
                 created_at=user_resp.created_at,
                 updated_at=user_resp.updated_at,

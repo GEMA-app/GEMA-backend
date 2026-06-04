@@ -29,6 +29,9 @@ class GetCurrentUserUseCase:
             return UserResponse(
                 id=str(user.id),
                 email=user.email.value,
+                nombre=user.nombre,
+                empresa_id=str(user.empresa_id),
+                telefono=user.telefono,
                 is_active=user.is_active,
                 created_at=user.created_at,
                 updated_at=user.updated_at,
