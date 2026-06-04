@@ -1,5 +1,6 @@
 from fastapi import Depends
 from redis.asyncio import Redis
+
 from app.application.ports.auth import PasswordHasherPort, TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.application.use_cases.get_current_user import GetCurrentUserUseCase
@@ -67,3 +68,196 @@ async def get_get_current_user_use_case(
 ) -> GetCurrentUserUseCase:
     """Fábrica de dependencias para el caso de uso de consulta del usuario actual."""
     return GetCurrentUserUseCase(uow, token_service)
+
+
+from app.application.services.authorization_service import AuthorizationService
+
+# Asset use cases
+from app.application.use_cases.asset import (
+    CreateAssetUseCase,
+    DeleteAssetUseCase,
+    GetAssetUseCase,
+    ListAssetsUseCase,
+    UpdateAssetUseCase,
+)
+
+# Company use cases
+from app.application.use_cases.company import (
+    CreateCompanyUseCase,
+    DeleteCompanyUseCase,
+    GetCompanyUseCase,
+    ListCompaniesUseCase,
+    UpdateCompanyUseCase,
+)
+
+# Location use cases
+from app.application.use_cases.location import (
+    CreateLocationUseCase,
+    DeleteLocationUseCase,
+    GetLocationChildrenUseCase,
+    GetLocationTreeUseCase,
+    GetLocationUseCase,
+    UpdateLocationUseCase,
+)
+
+# Role use cases
+from app.application.use_cases.role import (
+    AssignRoleToUserUseCase,
+    CreateRoleUseCase,
+    DeleteRoleUseCase,
+    GetRoleUseCase,
+    ListRolesUseCase,
+    RevokeRoleFromUserUseCase,
+    UpdateRoleUseCase,
+)
+from app.infrastructure.security.authorization import RbacAuthorizationService
+
+
+async def get_authorization_service(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> AuthorizationService:
+    """Fábrica de dependencias para el servicio de autorización RBAC."""
+    return RbacAuthorizationService(uow)
+
+
+# Company Factories
+async def get_create_company_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> CreateCompanyUseCase:
+    return CreateCompanyUseCase(uow)
+
+
+async def get_get_company_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> GetCompanyUseCase:
+    return GetCompanyUseCase(uow)
+
+
+async def get_list_companies_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> ListCompaniesUseCase:
+    return ListCompaniesUseCase(uow)
+
+
+async def get_update_company_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> UpdateCompanyUseCase:
+    return UpdateCompanyUseCase(uow)
+
+
+async def get_delete_company_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> DeleteCompanyUseCase:
+    return DeleteCompanyUseCase(uow)
+
+
+# Role Factories
+async def get_create_role_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> CreateRoleUseCase:
+    return CreateRoleUseCase(uow)
+
+
+async def get_get_role_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> GetRoleUseCase:
+    return GetRoleUseCase(uow)
+
+
+async def get_list_roles_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> ListRolesUseCase:
+    return ListRolesUseCase(uow)
+
+
+async def get_update_role_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> UpdateRoleUseCase:
+    return UpdateRoleUseCase(uow)
+
+
+async def get_delete_role_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> DeleteRoleUseCase:
+    return DeleteRoleUseCase(uow)
+
+
+async def get_assign_role_to_user_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> AssignRoleToUserUseCase:
+    return AssignRoleToUserUseCase(uow)
+
+
+async def get_revoke_role_from_user_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> RevokeRoleFromUserUseCase:
+    return RevokeRoleFromUserUseCase(uow)
+
+
+# Asset Factories
+async def get_create_asset_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> CreateAssetUseCase:
+    return CreateAssetUseCase(uow)
+
+
+async def get_get_asset_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> GetAssetUseCase:
+    return GetAssetUseCase(uow)
+
+
+async def get_list_assets_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> ListAssetsUseCase:
+    return ListAssetsUseCase(uow)
+
+
+async def get_update_asset_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> UpdateAssetUseCase:
+    return UpdateAssetUseCase(uow)
+
+
+async def get_delete_asset_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> DeleteAssetUseCase:
+    return DeleteAssetUseCase(uow)
+
+
+# Location Factories
+async def get_create_location_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> CreateLocationUseCase:
+    return CreateLocationUseCase(uow)
+
+
+async def get_get_location_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> GetLocationUseCase:
+    return GetLocationUseCase(uow)
+
+
+async def get_get_location_tree_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> GetLocationTreeUseCase:
+    return GetLocationTreeUseCase(uow)
+
+
+async def get_get_location_children_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> GetLocationChildrenUseCase:
+    return GetLocationChildrenUseCase(uow)
+
+
+async def get_update_location_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> UpdateLocationUseCase:
+    return UpdateLocationUseCase(uow)
+
+
+async def get_delete_location_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> DeleteLocationUseCase:
+    return DeleteLocationUseCase(uow)
+

@@ -1,8 +1,8 @@
+from app.application.dtos.company_dtos import CompanyResponse, UpdateCompanyRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.application.dtos.company_dtos import UpdateCompanyRequest, CompanyResponse
-from app.domain.value_objects import CompanyId
 from app.domain.enums import CompanyStatus
 from app.domain.exceptions import CompanyNotFoundError
+from app.domain.value_objects import CompanyId
 
 
 class UpdateCompanyUseCase:

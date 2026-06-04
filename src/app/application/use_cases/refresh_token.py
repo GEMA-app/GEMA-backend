@@ -15,7 +15,7 @@ class RefreshTokenUseCase:
     async def execute(self, request: RefreshTokenRequest) -> AuthTokensDTO:
         """Valida y revoca el token de refresco actual, generando uno nuevo para el usuario."""
         claims = await self.token_service.decode_token(request.refresh_token)
-        
+
         if claims.get("type") != "refresh":
             raise InvalidTokenError("El token proporcionado no es un token de refresco válido.")
 

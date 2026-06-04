@@ -1,10 +1,10 @@
+import uuid
 from dataclasses import dataclass, field
 from datetime import date
-import uuid
-from typing import Optional
-from app.domain.value_objects import CompanyId, Slug
+
 from app.domain.enums import CompanyStatus
-from app.domain.events import DomainEvent, CompanyCreated
+from app.domain.events import CompanyCreated, DomainEvent
+from app.domain.value_objects import CompanyId, Slug
 
 
 @dataclass
@@ -13,11 +13,11 @@ class Company:
     id: CompanyId
     nombre: str
     slug: Slug
-    rif: Optional[str] = None
-    email_contacto: Optional[str] = None
+    rif: str | None = None
+    email_contacto: str | None = None
     estado: CompanyStatus = CompanyStatus.ACTIVE
-    plan_id: Optional[uuid.UUID] = None
-    trial_hasta: Optional[date] = None
+    plan_id: uuid.UUID | None = None
+    trial_hasta: date | None = None
     _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
     @classmethod
@@ -25,10 +25,10 @@ class Company:
         cls,
         nombre: str,
         slug: Slug,
-        rif: Optional[str] = None,
-        email_contacto: Optional[str] = None,
-        plan_id: Optional[uuid.UUID] = None,
-        trial_hasta: Optional[date] = None,
+        rif: str | None = None,
+        email_contacto: str | None = None,
+        plan_id: uuid.UUID | None = None,
+        trial_hasta: date | None = None,
         estado: CompanyStatus = CompanyStatus.ACTIVE
     ) -> "Company":
         """Método fábrica para crear una nueva empresa y emitir CompanyCreated."""

@@ -1,7 +1,8 @@
 import uuid
-from typing import Optional
-from sqlalchemy import String, Text, ForeignKey, UniqueConstraint, Index
+
+from sqlalchemy import ForeignKey, Index, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.infrastructure.db.base import Base
 from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
 
@@ -16,7 +17,7 @@ class ArticleCategoryModel(TenantMixin, TimestampMixin, Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     nombre: Mapped[str] = mapped_column(String(100), nullable=False)
-    descripcion: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relación con artículos del catálogo
     articulos: Mapped[list["CatalogArticleModel"]] = relationship(
@@ -35,18 +36,18 @@ class CatalogArticleModel(TenantMixin, TimestampMixin, Base):
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    categoria_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+    categoria_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("categorias_articulos.id", ondelete="SET NULL"),
         nullable=True
     )
     nombre: Mapped[str] = mapped_column(String(255), nullable=False)
-    descripcion: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    fabricante: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    modelo: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    unidad_medida: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
+    fabricante: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    modelo: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    unidad_medida: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
     # Relación con la categoría
-    categoria: Mapped[Optional[ArticleCategoryModel]] = relationship(
+    categoria: Mapped[ArticleCategoryModel | None] = relationship(
         "ArticleCategoryModel",
         back_populates="articulos"
     )

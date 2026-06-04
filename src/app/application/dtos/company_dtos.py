@@ -1,25 +1,24 @@
+import uuid
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional
-import uuid
 
 
 @dataclass(frozen=True)
 class CreateCompanyRequest:
     nombre: str
-    slug: Optional[str] = None
-    rif: Optional[str] = None
-    email_contacto: Optional[str] = None
-    plan_id: Optional[uuid.UUID] = None
-    trial_hasta: Optional[date] = None
+    slug: str | None = None
+    rif: str | None = None
+    email_contacto: str | None = None
+    plan_id: uuid.UUID | None = None
+    trial_hasta: date | None = None
 
 
 @dataclass(frozen=True)
 class UpdateCompanyRequest:
-    nombre: Optional[str] = None
-    rif: Optional[str] = None
-    email_contacto: Optional[str] = None
-    estado: Optional[str] = None
+    nombre: str | None = None
+    rif: str | None = None
+    email_contacto: str | None = None
+    estado: str | None = None
 
 
 @dataclass(frozen=True)
@@ -27,8 +26,8 @@ class CompanyResponse:
     id: str
     nombre: str
     slug: str
-    rif: Optional[str]
-    email_contacto: Optional[str]
+    rif: str | None
+    email_contacto: str | None
     estado: str
-    plan_id: Optional[str]
-    trial_hasta: Optional[str]
+    plan_id: str | None
+    trial_hasta: str | None

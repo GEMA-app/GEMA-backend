@@ -1,12 +1,14 @@
 from typing import Any, Self
+
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.infrastructure.db.session import async_session_factory
-from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
-from app.infrastructure.repositories.company_repository import SqlAlchemyCompanyRepository
-from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
 from app.infrastructure.repositories.asset_repository import SqlAlchemyAssetRepository
+from app.infrastructure.repositories.company_repository import SqlAlchemyCompanyRepository
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
+from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
+from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
 
 
 class SqlAlchemyUnitOfWork(UnitOfWorkPort):

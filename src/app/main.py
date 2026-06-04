@@ -1,6 +1,8 @@
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+
 from fastapi import FastAPI
+
 from app.infrastructure.config.logger import logger, setup_logging
 from app.infrastructure.config.settings import settings
 from app.infrastructure.db.session import engine

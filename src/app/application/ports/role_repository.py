@@ -1,6 +1,7 @@
-from typing import Optional, Protocol
+from typing import Protocol
+
 from app.domain.entities import Role
-from app.domain.value_objects import RoleId, CompanyId, UserId
+from app.domain.value_objects import CompanyId, RoleId, UserId
 
 
 class RoleRepositoryPort(Protocol):
@@ -10,7 +11,7 @@ class RoleRepositoryPort(Protocol):
         """Guarda o actualiza un rol en el repositorio."""
         ...
 
-    async def get_by_id(self, id: RoleId, empresa_id: CompanyId) -> Optional[Role]:
+    async def get_by_id(self, id: RoleId, empresa_id: CompanyId) -> Role | None:
         """Busca un rol por su identificador único dentro de una empresa."""
         ...
 

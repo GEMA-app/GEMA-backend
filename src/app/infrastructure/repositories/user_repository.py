@@ -1,9 +1,10 @@
-from typing import Optional
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.application.ports.repository import UserRepositoryPort
 from app.domain.entities import User
-from app.domain.value_objects import Email, HashedPassword, UserId, CompanyId
+from app.domain.value_objects import CompanyId, Email, HashedPassword, UserId
 from app.infrastructure.db.models import UserModel
 
 
@@ -18,7 +19,7 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
         model = self._to_model(user)
         await self.session.merge(model)
 
-    async def get_by_email(self, email: Email) -> Optional[User]:
+    async def get_by_email(self, email: Email) -> User | None:
         """Busca un usuario por email globalmente en la base de datos."""
         stmt = select(UserModel).where(UserModel.email == email.value)
         result = await self.session.execute(stmt)
@@ -27,7 +28,7 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
             return None
         return self._to_entity(model)
 
-    async def get_by_email_and_company(self, email: Email, empresa_id: CompanyId) -> Optional[User]:
+    async def get_by_email_and_company(self, email: Email, empresa_id: CompanyId) -> User | None:
         """Busca un usuario por email dentro de una empresa específica."""
         stmt = select(UserModel).where(
             UserModel.email == email.value,
@@ -39,7 +40,7 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
             return None
         return self._to_entity(model)
 
-    async def get_by_id(self, id: UserId) -> Optional[User]:
+    async def get_by_id(self, id: UserId) -> User | None:
         """Busca un usuario por ID en la base de datos."""
         stmt = select(UserModel).where(UserModel.id == id.value)
         result = await self.session.execute(stmt)
@@ -73,7 +74,7 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
         )
 
     def _to_entity(self, model: UserModel) -> User:
-        from app.domain.entities import Role, Permission
+        from app.domain.entities import Permission, Role
         from app.domain.value_objects import RoleId
 
         roles = [

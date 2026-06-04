@@ -1,11 +1,16 @@
 import uuid
-from datetime import datetime, timezone
-from typing import Optional
-from sqlalchemy import String, Text, Boolean, ForeignKey, UniqueConstraint, Enum, DateTime
+from datetime import UTC, datetime
+
+from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from typing import TYPE_CHECKING
+from app.domain.enums import PermissionModule
 from app.infrastructure.db.base import Base
 from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
-from app.domain.enums import PermissionModule
+
+if TYPE_CHECKING:
+    from app.infrastructure.db.models.user import UserModel
 
 
 class RoleUserModel(Base):
@@ -23,7 +28,7 @@ class RoleUserModel(Base):
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False
     )
 
@@ -64,7 +69,7 @@ class RoleModel(TenantMixin, TimestampMixin, Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     nombre: Mapped[str] = mapped_column(String(100), nullable=False)
-    descripcion: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relación uno-a-muchos con permisos
     permisos: Mapped[list[PermissionModel]] = relationship(

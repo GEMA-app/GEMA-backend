@@ -1,13 +1,14 @@
 import logging
+
 from fastapi import status
 from redis.exceptions import RedisError
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
+
 from app.infrastructure.cache.redis import redis_client
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers import jsonapi_response
-
 
 logger = logging.getLogger(__name__)
 

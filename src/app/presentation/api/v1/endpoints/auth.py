@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
 from app.application.dtos import LoginUserRequest, RefreshTokenRequest, RegisterUserRequest
 from app.application.use_cases.get_current_user import GetCurrentUserUseCase
 from app.application.use_cases.login_user import LoginUserUseCase
@@ -24,7 +25,6 @@ from app.presentation.api.v1.schemas.auth import (
     UserDocument,
     UserResource,
 )
-
 
 router = APIRouter()
 security = HTTPBearer()

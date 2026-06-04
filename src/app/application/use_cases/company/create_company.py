@@ -1,8 +1,8 @@
+from app.application.dtos.company_dtos import CompanyResponse, CreateCompanyRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.application.dtos.company_dtos import CreateCompanyRequest, CompanyResponse
 from app.domain.entities import Company
-from app.domain.value_objects import Slug
 from app.domain.exceptions import CompanySlugExistsError
+from app.domain.value_objects import Slug
 
 
 class CreateCompanyUseCase:

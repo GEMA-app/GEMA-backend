@@ -1,6 +1,7 @@
-from typing import Optional, Protocol
+from typing import Protocol
+
 from app.domain.entities import Location
-from app.domain.value_objects import LocationId, CompanyId
+from app.domain.value_objects import CompanyId, LocationId
 
 
 class LocationRepositoryPort(Protocol):
@@ -10,7 +11,7 @@ class LocationRepositoryPort(Protocol):
         """Guarda o actualiza una ubicación en el repositorio."""
         ...
 
-    async def get_by_id(self, id: LocationId, empresa_id: CompanyId) -> Optional[Location]:
+    async def get_by_id(self, id: LocationId, empresa_id: CompanyId) -> Location | None:
         """Busca una ubicación por su identificador único dentro de una empresa."""
         ...
 

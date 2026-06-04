@@ -1,4 +1,5 @@
 import bcrypt
+
 from app.application.ports.auth import PasswordHasherPort
 
 

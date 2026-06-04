@@ -1,6 +1,7 @@
 from typing import Protocol
-from app.domain.value_objects import UserId, CompanyId
+
 from app.domain.enums import PermissionModule
+from app.domain.value_objects import CompanyId, UserId
 
 
 class AuthorizationService(Protocol):

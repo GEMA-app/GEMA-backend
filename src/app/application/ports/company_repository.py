@@ -1,4 +1,5 @@
-from typing import Optional, Protocol
+from typing import Protocol
+
 from app.domain.entities import Company
 from app.domain.value_objects import CompanyId, Slug
 
@@ -10,11 +11,11 @@ class CompanyRepositoryPort(Protocol):
         """Guarda o actualiza una empresa en el repositorio."""
         ...
 
-    async def get_by_id(self, id: CompanyId) -> Optional[Company]:
+    async def get_by_id(self, id: CompanyId) -> Company | None:
         """Busca una empresa por su identificador único."""
         ...
 
-    async def get_by_slug(self, slug: Slug) -> Optional[Company]:
+    async def get_by_slug(self, slug: Slug) -> Company | None:
         """Busca una empresa por su slug único."""
         ...
 

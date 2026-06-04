@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
+
 from app.infrastructure.cache.redis import redis_client
 from app.infrastructure.db.session import engine
-
 
 router = APIRouter(prefix="/health", tags=["health"])
 

@@ -1,7 +1,7 @@
-from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.application.dtos.company_dtos import CompanyResponse
-from app.domain.value_objects import CompanyId
+from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import CompanyNotFoundError
+from app.domain.value_objects import CompanyId
 
 
 class GetCompanyUseCase:

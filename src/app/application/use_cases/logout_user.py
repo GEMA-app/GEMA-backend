@@ -11,7 +11,7 @@ class LogoutUserUseCase:
     async def execute(self, access_token: str) -> None:
         """Decodifica el token de acceso y registra su JTI en la lista de bloqueo."""
         claims = await self.token_service.decode_token(access_token)
-        
+
         if claims.get("type") != "access":
             raise InvalidTokenError("Solo se pueden revocar tokens de acceso durante el cierre de sesión.")
 

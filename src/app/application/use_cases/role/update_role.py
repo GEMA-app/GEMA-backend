@@ -1,9 +1,9 @@
+from app.application.dtos.role_dtos import PermissionDTO, RoleResponse, UpdateRoleRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.application.dtos.role_dtos import UpdateRoleRequest, RoleResponse, PermissionDTO
 from app.domain.entities import Permission
-from app.domain.value_objects import RoleId, CompanyId
 from app.domain.enums import PermissionModule
-from app.domain.exceptions import RoleNotFoundError, RoleNameExistsError
+from app.domain.exceptions import RoleNameExistsError, RoleNotFoundError
+from app.domain.value_objects import CompanyId, RoleId
 
 
 class UpdateRoleUseCase:

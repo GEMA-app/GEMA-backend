@@ -1,6 +1,7 @@
-from typing import Optional, Any
-from app.application.ports.unit_of_work import UnitOfWorkPort
+from typing import Any
+
 from app.application.dtos.asset_dtos import AssetResponse
+from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.value_objects import CompanyId
 
 
@@ -15,7 +16,7 @@ class ListAssetsUseCase:
         company_id_str: str,
         offset: int,
         limit: int,
-        filters: Optional[dict[str, Any]] = None
+        filters: dict[str, Any] | None = None
     ) -> tuple[list[AssetResponse], int]:
         company_id = CompanyId.from_string(company_id_str)
         async with self.uow:

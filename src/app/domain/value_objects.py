@@ -1,6 +1,7 @@
 import re
 import uuid
 from dataclasses import dataclass
+
 from app.domain.exceptions import InvalidEmailError, WeakPasswordError
 
 
@@ -12,7 +13,7 @@ class Email:
     def __post_init__(self) -> None:
         if not self.value or not isinstance(self.value, str):
             raise InvalidEmailError("El correo electrónico no puede estar vacío.")
-        
+
         # Validación de formato de correo electrónico
         pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
         if not re.match(pattern, self.value):

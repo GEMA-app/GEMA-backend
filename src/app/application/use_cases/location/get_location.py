@@ -1,7 +1,7 @@
-from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.application.dtos.location_dtos import LocationResponse
-from app.domain.value_objects import LocationId, CompanyId
+from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import LocationNotFoundError
+from app.domain.value_objects import CompanyId, LocationId
 
 
 class GetLocationUseCase:

@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -10,7 +9,7 @@ class RegisterUserRequest:
     password: str
     nombre: str
     company_name: str
-    telefono: Optional[str] = None
+    telefono: str | None = None
 
 
 @dataclass(frozen=True)
@@ -35,7 +34,7 @@ class UserResponse:
     email: str
     nombre: str
     empresa_id: str
-    telefono: Optional[str]
+    telefono: str | None
     is_active: bool
     created_at: datetime
     updated_at: datetime

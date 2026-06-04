@@ -15,7 +15,7 @@ class GetCurrentUserUseCase:
     async def execute(self, access_token: str) -> UserResponse:
         """Decodifica el token de acceso, valida el estado del usuario y devuelve su perfil."""
         claims = await self.token_service.decode_token(access_token)
-        
+
         if claims.get("type") != "access":
             raise InvalidTokenError("Se requiere un token de acceso válido para esta operación.")
 

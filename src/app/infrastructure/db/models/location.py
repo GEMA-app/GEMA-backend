@@ -1,10 +1,12 @@
 import uuid
 from typing import Optional
-from sqlalchemy import String, Text, ForeignKey, Enum, Index
+
+from sqlalchemy import Enum, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.domain.enums import LocationType
 from app.infrastructure.db.base import Base
 from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
-from app.domain.enums import LocationType
 
 
 class LocationModel(TenantMixin, TimestampMixin, Base):
@@ -16,7 +18,7 @@ class LocationModel(TenantMixin, TimestampMixin, Base):
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    parent_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+    parent_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("ubicaciones.id", ondelete="CASCADE"),
         nullable=True
     )
@@ -25,7 +27,7 @@ class LocationModel(TenantMixin, TimestampMixin, Base):
         Enum(LocationType),
         nullable=False
     )
-    descripcion: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relación jerárquica auto-referencial
     parent: Mapped[Optional["LocationModel"]] = relationship(

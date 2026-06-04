@@ -1,6 +1,6 @@
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.domain.value_objects import CompanyId
 from app.domain.exceptions import CompanyNotFoundError
+from app.domain.value_objects import CompanyId
 
 
 class DeleteCompanyUseCase:

@@ -1,6 +1,9 @@
-from typing import Optional, Any
-from sqlalchemy import select, delete as sql_delete
+from typing import Any
+
+from sqlalchemy import delete as sql_delete
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.application.ports.asset_repository import AssetRepositoryPort
 from app.domain.entities import Asset
 from app.domain.value_objects import AssetId, CompanyId, LocationId
@@ -42,7 +45,7 @@ class SqlAlchemyAssetRepository(SqlAlchemyRepository[AssetModel, Asset, AssetId]
             moneda=model.moneda
         )
 
-    async def get_by_id(self, id: AssetId, empresa_id: CompanyId) -> Optional[Asset]:
+    async def get_by_id(self, id: AssetId, empresa_id: CompanyId) -> Asset | None:  # type: ignore[override]
         stmt = select(AssetModel).where(
             AssetModel.id == id.value,
             AssetModel.empresa_id == empresa_id.value
@@ -58,7 +61,7 @@ class SqlAlchemyAssetRepository(SqlAlchemyRepository[AssetModel, Asset, AssetId]
         empresa_id: CompanyId,
         offset: int,
         limit: int,
-        filters: Optional[dict[str, Any]] = None
+        filters: dict[str, Any] | None = None
     ) -> tuple[list[Asset], int]:
         from sqlalchemy import func
 
@@ -91,7 +94,7 @@ class SqlAlchemyAssetRepository(SqlAlchemyRepository[AssetModel, Asset, AssetId]
         models = result.scalars().all()
         return [self._to_entity(m) for m in models], total
 
-    async def delete(self, id: AssetId, empresa_id: CompanyId) -> None:
+    async def delete(self, id: AssetId, empresa_id: CompanyId) -> None:  # type: ignore[override]
         stmt = sql_delete(AssetModel).where(
             AssetModel.id == id.value,
             AssetModel.empresa_id == empresa_id.value

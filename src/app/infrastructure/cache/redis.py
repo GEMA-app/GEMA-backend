@@ -1,6 +1,6 @@
 import redis.asyncio as aioredis
-from app.infrastructure.config.settings import settings
 
+from app.infrastructure.config.settings import settings
 
 # Cliente global asíncrono de Redis
 redis_client = aioredis.from_url(settings.REDIS_URL, decode_responses=True)

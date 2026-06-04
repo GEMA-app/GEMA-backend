@@ -1,8 +1,8 @@
-from app.application.services.authorization_service import AuthorizationService
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.domain.value_objects import UserId, CompanyId
+from app.application.services.authorization_service import AuthorizationService
 from app.domain.enums import PermissionModule
 from app.domain.exceptions import InsufficientPermissionsError
+from app.domain.value_objects import CompanyId, UserId
 
 
 class RbacAuthorizationService(AuthorizationService):

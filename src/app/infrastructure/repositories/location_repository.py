@@ -1,9 +1,11 @@
-from typing import Optional
-from sqlalchemy import select, delete as sql_delete
+
+from sqlalchemy import delete as sql_delete
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.application.ports.location_repository import LocationRepositoryPort
 from app.domain.entities import Location
-from app.domain.value_objects import LocationId, CompanyId
+from app.domain.value_objects import CompanyId, LocationId
 from app.infrastructure.db.models.location import LocationModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
 
@@ -34,7 +36,7 @@ class SqlAlchemyLocationRepository(SqlAlchemyRepository[LocationModel, Location,
             descripcion=model.descripcion
         )
 
-    async def get_by_id(self, id: LocationId, empresa_id: CompanyId) -> Optional[Location]:
+    async def get_by_id(self, id: LocationId, empresa_id: CompanyId) -> Location | None:  # type: ignore[override]
         stmt = select(LocationModel).where(
             LocationModel.id == id.value,
             LocationModel.empresa_id == empresa_id.value
@@ -62,7 +64,7 @@ class SqlAlchemyLocationRepository(SqlAlchemyRepository[LocationModel, Location,
         models = result.scalars().all()
         return [self._to_entity(m) for m in models]
 
-    async def delete(self, id: LocationId, empresa_id: CompanyId) -> None:
+    async def delete(self, id: LocationId, empresa_id: CompanyId) -> None:  # type: ignore[override]
         stmt = sql_delete(LocationModel).where(
             LocationModel.id == id.value,
             LocationModel.empresa_id == empresa_id.value

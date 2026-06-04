@@ -1,8 +1,14 @@
 import uuid
-from sqlalchemy import String, Boolean, UniqueConstraint
+
+from sqlalchemy import Boolean, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from typing import TYPE_CHECKING
 from app.infrastructure.db.base import Base
 from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
+
+if TYPE_CHECKING:
+    from app.infrastructure.db.models.role import RoleModel
 
 
 class UserModel(TenantMixin, TimestampMixin, Base):

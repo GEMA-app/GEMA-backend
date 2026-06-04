@@ -1,11 +1,17 @@
 import uuid
 from datetime import date
-from typing import Optional
-from sqlalchemy import String, Numeric, Date, ForeignKey, UniqueConstraint, Enum
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.infrastructure.db.models.catalog import CatalogArticleModel
+    from app.infrastructure.db.models.location import LocationModel
+
+from sqlalchemy import Date, Enum, ForeignKey, Numeric, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.domain.enums import AssetStatus
 from app.infrastructure.db.base import Base
 from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
-from app.domain.enums import AssetStatus
 
 
 class AssetModel(TenantMixin, TimestampMixin, Base):
@@ -22,7 +28,7 @@ class AssetModel(TenantMixin, TimestampMixin, Base):
         ForeignKey("articulos_catalogo.id", ondelete="RESTRICT"),
         nullable=False
     )
-    ubicacion_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+    ubicacion_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("ubicaciones.id", ondelete="SET NULL"),
         nullable=True
     )
@@ -33,8 +39,8 @@ class AssetModel(TenantMixin, TimestampMixin, Base):
         default=AssetStatus.OPERATIONAL,
         nullable=False
     )
-    fecha_adquisicion: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
-    valor_monetario: Mapped[Optional[float]] = mapped_column(Numeric(12, 2), nullable=True)
+    fecha_adquisicion: Mapped[date | None] = mapped_column(Date, nullable=True)
+    valor_monetario: Mapped[float | None] = mapped_column(Numeric(12, 2), nullable=True)
     moneda: Mapped[str] = mapped_column(String(3), default="USD", nullable=False)
 
     # Relaciones

@@ -1,8 +1,9 @@
-from dataclasses import dataclass, field
 import uuid
-from app.domain.value_objects import RoleId, CompanyId
-from app.domain.enums import PermissionModule
+from dataclasses import dataclass, field
+
 from app.domain.entities.permission import Permission
+from app.domain.enums import PermissionModule
+from app.domain.value_objects import CompanyId, RoleId
 
 
 @dataclass
@@ -20,7 +21,7 @@ class Role:
         empresa_id: CompanyId,
         nombre: str,
         descripcion: str,
-        permisos: list[Permission] = None
+        permisos: list[Permission] | None = None
     ) -> "Role":
         """Crea un nuevo rol de dominio."""
         if not nombre or not nombre.strip():

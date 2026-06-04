@@ -1,9 +1,9 @@
+from app.application.dtos.role_dtos import CreateRoleRequest, PermissionDTO, RoleResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.application.dtos.role_dtos import CreateRoleRequest, RoleResponse, PermissionDTO
-from app.domain.entities import Role, Permission
-from app.domain.value_objects import CompanyId
+from app.domain.entities import Permission, Role
 from app.domain.enums import PermissionModule
 from app.domain.exceptions import RoleNameExistsError
+from app.domain.value_objects import CompanyId
 
 
 class CreateRoleUseCase:

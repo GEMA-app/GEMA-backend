@@ -1,5 +1,5 @@
+from app.application.dtos.role_dtos import PermissionDTO, RoleResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.application.dtos.role_dtos import RoleResponse, PermissionDTO
 from app.domain.value_objects import CompanyId
 
 

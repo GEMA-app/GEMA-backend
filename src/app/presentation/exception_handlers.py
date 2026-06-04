@@ -1,13 +1,25 @@
-from typing import Optional
+
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
+
 from app.domain.exceptions import (
+    AssetCodeExistsError,
+    AssetNotFoundError,
+    AssetSerialExistsError,
+    CompanyNotFoundError,
+    CompanySlugExistsError,
     DomainException,
+    InsufficientPermissionsError,
     InvalidCredentialsError,
     InvalidEmailError,
     InvalidTokenError,
+    LocationCircularReferenceError,
+    LocationInvalidTypeHierarchyError,
+    LocationNotFoundError,
+    RoleNameExistsError,
+    RoleNotFoundError,
     UserAlreadyExistsError,
     UserInactiveError,
     WeakPasswordError,
@@ -20,7 +32,7 @@ from app.presentation.api.v1.schemas.jsonapi_base import (
 
 
 def jsonapi_response(
-    status_code: int, errors: list[ErrorObject], headers: Optional[dict[str, str]] = None
+    status_code: int, errors: list[ErrorObject], headers: dict[str, str] | None = None
 ) -> JSONResponse:
     """Genera una respuesta JSONResponse formateada estrictamente bajo la especificación JSON:API."""
     doc = JsonApiErrorDocument(errors=errors)
@@ -55,6 +67,39 @@ async def domain_exception_handler(request: Request, exc: Exception) -> JSONResp
     elif isinstance(exc, InvalidTokenError):
         status_code = status.HTTP_401_UNAUTHORIZED
         code = "ERR_INVALID_TOKEN"
+    elif isinstance(exc, CompanyNotFoundError):
+        status_code = status.HTTP_404_NOT_FOUND
+        code = "ERR_COMPANY_NOT_FOUND"
+    elif isinstance(exc, CompanySlugExistsError):
+        status_code = status.HTTP_409_CONFLICT
+        code = "ERR_COMPANY_SLUG_EXISTS"
+    elif isinstance(exc, RoleNotFoundError):
+        status_code = status.HTTP_404_NOT_FOUND
+        code = "ERR_ROLE_NOT_FOUND"
+    elif isinstance(exc, RoleNameExistsError):
+        status_code = status.HTTP_409_CONFLICT
+        code = "ERR_ROLE_NAME_EXISTS"
+    elif isinstance(exc, InsufficientPermissionsError):
+        status_code = status.HTTP_403_FORBIDDEN
+        code = "ERR_INSUFFICIENT_PERMISSIONS"
+    elif isinstance(exc, AssetNotFoundError):
+        status_code = status.HTTP_404_NOT_FOUND
+        code = "ERR_ASSET_NOT_FOUND"
+    elif isinstance(exc, AssetCodeExistsError):
+        status_code = status.HTTP_409_CONFLICT
+        code = "ERR_ASSET_CODE_EXISTS"
+    elif isinstance(exc, AssetSerialExistsError):
+        status_code = status.HTTP_409_CONFLICT
+        code = "ERR_ASSET_SERIAL_EXISTS"
+    elif isinstance(exc, LocationNotFoundError):
+        status_code = status.HTTP_404_NOT_FOUND
+        code = "ERR_LOCATION_NOT_FOUND"
+    elif isinstance(exc, LocationCircularReferenceError):
+        status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+        code = "ERR_LOCATION_CIRCULAR_REFERENCE"
+    elif isinstance(exc, LocationInvalidTypeHierarchyError):
+        status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+        code = "ERR_LOCATION_INVALID_TYPE_HIERARCHY"
 
     error = ErrorObject(
         status=str(status_code),

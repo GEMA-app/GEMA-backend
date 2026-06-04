@@ -1,6 +1,7 @@
-from typing import Generic, TypeVar, Optional
 from abc import ABC, abstractmethod
-from sqlalchemy import select, delete
+from typing import Generic, TypeVar
+
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 ModelT = TypeVar("ModelT")
@@ -30,11 +31,11 @@ class SqlAlchemyRepository(Generic[ModelT, EntityT, IdT], ABC):
         model = self._to_model(entity)
         await self.session.merge(model)
 
-    async def get_by_id(self, id: IdT) -> Optional[EntityT]:
+    async def get_by_id(self, id: IdT) -> EntityT | None:
         """Busca una entidad por su identificador único."""
         # Se asume que 'id' es un objeto de valor que tiene una propiedad 'value'
         id_val = id.value if hasattr(id, "value") else id
-        stmt = select(self.model_class).where(self.model_class.id == id_val)
+        stmt = select(self.model_class).where(self.model_class.id == id_val)  # type: ignore[attr-defined]
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
         if not model:
@@ -44,5 +45,5 @@ class SqlAlchemyRepository(Generic[ModelT, EntityT, IdT], ABC):
     async def delete(self, id: IdT) -> None:
         """Elimina una entidad por su identificador único."""
         id_val = id.value if hasattr(id, "value") else id
-        stmt = delete(self.model_class).where(self.model_class.id == id_val)
+        stmt = delete(self.model_class).where(self.model_class.id == id_val)  # type: ignore[attr-defined]
         await self.session.execute(stmt)

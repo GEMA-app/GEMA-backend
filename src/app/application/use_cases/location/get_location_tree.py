@@ -1,5 +1,6 @@
-from app.application.ports.unit_of_work import UnitOfWorkPort
+from typing import Any
 from app.application.dtos.location_dtos import LocationTreeResponse
+from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.value_objects import CompanyId
 
 
@@ -16,7 +17,7 @@ class GetLocationTreeUseCase:
             locations = await self.uow.locations.get_tree(company_id)
 
             # Construir mapa de id -> nodo diccionario
-            nodes = {
+            nodes: dict[str, dict[str, Any]] = {
                 str(loc.id): {
                     "id": str(loc.id),
                     "nombre": loc.nombre,
@@ -28,7 +29,7 @@ class GetLocationTreeUseCase:
                 for loc in locations
             }
 
-            roots = []
+            roots: list[dict[str, Any]] = []
             for loc in locations:
                 node = nodes[str(loc.id)]
                 if loc.parent_id:
@@ -39,7 +40,7 @@ class GetLocationTreeUseCase:
                     roots.append(node)
 
             # Convertir diccionarios recursivamente a DTOs de árbol
-            def to_dto(n) -> LocationTreeResponse:
+            def to_dto(n: dict[str, Any]) -> LocationTreeResponse:
                 return LocationTreeResponse(
                     id=n["id"],
                     nombre=n["nombre"],

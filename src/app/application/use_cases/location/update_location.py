@@ -1,12 +1,12 @@
+from app.application.dtos.location_dtos import LocationResponse, UpdateLocationRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.application.dtos.location_dtos import UpdateLocationRequest, LocationResponse
-from app.domain.value_objects import LocationId, CompanyId
 from app.domain.enums import LocationType
 from app.domain.exceptions import (
-    LocationNotFoundError,
     LocationCircularReferenceError,
-    LocationInvalidTypeHierarchyError
+    LocationInvalidTypeHierarchyError,
+    LocationNotFoundError,
 )
+from app.domain.value_objects import CompanyId, LocationId
 
 
 class UpdateLocationUseCase:
@@ -41,8 +41,7 @@ class UpdateLocationUseCase:
                     if p_id == location.id:
                         raise LocationCircularReferenceError("Una ubicación no puede ser su propio padre.")
 
-                    # Chequeo de ciclo recorriendo hacia arriba la jerarquía del nuevo padre
-                    curr_id = p_id
+                    curr_id: LocationId | None = p_id
                     while curr_id is not None:
                         curr_loc = await self.uow.locations.get_by_id(curr_id, company_id)
                         if not curr_loc:

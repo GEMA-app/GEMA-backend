@@ -17,7 +17,7 @@ class Settings(BaseSettings):
 
     APP_ENV: str = "development"
     APP_DEBUG: bool = True
-    APP_TITLE: str = "SIGMA Backend"
+    APP_TITLE: str = "GEMA Backend"
     APP_VERSION: str = "0.1.0"
     STRICT_JSONAPI: bool = True
 

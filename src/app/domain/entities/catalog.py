@@ -1,6 +1,5 @@
-from dataclasses import dataclass
 import uuid
-from typing import Optional
+from dataclasses import dataclass
 
 
 @dataclass
@@ -9,7 +8,7 @@ class ArticleCategory:
     id: uuid.UUID
     empresa_id: uuid.UUID
     nombre: str
-    descripcion: Optional[str] = None
+    descripcion: str | None = None
 
 
 @dataclass
@@ -17,9 +16,9 @@ class CatalogArticle:
     """Entidad de dominio placeholder para artículos del catálogo."""
     id: uuid.UUID
     empresa_id: uuid.UUID
-    categoria_id: Optional[uuid.UUID]
+    categoria_id: uuid.UUID | None
     nombre: str
-    descripcion: Optional[str] = None
-    fabricante: Optional[str] = None
-    modelo: Optional[str] = None
-    unidad_medida: Optional[str] = None
+    descripcion: str | None = None
+    fabricante: str | None = None
+    modelo: str | None = None
+    unidad_medida: str | None = None

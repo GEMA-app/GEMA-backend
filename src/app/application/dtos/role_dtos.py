@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -20,9 +19,9 @@ class CreateRoleRequest:
 
 @dataclass(frozen=True)
 class UpdateRoleRequest:
-    nombre: Optional[str] = None
-    descripcion: Optional[str] = None
-    permisos: Optional[list[PermissionDTO]] = None
+    nombre: str | None = None
+    descripcion: str | None = None
+    permisos: list[PermissionDTO] | None = None
 
 
 @dataclass(frozen=True)

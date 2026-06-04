@@ -1,6 +1,7 @@
-from typing import Optional
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.application.ports.company_repository import CompanyRepositoryPort
 from app.domain.entities import Company
 from app.domain.value_objects import CompanyId, Slug
@@ -38,7 +39,7 @@ class SqlAlchemyCompanyRepository(SqlAlchemyRepository[CompanyModel, Company, Co
             trial_hasta=model.trial_hasta
         )
 
-    async def get_by_slug(self, slug: Slug) -> Optional[Company]:
+    async def get_by_slug(self, slug: Slug) -> Company | None:
         stmt = select(CompanyModel).where(CompanyModel.slug == slug.value)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()

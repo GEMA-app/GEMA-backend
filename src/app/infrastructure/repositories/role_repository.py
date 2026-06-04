@@ -1,11 +1,13 @@
 import uuid
-from typing import Optional
-from sqlalchemy import select, delete as sql_delete
+
+from sqlalchemy import delete as sql_delete
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.application.ports.role_repository import RoleRepositoryPort
-from app.domain.entities import Role, Permission
-from app.domain.value_objects import RoleId, CompanyId, UserId
-from app.infrastructure.db.models.role import RoleModel, PermissionModel, RoleUserModel
+from app.domain.entities import Permission, Role
+from app.domain.value_objects import CompanyId, RoleId, UserId
+from app.infrastructure.db.models.role import PermissionModel, RoleModel, RoleUserModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
 
 
@@ -58,7 +60,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
             permisos=permisos
         )
 
-    async def get_by_id(self, id: RoleId, empresa_id: CompanyId) -> Optional[Role]:
+    async def get_by_id(self, id: RoleId, empresa_id: CompanyId) -> Role | None:  # type: ignore[override]
         stmt = select(RoleModel).where(
             RoleModel.id == id.value,
             RoleModel.empresa_id == empresa_id.value
@@ -75,7 +77,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
         models = result.scalars().all()
         return [self._to_entity(m) for m in models]
 
-    async def delete(self, id: RoleId, empresa_id: CompanyId) -> None:
+    async def delete(self, id: RoleId, empresa_id: CompanyId) -> None:  # type: ignore[override]
         stmt = sql_delete(RoleModel).where(
             RoleModel.id == id.value,
             RoleModel.empresa_id == empresa_id.value

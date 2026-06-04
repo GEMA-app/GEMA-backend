@@ -1,8 +1,8 @@
 from app.application.dtos import AuthTokensDTO, RegisterUserRequest
 from app.application.ports.auth import PasswordHasherPort, TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.domain.entities import User, Company, Role
-from app.domain.exceptions import UserAlreadyExistsError, CompanySlugExistsError
+from app.domain.entities import Company, Role, User
+from app.domain.exceptions import CompanySlugExistsError, UserAlreadyExistsError
 from app.domain.value_objects import Email, HashedPassword, PlainPassword, Slug
 
 
