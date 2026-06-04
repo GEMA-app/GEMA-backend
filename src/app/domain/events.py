@@ -22,3 +22,28 @@ class UserLoggedIn(DomainEvent):
     """Evento emitido cuando un usuario inicia sesión exitosamente."""
     user_id: str
     email: str
+
+
+@dataclass(frozen=True, kw_only=True)
+class CompanyCreated(DomainEvent):
+    """Evento emitido cuando se crea una nueva empresa (tenant) en la plataforma."""
+    company_id: str
+    nombre: str
+    slug: str
+
+
+@dataclass(frozen=True, kw_only=True)
+class RoleAssigned(DomainEvent):
+    """Evento emitido cuando se asigna un rol a un usuario."""
+    user_id: str
+    role_id: str
+    empresa_id: str
+
+
+@dataclass(frozen=True, kw_only=True)
+class RoleRevoked(DomainEvent):
+    """Evento emitido cuando se revoca un rol a un usuario."""
+    user_id: str
+    role_id: str
+    empresa_id: str
+

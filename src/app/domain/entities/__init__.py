@@ -1,5 +1,9 @@
 # Re-exporta todas las entidades del dominio para mantener compatibilidad
 # con imports existentes: `from app.domain.entities import User`
 from app.domain.entities.user import User
+from app.domain.entities.company import Company
+from app.domain.entities.role import Role
+from app.domain.entities.permission import Permission
 
-__all__ = ["User"]
+__all__ = ["User", "Company", "Role", "Permission"]
+
