@@ -47,7 +47,7 @@ class PermissionModel(TenantMixin, TimestampMixin, Base):
         nullable=False
     )
     modulo: Mapped[PermissionModule] = mapped_column(
-        Enum(PermissionModule),
+        Enum(PermissionModule, values_callable=lambda obj: [e.value for e in obj]),
         nullable=False
     )
     puede_ver: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

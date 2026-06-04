@@ -35,7 +35,7 @@ class AssetModel(TenantMixin, TimestampMixin, Base):
     serial_interno: Mapped[str] = mapped_column(String(100), nullable=False)
     codigo_activo: Mapped[str] = mapped_column(String(100), nullable=False)
     estado: Mapped[AssetStatus] = mapped_column(
-        Enum(AssetStatus),
+        Enum(AssetStatus, values_callable=lambda obj: [e.value for e in obj]),
         default=AssetStatus.OPERATIONAL,
         nullable=False
     )

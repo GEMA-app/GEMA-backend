@@ -24,7 +24,7 @@ class LocationModel(TenantMixin, TimestampMixin, Base):
     )
     nombre: Mapped[str] = mapped_column(String(255), nullable=False)
     tipo: Mapped[LocationType] = mapped_column(
-        Enum(LocationType),
+        Enum(LocationType, values_callable=lambda obj: [e.value for e in obj]),
         nullable=False
     )
     descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)

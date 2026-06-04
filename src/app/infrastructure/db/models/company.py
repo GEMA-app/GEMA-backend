@@ -40,7 +40,7 @@ class CompanyModel(TimestampMixin, Base):
     rif: Mapped[str | None] = mapped_column(String(50), nullable=True)
     email_contacto: Mapped[str | None] = mapped_column(String(255), nullable=True)
     estado: Mapped[CompanyStatus] = mapped_column(
-        Enum(CompanyStatus),
+        Enum(CompanyStatus, values_callable=lambda obj: [e.value for e in obj]),
         default=CompanyStatus.ACTIVE,
         nullable=False
     )

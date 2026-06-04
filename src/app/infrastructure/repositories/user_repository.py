@@ -50,16 +50,6 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
         return self._to_entity(model)
 
     def _to_model(self, user: User) -> UserModel:
-        from app.infrastructure.db.models.role import RoleModel
-        roles_models = [
-            RoleModel(
-                id=r.id.value,
-                empresa_id=r.empresa_id.value,
-                nombre=r.nombre,
-                descripcion=r.descripcion
-            )
-            for r in user.roles
-        ]
         return UserModel(
             id=user.id.value,
             email=user.email.value,
@@ -68,7 +58,6 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
             nombre=user.nombre,
             telefono=user.telefono,
             activo=user.is_active,
-            roles=roles_models,
             created_at=user.created_at,
             updated_at=user.updated_at,
         )

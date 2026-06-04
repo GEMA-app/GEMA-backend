@@ -85,25 +85,26 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
         await self.session.execute(stmt)
 
     async def assign_to_user(self, role_id: RoleId, user_id: UserId) -> None:
-        stmt = select(RoleUserModel).where(
-            RoleUserModel.rol_id == role_id.value,
-            RoleUserModel.usuario_id == user_id.value
-        )
-        res = await self.session.execute(stmt)
-        exists = res.scalar_one_or_none()
-        if not exists:
-            association = RoleUserModel(
-                usuario_id=user_id.value,
-                rol_id=role_id.value
-            )
-            self.session.add(association)
+        from app.infrastructure.db.models.user import UserModel
+
+        await self.session.flush()
+        user_model = await self.session.get(UserModel, user_id.value)
+        role_model = await self.session.get(RoleModel, role_id.value)
+
+        if user_model and role_model:
+            if role_model not in user_model.roles:
+                user_model.roles.append(role_model)
 
     async def revoke_from_user(self, role_id: RoleId, user_id: UserId) -> None:
-        stmt = sql_delete(RoleUserModel).where(
-            RoleUserModel.rol_id == role_id.value,
-            RoleUserModel.usuario_id == user_id.value
-        )
-        await self.session.execute(stmt)
+        from app.infrastructure.db.models.user import UserModel
+
+        await self.session.flush()
+        user_model = await self.session.get(UserModel, user_id.value)
+        role_model = await self.session.get(RoleModel, role_id.value)
+
+        if user_model and role_model:
+            if role_model in user_model.roles:
+                user_model.roles.remove(role_model)
 
     async def get_user_roles(self, user_id: UserId, empresa_id: CompanyId) -> list[Role]:
         stmt = select(RoleModel).join(RoleUserModel).where(
