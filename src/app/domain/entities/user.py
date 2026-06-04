@@ -2,8 +2,9 @@ from datetime import datetime, timezone
 from typing import Optional
 import uuid
 from app.domain.exceptions import UserInactiveError
-from app.domain.value_objects import Email, HashedPassword, UserId
+from app.domain.value_objects import Email, HashedPassword, UserId, CompanyId
 from app.domain.events import DomainEvent, UserLoggedIn, UserRegistered
+from app.domain.entities.role import Role
 
 
 class User:
@@ -14,23 +15,47 @@ class User:
         id: UserId,
         email: Email,
         hashed_password: HashedPassword,
+        empresa_id: CompanyId,
+        nombre: str,
+        telefono: Optional[str] = None,
         is_active: bool = True,
+        roles: Optional[list[Role]] = None,
         created_at: Optional[datetime] = None,
         updated_at: Optional[datetime] = None,
     ) -> None:
         self.id = id
         self.email = email
         self.hashed_password = hashed_password
+        self.empresa_id = empresa_id
+        self.nombre = nombre
+        self.telefono = telefono
         self.is_active = is_active
+        self.roles = roles or []
         self.created_at = created_at or datetime.now(timezone.utc)
         self.updated_at = updated_at or datetime.now(timezone.utc)
         self._events: list[DomainEvent] = []
 
     @classmethod
-    def register(cls, email: Email, hashed_password: HashedPassword) -> "User":
+    def register(
+        cls,
+        email: Email,
+        hashed_password: HashedPassword,
+        empresa_id: CompanyId,
+        nombre: str,
+        telefono: Optional[str] = None,
+    ) -> "User":
         """Fábrica de dominio para registrar un nuevo usuario y emitir el evento correspondiente."""
         user_id = UserId(value=uuid.uuid4())
-        user = cls(id=user_id, email=email, hashed_password=hashed_password, is_active=True)
+        user = cls(
+            id=user_id,
+            email=email,
+            hashed_password=hashed_password,
+            empresa_id=empresa_id,
+            nombre=nombre,
+            telefono=telefono,
+            is_active=True,
+            roles=[]
+        )
         user._events.append(UserRegistered(user_id=str(user.id), email=user.email.value))
         return user
 
@@ -38,7 +63,7 @@ class User:
         """Registra el inicio de sesión del usuario, validando sus invariantes de estado."""
         if not self.is_active:
             raise UserInactiveError(f"El usuario {self.email.value} está inactivo.")
-        self._events.append(UserLoggedIn(user_id=str(self.id), email=self.email.value))
+        self._events.append(UserLoggedIn(user_id=str(self.id), email=user.email.value if hasattr(self, 'email') and hasattr(self.email, 'value') else ""))
 
     def pull_events(self) -> list[DomainEvent]:
         """Devuelve los eventos de dominio acumulados y limpia la lista interna."""
