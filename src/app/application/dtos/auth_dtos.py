@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -7,6 +8,9 @@ class RegisterUserRequest:
     """DTO de entrada para la solicitud de registro de usuario."""
     email: str
     password: str
+    nombre: str
+    company_name: str
+    telefono: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -29,6 +33,9 @@ class UserResponse:
     """DTO de salida con la información pública de un usuario."""
     id: str
     email: str
+    nombre: str
+    empresa_id: str
+    telefono: Optional[str]
     is_active: bool
     created_at: datetime
     updated_at: datetime
