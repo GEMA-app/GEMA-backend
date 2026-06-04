@@ -7,7 +7,7 @@ from app.presentation.exception_handlers.base import jsonapi_response
 
 
 async def request_validation_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    """Mapea errores de validación de Pydantic/FastAPI al formato de error de JSON:API con JSON Pointers."""
+    """Mapea errores de validación de Pydantic/FastAPI al formato de JSON:API."""
     assert isinstance(exc, RequestValidationError)
     errors = []
     for err in exc.errors():

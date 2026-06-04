@@ -2,7 +2,7 @@ from app.application.dtos.role_dtos import PermissionDTO, RoleResponse, UpdateRo
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Permission
 from app.domain.enums import PermissionModule
-from app.domain.exceptions import RoleNameExistsError, RoleNotFoundError
+from app.domain.exceptions import RoleNameExistsError, RoleNotFoundError, ValidationException
 from app.domain.value_objects import CompanyId, RoleId
 
 
@@ -10,11 +10,13 @@ class UpdateRoleUseCase:
     """Caso de uso para actualizar un rol."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
+        """Inicializa el caso de uso con la unidad de trabajo (UoW)."""
         self.uow = uow
 
     async def execute(
         self, company_id_str: str, role_id_str: str, request: UpdateRoleRequest
     ) -> RoleResponse:
+        """Ejecuta la actualización de un rol."""
         company_id = CompanyId.from_string(company_id_str)
         role_id = RoleId.from_string(role_id_str)
 
@@ -26,7 +28,7 @@ class UpdateRoleUseCase:
             if request.nombre is not None:
                 new_name = request.nombre.strip()
                 if not new_name:
-                    raise ValueError("El nombre del rol no puede estar vacío.")
+                    raise ValidationException("El nombre del rol no puede estar vacío.")
                 # Verificar duplicados en la misma empresa
                 existing_roles = await self.uow.roles.list_by_company(company_id)
                 if any(

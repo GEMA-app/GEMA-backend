@@ -1,7 +1,7 @@
 from app.application.dtos.company_dtos import CompanyResponse, UpdateCompanyRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import CompanyStatus
-from app.domain.exceptions import CompanyNotFoundError
+from app.domain.exceptions import CompanyNotFoundError, ValidationException
 from app.domain.value_objects import CompanyId
 
 
@@ -9,9 +9,11 @@ class UpdateCompanyUseCase:
     """Caso de uso para actualizar una empresa."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
+        """Inicializa el caso de uso con la unidad de trabajo (UoW)."""
         self.uow = uow
 
     async def execute(self, company_id_str: str, request: UpdateCompanyRequest) -> CompanyResponse:
+        """Ejecuta la actualización de la empresa."""
         company_id = CompanyId.from_string(company_id_str)
         async with self.uow:
             company = await self.uow.companies.get_by_id(company_id)
@@ -20,7 +22,7 @@ class UpdateCompanyUseCase:
 
             if request.nombre is not None:
                 if not request.nombre.strip():
-                    raise ValueError("El nombre de la empresa no puede estar vacío.")
+                    raise ValidationException("El nombre de la empresa no puede estar vacío.")
                 company.nombre = request.nombre.strip()
 
             if request.rif is not None:

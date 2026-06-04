@@ -20,7 +20,9 @@ from app.composition.container.auth import (
 )
 from app.composition.container.common import (
     get_authorization_service,
+    get_db_engine,
     get_password_hasher,
+    get_redis_client,
     get_token_service,
     get_uow,
 )
@@ -55,6 +57,8 @@ __all__ = [
     "get_password_hasher",
     "get_token_service",
     "get_authorization_service",
+    "get_db_engine",
+    "get_redis_client",
     # Auth
     "get_register_user_use_case",
     "get_login_user_use_case",

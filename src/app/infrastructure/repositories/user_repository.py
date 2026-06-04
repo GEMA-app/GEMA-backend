@@ -5,18 +5,17 @@ from app.application.ports.repository import UserRepositoryPort
 from app.domain.entities import User
 from app.domain.value_objects import CompanyId, Email, HashedPassword, UserId
 from app.infrastructure.db.models import UserModel
+from app.infrastructure.repositories.base import SqlAlchemyRepository
 
 
-class SqlAlchemyUserRepository(UserRepositoryPort):
-    """Implementación de UserRepositoryPort utilizando SQLAlchemy 2.0 y AsyncSession."""
+class SqlAlchemyUserRepository(
+    SqlAlchemyRepository[UserModel, User, UserId], UserRepositoryPort
+):
+    """Implementación de UserRepositoryPort utilizando la clase base SqlAlchemyRepository."""
 
     def __init__(self, session: AsyncSession) -> None:
-        self.session = session
-
-    async def save(self, user: User) -> None:
-        """Persiste o actualiza el modelo ORM en la sesión actual sin confirmar la transacción."""
-        model = self._to_model(user)
-        await self.session.merge(model)
+        """Inicializa el repositorio de usuarios con la sesión de base de datos."""
+        super().__init__(session, UserModel)
 
     async def get_by_email(self, email: Email) -> User | None:
         """Busca un usuario por email globalmente en la base de datos."""
@@ -38,26 +37,17 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
             return None
         return self._to_entity(model)
 
-    async def get_by_id(self, id: UserId) -> User | None:
-        """Busca un usuario por ID en la base de datos."""
-        stmt = select(UserModel).where(UserModel.id == id.value)
-        result = await self.session.execute(stmt)
-        model = result.scalar_one_or_none()
-        if not model:
-            return None
-        return self._to_entity(model)
-
-    def _to_model(self, user: User) -> UserModel:
+    def _to_model(self, entity: User) -> UserModel:
         return UserModel(
-            id=user.id.value,
-            email=user.email.value,
-            hashed_password=user.hashed_password.value,
-            empresa_id=user.empresa_id.value,
-            nombre=user.nombre,
-            telefono=user.telefono,
-            activo=user.is_active,
-            created_at=user.created_at,
-            updated_at=user.updated_at,
+            id=entity.id.value,
+            email=entity.email.value,
+            hashed_password=entity.hashed_password.value,
+            empresa_id=entity.empresa_id.value,
+            nombre=entity.nombre,
+            telefono=entity.telefono,
+            activo=entity.is_active,
+            created_at=entity.created_at,
+            updated_at=entity.updated_at,
         )
 
     def _to_entity(self, model: UserModel) -> User:

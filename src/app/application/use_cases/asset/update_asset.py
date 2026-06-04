@@ -6,6 +6,7 @@ from app.domain.exceptions import (
     AssetNotFoundError,
     AssetSerialExistsError,
     LocationNotFoundError,
+    ValidationException,
 )
 from app.domain.value_objects import AssetId, CompanyId, LocationId
 
@@ -14,11 +15,13 @@ class UpdateAssetUseCase:
     """Caso de uso para actualizar un activo físico."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
+        """Inicializa el caso de uso con la unidad de trabajo (UoW)."""
         self.uow = uow
 
     async def execute(
         self, company_id_str: str, asset_id_str: str, request: UpdateAssetRequest
     ) -> AssetResponse:
+        """Ejecuta la actualización del activo físico."""
         company_id = CompanyId.from_string(company_id_str)
         asset_id = AssetId.from_string(asset_id_str)
 
@@ -44,7 +47,7 @@ class UpdateAssetUseCase:
             if request.codigo_activo is not None:
                 new_code = request.codigo_activo.strip()
                 if not new_code:
-                    raise ValueError("El código del activo no puede estar vacío.")
+                    raise ValidationException("El código del activo no puede estar vacío.")
                 assets, _ = await self.uow.assets.list_by_company(company_id, 0, 1000)
                 if any(
                     a.codigo_activo.lower() == new_code.lower() and a.id != asset.id for a in assets
@@ -57,7 +60,7 @@ class UpdateAssetUseCase:
             if request.serial_interno is not None:
                 new_serial = request.serial_interno.strip()
                 if not new_serial:
-                    raise ValueError("El serial interno no puede estar vacío.")
+                    raise ValidationException("El serial interno no puede estar vacío.")
                 assets, _ = await self.uow.assets.list_by_company(company_id, 0, 1000)
                 if any(
                     a.serial_interno.lower() == new_serial.lower() and a.id != asset.id

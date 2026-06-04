@@ -1,5 +1,6 @@
-"""Paquete de manejadores globales de excepciones para la aplicación FastAPI.
-Re-exporta los símbolos públicos para mantener compatibilidad con los imports existentes (``from app.presentation.exception_handlers import X``).
+"""Manejadores globales de excepciones para la aplicación FastAPI.
+
+Re-exporta los símbolos públicos para mantener compatibilidad.
 """
 
 from fastapi import FastAPI

@@ -2,11 +2,13 @@
 
 from fastapi import Depends
 from redis.asyncio import Redis
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.application.ports.auth import PasswordHasherPort, TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.application.services.authorization_service import AuthorizationService
-from app.infrastructure.cache.redis import get_redis
+from app.infrastructure.cache.redis import get_redis, redis_client
+from app.infrastructure.db.session import engine
 from app.infrastructure.security.authorization import RbacAuthorizationService
 from app.infrastructure.security.hashing import BcryptPasswordHasher
 from app.infrastructure.security.jwt import PyJwtTokenService
@@ -33,3 +35,13 @@ async def get_authorization_service(
 ) -> AuthorizationService:
     """Fábrica de dependencias para el servicio de autorización RBAC."""
     return RbacAuthorizationService(uow)
+
+
+def get_db_engine() -> AsyncEngine:
+    """Devuelve la instancia global de AsyncEngine."""
+    return engine
+
+
+def get_redis_client() -> Redis:
+    """Devuelve el cliente global de Redis."""
+    return redis_client  # type: ignore[no-any-return]

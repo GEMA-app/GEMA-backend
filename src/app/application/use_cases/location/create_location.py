@@ -4,7 +4,7 @@ from app.application.dtos.location_dtos import CreateLocationRequest, LocationRe
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Location
 from app.domain.enums import LocationType
-from app.domain.exceptions import LocationInvalidTypeHierarchyError, LocationNotFoundError
+from app.domain.exceptions import LocationNotFoundError
 from app.domain.value_objects import CompanyId, LocationId
 
 
@@ -12,11 +12,13 @@ class CreateLocationUseCase:
     """Caso de uso para registrar una nueva ubicación física jerárquica."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
+        """Inicializa el caso de uso con la unidad de trabajo (UoW)."""
         self.uow = uow
 
     async def execute(
         self, company_id_str: str, request: CreateLocationRequest
     ) -> LocationResponse:
+        """Ejecuta el registro de una nueva ubicación física jerárquica."""
         company_id = CompanyId.from_string(company_id_str)
         tipo = LocationType(request.tipo)
 
@@ -33,26 +35,7 @@ class CreateLocationUseCase:
                 parent_tipo = parent_loc.tipo
 
             # Validar jerarquía de tipos
-            if tipo == LocationType.HEADQUARTERS:
-                if parent_tipo is not None:
-                    raise LocationInvalidTypeHierarchyError(
-                        "Una sede (HEADQUARTERS) no puede tener una ubicación padre."
-                    )
-            elif tipo == LocationType.PLANT:
-                if parent_tipo != LocationType.HEADQUARTERS:
-                    raise LocationInvalidTypeHierarchyError(
-                        "Una planta (PLANT) debe tener una sede (HEADQUARTERS) como padre."
-                    )
-            elif tipo == LocationType.AREA:
-                if parent_tipo != LocationType.PLANT:
-                    raise LocationInvalidTypeHierarchyError(
-                        "Un área (AREA) debe tener una planta (PLANT) como padre."
-                    )
-            elif tipo == LocationType.SECTION:
-                if parent_tipo != LocationType.AREA:
-                    raise LocationInvalidTypeHierarchyError(
-                        "Una sección (SECTION) debe tener un área (AREA) como padre."
-                    )
+            Location.validate_hierarchy(tipo, parent_tipo)
 
             location = Location(
                 id=LocationId(uuid.uuid4()),

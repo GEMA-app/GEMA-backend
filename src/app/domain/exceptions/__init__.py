@@ -40,6 +40,7 @@ from app.domain.exceptions.role import (
     RoleNameExistsError,
     RoleNotFoundError,
 )
+from app.domain.exceptions.validation import ValidationException
 
 __all__ = [
     "DomainException",
@@ -66,4 +67,5 @@ __all__ = [
     "LocationNotFoundError",
     "LocationCircularReferenceError",
     "LocationInvalidTypeHierarchyError",
+    "ValidationException",
 ]

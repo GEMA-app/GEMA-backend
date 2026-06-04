@@ -9,6 +9,7 @@ class RefreshTokenUseCase:
     """Caso de uso para rotar tokens de refresco, emitiendo un nuevo par y revocando el anterior."""
 
     def __init__(self, uow: UnitOfWorkPort, token_service: TokenServicePort) -> None:
+        """Inicializa el caso de uso con la unidad de trabajo (UoW) y el servicio de tokens."""
         self.uow = uow
         self.token_service = token_service
 
@@ -23,8 +24,6 @@ class RefreshTokenUseCase:
         exp = claims["exp"]
         sub = claims["sub"]
 
-        await self.token_service.revoke_token(jti=jti, exp=exp)
-
         async with self.uow:
             user = await self.uow.users.get_by_id(UserId.from_string(sub))
             if not user or not user.is_active:
@@ -33,4 +32,6 @@ class RefreshTokenUseCase:
             access_token = await self.token_service.generate_access_token(str(user.id))
             refresh_token = await self.token_service.generate_refresh_token(str(user.id))
 
-            return AuthTokensDTO(access_token=access_token, refresh_token=refresh_token)
+        await self.token_service.revoke_token(jti=jti, exp=exp)
+
+        return AuthTokensDTO(access_token=access_token, refresh_token=refresh_token)

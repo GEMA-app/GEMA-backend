@@ -19,6 +19,7 @@ from app.domain.exceptions import (
     RoleNotFoundError,
     UserAlreadyExistsError,
     UserInactiveError,
+    ValidationException,
     WeakPasswordError,
 )
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
@@ -51,6 +52,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     LocationInvalidTypeHierarchyError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_LOCATION_INVALID_TYPE_HIERARCHY",
+    ),
+    ValidationException: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_VALIDATION",
     ),
 }
 

@@ -11,7 +11,7 @@ from app.presentation.api.v1.schemas.jsonapi_base import (
 def jsonapi_response(
     status_code: int, errors: list[ErrorObject], headers: Mapping[str, str] | None = None
 ) -> JSONResponse:
-    """Genera una respuesta JSONResponse formateada estrictamente bajo la especificación JSON:API."""
+    """Genera una respuesta JSONResponse formateada bajo la especificación JSON:API."""
     doc = JsonApiErrorDocument(errors=errors)
     return JSONResponse(
         status_code=status_code,
