@@ -3,6 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.infrastructure.db.session import async_session_factory
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
+from app.infrastructure.repositories.company_repository import SqlAlchemyCompanyRepository
+from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
+from app.infrastructure.repositories.asset_repository import SqlAlchemyAssetRepository
+from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
 
 
 class SqlAlchemyUnitOfWork(UnitOfWorkPort):
@@ -17,6 +21,10 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         """Inicia la sesión asíncrona y construye los repositorios asociados a ella."""
         self.session = self.session_factory()
         self.users = SqlAlchemyUserRepository(self.session)
+        self.companies = SqlAlchemyCompanyRepository(self.session)
+        self.roles = SqlAlchemyRoleRepository(self.session)
+        self.assets = SqlAlchemyAssetRepository(self.session)
+        self.locations = SqlAlchemyLocationRepository(self.session)
         return self
 
     async def __aexit__(self, exc_type: Any, exc_val: Any, tb: Any) -> None:

@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.application.ports.repository import UserRepositoryPort
 from app.domain.entities import User
-from app.domain.value_objects import Email, HashedPassword, UserId
+from app.domain.value_objects import Email, HashedPassword, UserId, CompanyId
 from app.infrastructure.db.models import UserModel
 
 
@@ -19,7 +19,7 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
         await self.session.merge(model)
 
     async def get_by_email(self, email: Email) -> Optional[User]:
-        """Busca un usuario por email en la base de datos y lo mapea a la entidad de dominio."""
+        """Busca un usuario por email globalmente en la base de datos."""
         stmt = select(UserModel).where(UserModel.email == email.value)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
@@ -27,8 +27,20 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
             return None
         return self._to_entity(model)
 
+    async def get_by_email_and_company(self, email: Email, empresa_id: CompanyId) -> Optional[User]:
+        """Busca un usuario por email dentro de una empresa específica."""
+        stmt = select(UserModel).where(
+            UserModel.email == email.value,
+            UserModel.empresa_id == empresa_id.value
+        )
+        result = await self.session.execute(stmt)
+        model = result.scalar_one_or_none()
+        if not model:
+            return None
+        return self._to_entity(model)
+
     async def get_by_id(self, id: UserId) -> Optional[User]:
-        """Busca un usuario por ID en la base de datos y lo mapea a la entidad de dominio."""
+        """Busca un usuario por ID en la base de datos."""
         stmt = select(UserModel).where(UserModel.id == id.value)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
@@ -37,21 +49,61 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
         return self._to_entity(model)
 
     def _to_model(self, user: User) -> UserModel:
+        from app.infrastructure.db.models.role import RoleModel
+        roles_models = [
+            RoleModel(
+                id=r.id.value,
+                empresa_id=r.empresa_id.value,
+                nombre=r.nombre,
+                descripcion=r.descripcion
+            )
+            for r in user.roles
+        ]
         return UserModel(
             id=user.id.value,
             email=user.email.value,
             hashed_password=user.hashed_password.value,
-            is_active=user.is_active,
+            empresa_id=user.empresa_id.value,
+            nombre=user.nombre,
+            telefono=user.telefono,
+            activo=user.is_active,
+            roles=roles_models,
             created_at=user.created_at,
             updated_at=user.updated_at,
         )
 
     def _to_entity(self, model: UserModel) -> User:
+        from app.domain.entities import Role, Permission
+        from app.domain.value_objects import RoleId
+
+        roles = [
+            Role(
+                id=RoleId(rm.id),
+                empresa_id=CompanyId(rm.empresa_id),
+                nombre=rm.nombre,
+                descripcion=rm.descripcion or "",
+                permisos=[
+                    Permission(
+                        module=p.modulo,
+                        can_view=p.puede_ver,
+                        can_create=p.puede_crear,
+                        can_edit=p.puede_editar,
+                        can_delete=p.puede_eliminar
+                    )
+                    for p in rm.permisos
+                ]
+            )
+            for rm in model.roles
+        ]
         return User(
             id=UserId(value=model.id),
             email=Email(value=model.email),
             hashed_password=HashedPassword(value=model.hashed_password),
-            is_active=model.is_active,
+            empresa_id=CompanyId(model.empresa_id),
+            nombre=model.nombre,
+            telefono=model.telefono,
+            is_active=model.activo,
+            roles=roles,
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
