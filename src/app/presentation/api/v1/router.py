@@ -11,5 +11,6 @@ v1_router.include_router(auth_router, prefix="/auth", tags=["auth"])
 v1_router.include_router(companies_router, prefix="/companies", tags=["companies"])
 v1_router.include_router(roles_router, prefix="/companies/{company_id}/roles", tags=["roles"])
 v1_router.include_router(assets_router, prefix="/companies/{company_id}/assets", tags=["assets"])
-v1_router.include_router(locations_router, prefix="/companies/{company_id}/locations", tags=["locations"])
-
+v1_router.include_router(
+    locations_router, prefix="/companies/{company_id}/locations", tags=["locations"]
+)

@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import status
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -11,7 +13,7 @@ from app.presentation.exception_handlers import jsonapi_response
 class ContentTypeMiddleware(BaseHTTPMiddleware):
     """Middleware que valida el encabezado Content-Type bajo la especificación JSON:API y estándar JSON."""
 
-    async def dispatch(self, request: Request, call_next) -> Response:
+    async def dispatch(self, request: Request, call_next: Any) -> Response:
         if request.method in ("POST", "PATCH", "DELETE"):
             content_type = request.headers.get("Content-Type", "")
             expected = "application/vnd.api+json"
@@ -36,4 +38,5 @@ class ContentTypeMiddleware(BaseHTTPMiddleware):
                     )
                     return jsonapi_response(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, [error])
 
-        return await call_next(request)
+        response: Response = await call_next(request)
+        return response

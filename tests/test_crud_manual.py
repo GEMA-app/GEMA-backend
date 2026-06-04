@@ -1,6 +1,7 @@
 import asyncio
 import uuid
 from httpx import AsyncClient, ASGITransport
+from sqlalchemy import delete as sql_delete
 
 # Importar aplicación y configuraciones
 from app.main import app

@@ -1,4 +1,5 @@
 from typing import Any
+
 from fastapi import APIRouter, Depends, Query, status
 
 from app.application.dtos.role_dtos import (
@@ -23,10 +24,10 @@ from app.composition.container import (
     get_assign_role_to_user_use_case,
     get_create_role_use_case,
     get_delete_role_use_case,
-    get_get_role_use_case,
     get_list_roles_use_case,
     get_revoke_role_from_user_use_case,
     get_update_role_use_case,
+    provide_role_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
@@ -140,7 +141,7 @@ async def get_role(
     company_id: str,
     id: str,
     current_user: Any = Depends(get_current_active_user),
-    use_case: GetRoleUseCase = Depends(get_get_role_use_case),
+    use_case: GetRoleUseCase = Depends(provide_role_use_case),
 ) -> RoleDocument:
     res = await use_case.execute(company_id, id)
     return RoleDocument(

@@ -1,4 +1,3 @@
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -31,8 +30,7 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
     async def get_by_email_and_company(self, email: Email, empresa_id: CompanyId) -> User | None:
         """Busca un usuario por email dentro de una empresa específica."""
         stmt = select(UserModel).where(
-            UserModel.email == email.value,
-            UserModel.empresa_id == empresa_id.value
+            UserModel.email == email.value, UserModel.empresa_id == empresa_id.value
         )
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
@@ -78,10 +76,10 @@ class SqlAlchemyUserRepository(UserRepositoryPort):
                         can_view=p.puede_ver,
                         can_create=p.puede_crear,
                         can_edit=p.puede_editar,
-                        can_delete=p.puede_eliminar
+                        can_delete=p.puede_eliminar,
                     )
                     for p in rm.permisos
-                ]
+                ],
             )
             for rm in model.roles
         ]

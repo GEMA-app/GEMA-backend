@@ -26,7 +26,7 @@ class CreateCompanyUseCase:
                 rif=request.rif,
                 email_contacto=request.email_contacto,
                 plan_id=request.plan_id,
-                trial_hasta=request.trial_hasta
+                trial_hasta=request.trial_hasta,
             )
             await self.uow.companies.save(company)
             await self.uow.commit()
@@ -39,5 +39,5 @@ class CreateCompanyUseCase:
                 email_contacto=company.email_contacto,
                 estado=company.estado.value,
                 plan_id=str(company.plan_id) if company.plan_id else None,
-                trial_hasta=company.trial_hasta.isoformat() if company.trial_hasta else None
+                trial_hasta=company.trial_hasta.isoformat() if company.trial_hasta else None,
             )

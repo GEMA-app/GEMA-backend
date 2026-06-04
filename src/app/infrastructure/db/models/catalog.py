@@ -21,9 +21,7 @@ class ArticleCategoryModel(TenantMixin, TimestampMixin, Base):
 
     # Relación con artículos del catálogo
     articulos: Mapped[list["CatalogArticleModel"]] = relationship(
-        "CatalogArticleModel",
-        back_populates="categoria",
-        cascade="all, delete-orphan"
+        "CatalogArticleModel", back_populates="categoria", cascade="all, delete-orphan"
     )
 
 
@@ -37,8 +35,7 @@ class CatalogArticleModel(TenantMixin, TimestampMixin, Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     categoria_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("categorias_articulos.id", ondelete="SET NULL"),
-        nullable=True
+        ForeignKey("categorias_articulos.id", ondelete="SET NULL"), nullable=True
     )
     nombre: Mapped[str] = mapped_column(String(255), nullable=False)
     descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -48,6 +45,5 @@ class CatalogArticleModel(TenantMixin, TimestampMixin, Base):
 
     # Relación con la categoría
     categoria: Mapped[ArticleCategoryModel | None] = relationship(
-        "ArticleCategoryModel",
-        back_populates="articulos"
+        "ArticleCategoryModel", back_populates="articulos"
     )

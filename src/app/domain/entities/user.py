@@ -54,16 +54,17 @@ class User:
             nombre=nombre,
             telefono=telefono,
             is_active=True,
-            roles=[]
+            roles=[],
         )
         user._events.append(UserRegistered(user_id=str(user.id), email=user.email.value))
         return user
+
     def login(self) -> None:
         """Registra el inicio de sesión del usuario, validando sus invariantes de estado."""
         if not self.is_active:
             raise UserInactiveError(f"El usuario {self.email.value} está inactivo.")
         self._events.append(UserLoggedIn(user_id=str(self.id), email=self.email.value))
-   
+
     def pull_events(self) -> list[DomainEvent]:
         """Devuelve los eventos de dominio acumulados y limpia la lista interna."""
         events = self._events.copy()

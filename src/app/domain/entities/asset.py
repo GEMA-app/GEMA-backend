@@ -9,6 +9,7 @@ from app.domain.value_objects import AssetId, CompanyId, LocationId
 @dataclass
 class Asset:
     """Entidad de dominio que representa un activo físico de la empresa."""
+
     id: AssetId
     empresa_id: CompanyId
     articulo_id: uuid.UUID

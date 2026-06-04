@@ -10,6 +10,7 @@ from app.domain.value_objects import CompanyId, Slug
 @dataclass
 class Company:
     """Entidad que representa una Empresa (Tenant) en la plataforma GEMA."""
+
     id: CompanyId
     nombre: str
     slug: Slug
@@ -29,7 +30,7 @@ class Company:
         email_contacto: str | None = None,
         plan_id: uuid.UUID | None = None,
         trial_hasta: date | None = None,
-        estado: CompanyStatus = CompanyStatus.ACTIVE
+        estado: CompanyStatus = CompanyStatus.ACTIVE,
     ) -> "Company":
         """Método fábrica para crear una nueva empresa y emitir CompanyCreated."""
         if not nombre or not nombre.strip():
@@ -44,13 +45,11 @@ class Company:
             email_contacto=email_contacto,
             estado=estado,
             plan_id=plan_id,
-            trial_hasta=trial_hasta
+            trial_hasta=trial_hasta,
         )
         company._events.append(
             CompanyCreated(
-                company_id=str(company.id),
-                nombre=company.nombre,
-                slug=company.slug.value
+                company_id=str(company.id), nombre=company.nombre, slug=company.slug.value
             )
         )
         return company

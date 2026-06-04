@@ -12,7 +12,7 @@ class AuthorizationService(Protocol):
         user_id: UserId,
         empresa_id: CompanyId,
         module: PermissionModule,
-        action: str  # 'view' | 'create' | 'edit' | 'delete'
+        action: str,  # 'view' | 'create' | 'edit' | 'delete'
     ) -> None:
         """Lanza InsufficientPermissionsError si el usuario no tiene el permiso requerido."""
         ...

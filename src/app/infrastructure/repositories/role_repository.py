@@ -29,7 +29,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
                 puede_ver=p.can_view,
                 puede_crear=p.can_create,
                 puede_editar=p.can_edit,
-                puede_eliminar=p.can_delete
+                puede_eliminar=p.can_delete,
             )
             for p in entity.permisos
         ]
@@ -38,7 +38,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
             empresa_id=entity.empresa_id.value,
             nombre=entity.nombre,
             descripcion=entity.descripcion,
-            permisos=permisos_models
+            permisos=permisos_models,
         )
 
     def _to_entity(self, model: RoleModel) -> Role:
@@ -48,7 +48,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
                 can_view=p.puede_ver,
                 can_create=p.puede_crear,
                 can_edit=p.puede_editar,
-                can_delete=p.puede_eliminar
+                can_delete=p.puede_eliminar,
             )
             for p in model.permisos
         ]
@@ -57,13 +57,12 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
             empresa_id=CompanyId(model.empresa_id),
             nombre=model.nombre,
             descripcion=model.descripcion or "",
-            permisos=permisos
+            permisos=permisos,
         )
 
     async def get_by_id(self, id: RoleId, empresa_id: CompanyId) -> Role | None:  # type: ignore[override]
         stmt = select(RoleModel).where(
-            RoleModel.id == id.value,
-            RoleModel.empresa_id == empresa_id.value
+            RoleModel.id == id.value, RoleModel.empresa_id == empresa_id.value
         )
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
@@ -79,8 +78,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
 
     async def delete(self, id: RoleId, empresa_id: CompanyId) -> None:  # type: ignore[override]
         stmt = sql_delete(RoleModel).where(
-            RoleModel.id == id.value,
-            RoleModel.empresa_id == empresa_id.value
+            RoleModel.id == id.value, RoleModel.empresa_id == empresa_id.value
         )
         await self.session.execute(stmt)
 
@@ -107,9 +105,12 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
                 user_model.roles.remove(role_model)
 
     async def get_user_roles(self, user_id: UserId, empresa_id: CompanyId) -> list[Role]:
-        stmt = select(RoleModel).join(RoleUserModel).where(
-            RoleUserModel.usuario_id == user_id.value,
-            RoleModel.empresa_id == empresa_id.value
+        stmt = (
+            select(RoleModel)
+            .join(RoleUserModel)
+            .where(
+                RoleUserModel.usuario_id == user_id.value, RoleModel.empresa_id == empresa_id.value
+            )
         )
         result = await self.session.execute(stmt)
         models = result.scalars().all()

@@ -16,7 +16,7 @@ async def liveness() -> dict[str, str]:
 async def readiness() -> dict[str, str]:
     """Endpoint de readiness para verificar la conectividad con la base de datos PostgreSQL y la caché Redis."""
     try:
-        async with engine.connect() as conn:
+        async with engine.connect():
             pass
         await redis_client.execute_command("PING")
         return {"status": "ready"}

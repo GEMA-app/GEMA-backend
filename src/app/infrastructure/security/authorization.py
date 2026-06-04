@@ -16,7 +16,7 @@ class RbacAuthorizationService(AuthorizationService):
         user_id: UserId,
         empresa_id: CompanyId,
         module: PermissionModule,
-        action: str  # 'view' | 'create' | 'edit' | 'delete'
+        action: str,  # 'view' | 'create' | 'edit' | 'delete'
     ) -> None:
         async with self.uow:
             # Obtener los roles del usuario asignados en esa empresa

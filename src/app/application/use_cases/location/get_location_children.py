@@ -17,7 +17,9 @@ class GetLocationChildrenUseCase:
         async with self.uow:
             parent = await self.uow.locations.get_by_id(parent_id, company_id)
             if not parent:
-                raise LocationNotFoundError(f"La ubicación padre con ID '{parent_id_str}' no existe en esta empresa.")
+                raise LocationNotFoundError(
+                    f"La ubicación padre con ID '{parent_id_str}' no existe en esta empresa."
+                )
 
             children = await self.uow.locations.get_children(parent_id, company_id)
             return [
@@ -27,7 +29,7 @@ class GetLocationChildrenUseCase:
                     parent_id=str(c.parent_id) if c.parent_id else None,
                     nombre=c.nombre,
                     tipo=c.tipo.value,
-                    descripcion=c.descripcion
+                    descripcion=c.descripcion,
                 )
                 for c in children
             ]

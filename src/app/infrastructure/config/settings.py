@@ -1,4 +1,4 @@
-from pydantic import field_validator
+from pydantic import ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,7 +23,7 @@ class Settings(BaseSettings):
 
     @field_validator("JWT_SECRET_KEY")
     @classmethod
-    def validate_secret_key(cls, v: str, info) -> str:
+    def validate_secret_key(cls, v: str, info: ValidationInfo) -> str:
         app_env = info.data.get("APP_ENV", "development")
         if app_env == "production" and (v == "dev-secret-change-in-production" or len(v) < 32):
             raise ValueError("JWT_SECRET_KEY debe ser segura y no por defecto en producción")

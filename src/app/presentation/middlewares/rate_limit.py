@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from fastapi import status
 from redis.exceptions import RedisError
@@ -26,7 +27,7 @@ rate_limit_script = redis_client.register_script(LUA_SCRIPT)
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """Middleware de limitación de tasa (Rate Limiting) con script Lua atómico en Redis y comportamiento fail-open."""
 
-    async def dispatch(self, request: Request, call_next) -> Response:
+    async def dispatch(self, request: Request, call_next: Any) -> Response:
         path = request.url.path
 
         limit = None
@@ -59,4 +60,5 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             except RedisError as e:
                 logger.error("rate_limit_redis_unavailable: %s", e, extra={"path": path})
 
-        return await call_next(request)
+        response: Response = await call_next(request)
+        return response

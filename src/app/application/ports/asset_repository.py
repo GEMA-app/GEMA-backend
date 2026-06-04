@@ -16,11 +16,7 @@ class AssetRepositoryPort(Protocol):
         ...
 
     async def list_by_company(
-        self,
-        empresa_id: CompanyId,
-        offset: int,
-        limit: int,
-        filters: dict[str, Any] | None = None
+        self, empresa_id: CompanyId, offset: int, limit: int, filters: dict[str, Any] | None = None
     ) -> tuple[list[Asset], int]:
         """Devuelve una lista paginada de activos con filtros y el conteo total."""
         ...

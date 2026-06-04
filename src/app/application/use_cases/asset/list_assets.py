@@ -12,15 +12,13 @@ class ListAssetsUseCase:
         self.uow = uow
 
     async def execute(
-        self,
-        company_id_str: str,
-        offset: int,
-        limit: int,
-        filters: dict[str, Any] | None = None
+        self, company_id_str: str, offset: int, limit: int, filters: dict[str, Any] | None = None
     ) -> tuple[list[AssetResponse], int]:
         company_id = CompanyId.from_string(company_id_str)
         async with self.uow:
-            assets, total = await self.uow.assets.list_by_company(company_id, offset, limit, filters)
+            assets, total = await self.uow.assets.list_by_company(
+                company_id, offset, limit, filters
+            )
             responses = [
                 AssetResponse(
                     id=str(a.id),
@@ -30,9 +28,11 @@ class ListAssetsUseCase:
                     serial_interno=a.serial_interno,
                     codigo_activo=a.codigo_activo,
                     estado=a.estado.value,
-                    fecha_adquisicion=a.fecha_adquisicion.isoformat() if a.fecha_adquisicion else None,
+                    fecha_adquisicion=a.fecha_adquisicion.isoformat()
+                    if a.fecha_adquisicion
+                    else None,
                     valor_monetario=a.valor_monetario,
-                    moneda=a.moneda
+                    moneda=a.moneda,
                 )
                 for a in assets
             ]

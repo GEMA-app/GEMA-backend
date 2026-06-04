@@ -5,6 +5,7 @@ from dataclasses import dataclass
 @dataclass
 class ArticleCategory:
     """Entidad de dominio placeholder para categorías de artículos."""
+
     id: uuid.UUID
     empresa_id: uuid.UUID
     nombre: str
@@ -14,6 +15,7 @@ class ArticleCategory:
 @dataclass
 class CatalogArticle:
     """Entidad de dominio placeholder para artículos del catálogo."""
+
     id: uuid.UUID
     empresa_id: uuid.UUID
     categoria_id: uuid.UUID | None

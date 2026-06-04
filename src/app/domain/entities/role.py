@@ -9,6 +9,7 @@ from app.domain.value_objects import CompanyId, RoleId
 @dataclass
 class Role:
     """Entidad que representa un Rol con permisos asignados para cada módulo."""
+
     id: RoleId
     empresa_id: CompanyId
     nombre: str
@@ -21,7 +22,7 @@ class Role:
         empresa_id: CompanyId,
         nombre: str,
         descripcion: str,
-        permisos: list[Permission] | None = None
+        permisos: list[Permission] | None = None,
     ) -> "Role":
         """Crea un nuevo rol de dominio."""
         if not nombre or not nombre.strip():
@@ -31,7 +32,7 @@ class Role:
             empresa_id=empresa_id,
             nombre=nombre.strip(),
             descripcion=descripcion,
-            permisos=permisos or []
+            permisos=permisos or [],
         )
 
     @classmethod
@@ -39,11 +40,7 @@ class Role:
         """Crea un rol de Administrador con todos los permisos."""
         permisos = [
             Permission(
-                module=module,
-                can_view=True,
-                can_create=True,
-                can_edit=True,
-                can_delete=True
+                module=module, can_view=True, can_create=True, can_edit=True, can_delete=True
             )
             for module in PermissionModule
         ]
@@ -52,7 +49,7 @@ class Role:
             empresa_id=empresa_id,
             nombre="Administrador",
             descripcion="Administrador del sistema con acceso completo a todos los módulos.",
-            permisos=permisos
+            permisos=permisos,
         )
 
     def has_permission(self, module: PermissionModule, action: str) -> bool:
@@ -78,7 +75,7 @@ class Role:
         can_view: bool = False,
         can_create: bool = False,
         can_edit: bool = False,
-        can_delete: bool = False
+        can_delete: bool = False,
     ) -> None:
         """Otorga o actualiza permisos para un módulo específico."""
         new_perm = Permission(
@@ -86,7 +83,7 @@ class Role:
             can_view=can_view,
             can_create=can_create,
             can_edit=can_edit,
-            can_delete=can_delete
+            can_delete=can_delete,
         )
         # Reemplazar si ya existe
         for i, p in enumerate(self.permisos):

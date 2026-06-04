@@ -28,7 +28,7 @@ class CreateRoleUseCase:
                     can_view=p.can_view,
                     can_create=p.can_create,
                     can_edit=p.can_edit,
-                    can_delete=p.can_delete
+                    can_delete=p.can_delete,
                 )
                 for p in request.permisos
             ]
@@ -37,7 +37,7 @@ class CreateRoleUseCase:
                 empresa_id=company_id,
                 nombre=request.nombre,
                 descripcion=request.descripcion,
-                permisos=permisos
+                permisos=permisos,
             )
 
             await self.uow.roles.save(role)
@@ -54,8 +54,8 @@ class CreateRoleUseCase:
                         can_view=p.can_view,
                         can_create=p.can_create,
                         can_edit=p.can_edit,
-                        can_delete=p.can_delete
+                        can_delete=p.can_delete,
                     )
                     for p in role.permisos
-                ]
+                ],
             )

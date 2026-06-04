@@ -1,4 +1,5 @@
 from typing import Any
+
 from fastapi import APIRouter, Depends, status
 
 from app.application.dtos.location_dtos import (
@@ -21,10 +22,10 @@ from app.application.use_cases.location import (
 from app.composition.container import (
     get_create_location_use_case,
     get_delete_location_use_case,
-    get_get_location_children_use_case,
-    get_get_location_tree_use_case,
-    get_get_location_use_case,
     get_update_location_use_case,
+    provide_location_children_use_case,
+    provide_location_tree_use_case,
+    provide_location_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
@@ -87,7 +88,7 @@ async def create_location(
 async def get_location_tree(
     company_id: str,
     current_user: Any = Depends(get_current_active_user),
-    use_case: GetLocationTreeUseCase = Depends(get_get_location_tree_use_case),
+    use_case: GetLocationTreeUseCase = Depends(provide_location_tree_use_case),
 ) -> LocationTreeDocument:
     tree = await use_case.execute(company_id)
 
@@ -102,9 +103,7 @@ async def get_location_tree(
             ),
         )
 
-    return LocationTreeDocument(
-        data=[map_tree_node(root) for root in tree]
-    )
+    return LocationTreeDocument(data=[map_tree_node(root) for root in tree])
 
 
 @router.get(
@@ -116,7 +115,7 @@ async def get_location(
     company_id: str,
     id: str,
     current_user: Any = Depends(get_current_active_user),
-    use_case: GetLocationUseCase = Depends(get_get_location_use_case),
+    use_case: GetLocationUseCase = Depends(provide_location_use_case),
 ) -> LocationDocument:
     res = await use_case.execute(company_id, id)
     return LocationDocument(
@@ -189,7 +188,7 @@ async def get_location_children(
     company_id: str,
     id: str,
     current_user: Any = Depends(get_current_active_user),
-    use_case: GetLocationChildrenUseCase = Depends(get_get_location_children_use_case),
+    use_case: GetLocationChildrenUseCase = Depends(provide_location_children_use_case),
 ) -> LocationListDocument:
     children = await use_case.execute(company_id, id)
     return LocationListDocument(

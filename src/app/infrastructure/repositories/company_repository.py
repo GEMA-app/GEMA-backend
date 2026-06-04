@@ -1,4 +1,3 @@
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,7 +8,9 @@ from app.infrastructure.db.models.company import CompanyModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
 
 
-class SqlAlchemyCompanyRepository(SqlAlchemyRepository[CompanyModel, Company, CompanyId], CompanyRepositoryPort):
+class SqlAlchemyCompanyRepository(
+    SqlAlchemyRepository[CompanyModel, Company, CompanyId], CompanyRepositoryPort
+):
     """Implementación en SQLAlchemy para el puerto de repositorio de Empresa."""
 
     def __init__(self, session: AsyncSession) -> None:
@@ -24,7 +25,7 @@ class SqlAlchemyCompanyRepository(SqlAlchemyRepository[CompanyModel, Company, Co
             email_contacto=entity.email_contacto,
             estado=entity.estado,
             plan_id=entity.plan_id,
-            trial_hasta=entity.trial_hasta
+            trial_hasta=entity.trial_hasta,
         )
 
     def _to_entity(self, model: CompanyModel) -> Company:
@@ -36,7 +37,7 @@ class SqlAlchemyCompanyRepository(SqlAlchemyRepository[CompanyModel, Company, Co
             email_contacto=model.email_contacto,
             estado=model.estado,
             plan_id=model.plan_id,
-            trial_hasta=model.trial_hasta
+            trial_hasta=model.trial_hasta,
         )
 
     async def get_by_slug(self, slug: Slug) -> Company | None:
@@ -49,6 +50,7 @@ class SqlAlchemyCompanyRepository(SqlAlchemyRepository[CompanyModel, Company, Co
 
     async def list_all(self, offset: int, limit: int) -> tuple[list[Company], int]:
         from sqlalchemy import func
+
         count_stmt = select(func.count(CompanyModel.id))
         count_res = await self.session.execute(count_stmt)
         total = count_res.scalar_one()

@@ -1,4 +1,5 @@
-from typing import Any, Optional
+from typing import Any
+
 from fastapi import APIRouter, Depends, Query, status
 
 from app.application.dtos.asset_dtos import (
@@ -17,9 +18,9 @@ from app.application.use_cases.asset import (
 from app.composition.container import (
     get_create_asset_use_case,
     get_delete_asset_use_case,
-    get_get_asset_use_case,
     get_list_assets_use_case,
     get_update_asset_use_case,
+    provide_asset_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import require_permission
@@ -85,8 +86,8 @@ async def list_assets(
     company_id: str,
     offset: int = 0,
     limit: int = 10,
-    estado: Optional[str] = Query(None, description="Filtrar por estado del activo"),
-    ubicacion_id: Optional[str] = Query(None, description="Filtrar por ID de ubicación"),
+    estado: str | None = Query(None, description="Filtrar por estado del activo"),
+    ubicacion_id: str | None = Query(None, description="Filtrar por ID de ubicación"),
     current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "view")),
     use_case: ListAssetsUseCase = Depends(get_list_assets_use_case),
 ) -> AssetListDocument:
@@ -128,7 +129,7 @@ async def get_asset(
     company_id: str,
     id: str,
     current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "view")),
-    use_case: GetAssetUseCase = Depends(get_get_asset_use_case),
+    use_case: GetAssetUseCase = Depends(provide_asset_use_case),
 ) -> AssetDocument:
     res = await use_case.execute(company_id, id)
     return AssetDocument(

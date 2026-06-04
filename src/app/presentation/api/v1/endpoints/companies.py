@@ -1,4 +1,5 @@
 from typing import Any
+
 from fastapi import APIRouter, Depends, status
 
 from app.application.dtos.company_dtos import (
@@ -17,9 +18,9 @@ from app.application.use_cases.company import (
 from app.composition.container import (
     get_create_company_use_case,
     get_delete_company_use_case,
-    get_get_company_use_case,
     get_list_companies_use_case,
     get_update_company_use_case,
+    provide_company_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
@@ -53,7 +54,7 @@ async def create_company(
         nombre=request.data.attributes.nombre,
         slug=request.data.attributes.slug,
         rif=request.data.attributes.rif,
-        email_contacto=request.data.attributes.email_contacto
+        email_contacto=request.data.attributes.email_contacto,
     )
     res = await use_case.execute(dto)
     return CompanyDocument(
@@ -66,8 +67,8 @@ async def create_company(
                 rif=res.rif,
                 email_contacto=res.email_contacto,
                 plan_id=res.plan_id,
-                trial_hasta=res.trial_hasta
-            )
+                trial_hasta=res.trial_hasta,
+            ),
         )
     )
 
@@ -95,12 +96,12 @@ async def list_companies(
                     rif=c.rif,
                     email_contacto=c.email_contacto,
                     plan_id=c.plan_id,
-                    trial_hasta=c.trial_hasta
-                )
+                    trial_hasta=c.trial_hasta,
+                ),
             )
             for c in companies
         ],
-        meta={"total": total}
+        meta={"total": total},
     )
 
 
@@ -112,7 +113,7 @@ async def list_companies(
 async def get_company(
     id: str,
     current_user: Any = Depends(get_current_active_user),
-    use_case: GetCompanyUseCase = Depends(get_get_company_use_case),
+    use_case: GetCompanyUseCase = Depends(provide_company_use_case),
 ) -> CompanyDocument:
     res = await use_case.execute(id)
     return CompanyDocument(
@@ -125,8 +126,8 @@ async def get_company(
                 rif=res.rif,
                 email_contacto=res.email_contacto,
                 plan_id=res.plan_id,
-                trial_hasta=res.trial_hasta
-            )
+                trial_hasta=res.trial_hasta,
+            ),
         )
     )
 
@@ -146,7 +147,7 @@ async def update_company(
         nombre=request.data.attributes.nombre,
         rif=request.data.attributes.rif,
         email_contacto=request.data.attributes.email_contacto,
-        estado=request.data.attributes.estado
+        estado=request.data.attributes.estado,
     )
     res = await use_case.execute(id, dto)
     return CompanyDocument(
@@ -159,8 +160,8 @@ async def update_company(
                 rif=res.rif,
                 email_contacto=res.email_contacto,
                 plan_id=res.plan_id,
-                trial_hasta=res.trial_hasta
-            )
+                trial_hasta=res.trial_hasta,
+            ),
         )
     )
 

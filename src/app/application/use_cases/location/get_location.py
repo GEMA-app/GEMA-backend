@@ -17,7 +17,9 @@ class GetLocationUseCase:
         async with self.uow:
             location = await self.uow.locations.get_by_id(location_id, company_id)
             if not location:
-                raise LocationNotFoundError(f"La ubicación con ID '{location_id_str}' no existe en esta empresa.")
+                raise LocationNotFoundError(
+                    f"La ubicación con ID '{location_id_str}' no existe en esta empresa."
+                )
 
             return LocationResponse(
                 id=str(location.id),
@@ -25,5 +27,5 @@ class GetLocationUseCase:
                 parent_id=str(location.parent_id) if location.parent_id else None,
                 nombre=location.nombre,
                 tipo=location.tipo.value,
-                descripcion=location.descripcion
+                descripcion=location.descripcion,
             )

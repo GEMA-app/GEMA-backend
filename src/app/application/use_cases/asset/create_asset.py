@@ -27,17 +27,23 @@ class CreateAssetUseCase:
                 loc_id = LocationId.from_string(request.ubicacion_id)
                 loc = await self.uow.locations.get_by_id(loc_id, company_id)
                 if not loc:
-                    raise LocationNotFoundError(f"La ubicación con ID '{request.ubicacion_id}' no existe.")
+                    raise LocationNotFoundError(
+                        f"La ubicación con ID '{request.ubicacion_id}' no existe."
+                    )
             else:
                 loc_id = None
 
             # Verificar duplicados de código o serial en la misma empresa
             assets, _ = await self.uow.assets.list_by_company(company_id, 0, 1000)
-            if any(a.codigo_activo.lower() == request.codigo_activo.strip().lower() for a in assets):
+            if any(
+                a.codigo_activo.lower() == request.codigo_activo.strip().lower() for a in assets
+            ):
                 raise AssetCodeExistsError(
                     f"El activo con código '{request.codigo_activo}' ya existe en esta empresa."
                 )
-            if any(a.serial_interno.lower() == request.serial_interno.strip().lower() for a in assets):
+            if any(
+                a.serial_interno.lower() == request.serial_interno.strip().lower() for a in assets
+            ):
                 raise AssetSerialExistsError(
                     f"El activo con serial '{request.serial_interno}' ya existe en esta empresa."
                 )
@@ -52,7 +58,7 @@ class CreateAssetUseCase:
                 estado=AssetStatus(request.estado),
                 fecha_adquisicion=request.fecha_adquisicion,
                 valor_monetario=request.valor_monetario,
-                moneda=request.moneda
+                moneda=request.moneda,
             )
 
             await self.uow.assets.save(asset)
@@ -66,7 +72,9 @@ class CreateAssetUseCase:
                 serial_interno=asset.serial_interno,
                 codigo_activo=asset.codigo_activo,
                 estado=asset.estado.value,
-                fecha_adquisicion=asset.fecha_adquisicion.isoformat() if asset.fecha_adquisicion else None,
+                fecha_adquisicion=asset.fecha_adquisicion.isoformat()
+                if asset.fecha_adquisicion
+                else None,
                 valor_monetario=asset.valor_monetario,
-                moneda=asset.moneda
+                moneda=asset.moneda,
             )

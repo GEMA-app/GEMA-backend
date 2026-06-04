@@ -42,9 +42,7 @@ class RegisterUserUseCase:
 
             # 3. Crear empresa
             company = Company.create(
-                nombre=request.company_name,
-                slug=slug,
-                email_contacto=request.email
+                nombre=request.company_name, slug=slug, email_contacto=request.email
             )
             await self.uow.companies.save(company)
 
@@ -56,7 +54,7 @@ class RegisterUserUseCase:
                 hashed_password=hashed_password,
                 empresa_id=company.id,
                 nombre=request.nombre,
-                telefono=request.telefono
+                telefono=request.telefono,
             )
             await self.uow.users.save(user)
 

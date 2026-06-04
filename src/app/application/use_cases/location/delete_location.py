@@ -16,7 +16,9 @@ class DeleteLocationUseCase:
         async with self.uow:
             location = await self.uow.locations.get_by_id(location_id, company_id)
             if not location:
-                raise LocationNotFoundError(f"La ubicación con ID '{location_id_str}' no existe en esta empresa.")
+                raise LocationNotFoundError(
+                    f"La ubicación con ID '{location_id_str}' no existe en esta empresa."
+                )
 
             await self.uow.locations.delete(location_id, company_id)
             await self.uow.commit()

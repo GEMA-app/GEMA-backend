@@ -20,7 +20,7 @@ class ListCompaniesUseCase:
                     email_contacto=c.email_contacto,
                     estado=c.estado.value,
                     plan_id=str(c.plan_id) if c.plan_id else None,
-                    trial_hasta=c.trial_hasta.isoformat() if c.trial_hasta else None
+                    trial_hasta=c.trial_hasta.isoformat() if c.trial_hasta else None,
                 )
                 for c in companies
             ]

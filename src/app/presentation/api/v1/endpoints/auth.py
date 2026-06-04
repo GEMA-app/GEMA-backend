@@ -2,17 +2,19 @@ from fastapi import APIRouter, Depends, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.application.dtos import LoginUserRequest, RefreshTokenRequest, RegisterUserRequest
-from app.application.use_cases.get_current_user import GetCurrentUserUseCase
-from app.application.use_cases.login_user import LoginUserUseCase
-from app.application.use_cases.logout_user import LogoutUserUseCase
-from app.application.use_cases.refresh_token import RefreshTokenUseCase
-from app.application.use_cases.register_user import RegisterUserUseCase
+from app.application.use_cases.auth import (
+    GetCurrentUserUseCase,
+    LoginUserUseCase,
+    LogoutUserUseCase,
+    RefreshTokenUseCase,
+    RegisterUserUseCase,
+)
 from app.composition.container import (
-    get_get_current_user_use_case,
     get_login_user_use_case,
     get_logout_user_use_case,
     get_refresh_token_use_case,
     get_register_user_use_case,
+    provide_current_user_use_case,
 )
 from app.presentation.api.v1.schemas.auth import (
     LoginRequest,
@@ -133,7 +135,7 @@ async def logout(
 )
 async def get_current_user(
     token: HTTPAuthorizationCredentials = Depends(security),
-    use_case: GetCurrentUserUseCase = Depends(get_get_current_user_use_case),
+    use_case: GetCurrentUserUseCase = Depends(provide_current_user_use_case),
 ) -> UserDocument:
     """Obtiene la información del perfil del usuario autenticado actual en formato JSON:API."""
     user_resp = await use_case.execute(token.credentials)

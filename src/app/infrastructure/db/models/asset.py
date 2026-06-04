@@ -1,6 +1,6 @@
 import uuid
 from datetime import date
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from app.infrastructure.db.models.catalog import CatalogArticleModel
@@ -25,19 +25,17 @@ class AssetModel(TenantMixin, TimestampMixin, Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     articulo_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("articulos_catalogo.id", ondelete="RESTRICT"),
-        nullable=False
+        ForeignKey("articulos_catalogo.id", ondelete="RESTRICT"), nullable=False
     )
     ubicacion_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("ubicaciones.id", ondelete="SET NULL"),
-        nullable=True
+        ForeignKey("ubicaciones.id", ondelete="SET NULL"), nullable=True
     )
     serial_interno: Mapped[str] = mapped_column(String(100), nullable=False)
     codigo_activo: Mapped[str] = mapped_column(String(100), nullable=False)
     estado: Mapped[AssetStatus] = mapped_column(
         Enum(AssetStatus, values_callable=lambda obj: [e.value for e in obj]),
         default=AssetStatus.OPERATIONAL,
-        nullable=False
+        nullable=False,
     )
     fecha_adquisicion: Mapped[date | None] = mapped_column(Date, nullable=True)
     valor_monetario: Mapped[float | None] = mapped_column(Numeric(12, 2), nullable=True)

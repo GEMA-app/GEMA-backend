@@ -1,10 +1,10 @@
 import uuid
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from typing import TYPE_CHECKING
 from app.domain.enums import PermissionModule
 from app.infrastructure.db.base import Base
 from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
@@ -19,17 +19,13 @@ class RoleUserModel(Base):
     __tablename__ = "roles_usuarios"
 
     usuario_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("usuarios.id", ondelete="CASCADE"),
-        primary_key=True
+        ForeignKey("usuarios.id", ondelete="CASCADE"), primary_key=True
     )
     rol_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("roles.id", ondelete="CASCADE"),
-        primary_key=True
+        ForeignKey("roles.id", ondelete="CASCADE"), primary_key=True
     )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(UTC),
-        nullable=False
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )
 
 
@@ -43,12 +39,10 @@ class PermissionModel(TenantMixin, TimestampMixin, Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     rol_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("roles.id", ondelete="CASCADE"),
-        nullable=False
+        ForeignKey("roles.id", ondelete="CASCADE"), nullable=False
     )
     modulo: Mapped[PermissionModule] = mapped_column(
-        Enum(PermissionModule, values_callable=lambda obj: [e.value for e in obj]),
-        nullable=False
+        Enum(PermissionModule, values_callable=lambda obj: [e.value for e in obj]), nullable=False
     )
     puede_ver: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     puede_crear: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
@@ -63,9 +57,7 @@ class RoleModel(TenantMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla de roles."""
 
     __tablename__ = "roles"
-    __table_args__ = (
-        UniqueConstraint("empresa_id", "nombre", name="uq_roles_empresa_nombre"),
-    )
+    __table_args__ = (UniqueConstraint("empresa_id", "nombre", name="uq_roles_empresa_nombre"),)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     nombre: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -73,15 +65,10 @@ class RoleModel(TenantMixin, TimestampMixin, Base):
 
     # Relación uno-a-muchos con permisos
     permisos: Mapped[list[PermissionModel]] = relationship(
-        "PermissionModel",
-        back_populates="rol",
-        cascade="all, delete-orphan",
-        lazy="selectin"
+        "PermissionModel", back_populates="rol", cascade="all, delete-orphan", lazy="selectin"
     )
 
     # Relación muchos-a-muchos con usuarios
     usuarios: Mapped[list["UserModel"]] = relationship(
-        "UserModel",
-        secondary="roles_usuarios",
-        back_populates="roles"
+        "UserModel", secondary="roles_usuarios", back_populates="roles"
     )

@@ -13,7 +13,9 @@ class LogoutUserUseCase:
         claims = await self.token_service.decode_token(access_token)
 
         if claims.get("type") != "access":
-            raise InvalidTokenError("Solo se pueden revocar tokens de acceso durante el cierre de sesión.")
+            raise InvalidTokenError(
+                "Solo se pueden revocar tokens de acceso durante el cierre de sesión."
+            )
 
         jti = claims["jti"]
         exp = claims["exp"]

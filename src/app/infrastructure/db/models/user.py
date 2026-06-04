@@ -1,9 +1,9 @@
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from typing import TYPE_CHECKING
 from app.infrastructure.db.base import Base
 from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
 
@@ -15,9 +15,7 @@ class UserModel(TenantMixin, TimestampMixin, Base):
     """Modelo ORM de SQLAlchemy para la tabla de usuarios."""
 
     __tablename__ = "usuarios"
-    __table_args__ = (
-        UniqueConstraint("empresa_id", "email", name="uq_usuarios_empresa_email"),
-    )
+    __table_args__ = (UniqueConstraint("empresa_id", "email", name="uq_usuarios_empresa_email"),)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     email: Mapped[str] = mapped_column(nullable=False)
@@ -28,8 +26,5 @@ class UserModel(TenantMixin, TimestampMixin, Base):
 
     # Relación con roles a través de la tabla asociativa roles_usuarios
     roles: Mapped[list["RoleModel"]] = relationship(
-        "RoleModel",
-        secondary="roles_usuarios",
-        back_populates="usuarios",
-        lazy="selectin"
+        "RoleModel", secondary="roles_usuarios", back_populates="usuarios", lazy="selectin"
     )

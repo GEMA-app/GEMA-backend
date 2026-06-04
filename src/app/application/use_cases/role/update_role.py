@@ -13,10 +13,7 @@ class UpdateRoleUseCase:
         self.uow = uow
 
     async def execute(
-        self,
-        company_id_str: str,
-        role_id_str: str,
-        request: UpdateRoleRequest
+        self, company_id_str: str, role_id_str: str, request: UpdateRoleRequest
     ) -> RoleResponse:
         company_id = CompanyId.from_string(company_id_str)
         role_id = RoleId.from_string(role_id_str)
@@ -32,7 +29,9 @@ class UpdateRoleUseCase:
                     raise ValueError("El nombre del rol no puede estar vacío.")
                 # Verificar duplicados en la misma empresa
                 existing_roles = await self.uow.roles.list_by_company(company_id)
-                if any(r.nombre.lower() == new_name.lower() and r.id != role.id for r in existing_roles):
+                if any(
+                    r.nombre.lower() == new_name.lower() and r.id != role.id for r in existing_roles
+                ):
                     raise RoleNameExistsError(
                         f"Ya existe otro rol con el nombre '{new_name}' en esta empresa."
                     )
@@ -48,7 +47,7 @@ class UpdateRoleUseCase:
                         can_view=p.can_view,
                         can_create=p.can_create,
                         can_edit=p.can_edit,
-                        can_delete=p.can_delete
+                        can_delete=p.can_delete,
                     )
                     for p in request.permisos
                 ]
@@ -67,8 +66,8 @@ class UpdateRoleUseCase:
                         can_view=p.can_view,
                         can_create=p.can_create,
                         can_edit=p.can_edit,
-                        can_delete=p.can_delete
+                        can_delete=p.can_delete,
                     )
                     for p in role.permisos
-                ]
+                ],
             )

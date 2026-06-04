@@ -30,8 +30,8 @@ class GetRoleUseCase:
                         can_view=p.can_view,
                         can_create=p.can_create,
                         can_edit=p.can_edit,
-                        can_delete=p.can_delete
+                        can_delete=p.can_delete,
                     )
                     for p in role.permisos
-                ]
+                ],
             )

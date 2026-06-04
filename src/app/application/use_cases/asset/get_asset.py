@@ -17,7 +17,9 @@ class GetAssetUseCase:
         async with self.uow:
             asset = await self.uow.assets.get_by_id(asset_id, company_id)
             if not asset:
-                raise AssetNotFoundError(f"El activo con ID '{asset_id_str}' no existe en esta empresa.")
+                raise AssetNotFoundError(
+                    f"El activo con ID '{asset_id_str}' no existe en esta empresa."
+                )
 
             return AssetResponse(
                 id=str(asset.id),
@@ -27,7 +29,9 @@ class GetAssetUseCase:
                 serial_interno=asset.serial_interno,
                 codigo_activo=asset.codigo_activo,
                 estado=asset.estado.value,
-                fecha_adquisicion=asset.fecha_adquisicion.isoformat() if asset.fecha_adquisicion else None,
+                fecha_adquisicion=asset.fecha_adquisicion.isoformat()
+                if asset.fecha_adquisicion
+                else None,
                 valor_monetario=asset.valor_monetario,
-                moneda=asset.moneda
+                moneda=asset.moneda,
             )

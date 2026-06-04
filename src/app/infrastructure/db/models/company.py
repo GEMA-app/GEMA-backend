@@ -32,8 +32,7 @@ class CompanyModel(TimestampMixin, Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     plan_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("planes_suscripcion.id", ondelete="SET NULL"),
-        nullable=True
+        ForeignKey("planes_suscripcion.id", ondelete="SET NULL"), nullable=True
     )
     nombre: Mapped[str] = mapped_column(String(255), nullable=False)
     slug: Mapped[str] = mapped_column(String(63), unique=True, index=True, nullable=False)
@@ -42,9 +41,11 @@ class CompanyModel(TimestampMixin, Base):
     estado: Mapped[CompanyStatus] = mapped_column(
         Enum(CompanyStatus, values_callable=lambda obj: [e.value for e in obj]),
         default=CompanyStatus.ACTIVE,
-        nullable=False
+        nullable=False,
     )
     trial_hasta: Mapped[date | None] = mapped_column(Date, nullable=True)
 
     # Relación con el plan de suscripción
-    plan: Mapped[SubscriptionPlanModel | None] = relationship("SubscriptionPlanModel", back_populates="empresas")
+    plan: Mapped[SubscriptionPlanModel | None] = relationship(
+        "SubscriptionPlanModel", back_populates="empresas"
+    )

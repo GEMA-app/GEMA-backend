@@ -22,4 +22,3 @@ class UserRepositoryPort(Protocol):
     async def get_by_id(self, id: UserId) -> User | None:
         """Busca un usuario por su identificador único."""
         ...
-

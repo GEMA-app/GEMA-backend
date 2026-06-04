@@ -16,7 +16,9 @@ class DeleteAssetUseCase:
         async with self.uow:
             asset = await self.uow.assets.get_by_id(asset_id, company_id)
             if not asset:
-                raise AssetNotFoundError(f"El activo con ID '{asset_id_str}' no existe en esta empresa.")
+                raise AssetNotFoundError(
+                    f"El activo con ID '{asset_id_str}' no existe en esta empresa."
+                )
 
             await self.uow.assets.delete(asset_id, company_id)
             await self.uow.commit()

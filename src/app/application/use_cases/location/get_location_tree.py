@@ -1,4 +1,5 @@
 from typing import Any
+
 from app.application.dtos.location_dtos import LocationTreeResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.value_objects import CompanyId
@@ -24,7 +25,7 @@ class GetLocationTreeUseCase:
                     "tipo": loc.tipo.value,
                     "descripcion": loc.descripcion,
                     "parent_id": str(loc.parent_id) if loc.parent_id else None,
-                    "children": []
+                    "children": [],
                 }
                 for loc in locations
             }
@@ -46,7 +47,7 @@ class GetLocationTreeUseCase:
                     nombre=n["nombre"],
                     tipo=n["tipo"],
                     descripcion=n["descripcion"],
-                    children=[to_dto(c) for c in n["children"]]
+                    children=[to_dto(c) for c in n["children"]],
                 )
 
             return [to_dto(r) for r in roots]
