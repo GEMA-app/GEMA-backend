@@ -75,7 +75,7 @@ Request HTTP
   → Middlewares (RequestId → ContentType → Accept → RateLimit)
   → Router FastAPI (v1)
   → Endpoint (FastAPI valida Token y verifica Permiso RBAC por dependencia)
-  → Composition Root (resuelve dependencias en container.py)
+  → Composition Root (resuelve dependencias en el paquete composition/container)
   → Use Case (orquesta la lógica de negocio y abre transacción vía UoW)
   → Domain Entity (ejecuta reglas de negocio, valida invariantes y genera eventos)
   → Repository Port (interfaz) → Repository Adapter (query SQL en base de datos)
@@ -92,17 +92,24 @@ Request HTTP
 │   ├── main.py                          # Entry point, lifespan, registro de middlewares y routers
 │   ├── domain/
 │   │   ├── enums.py                     # CompanyStatus, PermissionModule, AssetStatus, LocationType
-│   │   ├── exceptions.py               # Jerarquía de DomainException para Auth, Company, Role, Asset, Location
-│   │   ├── value_objects.py             # Email, PlainPassword, HashedPassword, UserId, CompanyId, RoleId, AssetId, LocationId, Slug
 │   │   ├── events.py                    # DomainEvents (UserRegistered, CompanyCreated, RoleAssigned, etc.)
-│   │   └── entities/                    # Paquete modular de entidades
-│   │       ├── __init__.py              # Exporta User, Company, Role, Permission, Asset, Location
-│   │       ├── user.py                  # Entidad User con empresa_id, nombre, teléfono y roles asignados
-│   │       ├── company.py               # Entidad Company
-│   │       ├── role.py                  # Entidad Role
-│   │       ├── permission.py            # Entidad Permission (Value Object)
-│   │       ├── asset.py                 # Entidad Asset (Activos físicos)
-│   │       └── location.py              # Entidad Location (Ubicaciones físicas jerárquicas)
+│   │   ├── entities/                    # Paquete modular de entidades
+│   │   │   ├── __init__.py              # Exporta User, Company, Role, Permission, Asset, Location
+│   │   │   ├── user.py                  # Entidad User con empresa_id, nombre, teléfono y roles asignados
+│   │   │   ├── company.py               # Entidad Company
+│   │   │   ├── role.py                  # Entidad Role
+│   │   │   ├── permission.py            # Entidad Permission (Value Object)
+│   │   │   ├── asset.py                 # Entidad Asset (Activos físicos)
+│   │   │   └── location.py              # Entidad Location (Ubicaciones físicas jerárquicas)
+│   │   ├── exceptions/                  # Paquete modular de excepciones del dominio
+│   │   │   ├── __init__.py              # Re-exporta todas las excepciones para retrocompatibilidad
+│   │   │   ├── base.py                  # Clase base DomainException
+│   │   │   └── auth.py, company.py, role.py, permission.py, asset.py, location.py
+│   │   └── value_objects/               # Paquete modular de objetos de valor
+│   │       ├── __init__.py              # Re-exporta todos los value objects
+│   │       ├── credentials.py           # Email, PlainPassword, HashedPassword
+│   │       ├── identifiers.py           # UserId, CompanyId, RoleId, AssetId, LocationId
+│   │       └── slug.py                  # Slug URL-friendly para empresas
 │   ├── application/
 │   │   ├── dtos/                        # Paquete modular de DTOs
 │   │   │   ├── auth_dtos.py
@@ -121,11 +128,13 @@ Request HTTP
 │   │   ├── services/
 │   │   │   └── authorization_service.py # Interfaz del servicio de autorización RBAC
 │   │   └── use_cases/
-│   │       ├── login_user.py
-│   │       ├── logout_user.py
-│   │       ├── refresh_token.py
-│   │       ├── register_user.py         # Registro modular (SaaS Onboarding)
-│   │       ├── get_current_user.py
+│   │       ├── auth/                    # Paquete modular de casos de uso de autenticación
+│   │       │   ├── __init__.py          # Re-exporta los casos de uso de auth
+│   │       │   ├── login_user.py
+│   │       │   ├── logout_user.py
+│   │       │   ├── refresh_token.py
+│   │       │   ├── register_user.py
+│   │       │   └── get_current_user.py
 │   │       ├── company/                 # CRUD de empresas
 │   │       ├── role/                    # CRUD de roles, assign/revoke a usuario
 │   │       ├── asset/                   # CRUD de activos
@@ -161,7 +170,12 @@ Request HTTP
 │   │   │   └── redis.py                # Cliente global async Redis
 │   │   └── uow.py                      # SqlAlchemyUnitOfWork
 │   ├── presentation/
-│   │   ├── exception_handlers.py        # Mapeo DomainException → respuestas JSON:API
+│   │   ├── exception_handlers/          # Paquete modular de manejadores de excepciones
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py                  # Respuesta jsonapi_response estándar
+│   │   │   ├── domain.py                # Mapeo declarativo de excepciones de dominio a HTTP
+│   │   │   ├── http.py                  # Manejador de Starlette HTTPExceptions
+│   │   │   └── validation.py            # Manejador de RequestValidationErrors (Pydantic)
 │   │   ├── middlewares/
 │   │   │   ├── request_id.py            # Correlation ID
 │   │   │   ├── content_type.py          # Validación Content-Type JSON:API
@@ -184,7 +198,10 @@ Request HTTP
 │   │               ├── asset.py
 │   │               └── location.py
 │   └── composition/
-│       └── container.py                 # Composition Root (FastAPI Depends)
+│       └── container/                   # Paquete modular de inyección de dependencias
+│           ├── __init__.py              # Re-exporta todas las fábricas
+│           ├── common.py                # Dependencias compartidas (UoW, Hasher, TokenService, AuthService)
+│           └── auth.py, company.py, role.py, asset.py, location.py (Fábricas específicas de dominio)
 ```
 
 ---
