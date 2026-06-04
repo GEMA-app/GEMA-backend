@@ -9,16 +9,16 @@ from app.domain.value_objects import CompanyId, LocationId
 
 
 class CreateLocationUseCase:
-    """Caso de uso para registrar una nueva ubicación física jerárquica."""
+    """Registra una ubicación jerárquica en la empresa."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
-        """Inicializa el caso de uso con la unidad de trabajo (UoW)."""
+        """Guarda dependencias."""
         self.uow = uow
 
     async def execute(
         self, company_id_str: str, request: CreateLocationRequest
     ) -> LocationResponse:
-        """Ejecuta el registro de una nueva ubicación física jerárquica."""
+        """Crea una nueva ubicación física."""
         company_id = CompanyId.from_string(company_id_str)
         tipo = LocationType(request.tipo)
 

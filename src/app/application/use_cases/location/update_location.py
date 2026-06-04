@@ -11,16 +11,16 @@ from app.domain.value_objects import CompanyId, LocationId
 
 
 class UpdateLocationUseCase:
-    """Caso de uso para actualizar una ubicación jerárquica."""
+    """Actualiza los datos de una ubicación jerárquica."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
-        """Inicializa el caso de uso con la unidad de trabajo (UoW)."""
+        """Guarda dependencias."""
         self.uow = uow
 
     async def execute(
         self, company_id_str: str, location_id_str: str, request: UpdateLocationRequest
     ) -> LocationResponse:
-        """Ejecuta la actualización de la ubicación física."""
+        """Actualiza los datos de la ubicación."""
         company_id = CompanyId.from_string(company_id_str)
         location_id = LocationId.from_string(location_id_str)
 

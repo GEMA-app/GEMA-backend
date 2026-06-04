@@ -6,15 +6,15 @@ from app.domain.value_objects import UserId
 
 
 class RefreshTokenUseCase:
-    """Caso de uso para rotar tokens de refresco, emitiendo un nuevo par y revocando el anterior."""
+    """Rota los tokens de sesión de un usuario."""
 
     def __init__(self, uow: UnitOfWorkPort, token_service: TokenServicePort) -> None:
-        """Inicializa el caso de uso con la unidad de trabajo (UoW) y el servicio de tokens."""
+        """Guarda dependencias."""
         self.uow = uow
         self.token_service = token_service
 
     async def execute(self, request: RefreshTokenRequest) -> AuthTokensDTO:
-        """Valida y revoca el token de refresco actual, generando uno nuevo para el usuario."""
+        """Genera un nuevo par de tokens tras validar el token de refresco."""
         claims = await self.token_service.decode_token(request.refresh_token)
 
         if claims.get("type") != "refresh":

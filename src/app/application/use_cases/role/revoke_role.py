@@ -4,14 +4,14 @@ from app.domain.value_objects import CompanyId, RoleId, UserId
 
 
 class RevokeRoleFromUserUseCase:
-    """Caso de uso para revocar un rol a un usuario."""
+    """Revoca un rol a un usuario de la empresa."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
-        """Inicializa el caso de uso con la unidad de trabajo (UoW)."""
+        """Guarda dependencias."""
         self.uow = uow
 
     async def execute(self, company_id_str: str, role_id_str: str, user_id_str: str) -> None:
-        """Ejecuta la revocación de un rol de un usuario."""
+        """Realiza la revocación del rol del usuario."""
         company_id = CompanyId.from_string(company_id_str)
         role_id = RoleId.from_string(role_id_str)
         user_id = UserId.from_string(user_id_str)

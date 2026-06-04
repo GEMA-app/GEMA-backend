@@ -12,16 +12,16 @@ from app.domain.value_objects import AssetId, CompanyId, LocationId
 
 
 class UpdateAssetUseCase:
-    """Caso de uso para actualizar un activo físico."""
+    """Actualiza un activo físico de la empresa."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
-        """Inicializa el caso de uso con la unidad de trabajo (UoW)."""
+        """Guarda dependencias."""
         self.uow = uow
 
     async def execute(
         self, company_id_str: str, asset_id_str: str, request: UpdateAssetRequest
     ) -> AssetResponse:
-        """Ejecuta la actualización del activo físico."""
+        """Actualiza los datos del activo."""
         company_id = CompanyId.from_string(company_id_str)
         asset_id = AssetId.from_string(asset_id_str)
 

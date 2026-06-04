@@ -4,14 +4,14 @@ from app.domain.value_objects import CompanyId, RoleId, UserId
 
 
 class AssignRoleToUserUseCase:
-    """Caso de uso para asignar un rol a un usuario."""
+    """Asigna un rol a un usuario de la empresa."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
-        """Inicializa el caso de uso con la unidad de trabajo (UoW)."""
+        """Guarda dependencias."""
         self.uow = uow
 
     async def execute(self, company_id_str: str, role_id_str: str, user_id_str: str) -> None:
-        """Ejecuta la asignación de un rol a un usuario."""
+        """Realiza la asignación del rol al usuario."""
         company_id = CompanyId.from_string(company_id_str)
         role_id = RoleId.from_string(role_id_str)
         user_id = UserId.from_string(user_id_str)

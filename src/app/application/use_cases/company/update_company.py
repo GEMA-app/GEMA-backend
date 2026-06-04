@@ -6,14 +6,14 @@ from app.domain.value_objects import CompanyId
 
 
 class UpdateCompanyUseCase:
-    """Caso de uso para actualizar una empresa."""
+    """Actualiza los datos de una empresa."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
-        """Inicializa el caso de uso con la unidad de trabajo (UoW)."""
+        """Guarda dependencias."""
         self.uow = uow
 
     async def execute(self, company_id_str: str, request: UpdateCompanyRequest) -> CompanyResponse:
-        """Ejecuta la actualización de la empresa."""
+        """Actualiza la información de la empresa."""
         company_id = CompanyId.from_string(company_id_str)
         async with self.uow:
             company = await self.uow.companies.get_by_id(company_id)

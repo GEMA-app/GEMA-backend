@@ -7,16 +7,16 @@ from app.domain.value_objects import CompanyId, RoleId
 
 
 class UpdateRoleUseCase:
-    """Caso de uso para actualizar un rol."""
+    """Actualiza los datos de un rol."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
-        """Inicializa el caso de uso con la unidad de trabajo (UoW)."""
+        """Guarda dependencias."""
         self.uow = uow
 
     async def execute(
         self, company_id_str: str, role_id_str: str, request: UpdateRoleRequest
     ) -> RoleResponse:
-        """Ejecuta la actualización de un rol."""
+        """Actualiza la información del rol."""
         company_id = CompanyId.from_string(company_id_str)
         role_id = RoleId.from_string(role_id_str)
 
