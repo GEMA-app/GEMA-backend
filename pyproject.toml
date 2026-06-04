@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "sigma-backend"
+name = "gema-backend"
 version = "0.1.0"
-description = "UNEGIA - SIGMA Backend"
+description = "UNEGIA - GEMA Backend"
 
 [tool.poetry.dependencies]
 python = "^3.12"
