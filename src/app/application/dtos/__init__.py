@@ -1,5 +1,3 @@
-# Re-exporta todos los DTOs para mantener compatibilidad
-# con imports existentes: `from app.application.dtos import RegisterUserRequest`
 from app.application.dtos.auth_dtos import (
     AuthTokensDTO,
     LoginUserRequest,
@@ -7,6 +5,10 @@ from app.application.dtos.auth_dtos import (
     RegisterUserRequest,
     UserResponse,
 )
+from app.application.dtos.company_dtos import CreateCompanyRequest, UpdateCompanyRequest, CompanyResponse
+from app.application.dtos.role_dtos import PermissionDTO, CreateRoleRequest, UpdateRoleRequest, AssignRoleRequest, RoleResponse
+from app.application.dtos.asset_dtos import CreateAssetRequest, UpdateAssetRequest, AssetResponse
+from app.application.dtos.location_dtos import CreateLocationRequest, UpdateLocationRequest, LocationResponse, LocationTreeResponse
 
 __all__ = [
     "AuthTokensDTO",
@@ -14,4 +16,19 @@ __all__ = [
     "RefreshTokenRequest",
     "RegisterUserRequest",
     "UserResponse",
+    "CreateCompanyRequest",
+    "UpdateCompanyRequest",
+    "CompanyResponse",
+    "PermissionDTO",
+    "CreateRoleRequest",
+    "UpdateRoleRequest",
+    "AssignRoleRequest",
+    "RoleResponse",
+    "CreateAssetRequest",
+    "UpdateAssetRequest",
+    "AssetResponse",
+    "CreateLocationRequest",
+    "UpdateLocationRequest",
+    "LocationResponse",
+    "LocationTreeResponse",
 ]
