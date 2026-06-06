@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.ports.asset_repository import AssetRepositoryPort
 from app.domain.entities import Asset
+from app.domain.events import DomainEvent
 from app.domain.value_objects import AssetId, CompanyId, LocationId
 from app.infrastructure.db.models.asset import AssetModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
@@ -16,8 +17,12 @@ class SqlAlchemyAssetRepository(
 ):
     """Implementación en SQLAlchemy para el puerto de repositorio de Activos."""
 
-    def __init__(self, session: AsyncSession) -> None:
-        super().__init__(session, AssetModel)
+    def __init__(
+        self, session: AsyncSession, pending_events: list[DomainEvent] | None = None
+    ) -> None:
+        super().__init__(session, AssetModel, pending_events)
+
+
 
     def _to_model(self, entity: Asset) -> AssetModel:
         return AssetModel(

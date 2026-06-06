@@ -4,6 +4,7 @@ from app.application.ports.location_repository import LocationRepositoryPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.application.ports.event_bus import EventBusPort
 
 __all__ = [
     "UserRepositoryPort",
@@ -12,4 +13,6 @@ __all__ = [
     "AssetRepositoryPort",
     "LocationRepositoryPort",
     "UnitOfWorkPort",
+    "EventBusPort",
 ]
+

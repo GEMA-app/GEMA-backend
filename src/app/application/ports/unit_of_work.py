@@ -2,6 +2,7 @@ from typing import Any, Protocol, Self
 
 from app.application.ports.asset_repository import AssetRepositoryPort
 from app.application.ports.company_repository import CompanyRepositoryPort
+from app.application.ports.event_bus import EventBusPort
 from app.application.ports.location_repository import LocationRepositoryPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
@@ -15,6 +16,8 @@ class UnitOfWorkPort(Protocol):
     roles: RoleRepositoryPort
     assets: AssetRepositoryPort
     locations: LocationRepositoryPort
+    event_bus: EventBusPort
+
 
     async def __aenter__(self) -> Self:
         """Inicia el contexto transaccional asíncrono."""

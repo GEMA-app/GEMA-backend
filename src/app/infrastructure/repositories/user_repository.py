@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.ports.repository import UserRepositoryPort
 from app.domain.entities import User
+from app.domain.events import DomainEvent
 from app.domain.value_objects import CompanyId, Email, HashedPassword, UserId
 from app.infrastructure.db.models import UserModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
@@ -13,9 +14,12 @@ class SqlAlchemyUserRepository(
 ):
     """Implementación de UserRepositoryPort utilizando la clase base SqlAlchemyRepository."""
 
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(
+        self, session: AsyncSession, pending_events: list[DomainEvent] | None = None
+    ) -> None:
         """Inicializa el repositorio de usuarios con la sesión de base de datos."""
-        super().__init__(session, UserModel)
+        super().__init__(session, UserModel, pending_events)
+
 
     async def get_by_email(self, email: Email) -> User | None:
         """Busca un usuario por email globalmente en la base de datos."""

@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.ports.location_repository import LocationRepositoryPort
 from app.domain.entities import Location
+from app.domain.events import DomainEvent
 from app.domain.value_objects import CompanyId, LocationId
 from app.infrastructure.db.models.location import LocationModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
@@ -14,8 +15,12 @@ class SqlAlchemyLocationRepository(
 ):
     """Implementación en SQLAlchemy para el puerto de repositorio de Ubicaciones."""
 
-    def __init__(self, session: AsyncSession) -> None:
-        super().__init__(session, LocationModel)
+    def __init__(
+        self, session: AsyncSession, pending_events: list[DomainEvent] | None = None
+    ) -> None:
+        super().__init__(session, LocationModel, pending_events)
+
+
 
     def _to_model(self, entity: Location) -> LocationModel:
         return LocationModel(

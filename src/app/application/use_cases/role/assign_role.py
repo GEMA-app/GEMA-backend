@@ -25,5 +25,10 @@ class AssignRoleToUserUseCase:
             if not user or user.empresa_id != company_id:
                 raise ValidationException("El usuario no existe o no pertenece a esta empresa.")
 
+            # Registrar evento de asignación en la entidad e invocar guardado
+            role.record_assignment(user_id)
+            await self.uow.roles.save(role)
+
             await self.uow.roles.assign_to_user(role_id, user_id)
             await self.uow.commit()
+

@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.ports.company_repository import CompanyRepositoryPort
 from app.domain.entities import Company
+from app.domain.events import DomainEvent
 from app.domain.value_objects import CompanyId, Slug
 from app.infrastructure.db.models.company import CompanyModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
@@ -13,8 +14,12 @@ class SqlAlchemyCompanyRepository(
 ):
     """Implementación en SQLAlchemy para el puerto de repositorio de Empresa."""
 
-    def __init__(self, session: AsyncSession) -> None:
-        super().__init__(session, CompanyModel)
+    def __init__(
+        self, session: AsyncSession, pending_events: list[DomainEvent] | None = None
+    ) -> None:
+        super().__init__(session, CompanyModel, pending_events)
+
+
 
     def _to_model(self, entity: Company) -> CompanyModel:
         return CompanyModel(

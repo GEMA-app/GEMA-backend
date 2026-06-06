@@ -1,6 +1,7 @@
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from typing import Protocol, runtime_checkable
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -9,6 +10,16 @@ class DomainEvent:
 
     event_id: uuid.UUID = field(default_factory=uuid.uuid4)
     occurred_on: datetime = field(default_factory=lambda: datetime.now(UTC))
+
+
+@runtime_checkable
+class EventProducer(Protocol):
+    """Protocol para entidades de dominio que producen eventos (reemplaza hasattr)."""
+
+    def pull_events(self) -> list[DomainEvent]:
+        """Extrae y limpia la lista de eventos acumulados."""
+        ...
+
 
 
 @dataclass(frozen=True, kw_only=True)

@@ -4,12 +4,13 @@ from datetime import datetime
 
 from app.domain.entities.permission import Permission
 from app.domain.enums import PermissionModule
+from app.domain.events import DomainEvent, EventProducer, RoleAssigned, RoleRevoked
 from app.domain.exceptions import EmptyRoleNameError
-from app.domain.value_objects import CompanyId, RoleId
+from app.domain.value_objects import CompanyId, RoleId, UserId
 
 
 @dataclass
-class Role:
+class Role(EventProducer):
     """Entidad con comportamiento (Rich Entity) que representa un Rol con permisos asignados para cada módulo."""
 
     id: RoleId
@@ -19,6 +20,7 @@ class Role:
     permisos: list[Permission] = field(default_factory=list)
     created_at: datetime | None = None
     updated_at: datetime | None = None
+    _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
     @classmethod
     def create(
@@ -95,3 +97,30 @@ class Role:
                 self.permisos[i] = new_perm
                 return
         self.permisos.append(new_perm)
+
+    def record_assignment(self, user_id: UserId) -> None:
+        """Registra la asignación de este rol a un usuario."""
+        self._events.append(
+            RoleAssigned(
+                user_id=str(user_id.value),
+                role_id=str(self.id.value),
+                empresa_id=str(self.empresa_id.value),
+            )
+        )
+
+    def record_revocation(self, user_id: UserId) -> None:
+        """Registra la revocación de este rol de un usuario."""
+        self._events.append(
+            RoleRevoked(
+                user_id=str(user_id.value),
+                role_id=str(self.id.value),
+                empresa_id=str(self.empresa_id.value),
+            )
+        )
+
+    def pull_events(self) -> list[DomainEvent]:
+        """Devuelve los eventos de dominio acumulados y limpia la lista interna."""
+        events = self._events.copy()
+        self._events.clear()
+        return events
+

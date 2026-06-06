@@ -4,6 +4,8 @@ from typing import Generic, TypeVar
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.domain.events import DomainEvent, EventProducer
+
 ModelT = TypeVar("ModelT")
 EntityT = TypeVar("EntityT")
 IdT = TypeVar("IdT")
@@ -12,9 +14,15 @@ IdT = TypeVar("IdT")
 class SqlAlchemyRepository(Generic[ModelT, EntityT, IdT], ABC):
     """Repositorio base con operaciones CRUD genéricas utilizando SQLAlchemy 2.0."""
 
-    def __init__(self, session: AsyncSession, model_class: type[ModelT]) -> None:
+    def __init__(
+        self,
+        session: AsyncSession,
+        model_class: type[ModelT],
+        pending_events: list[DomainEvent] | None = None,
+    ) -> None:
         self.session = session
         self.model_class = model_class
+        self.pending_events = pending_events
 
     @abstractmethod
     def _to_model(self, entity: EntityT) -> ModelT:
@@ -26,10 +34,19 @@ class SqlAlchemyRepository(Generic[ModelT, EntityT, IdT], ABC):
         """Convierte un modelo ORM a una entidad de dominio."""
         ...
 
+    def _collect_events(self, entity: EntityT) -> None:
+        """Extrae eventos de la entidad si es EventProducer y los agrega a pending_events."""
+        if isinstance(entity, EventProducer) and self.pending_events is not None:
+            events = entity.pull_events()
+            if events:
+                self.pending_events.extend(events)
+
     async def save(self, entity: EntityT) -> None:
         """Persiste o actualiza una entidad en el repositorio sin confirmar la transacción."""
         model = self._to_model(entity)
         await self.session.merge(model)
+        self._collect_events(entity)
+
 
     async def get_by_id(self, id: IdT) -> EntityT | None:
         """Busca una entidad por su identificador único."""

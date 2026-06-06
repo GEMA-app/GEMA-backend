@@ -72,6 +72,7 @@ La autorización se basa en roles y permisos específicos asignados a nivel de t
 
 ```
 Request HTTP
+
   → Middlewares (RequestId → ContentType → Accept → RateLimit)
   → Router FastAPI (v1)
   → Endpoint (FastAPI valida Token y verifica Permiso RBAC por dependencia)
@@ -83,7 +84,15 @@ Request HTTP
   → Response JSON:API
 ```
 
+### Flujo de Eventos de Dominio
+
+El sistema implementa un despacho síncrono de eventos de dominio recolectados por el Unit of Work:
+1. **Generación**: Las entidades de dominio acumulan eventos internamente al ejecutar acciones (ej: `role.record_assignment()`).
+2. **Recolección**: Al persistir una entidad a través de un repositorio (`repo.save(entity)`), este extrae los eventos acumulados si la entidad cumple con el protocolo `EventProducer`, y los almacena en una lista interna del Unit of Work (`_pending_events`).
+3. **Publicación**: Al confirmar la transacción (`uow.commit()`), si el commit en base de datos es exitoso, los eventos pendientes se publican en memoria a través del `EventBusPort`.
+
 ---
+
 
 ## Estructura de Directorios
 
@@ -300,6 +309,6 @@ Para mantener el alcance de entrega acotado y enfocado en el núcleo de negocio 
    - *Estado actual*: El registro actual (`/register`) implementa onboarding directo, el cual asume que cada registro crea una empresa nueva.
    - *Pendiente*: Flujo de invitación por correo electrónico, validación de tokens de invitación y unión de usuarios a tenants preexistentes.
 
-4. **Eventos asíncronos y Outbox Pattern**:
-   - *Estado actual*: Los archivos `dispatcher.py` y `outbox.py` existen como esqueletos.
-   - *Pendiente*: Integración de workers asíncronos (Celery/RQ) para el procesamiento en segundo plano y persistencia transactional outbox.
+4. **Outbox Pattern e integración asíncrona**:
+   - *Estado actual*: Se despachan eventos en memoria de manera síncrona después de confirmar la transacción de base de datos (dual-write simplificado).
+   - *Pendiente*: Persistencia outbox transaccional para garantizar entrega a nivel de infraestructura ("at least once") y procesamiento mediante colas de mensajes asíncronas.

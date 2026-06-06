@@ -9,6 +9,7 @@ from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.application.services.authorization_service import AuthorizationService
 from app.infrastructure.cache.redis import get_redis, redis_client
 from app.infrastructure.db.session import engine
+from app.infrastructure.events.bus import LoggingEventBus
 from app.infrastructure.security.authorization import RbacAuthorizationService
 from app.infrastructure.security.hashing import BcryptPasswordHasher
 from app.infrastructure.security.jwt import PyJwtTokenService
@@ -16,8 +17,9 @@ from app.infrastructure.uow import SqlAlchemyUnitOfWork
 
 
 def get_uow() -> UnitOfWorkPort:
-    """Fábrica de dependencias para el Unit of Work de SQLAlchemy."""
-    return SqlAlchemyUnitOfWork()
+    """Fábrica de dependencias para el Unit of Work de SQLAlchemy, inyectando el bus de eventos."""
+    return SqlAlchemyUnitOfWork(event_bus=LoggingEventBus())
+
 
 
 def get_password_hasher() -> PasswordHasherPort:

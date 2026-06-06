@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.ports.role_repository import RoleRepositoryPort
 from app.domain.entities import Permission, Role
+from app.domain.events import DomainEvent
 from app.domain.value_objects import CompanyId, RoleId, UserId
 from app.infrastructure.db.models.role import PermissionModel, RoleModel, RoleUserModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
@@ -14,8 +15,11 @@ from app.infrastructure.repositories.base import SqlAlchemyRepository
 class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], RoleRepositoryPort):
     """Implementación en SQLAlchemy para el puerto de repositorio de Roles."""
 
-    def __init__(self, session: AsyncSession) -> None:
-        super().__init__(session, RoleModel)
+    def __init__(
+        self, session: AsyncSession, pending_events: list[DomainEvent] | None = None
+    ) -> None:
+        super().__init__(session, RoleModel, pending_events)
+
 
     async def save(self, entity: Role) -> None:
         """Persiste un rol preservando los UUIDs de permisos existentes."""
@@ -59,6 +63,10 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
                     )
 
             existing_model.permisos = new_permisos
+
+        # Recolectar eventos (no se invoca super().save() para preservar UUIDs de permisos)
+        self._collect_events(entity)
+
 
     def _to_model(self, entity: Role) -> RoleModel:
         # Se genera un UUID para permisos nuevos si no lo tuvieran,

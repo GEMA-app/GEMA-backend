@@ -60,10 +60,12 @@ class RegisterUserUseCase:
 
             # 5. Crear rol Administrador por defecto con todos los permisos
             admin_role = Role.create_admin(empresa_id=company.id)
+            admin_role.record_assignment(user.id)
             await self.uow.roles.save(admin_role)
 
             # 6. Asignar el rol al usuario creado
             await self.uow.roles.assign_to_user(admin_role.id, user.id)
+
 
             await self.uow.commit()
 
