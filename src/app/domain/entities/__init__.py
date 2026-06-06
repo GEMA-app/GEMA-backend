@@ -5,6 +5,7 @@ from app.domain.entities.location import Location
 from app.domain.entities.permission import Permission
 from app.domain.entities.role import Role
 from app.domain.entities.user import User
+from app.domain.entities.preferences import UserPreference
 
 __all__ = [
     "User",
@@ -15,4 +16,5 @@ __all__ = [
     "Asset",
     "ArticleCategory",
     "CatalogArticle",
+    "UserPreference",
 ]

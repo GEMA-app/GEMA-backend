@@ -49,6 +49,12 @@ from app.domain.exceptions.validation import (
     ValidationException,
 )
 
+from app.domain.exceptions.preferences import (
+    PreferenceException,
+    PreferenceNotFoundError,
+    PreferenceThemeInvalidError,
+)
+
 __all__ = [
     "DomainException",
     "EmptyCompanyNameError",
@@ -80,4 +86,7 @@ __all__ = [
     "LocationCircularReferenceError",
     "LocationInvalidTypeHierarchyError",
     "ValidationException",
+    "PreferenceException",
+    "PreferenceNotFoundError",
+    "PreferenceThemeInvalidError",
 ]

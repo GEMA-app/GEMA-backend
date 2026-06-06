@@ -51,6 +51,11 @@ from app.composition.container.role import (
     provide_role_use_case,
 )
 
+from app.composition.container.preferences import (
+    get_update_preferences_use_case,
+    provide_user_preferences_use_case,
+)
+
 __all__ = [
     # Common
     "get_uow",
@@ -92,4 +97,7 @@ __all__ = [
     "provide_location_children_use_case",
     "get_update_location_use_case",
     "get_delete_location_use_case",
+    # Preferences
+    "get_update_preferences_use_case",
+    "provide_user_preferences_use_case",
 ]

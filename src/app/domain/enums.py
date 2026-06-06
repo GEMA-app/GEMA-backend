@@ -71,3 +71,10 @@ class ReportStatus(StrEnum):
     IN_PROGRESS = "en_proceso"
     RESOLVED = "atendido"
     DISCARDED = "descartado"
+
+class Theme(StrEnum):
+    """Tema visual de la interfaz de usuario."""
+
+    DARK = "oscuro"
+    LIGHT = "claro"
+    SYSTEM = "sistema"
