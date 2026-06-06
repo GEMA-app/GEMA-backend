@@ -8,7 +8,7 @@ from app.domain.value_objects import CompanyId, LocationId
 
 @dataclass
 class Location:
-    """Entidad de dominio que representa una ubicación física jerárquica."""
+    """Entidad con comportamiento (Rich Entity) que representa una ubicación física jerárquica."""
 
     id: LocationId
     empresa_id: CompanyId

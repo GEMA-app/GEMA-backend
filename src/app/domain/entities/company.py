@@ -10,7 +10,7 @@ from app.domain.value_objects import CompanyId, Slug
 
 @dataclass
 class Company:
-    """Entidad que representa una Empresa (Tenant) en la plataforma GEMA."""
+    """Entidad con comportamiento (Rich Entity) que representa una Empresa (Tenant) en la plataforma GEMA."""
 
     id: CompanyId
     nombre: str

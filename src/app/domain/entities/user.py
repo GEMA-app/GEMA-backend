@@ -8,7 +8,7 @@ from app.domain.value_objects import CompanyId, Email, HashedPassword, UserId
 
 
 class User:
-    """Entidad de dominio rica que representa a un usuario en el sistema."""
+    """Entidad con comportamiento (Rich Entity) que representa a un usuario en el sistema."""
 
     def __init__(
         self,

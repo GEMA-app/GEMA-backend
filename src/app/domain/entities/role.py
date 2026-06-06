@@ -10,7 +10,7 @@ from app.domain.value_objects import CompanyId, RoleId
 
 @dataclass
 class Role:
-    """Entidad que representa un Rol con permisos asignados para cada módulo."""
+    """Entidad con comportamiento (Rich Entity) que representa un Rol con permisos asignados para cada módulo."""
 
     id: RoleId
     empresa_id: CompanyId
