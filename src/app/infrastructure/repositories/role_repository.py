@@ -17,6 +17,49 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session, RoleModel)
 
+    async def save(self, entity: Role) -> None:
+        """Persiste un rol preservando los UUIDs de permisos existentes."""
+        existing_model = await self.session.get(RoleModel, entity.id.value)
+
+        if existing_model is None:
+            # Nuevo rol: generar UUIDs para permisos nuevos
+            model = self._to_model(entity)
+            await self.session.merge(model)
+        else:
+            # Actualización: mutar in-place
+            existing_model.nombre = entity.nombre
+            existing_model.descripcion = entity.descripcion
+
+            # Sincronizar permisos por módulo
+            existing_by_module = {p.modulo: p for p in existing_model.permisos}
+            new_permisos = []
+
+            for p in entity.permisos:
+                existing_perm = existing_by_module.get(p.module)
+                if existing_perm:
+                    # Preservar UUID existente, actualizar valores
+                    existing_perm.puede_ver = p.can_view
+                    existing_perm.puede_crear = p.can_create
+                    existing_perm.puede_editar = p.can_edit
+                    existing_perm.puede_eliminar = p.can_delete
+                    new_permisos.append(existing_perm)
+                else:
+                    # Permiso nuevo: generar UUID
+                    new_permisos.append(
+                        PermissionModel(
+                            id=uuid.uuid4(),
+                            empresa_id=entity.empresa_id.value,
+                            rol_id=entity.id.value,
+                            modulo=p.module,
+                            puede_ver=p.can_view,
+                            puede_crear=p.can_create,
+                            puede_editar=p.can_edit,
+                            puede_eliminar=p.can_delete,
+                        )
+                    )
+
+            existing_model.permisos = new_permisos
+
     def _to_model(self, entity: Role) -> RoleModel:
         # Se genera un UUID para permisos nuevos si no lo tuvieran,
         # pero como Permission es un Value Object de dominio, mapeamos a modelos ORM.

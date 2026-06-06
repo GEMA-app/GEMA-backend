@@ -26,7 +26,7 @@ class RefreshTokenUseCase:
 
         async with self.uow:
             user = await self.uow.users.get_by_id(UserId.from_string(sub))
-            if not user or not user.is_active:
+            if not user or not user.activo:
                 raise UserInactiveError("El usuario no existe o se encuentra inactivo.")
 
             access_token = await self.token_service.generate_access_token(str(user.id))

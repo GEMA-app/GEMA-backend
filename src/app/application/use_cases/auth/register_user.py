@@ -51,7 +51,7 @@ class RegisterUserUseCase:
             hashed_password = HashedPassword(value=hashed_val)
             user = User.register(
                 email=email,
-                hashed_password=hashed_password,
+                password_hash=hashed_password,
                 empresa_id=company.id,
                 nombre=request.nombre,
                 telefono=request.telefono,

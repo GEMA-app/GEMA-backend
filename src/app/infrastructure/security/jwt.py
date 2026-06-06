@@ -52,9 +52,9 @@ class PyJwtTokenService(TokenServicePort):
                 options={"require": ["exp", "sub", "jti"]},
             )
         except jwt.ExpiredSignatureError:
-            raise InvalidTokenError("El token ha expirado.")
+            raise InvalidTokenError("El token ha expirado.") from None
         except jwt.InvalidTokenError:
-            raise InvalidTokenError("Token JWT inválido.")
+            raise InvalidTokenError("Token JWT inválido.") from None
 
         jti = claims["jti"]
         is_revoked = await self.redis.get(f"blocklist:{jti}")

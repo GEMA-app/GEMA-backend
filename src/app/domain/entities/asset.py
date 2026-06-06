@@ -1,6 +1,6 @@
 import uuid
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 
 from app.domain.enums import AssetStatus
 from app.domain.value_objects import AssetId, CompanyId, LocationId
@@ -20,3 +20,5 @@ class Asset:
     fecha_adquisicion: date | None = None
     valor_monetario: float | None = None
     moneda: str = "USD"
+    created_at: datetime | None = None
+    updated_at: datetime | None = None

@@ -1,5 +1,6 @@
 import uuid
 from dataclasses import dataclass
+from datetime import datetime
 
 
 @dataclass
@@ -10,6 +11,8 @@ class ArticleCategory:
     empresa_id: uuid.UUID
     nombre: str
     descripcion: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 @dataclass
@@ -24,3 +27,5 @@ class CatalogArticle:
     fabricante: str | None = None
     modelo: str | None = None
     unidad_medida: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None

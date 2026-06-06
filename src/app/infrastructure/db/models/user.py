@@ -19,7 +19,7 @@ class UserModel(TenantMixin, TimestampMixin, Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     email: Mapped[str] = mapped_column(nullable=False)
-    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    password_hash: Mapped[str] = mapped_column("hashed_password", String(255), nullable=False)
     nombre: Mapped[str] = mapped_column(String(255), nullable=False)
     telefono: Mapped[str] = mapped_column(String(50), nullable=True)
     activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)

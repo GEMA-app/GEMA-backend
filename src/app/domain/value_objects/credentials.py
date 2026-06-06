@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass
 
-from app.domain.exceptions import InvalidEmailError, WeakPasswordError
+from app.domain.exceptions import EmptyHashedPasswordError, InvalidEmailError, WeakPasswordError
 
 
 @dataclass(frozen=True)
@@ -47,4 +47,4 @@ class HashedPassword:
 
     def __post_init__(self) -> None:
         if not self.value or not isinstance(self.value, str):
-            raise ValueError("El hash de la contraseña no puede estar vacío.")
+            raise EmptyHashedPasswordError("El hash de la contraseña no puede estar vacío.")

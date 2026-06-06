@@ -27,7 +27,7 @@ class LoginUserUseCase:
             if not user:
                 raise InvalidCredentialsError("Credenciales inválidas.")
 
-            if not self.hasher.verify(request.password, user.hashed_password.value):
+            if not self.hasher.verify(request.password, user.password_hash.value):
                 raise InvalidCredentialsError("Credenciales inválidas.")
 
             user.login()

@@ -147,7 +147,7 @@ async def get_current_user(
                 nombre=user_resp.nombre,
                 empresa_id=user_resp.empresa_id,
                 telefono=user_resp.telefono,
-                is_active=user_resp.is_active,
+                activo=user_resp.activo,
                 created_at=user_resp.created_at,
                 updated_at=user_resp.updated_at,
             ),

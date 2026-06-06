@@ -15,7 +15,7 @@ class UserAttributes(BaseModel):
     nombre: str = Field(..., description="Nombre completo del usuario")
     empresa_id: str = Field(..., description="Identificador único de la empresa")
     telefono: str | None = Field(None, description="Teléfono de contacto")
-    is_active: bool = Field(..., description="Estado de activación del usuario")
+    activo: bool = Field(..., description="Estado de activación del usuario")
     created_at: datetime = Field(..., description="Fecha y hora de creación")
     updated_at: datetime = Field(..., description="Fecha y hora de última actualización")
 

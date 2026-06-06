@@ -1,8 +1,10 @@
 import uuid
 from dataclasses import dataclass, field
+from datetime import datetime
 
 from app.domain.entities.permission import Permission
 from app.domain.enums import PermissionModule
+from app.domain.exceptions import EmptyRoleNameError
 from app.domain.value_objects import CompanyId, RoleId
 
 
@@ -15,6 +17,8 @@ class Role:
     nombre: str
     descripcion: str
     permisos: list[Permission] = field(default_factory=list)
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
     @classmethod
     def create(
@@ -26,7 +30,7 @@ class Role:
     ) -> "Role":
         """Crea un nuevo rol de dominio."""
         if not nombre or not nombre.strip():
-            raise ValueError("El nombre del rol no puede estar vacío.")
+            raise EmptyRoleNameError("El nombre del rol no puede estar vacío.")
         return cls(
             id=RoleId(uuid.uuid4()),
             empresa_id=empresa_id,

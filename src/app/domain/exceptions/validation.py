@@ -5,3 +5,15 @@ class ValidationException(DomainException):
     """Lanzada cuando una validación de reglas de negocio en la capa de aplicación fallan."""
 
     pass
+
+
+class InvalidUUIDError(ValidationException):
+    """Se lanza cuando un identificador UUID tiene formato inválido."""
+
+    pass
+
+
+class InvalidSlugError(ValidationException):
+    """Se lanza cuando un slug tiene formato inválido."""
+
+    pass

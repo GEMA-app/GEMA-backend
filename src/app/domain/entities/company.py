@@ -1,9 +1,10 @@
 import uuid
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime
 
 from app.domain.enums import CompanyStatus
 from app.domain.events import CompanyCreated, DomainEvent
+from app.domain.exceptions import EmptyCompanyNameError
 from app.domain.value_objects import CompanyId, Slug
 
 
@@ -19,6 +20,8 @@ class Company:
     estado: CompanyStatus = CompanyStatus.ACTIVE
     plan_id: uuid.UUID | None = None
     trial_hasta: date | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
     _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
     @classmethod
@@ -34,7 +37,7 @@ class Company:
     ) -> "Company":
         """Método fábrica para crear una nueva empresa y emitir CompanyCreated."""
         if not nombre or not nombre.strip():
-            raise ValueError("El nombre de la empresa no puede estar vacío.")
+            raise EmptyCompanyNameError("El nombre de la empresa no puede estar vacío.")
 
         company_id = CompanyId(value=uuid.uuid4())
         company = cls(

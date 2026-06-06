@@ -23,7 +23,7 @@ class GetCurrentUserUseCase:
 
         async with self.uow:
             user = await self.uow.users.get_by_id(UserId.from_string(sub))
-            if not user or not user.is_active:
+            if not user or not user.activo:
                 raise UserInactiveError("El usuario no existe o se encuentra inactivo.")
 
             return UserResponse(
@@ -32,7 +32,7 @@ class GetCurrentUserUseCase:
                 nombre=user.nombre,
                 empresa_id=str(user.empresa_id),
                 telefono=user.telefono,
-                is_active=user.is_active,
+                activo=user.activo,
                 created_at=user.created_at,
                 updated_at=user.updated_at,
             )

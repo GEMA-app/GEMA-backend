@@ -1,6 +1,8 @@
 import uuid
 from dataclasses import dataclass
 
+from app.domain.exceptions import InvalidUUIDError
+
 
 @dataclass(frozen=True)
 class UserId:
@@ -15,8 +17,8 @@ class UserId:
     def from_string(cls, user_id_str: str) -> "UserId":
         try:
             return cls(value=uuid.UUID(user_id_str))
-        except ValueError:
-            raise ValueError(f"El identificador '{user_id_str}' no es un UUID válido.")
+        except ValueError as e:
+            raise InvalidUUIDError(f"El identificador '{user_id_str}' no es un UUID válido.") from e
 
 
 @dataclass(frozen=True)
@@ -32,8 +34,8 @@ class CompanyId:
     def from_string(cls, value: str) -> "CompanyId":
         try:
             return cls(value=uuid.UUID(value))
-        except ValueError:
-            raise ValueError(f"El identificador '{value}' no es un UUID válido.")
+        except ValueError as e:
+            raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
 
 
 @dataclass(frozen=True)
@@ -49,8 +51,8 @@ class RoleId:
     def from_string(cls, value: str) -> "RoleId":
         try:
             return cls(value=uuid.UUID(value))
-        except ValueError:
-            raise ValueError(f"El identificador '{value}' no es un UUID válido.")
+        except ValueError as e:
+            raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
 
 
 @dataclass(frozen=True)
@@ -66,8 +68,8 @@ class AssetId:
     def from_string(cls, value: str) -> "AssetId":
         try:
             return cls(value=uuid.UUID(value))
-        except ValueError:
-            raise ValueError(f"El identificador '{value}' no es un UUID válido.")
+        except ValueError as e:
+            raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
 
 
 @dataclass(frozen=True)
@@ -83,5 +85,5 @@ class LocationId:
     def from_string(cls, value: str) -> "LocationId":
         try:
             return cls(value=uuid.UUID(value))
-        except ValueError:
-            raise ValueError(f"El identificador '{value}' no es un UUID válido.")
+        except ValueError as e:
+            raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e

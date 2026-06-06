@@ -1,4 +1,5 @@
 from app.domain.exceptions.base import DomainException
+from app.domain.exceptions.validation import ValidationException
 
 
 class CompanyException(DomainException):
@@ -15,5 +16,11 @@ class CompanyNotFoundError(CompanyException):
 
 class CompanySlugExistsError(CompanyException):
     """Lanzada cuando se intenta crear o actualizar una empresa con un slug que ya existe."""
+
+    pass
+
+
+class EmptyCompanyNameError(CompanyException, ValidationException):
+    """Se lanza cuando el nombre de una empresa está vacío."""
 
     pass

@@ -39,7 +39,7 @@ class UserResponse:
     nombre: str
     empresa_id: str
     telefono: str | None
-    is_active: bool
+    activo: bool
     created_at: datetime
     updated_at: datetime
 

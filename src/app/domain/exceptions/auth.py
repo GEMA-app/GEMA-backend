@@ -1,4 +1,5 @@
 from app.domain.exceptions.base import DomainException
+from app.domain.exceptions.validation import ValidationException
 
 
 class AuthException(DomainException):
@@ -39,5 +40,11 @@ class UserInactiveError(AuthException):
 
 class InvalidTokenError(AuthException):
     """Lanzada cuando un token de autenticación es inválido, revocado o ha expirado."""
+
+    pass
+
+
+class EmptyHashedPasswordError(AuthException, ValidationException):
+    """Se lanza cuando el hash de la contraseña está vacío."""
 
     pass

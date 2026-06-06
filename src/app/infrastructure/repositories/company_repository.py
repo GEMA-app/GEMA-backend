@@ -38,6 +38,8 @@ class SqlAlchemyCompanyRepository(
             estado=model.estado,
             plan_id=model.plan_id,
             trial_hasta=model.trial_hasta,
+            created_at=model.created_at,
+            updated_at=model.updated_at,
         )
 
     async def get_by_slug(self, slug: Slug) -> Company | None:

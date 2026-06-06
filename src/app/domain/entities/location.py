@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from app.domain.enums import LocationType
 from app.domain.exceptions.location import LocationInvalidTypeHierarchyError
@@ -15,6 +16,8 @@ class Location:
     nombre: str
     tipo: LocationType
     descripcion: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
     @staticmethod
     def validate_hierarchy(tipo: LocationType, parent_tipo: LocationType | None) -> None:

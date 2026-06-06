@@ -41,11 +41,11 @@ class SqlAlchemyUserRepository(
         return UserModel(
             id=entity.id.value,
             email=entity.email.value,
-            hashed_password=entity.hashed_password.value,
+            password_hash=entity.password_hash.value,
             empresa_id=entity.empresa_id.value,
             nombre=entity.nombre,
             telefono=entity.telefono,
-            activo=entity.is_active,
+            activo=entity.activo,
             created_at=entity.created_at,
             updated_at=entity.updated_at,
         )
@@ -76,11 +76,11 @@ class SqlAlchemyUserRepository(
         return User(
             id=UserId(value=model.id),
             email=Email(value=model.email),
-            hashed_password=HashedPassword(value=model.hashed_password),
+            password_hash=HashedPassword(value=model.password_hash),
             empresa_id=CompanyId(model.empresa_id),
             nombre=model.nombre,
             telefono=model.telefono,
-            is_active=model.activo,
+            activo=model.activo,
             roles=roles,
             created_at=model.created_at,
             updated_at=model.updated_at,

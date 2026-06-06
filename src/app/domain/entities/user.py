@@ -14,22 +14,22 @@ class User:
         self,
         id: UserId,
         email: Email,
-        hashed_password: HashedPassword,
+        password_hash: HashedPassword,
         empresa_id: CompanyId,
         nombre: str,
         telefono: str | None = None,
-        is_active: bool = True,
+        activo: bool = True,
         roles: list[Role] | None = None,
         created_at: datetime | None = None,
         updated_at: datetime | None = None,
     ) -> None:
         self.id = id
         self.email = email
-        self.hashed_password = hashed_password
+        self.password_hash = password_hash
         self.empresa_id = empresa_id
         self.nombre = nombre
         self.telefono = telefono
-        self.is_active = is_active
+        self.activo = activo
         self.roles = roles or []
         self.created_at = created_at or datetime.now(UTC)
         self.updated_at = updated_at or datetime.now(UTC)
@@ -39,7 +39,7 @@ class User:
     def register(
         cls,
         email: Email,
-        hashed_password: HashedPassword,
+        password_hash: HashedPassword,
         empresa_id: CompanyId,
         nombre: str,
         telefono: str | None = None,
@@ -49,11 +49,11 @@ class User:
         user = cls(
             id=user_id,
             email=email,
-            hashed_password=hashed_password,
+            password_hash=password_hash,
             empresa_id=empresa_id,
             nombre=nombre,
             telefono=telefono,
-            is_active=True,
+            activo=True,
             roles=[],
         )
         user._events.append(UserRegistered(user_id=str(user.id), email=user.email.value))
@@ -61,7 +61,7 @@ class User:
 
     def login(self) -> None:
         """Registra el inicio de sesión del usuario, validando sus invariantes de estado."""
-        if not self.is_active:
+        if not self.activo:
             raise UserInactiveError(f"El usuario {self.email.value} está inactivo.")
         self._events.append(UserLoggedIn(user_id=str(self.id), email=self.email.value))
 

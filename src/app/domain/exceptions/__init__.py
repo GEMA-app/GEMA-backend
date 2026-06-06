@@ -12,6 +12,7 @@ from app.domain.exceptions.asset import (
 )
 from app.domain.exceptions.auth import (
     AuthException,
+    EmptyHashedPasswordError,
     InvalidCredentialsError,
     InvalidEmailError,
     InvalidTokenError,
@@ -24,6 +25,7 @@ from app.domain.exceptions.company import (
     CompanyException,
     CompanyNotFoundError,
     CompanySlugExistsError,
+    EmptyCompanyNameError,
 )
 from app.domain.exceptions.location import (
     LocationCircularReferenceError,
@@ -36,14 +38,24 @@ from app.domain.exceptions.permission import (
     PermissionException,
 )
 from app.domain.exceptions.role import (
+    EmptyRoleNameError,
     RoleException,
     RoleNameExistsError,
     RoleNotFoundError,
 )
-from app.domain.exceptions.validation import ValidationException
+from app.domain.exceptions.validation import (
+    InvalidSlugError,
+    InvalidUUIDError,
+    ValidationException,
+)
 
 __all__ = [
     "DomainException",
+    "EmptyCompanyNameError",
+    "EmptyHashedPasswordError",
+    "EmptyRoleNameError",
+    "InvalidSlugError",
+    "InvalidUUIDError",
     "AuthException",
     "WeakPasswordError",
     "InvalidEmailError",

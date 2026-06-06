@@ -1,4 +1,5 @@
 from app.domain.exceptions.base import DomainException
+from app.domain.exceptions.validation import ValidationException
 
 
 class RoleException(DomainException):
@@ -15,5 +16,11 @@ class RoleNotFoundError(RoleException):
 
 class RoleNameExistsError(RoleException):
     """Lanzada cuando se intenta crear un rol con un nombre que ya existe en la empresa."""
+
+    pass
+
+
+class EmptyRoleNameError(RoleException, ValidationException):
+    """Se lanza cuando el nombre de un rol está vacío."""
 
     pass

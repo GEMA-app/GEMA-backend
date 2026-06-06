@@ -1,6 +1,8 @@
 import re
 from dataclasses import dataclass
 
+from app.domain.exceptions import InvalidSlugError
+
 
 @dataclass(frozen=True)
 class Slug:
@@ -16,9 +18,9 @@ class Slug:
 
     def __post_init__(self) -> None:
         if not self.value or not isinstance(self.value, str):
-            raise ValueError("El slug no puede estar vacío.")
+            raise InvalidSlugError("El slug no puede estar vacío.")
         if not self._PATTERN.match(self.value):
-            raise ValueError(
+            raise InvalidSlugError(
                 f"El slug '{self.value}' tiene un formato inválido. "
                 "Solo se permiten letras minúsculas, dígitos y guiones, "
                 "sin comenzar ni terminar con guión."
