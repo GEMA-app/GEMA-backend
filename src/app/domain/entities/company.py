@@ -3,14 +3,14 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 
 from app.domain.enums import CompanyStatus
-from app.domain.events import CompanyCreated, DomainEvent
+from app.domain.events import CompanyCreated, DomainEvent, EventProducer
 from app.domain.exceptions import EmptyCompanyNameError
 from app.domain.value_objects import CompanyId, Slug
 
 
 @dataclass
-class Company:
-    """Entidad con comportamiento (Rich Entity) que representa una Empresa (Tenant) en la plataforma GEMA."""
+class Company(EventProducer):
+    """Entidad con comportamiento (Rich Entity) que representa una Empresa (Tenant) en GEMA."""
 
     id: CompanyId
     nombre: str
