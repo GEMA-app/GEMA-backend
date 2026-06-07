@@ -16,7 +16,10 @@ from app.composition.container.auth import (
     get_logout_user_use_case,
     get_refresh_token_use_case,
     get_register_user_use_case,
+    provide_change_password_use_case,
     provide_current_user_use_case,
+    provide_request_password_reset_use_case,
+    provide_reset_password_use_case,
 )
 from app.composition.container.common import (
     get_authorization_service,
@@ -70,6 +73,9 @@ __all__ = [
     "get_refresh_token_use_case",
     "get_logout_user_use_case",
     "provide_current_user_use_case",
+    "provide_change_password_use_case",
+    "provide_request_password_reset_use_case",
+    "provide_reset_password_use_case",
     # Company
     "get_create_company_use_case",
     "provide_company_use_case",

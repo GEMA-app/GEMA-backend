@@ -55,6 +55,7 @@ class RegisterUserUseCase:
                 empresa_id=company.id,
                 nombre=request.nombre,
                 telefono=request.telefono,
+                company_name=company.nombre,
             )
             await self.uow.users.save(user)
 

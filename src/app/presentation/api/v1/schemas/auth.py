@@ -131,3 +131,59 @@ class LogoutRequest(BaseModel):
     """Solicitud JSON:API para cierre de sesión."""
 
     data: LogoutResource
+
+
+# --- Cambio de Contraseña ---
+
+
+class ChangePasswordAttributes(BaseModel):
+    old_password: str = Field(..., description="Contraseña actual")
+    new_password: str = Field(..., min_length=8, description="Nueva contraseña")
+
+
+class ChangePasswordResource(BaseModel):
+    type: str = Field(default="passwords", description="Tipo de recurso solicitado")
+    attributes: ChangePasswordAttributes
+
+
+class ChangePasswordRequest(BaseModel):
+    """Solicitud JSON:API para cambio de contraseña."""
+
+    data: ChangePasswordResource
+
+
+# --- Recuperación de Contraseña ---
+
+
+class ForgotPasswordAttributes(BaseModel):
+    email: str = Field(..., description="Correo electrónico de la cuenta")
+
+
+class ForgotPasswordResource(BaseModel):
+    type: str = Field(default="passwords", description="Tipo de recurso solicitado")
+    attributes: ForgotPasswordAttributes
+
+
+class ForgotPasswordRequest(BaseModel):
+    """Solicitud JSON:API para solicitar reset de contraseña."""
+
+    data: ForgotPasswordResource
+
+
+# --- Restablecimiento de Contraseña ---
+
+
+class ResetPasswordAttributes(BaseModel):
+    token: str = Field(..., description="Token de recuperación recibido por email")
+    new_password: str = Field(..., min_length=8, description="Nueva contraseña")
+
+
+class ResetPasswordResource(BaseModel):
+    type: str = Field(default="passwords", description="Tipo de recurso solicitado")
+    attributes: ResetPasswordAttributes
+
+
+class ResetPasswordRequest(BaseModel):
+    """Solicitud JSON:API para restablecer contraseña con token."""
+
+    data: ResetPasswordResource

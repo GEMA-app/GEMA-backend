@@ -3,15 +3,20 @@
 from fastapi import Depends
 
 from app.application.ports.auth import PasswordHasherPort, TokenServicePort
+from app.application.ports.notifications import NotificationPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.application.use_cases.auth import (
+    ChangePasswordUseCase,
     GetCurrentUserUseCase,
     LoginUserUseCase,
     LogoutUserUseCase,
     RefreshTokenUseCase,
     RegisterUserUseCase,
+    RequestPasswordResetUseCase,
+    ResetPasswordUseCase,
 )
 from app.composition.container.common import (
+    get_notification_sender,
     get_password_hasher,
     get_token_service,
     get_uow,
@@ -57,3 +62,34 @@ async def provide_current_user_use_case(
 ) -> GetCurrentUserUseCase:
     """Fábrica de dependencias para el caso de uso de consulta del usuario actual."""
     return GetCurrentUserUseCase(uow, token_service)
+
+
+def provide_change_password_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+    hasher: PasswordHasherPort = Depends(get_password_hasher),
+) -> ChangePasswordUseCase:
+    """Fábrica de dependencias para el caso de uso de cambio de contraseña."""
+    return ChangePasswordUseCase(uow, hasher)
+
+
+def provide_request_password_reset_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+    token_service: TokenServicePort = Depends(get_token_service),
+    notification: NotificationPort = Depends(get_notification_sender),
+) -> RequestPasswordResetUseCase:
+    """Fábrica de dependencias para el caso de uso de solicitud de reset."""
+    from app.infrastructure.config.settings import settings
+
+    return RequestPasswordResetUseCase(
+        uow, token_service, notification, frontend_url=settings.FRONTEND_URL
+    )
+
+
+def provide_reset_password_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+    hasher: PasswordHasherPort = Depends(get_password_hasher),
+    token_service: TokenServicePort = Depends(get_token_service),
+    notification: NotificationPort = Depends(get_notification_sender),
+) -> ResetPasswordUseCase:
+    """Fábrica de dependencias para el caso de uso de reset con token."""
+    return ResetPasswordUseCase(uow, hasher, token_service, notification)

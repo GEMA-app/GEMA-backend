@@ -1,25 +1,38 @@
+from typing import Any
+
 from fastapi import APIRouter, Depends, status
+from fastapi.responses import JSONResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.application.dtos import LoginUserRequest, RefreshTokenRequest, RegisterUserRequest
 from app.application.use_cases.auth import (
+    ChangePasswordUseCase,
     GetCurrentUserUseCase,
     LoginUserUseCase,
     LogoutUserUseCase,
     RefreshTokenUseCase,
     RegisterUserUseCase,
+    RequestPasswordResetUseCase,
+    ResetPasswordUseCase,
 )
 from app.composition.container import (
     get_login_user_use_case,
     get_logout_user_use_case,
     get_refresh_token_use_case,
     get_register_user_use_case,
+    provide_change_password_use_case,
     provide_current_user_use_case,
+    provide_request_password_reset_use_case,
+    provide_reset_password_use_case,
 )
+from app.presentation.api.v1.endpoints.dependencies import get_current_active_user
 from app.presentation.api.v1.schemas.auth import (
+    ChangePasswordRequest,
+    ForgotPasswordRequest,
     LoginRequest,
     RefreshRequest,
     RegisterRequest,
+    ResetPasswordRequest,
     TokenAttributes,
     TokenDocument,
     TokenResource,
@@ -152,4 +165,62 @@ async def get_current_user(
                 updated_at=user_resp.updated_at,
             ),
         )
+    )
+
+
+@router.post(
+    "/change-password",
+    status_code=status.HTTP_200_OK,
+    summary="Cambiar contraseña del usuario actual",
+)
+async def change_password(
+    request: ChangePasswordRequest,
+    current_user: Any = Depends(get_current_active_user),
+    use_case: ChangePasswordUseCase = Depends(provide_change_password_use_case),
+) -> JSONResponse:
+    """Cambia la contraseña del usuario autenticado y emite la alerta de seguridad."""
+    await use_case.execute(
+        user_id=current_user.id,
+        old_password=request.data.attributes.old_password,
+        new_password=request.data.attributes.new_password,
+    )
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"meta": {"message": "Contraseña cambiada exitosamente"}},
+        headers={"Content-Type": "application/vnd.api+json"},
+    )
+
+
+@router.post(
+    "/forgot-password",
+    status_code=status.HTTP_202_ACCEPTED,
+    summary="Solicitar reset de contraseña",
+)
+async def forgot_password(
+    request: ForgotPasswordRequest,
+    use_case: RequestPasswordResetUseCase = Depends(provide_request_password_reset_use_case),
+) -> Response:
+    """Envía un email con un enlace de reset. Siempre responde 202 para evitar enumeración."""
+    await use_case.execute(request.data.attributes.email)
+    return Response(status_code=status.HTTP_202_ACCEPTED)
+
+
+@router.post(
+    "/reset-password",
+    status_code=status.HTTP_200_OK,
+    summary="Restablecer contraseña con token",
+)
+async def reset_password(
+    request: ResetPasswordRequest,
+    use_case: ResetPasswordUseCase = Depends(provide_reset_password_use_case),
+) -> JSONResponse:
+    """Consume el token de un solo uso, actualiza la contraseña y envía la confirmación."""
+    await use_case.execute(
+        raw_token=request.data.attributes.token,
+        new_password=request.data.attributes.new_password,
+    )
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"meta": {"message": "Contraseña restablecida exitosamente"}},
+        headers={"Content-Type": "application/vnd.api+json"},
     )
