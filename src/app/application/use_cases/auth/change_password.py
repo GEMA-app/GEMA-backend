@@ -1,0 +1,36 @@
+import uuid
+
+import structlog
+
+from app.application.ports.auth import PasswordHasherPort
+from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.exceptions import InvalidCredentialsError
+from app.domain.value_objects import UserId
+
+logger = structlog.get_logger()
+
+
+class ChangePasswordUseCase:
+    """Caso de uso para que un usuario autenticado cambie su contraseña."""
+
+    def __init__(
+        self,
+        uow: UnitOfWorkPort,
+        hasher: PasswordHasherPort,
+    ) -> None:
+        self.uow = uow
+        self.hasher = hasher
+
+    async def execute(
+        self, user_id: str, old_password: str, new_password: str
+    ) -> None:
+        """Valida la contraseña actual y emite PasswordChanged al reemplazarla."""
+        async with self.uow:
+            user = await self.uow.users.get_by_id(UserId(value=uuid.UUID(user_id)))
+            if not user or not self.hasher.verify(old_password, user.password_hash.value):
+                logger.warning("change_password_failed", user_id=user_id)
+                raise InvalidCredentialsError("No se pudo cambiar la contraseña")
+
+            user.change_password(self.hasher.hash(new_password))
+            await self.uow.users.save(user)
+            await self.uow.commit()

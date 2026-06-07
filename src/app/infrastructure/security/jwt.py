@@ -1,6 +1,6 @@
 import uuid
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import Any, cast
 
 import jwt
 from redis.asyncio import Redis
@@ -8,6 +8,9 @@ from redis.asyncio import Redis
 from app.application.ports.auth import TokenServicePort
 from app.domain.exceptions import InvalidTokenError
 from app.infrastructure.config.settings import settings
+
+RESET_TOKEN_PREFIX = "gema:reset_token:"
+RESET_TOKEN_USER_SET_PREFIX = "gema:user_reset_tokens:"
 
 
 class PyJwtTokenService(TokenServicePort):
@@ -69,3 +72,43 @@ class PyJwtTokenService(TokenServicePort):
         ttl = exp - now
         if ttl > 0:
             await self.redis.set(f"blocklist:{jti}", "revoked", ex=ttl)
+
+    async def store_reset_token(
+        self, token_hash: str, user_id: str, ttl_seconds: int
+    ) -> None:
+        """Almacena el hash del token y registra el usuario en el set de tokens."""
+        key = f"{RESET_TOKEN_PREFIX}{token_hash}"
+        user_key = f"{RESET_TOKEN_USER_SET_PREFIX}{user_id}"
+        async with self.redis.pipeline(transaction=True) as pipe:
+            pipe.setex(key, ttl_seconds, user_id)
+            pipe.sadd(user_key, token_hash)
+            pipe.expire(user_key, ttl_seconds)
+            await pipe.execute()
+
+    async def verify_reset_token(self, token_hash: str) -> str | None:
+        """Devuelve el user_id asociado al token si existe y no ha expirado."""
+        key = f"{RESET_TOKEN_PREFIX}{token_hash}"
+        result = await self.redis.get(key)
+        return cast("str | None", result)
+
+    async def delete_reset_token(self, token_hash: str) -> None:
+        """Elimina el token y lo quita del set de tokens del usuario."""
+        key = f"{RESET_TOKEN_PREFIX}{token_hash}"
+        user_id = await self.redis.get(key)
+        if user_id:
+            user_key = f"{RESET_TOKEN_USER_SET_PREFIX}{cast(str, user_id)}"
+            async with self.redis.pipeline(transaction=True) as pipe:
+                pipe.delete(key)
+                pipe.srem(user_key, token_hash)
+                await pipe.execute()
+
+    async def delete_user_reset_tokens(self, user_id: str) -> None:
+        """Invalida todos los tokens de reset activos de un usuario."""
+        user_key = f"{RESET_TOKEN_USER_SET_PREFIX}{user_id}"
+        token_hashes = await self.redis.smembers(user_key)
+        if token_hashes:
+            keys = [f"{RESET_TOKEN_PREFIX}{cast(str, th)}" for th in token_hashes]
+            async with self.redis.pipeline(transaction=True) as pipe:
+                pipe.delete(*keys)
+                pipe.delete(user_key)
+                await pipe.execute()

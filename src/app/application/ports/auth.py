@@ -31,3 +31,21 @@ class TokenServicePort(Protocol):
     async def revoke_token(self, jti: str, exp: int) -> None:
         """Revoca un token identificándolo por su JTI e indicando su fecha de expiración."""
         ...
+
+    async def store_reset_token(
+        self, token_hash: str, user_id: str, ttl_seconds: int
+    ) -> None:
+        """Almacena el hash de un token de reset de contraseña en Redis con TTL."""
+        ...
+
+    async def verify_reset_token(self, token_hash: str) -> str | None:
+        """Devuelve el user_id asociado al token si es válido, None si no."""
+        ...
+
+    async def delete_reset_token(self, token_hash: str) -> None:
+        """Elimina un token de reset de contraseña (single-use)."""
+        ...
+
+    async def delete_user_reset_tokens(self, user_id: str) -> None:
+        """Invalida todos los tokens de reset activos para un usuario."""
+        ...
