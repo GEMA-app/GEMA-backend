@@ -1,3 +1,3 @@
-from app.infrastructure.events.bus import LoggingEventBus
+from app.infrastructure.events.bus import InProcessEventBus
 
-__all__ = ["LoggingEventBus"]
+__all__ = ["InProcessEventBus"]

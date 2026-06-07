@@ -24,8 +24,9 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
     ) -> None:
         self.session_factory = session_factory
         if event_bus is None:
-            from app.infrastructure.events.bus import LoggingEventBus
-            self.event_bus = LoggingEventBus()
+            from app.infrastructure.events.bus import InProcessEventBus
+
+            self.event_bus: EventBusPort = InProcessEventBus()
         else:
             self.event_bus = event_bus
         self._pending_events: list[DomainEvent] = []
