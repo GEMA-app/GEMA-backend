@@ -1,7 +1,10 @@
+from typing import Any
+
 from fastapi import status
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
+
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers import jsonapi_response
 
@@ -9,7 +12,7 @@ from app.presentation.exception_handlers import jsonapi_response
 class AcceptMiddleware(BaseHTTPMiddleware):
     """Middleware que valida el encabezado Accept para garantizar la compatibilidad con JSON:API."""
 
-    async def dispatch(self, request: Request, call_next) -> Response:
+    async def dispatch(self, request: Request, call_next: Any) -> Response:
         accept = request.headers.get("Accept", "*/*")
         if (
             "application/vnd.api+json" not in accept
@@ -24,4 +27,5 @@ class AcceptMiddleware(BaseHTTPMiddleware):
             )
             return jsonapi_response(status.HTTP_406_NOT_ACCEPTABLE, [error])
 
-        return await call_next(request)
+        response: Response = await call_next(request)
+        return response

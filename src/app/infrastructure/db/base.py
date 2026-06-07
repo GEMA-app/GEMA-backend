@@ -4,4 +4,5 @@ from sqlalchemy.orm import DeclarativeBase
 
 class Base(AsyncAttrs, DeclarativeBase):
     """Clase base declarativa para todos los modelos ORM de SQLAlchemy 2.0."""
+
     pass

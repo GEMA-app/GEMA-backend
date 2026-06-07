@@ -1,6 +1,7 @@
-from typing import Optional, Protocol
+from typing import Protocol
+
 from app.domain.entities import User
-from app.domain.value_objects import Email, UserId
+from app.domain.value_objects import CompanyId, Email, UserId
 
 
 class UserRepositoryPort(Protocol):
@@ -10,10 +11,14 @@ class UserRepositoryPort(Protocol):
         """Guarda o actualiza un usuario en el repositorio sin confirmar la transacción."""
         ...
 
-    async def get_by_email(self, email: Email) -> Optional[User]:
-        """Busca un usuario por su dirección de correo electrónico."""
+    async def get_by_email(self, email: Email) -> User | None:
+        """Busca un usuario por su dirección de correo electrónico globalmente."""
         ...
 
-    async def get_by_id(self, id: UserId) -> Optional[User]:
+    async def get_by_email_and_company(self, email: Email, empresa_id: CompanyId) -> User | None:
+        """Busca un usuario por email dentro de una empresa específica."""
+        ...
+
+    async def get_by_id(self, id: UserId) -> User | None:
         """Busca un usuario por su identificador único."""
         ...
