@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic import ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -20,6 +22,19 @@ class Settings(BaseSettings):
     APP_TITLE: str = "GEMA Backend"
     APP_VERSION: str = "0.1.0"
     STRICT_JSONAPI: bool = True
+
+    # --- Email / Notificaciones ---
+    EMAIL_PROVIDER: str = "log"
+    SMTP_HOST: str = "localhost"
+    SMTP_PORT: int = 1025
+    SMTP_USE_TLS: bool = False
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+    EMAIL_FROM_ADDRESS: str = "noreply@gema.unegia.com"
+    EMAIL_FROM_NAME: str = "GEMA"
+    EMAIL_TEMPLATES_DIR: Path = Path("src/app/infrastructure/notifications/templates")
+    FRONTEND_URL: str = "http://localhost:3000"
+    OUTBOX_ENABLED: bool = False
 
     @field_validator("JWT_SECRET_KEY")
     @classmethod
