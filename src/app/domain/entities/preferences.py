@@ -31,7 +31,19 @@ class UserPreference:
         )
 
     def __post_init__(self) -> None:
+        """Valida invariantes después de la inicialización."""
         if self.tema is None:
             raise PreferenceThemeInvalidError(
                 "El tema visual no puede estar vacío."
             )
+
+    def change_theme(self, nuevo_tema: str) -> None:
+        """Cambia el tema visual. Acepta str para que la validación sea en dominio."""
+        try:
+            tema_validado = Theme(nuevo_tema)
+        except ValueError:
+            raise PreferenceThemeInvalidError(
+                f"El tema '{nuevo_tema}' no es válido. "
+                f"Valores permitidos: {', '.join(t.value for t in Theme)}."
+            ) from None
+        self.tema = tema_validado
