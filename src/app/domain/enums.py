@@ -17,6 +17,7 @@ class PermissionModule(StrEnum):
     INVENTORY = "inventario"
     REPORTS = "reportes"
     ADMIN = "administracion"
+    PREFERENCES = "preferencias"
 
 
 class AssetStatus(StrEnum):
