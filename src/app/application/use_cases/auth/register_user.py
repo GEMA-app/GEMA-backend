@@ -1,13 +1,13 @@
 from app.application.dtos import AuthTokensDTO, RegisterUserRequest
 from app.application.ports.auth import PasswordHasherPort, TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.domain.entities import Company, Role, User
+from app.domain.entities import Company, Role, User, UserPreference
 from app.domain.exceptions import CompanySlugExistsError, UserAlreadyExistsError
 from app.domain.value_objects import Email, HashedPassword, PlainPassword, Slug
 
 
 class RegisterUserUseCase:
-    """Caso de uso para registrar un nuevo usuario en el sistema, creando su empresa y rol administrador."""
+    """Registra un nuevo usuario en el sistema creando empresa y rol administrador."""
 
     def __init__(
         self,
@@ -67,6 +67,12 @@ class RegisterUserUseCase:
             # 6. Asignar el rol al usuario creado
             await self.uow.roles.assign_to_user(admin_role.id, user.id)
 
+            # 7. Crear preferencias por defecto (evita 404 en GET /preferences)
+            prefs = UserPreference.create(
+                usuario_id=user.id,
+                empresa_id=company.id,
+            )
+            await self.uow.preferences.save(prefs)
 
             await self.uow.commit()
 
