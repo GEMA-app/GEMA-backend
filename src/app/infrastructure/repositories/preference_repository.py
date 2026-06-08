@@ -16,6 +16,8 @@ class SqlAlchemyPreferenceRepository(
 ):
     """Implementación en SQLAlchemy para el puerto de Preferencias."""
 
+    pk_column = "usuario_id"
+
     def __init__(
         self, session: AsyncSession, pending_events: list[DomainEvent] | None = None
     ) -> None:
@@ -36,15 +38,6 @@ class SqlAlchemyPreferenceRepository(
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
-
-    async def get_by_id(self, id: UserId) -> UserPreference | None:
-        """Sobrescribe get_by_id del base porque la PK no se llama 'id'."""
-        stmt = select(UserPreferenceModel).where(
-            UserPreferenceModel.usuario_id == id.value
-        )
-        result = await self.session.execute(stmt)
-        model = result.scalar_one_or_none()
-        return self._to_entity(model) if model else None
 
     async def get_by_user(
         self, usuario_id: UserId, empresa_id: CompanyId
