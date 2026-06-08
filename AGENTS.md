@@ -64,9 +64,9 @@ GEMA es una plataforma SaaS multi-tenant que implementa aislamiento a nivel de b
 La autorización se basa en roles y permisos específicos asignados a nivel de tenant:
 - **Roles**: Entidad `Role` definida por empresa (`empresa_id`) con su lista de permisos granularizados.
 - **Permisos**: Value Object `Permission` que define permisos granulares por módulo y acciones CRUD:
-  - **Módulos (`PermissionModule`)**: `assets` (Activos), `maintenance` (Mantenimiento), `inventory` (Inventario), `reports` (Reportes), `admin` (Administración del sistema).
+  - **Módulos (`PermissionModule`)**: `assets` (Activos), `maintenance` (Mantenimiento), `inventory` (Inventario), `reports` (Reportes), `admin` (Administración del sistema), `preferences` (Preferencias).
   - **Acciones**: `view` (Visualizar), `create` (Crear), `edit` (Editar), `delete` (Eliminar).
-- **Decorador de Seguridad**: Los endpoints REST validan permisos en tiempo de ejecución usando la dependencia `Depends(require_permission(modulo, accion))`.
+- **Decorador de Seguridad**: Los endpoints REST validan permisos en tiempo de ejecución usando la dependencia `Depends(require_permission(modulo, accion, company_id))`. La función `require_permission()` ahora incluye validación de tenant: verifica que el `company_id` del path coincida con la empresa del token JWT, además del permiso RBAC.
 
 ### Flujo de una Request
 
@@ -75,7 +75,7 @@ Request HTTP
 
   → Middlewares (RequestId → ContentType → Accept → RateLimit)
   → Router FastAPI (v1)
-  → Endpoint (FastAPI valida Token y verifica Permiso RBAC por dependencia)
+  → Endpoint (FastAPI valida Token + Tenant + Permiso RBAC por dependencia require_permission())
   → Composition Root (resuelve dependencias en el paquete composition/container)
   → Use Case (orquesta la lógica de negocio y abre transacción vía UoW)
   → Domain Entity (ejecuta reglas de negocio, valida invariantes y genera eventos)
@@ -105,6 +105,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   ├── entities/                    # Paquete modular de entidades
 │   │   │   ├── __init__.py              # Exporta User, Company, Role, Permission, Asset, Location
 │   │   │   ├── user.py                  # Entidad User con empresa_id, nombre, teléfono y roles asignados
+│   │   │   ├── preferences.py           # Entidad UserPreference (método change_theme(), themes, pk)
 │   │   │   ├── company.py               # Entidad Company
 │   │   │   ├── role.py                  # Entidad Role
 │   │   │   ├── permission.py            # Entidad Permission (Value Object)
@@ -113,7 +114,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   ├── exceptions/                  # Paquete modular de excepciones del dominio
 │   │   │   ├── __init__.py              # Re-exporta todas las excepciones para retrocompatibilidad
 │   │   │   ├── base.py                  # Clase base DomainException
-│   │   │   └── auth.py, company.py, role.py, permission.py, asset.py, location.py
+│   │   │   └── auth.py, company.py, role.py, permission.py, asset.py, location.py, preferences.py
 │   │   └── value_objects/               # Paquete modular de objetos de valor
 │   │       ├── __init__.py              # Re-exporta todos los value objects
 │   │       ├── credentials.py           # Email, PlainPassword, HashedPassword
@@ -125,13 +126,15 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   │   ├── company_dtos.py
 │   │   │   ├── role_dtos.py
 │   │   │   ├── asset_dtos.py
-│   │   │   └── location_dtos.py
+│   │   │   ├── location_dtos.py
+│   │   │   └── preferences_dtos.py
 │   │   ├── ports/
 │   │   │   ├── auth.py                  # PasswordHasherPort, TokenServicePort
 │   │   │   ├── company_repository.py
 │   │   │   ├── role_repository.py
 │   │   │   ├── asset_repository.py
 │   │   │   ├── location_repository.py
+│   │   │   ├── preference_repository.py # PreferenceRepositoryPort (interfaz con pk_column)
 │   │   │   ├── repository.py            # UserRepositoryPort
 │   │   │   └── unit_of_work.py          # UnitOfWorkPort
 │   │   ├── services/
@@ -147,6 +150,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │       ├── company/                 # CRUD de empresas
 │   │       ├── role/                    # CRUD de roles, assign/revoke a usuario
 │   │       ├── asset/                   # CRUD de activos
+│   │       ├── preferences/             # CRUD de preferencias de usuario
 │   │       └── location/                # CRUD de ubicaciones y reconstrucción de árbol jerárquico
 │   ├── infrastructure/
 │   │   ├── config/
@@ -163,14 +167,16 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   │       ├── role.py              # RoleModel, PermissionModel, RoleUserModel
 │   │   │       ├── asset.py             # AssetModel
 │   │   │       ├── location.py          # LocationModel (autocontrol de jerarquía)
+│   │   │       ├── preferences.py       # UserPreferenceModel (modelo ORM de preferencias)
 │   │   │       └── catalog.py           # Modelos de catálogo (placeholder)
 │   │   ├── repositories/                # Adapters concretos de persistencia
-│   │   │   ├── base.py                  # SqlAlchemyRepository genérico
+│   │   │   ├── base.py                  # SqlAlchemyRepository genérico con pk_column como atributo de clase
 │   │   │   ├── user_repository.py
 │   │   │   ├── company_repository.py
 │   │   │   ├── role_repository.py
 │   │   │   ├── asset_repository.py
-│   │   │   └── location_repository.py
+│   │   │   ├── location_repository.py
+│   │   │   └── preference_repository.py # SqlAlchemyPreferenceRepository (pk_column = "usuario_id")
 │   │   ├── security/
 │   │   │   ├── hashing.py              # BcryptPasswordHasher
 │   │   │   ├── jwt.py                  # PyJwtTokenService
@@ -198,14 +204,16 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │           │   ├── companies.py     # /v1/companies
 │   │           │   ├── roles.py         # /v1/companies/{company_id}/roles
 │   │           │   ├── assets.py        # /v1/companies/{company_id}/assets
-│   │           │   └── locations.py     # /v1/companies/{company_id}/locations
+│   │           │   ├── locations.py     # /v1/companies/{company_id}/locations
+│   │           │   └── preferences.py   # /v1/companies/{cid}/me/preferences (protegido con require_permission)
 │   │           └── schemas/             # Schemas de validación y representación JSON:API
 │   │               ├── jsonapi_base.py
 │   │               ├── auth.py
 │   │               ├── company.py
 │   │               ├── role.py
 │   │               ├── asset.py
-│   │               └── location.py
+│   │               ├── location.py
+│   │               └── preferences.py
 │   └── composition/
 │       └── container/                   # Paquete modular de inyección de dependencias
 │           ├── __init__.py              # Re-exporta todas las fábricas
@@ -253,6 +261,8 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 | `LocationNotFoundError` | 404 | Ubicación no encontrada |
 | `LocationCircularReferenceError` | 422 | Error en la jerarquía (referencia circular) |
 | `LocationInvalidTypeHierarchyError`| 422 | Tipo de ubicación inconsistente con su padre |
+| `PreferenceNotFoundError` | 404 | Preferencias de usuario no encontradas |
+| `PreferenceThemeInvalidError` | 422 | El tema visual especificado no es válido |
 
 ---
 
@@ -288,6 +298,8 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 | `PATCH` | `/v1/companies/{cid}/locations/{id}`| Actualizar ubicación | Bearer | `admin:edit` |
 | `DELETE` | `/v1/companies/{cid}/locations/{id}`| Eliminar ubicación | Bearer | `admin:delete` |
 | `GET` | `/v1/companies/{cid}/locations/{id}/children`| Listar ubicaciones hijas directas | Bearer | - |
+| `GET` | `/v1/companies/{cid}/me/preferences` | Obtener preferencias del usuario actual | Bearer | `preferencias:view` |
+| `PATCH` | `/v1/companies/{cid}/me/preferences` | Actualizar preferencias del usuario actual | Bearer | `preferencias:edit` |
 | `GET` | `/health/live` | Liveness probe | No | - |
 | `GET` | `/health/ready` | Readiness probe (DB + Redis) | No | - |
 
@@ -312,3 +324,17 @@ Para mantener el alcance de entrega acotado y enfocado en el núcleo de negocio 
 4. **Outbox Pattern e integración asíncrona**:
    - *Estado actual*: Se despachan eventos en memoria de manera síncrona después de confirmar la transacción de base de datos (dual-write simplificado).
    - *Pendiente*: Persistencia outbox transaccional para garantizar entrega a nivel de infraestructura ("at least once") y procesamiento mediante colas de mensajes asíncronas.
+
+---
+## Decisiones Técnicas Diferidas (Technical Debt)
+
+Registro de decisiones técnicas que quedaron pendientes en cada plan de implementación.
+Cada entrada indica en qué plan se resolvió (si aplica).
+
+| # | Decisión | Plan que la difirió | Plan que la resolvió | Estado |
+|----|----------|---------------------|----------------------|--------|
+| 1 | Control de concurrencia en PATCH (lost updates) | v6 / v7 | — | Pendiente |
+| 2 | Composition Root acoplado a FastAPI (Depends directo) | v6 / v7 | — | Pendiente |
+| 3 | `id` → `entity_id` en `base.py` (LSP violation, 6 repos) | v6 | **v7 — pk_column** | ✅ Resuelto |
+| 4 | Observabilidad (logging en use cases) | v6 / v7 | — | 🚫 Descartado |
+| 5 | Testing de módulo preferences | v6 / v7 | — | 🚫 Descartado |
