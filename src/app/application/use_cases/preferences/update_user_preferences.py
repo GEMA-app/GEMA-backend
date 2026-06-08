@@ -4,8 +4,6 @@ from app.application.dtos.preferences_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import UserPreference
-from app.domain.enums import Theme
-from app.domain.exceptions import PreferenceThemeInvalidError
 from app.domain.value_objects import CompanyId, UserId
 
 
@@ -37,14 +35,7 @@ class UpdateUserPreferencesUseCase:
                 )
 
             if request.tema is not None:
-                try:
-                    pref.tema = Theme(request.tema)
-                except ValueError:
-                    temas_validos = ", ".join(t.value for t in Theme)
-                    raise PreferenceThemeInvalidError(
-                        f"El tema '{request.tema}' no es válido. "
-                        f"Valores permitidos: {temas_validos}."
-                    )
+                pref.change_theme(request.tema)
 
             await self.uow.preferences.save(pref)
             await self.uow.commit()
