@@ -22,8 +22,10 @@ from app.domain.exceptions.auth import (
 )
 from app.domain.exceptions.base import DomainException
 from app.domain.exceptions.company import (
+    CompanyAlreadyCancelledError,
     CompanyException,
     CompanyNotFoundError,
+    CompanyNotSuspendedError,
     CompanySlugExistsError,
     EmptyCompanyNameError,
 )
@@ -37,6 +39,11 @@ from app.domain.exceptions.permission import (
     InsufficientPermissionsError,
     PermissionException,
 )
+from app.domain.exceptions.preference import (
+    PreferenceException,
+    PreferenceNotFoundError,
+    PreferenceThemeInvalidError,
+)
 from app.domain.exceptions.role import (
     EmptyRoleNameError,
     RoleException,
@@ -47,12 +54,6 @@ from app.domain.exceptions.validation import (
     InvalidSlugError,
     InvalidUUIDError,
     ValidationException,
-)
-
-from app.domain.exceptions.preferences import (
-    PreferenceException,
-    PreferenceNotFoundError,
-    PreferenceThemeInvalidError,
 )
 
 __all__ = [
@@ -81,6 +82,8 @@ __all__ = [
     "AssetNotFoundError",
     "AssetCodeExistsError",
     "AssetSerialExistsError",
+    "CompanyAlreadyCancelledError",
+    "CompanyNotSuspendedError",
     "LocationException",
     "LocationNotFoundError",
     "LocationCircularReferenceError",
