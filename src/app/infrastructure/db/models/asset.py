@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from app.infrastructure.db.models.catalog import CatalogArticleModel
     from app.infrastructure.db.models.location import LocationModel
 
-from sqlalchemy import Date, Enum, ForeignKey, Numeric, String, UniqueConstraint
+from sqlalchemy import Date, Enum, ForeignKey, Index, Numeric, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.domain.enums import AssetStatus
@@ -19,8 +19,18 @@ class AssetModel(TenantMixin, TimestampMixin, Base):
 
     __tablename__ = "activos"
     __table_args__ = (
-        UniqueConstraint("empresa_id", "serial_interno", name="uq_activos_empresa_serial_interno"),
-        UniqueConstraint("empresa_id", "codigo_activo", name="uq_activos_empresa_codigo_activo"),
+        Index(
+            "uq_activos_empresa_codigo_activo_lower",
+            "empresa_id",
+            text("LOWER(codigo_activo)"),
+            unique=True,
+        ),
+        Index(
+            "uq_activos_empresa_serial_interno_lower",
+            "empresa_id",
+            text("LOWER(serial_interno)"),
+            unique=True,
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
