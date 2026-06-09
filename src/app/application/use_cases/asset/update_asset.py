@@ -2,9 +2,7 @@ from app.application.dtos.asset_dtos import AssetResponse, UpdateAssetRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import AssetStatus
 from app.domain.exceptions import (
-    AssetCodeExistsError,
     AssetNotFoundError,
-    AssetSerialExistsError,
     LocationNotFoundError,
     ValidationException,
 )
@@ -45,30 +43,15 @@ class UpdateAssetUseCase:
                     asset.ubicacion_id = None
 
             if request.codigo_activo is not None:
-                new_code = request.codigo_activo.strip()
+                new_code = request.codigo_activo.lower().strip()
                 if not new_code:
                     raise ValidationException("El código del activo no puede estar vacío.")
-                assets, _ = await self.uow.assets.list_by_company(company_id, 0, 1000)
-                if any(
-                    a.codigo_activo.lower() == new_code.lower() and a.id != asset.id for a in assets
-                ):
-                    raise AssetCodeExistsError(
-                        f"El activo con código '{new_code}' ya existe en esta empresa."
-                    )
                 asset.codigo_activo = new_code
 
             if request.serial_interno is not None:
-                new_serial = request.serial_interno.strip()
+                new_serial = request.serial_interno.lower().strip()
                 if not new_serial:
                     raise ValidationException("El serial interno no puede estar vacío.")
-                assets, _ = await self.uow.assets.list_by_company(company_id, 0, 1000)
-                if any(
-                    a.serial_interno.lower() == new_serial.lower() and a.id != asset.id
-                    for a in assets
-                ):
-                    raise AssetSerialExistsError(
-                        f"El activo con serial '{new_serial}' ya existe en esta empresa."
-                    )
                 asset.serial_interno = new_serial
 
             if request.estado is not None:
