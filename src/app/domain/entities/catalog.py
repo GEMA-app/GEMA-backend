@@ -1,3 +1,5 @@
+"""Entidades placeholder ArticleCategory y CatalogArticle."""
+
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
@@ -5,7 +7,10 @@ from datetime import datetime
 
 @dataclass
 class ArticleCategory:
-    """Entidad de dominio placeholder para categorías de artículos."""
+    """Entidad de dominio placeholder para categorías de artículos.
+
+    Diferido: Sprint futuro — Pendiente de implementación de comportamiento de dominio.
+    """
 
     id: uuid.UUID
     empresa_id: uuid.UUID
@@ -17,7 +22,10 @@ class ArticleCategory:
 
 @dataclass
 class CatalogArticle:
-    """Entidad de dominio placeholder para artículos del catálogo."""
+    """Entidad de dominio placeholder para artículos del catálogo.
+
+    Diferido: Sprint futuro — Pendiente de implementación de comportamiento de dominio.
+    """
 
     id: uuid.UUID
     empresa_id: uuid.UUID
