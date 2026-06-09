@@ -2,6 +2,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, Query, status
 
+from app.application.dtos.auth_dtos import UserResponse
 from app.application.dtos.role_dtos import (
     CreateRoleRequest as CreateRoleDTO,
 )
@@ -31,8 +32,8 @@ from app.composition.container import (
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
-    get_current_active_user,
     require_permission,
+    require_tenant_read,
 )
 from app.presentation.api.v1.schemas.role import (
     AssignRoleRequest,
@@ -104,7 +105,7 @@ async def create_role(
 )
 async def list_roles(
     company_id: str,
-    current_user: Any = Depends(get_current_active_user),
+    current_user: UserResponse = Depends(require_tenant_read),
     use_case: ListRolesUseCase = Depends(get_list_roles_use_case),
 ) -> RoleListDocument:
     roles = await use_case.execute(company_id)
@@ -133,17 +134,17 @@ async def list_roles(
 
 
 @router.get(
-    "/{id}",
+    "/{role_id}",
     response_model=RoleDocument,
     summary="Obtener rol por ID",
 )
 async def get_role(
     company_id: str,
-    id: str,
-    current_user: Any = Depends(get_current_active_user),
+    role_id: str,
+    current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetRoleUseCase = Depends(provide_role_use_case),
 ) -> RoleDocument:
-    res = await use_case.execute(company_id, id)
+    res = await use_case.execute(company_id, role_id)
     return RoleDocument(
         data=RoleResource(
             id=res.id,
@@ -166,13 +167,13 @@ async def get_role(
 
 
 @router.patch(
-    "/{id}",
+    "/{role_id}",
     response_model=RoleDocument,
     summary="Actualizar rol",
 )
 async def update_role(
     company_id: str,
-    id: str,
+    role_id: str,
     request: UpdateRoleRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateRoleUseCase = Depends(get_update_role_use_case),
@@ -194,7 +195,7 @@ async def update_role(
         descripcion=request.data.attributes.descripcion,
         permisos=permisos_dto,
     )
-    res = await use_case.execute(company_id, id, dto)
+    res = await use_case.execute(company_id, role_id, dto)
     return RoleDocument(
         data=RoleResource(
             id=res.id,
@@ -217,44 +218,44 @@ async def update_role(
 
 
 @router.delete(
-    "/{id}",
+    "/{role_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Eliminar rol",
 )
 async def delete_role(
     company_id: str,
-    id: str,
+    role_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "delete")),
     use_case: DeleteRoleUseCase = Depends(get_delete_role_use_case),
 ) -> None:
-    await use_case.execute(company_id, id)
+    await use_case.execute(company_id, role_id)
 
 
 @router.post(
-    "/{id}/assign",
+    "/{role_id}/assign",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Asignar rol a un usuario",
 )
 async def assign_role(
     company_id: str,
-    id: str,
+    role_id: str,
     request: AssignRoleRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: AssignRoleToUserUseCase = Depends(get_assign_role_to_user_use_case),
 ) -> None:
-    await use_case.execute(company_id, id, request.data.attributes.usuario_id)
+    await use_case.execute(company_id, role_id, request.data.attributes.usuario_id)
 
 
 @router.delete(
-    "/{id}/revoke",
+    "/{role_id}/revoke",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Revocar rol a un usuario",
 )
 async def revoke_role(
     company_id: str,
-    id: str,
+    role_id: str,
     usuario_id: str = Query(..., description="ID del usuario al que se le revoca el rol"),
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: RevokeRoleFromUserUseCase = Depends(get_revoke_role_from_user_use_case),
 ) -> None:
-    await use_case.execute(company_id, id, usuario_id)
+    await use_case.execute(company_id, role_id, usuario_id)

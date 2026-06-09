@@ -2,6 +2,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, status
 
+from app.application.dtos.auth_dtos import UserResponse
 from app.application.dtos.company_dtos import (
     CreateCompanyRequest as CreateCompanyDTO,
 )
@@ -26,6 +27,8 @@ from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
     get_current_active_user,
     require_permission,
+    require_platform_permission,
+    require_tenant_read,
 )
 from app.presentation.api.v1.schemas.company import (
     CompanyAttributes,
@@ -47,7 +50,7 @@ router = APIRouter()
 )
 async def create_company(
     request: CreateCompanyRequest,
-    current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "create")),
+    current_user: UserResponse = Depends(require_platform_permission(PermissionModule.ADMIN, "create")),
     use_case: CreateCompanyUseCase = Depends(get_create_company_use_case),
 ) -> CompanyDocument:
     dto = CreateCompanyDTO(
@@ -84,7 +87,7 @@ async def list_companies(
     current_user: Any = Depends(get_current_active_user),
     use_case: ListCompaniesUseCase = Depends(get_list_companies_use_case),
 ) -> CompanyListDocument:
-    companies, total = await use_case.execute(offset, limit)
+    companies, total = await use_case.execute(offset, limit, company_id=current_user.empresa_id)
     return CompanyListDocument(
         data=[
             CompanyResource(
@@ -106,16 +109,16 @@ async def list_companies(
 
 
 @router.get(
-    "/{id}",
+    "/{company_id}",
     response_model=CompanyDocument,
     summary="Obtener empresa por ID",
 )
 async def get_company(
-    id: str,
-    current_user: Any = Depends(get_current_active_user),
+    company_id: str,
+    current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetCompanyUseCase = Depends(provide_company_use_case),
 ) -> CompanyDocument:
-    res = await use_case.execute(id)
+    res = await use_case.execute(company_id)
     return CompanyDocument(
         data=CompanyResource(
             id=res.id,
@@ -133,12 +136,12 @@ async def get_company(
 
 
 @router.patch(
-    "/{id}",
+    "/{company_id}",
     response_model=CompanyDocument,
     summary="Actualizar empresa",
 )
 async def update_company(
-    id: str,
+    company_id: str,
     request: UpdateCompanyRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateCompanyUseCase = Depends(get_update_company_use_case),
@@ -149,7 +152,7 @@ async def update_company(
         email_contacto=request.data.attributes.email_contacto,
         estado=request.data.attributes.estado,
     )
-    res = await use_case.execute(id, dto)
+    res = await use_case.execute(company_id, dto)
     return CompanyDocument(
         data=CompanyResource(
             id=res.id,
@@ -167,13 +170,13 @@ async def update_company(
 
 
 @router.delete(
-    "/{id}",
+    "/{company_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Eliminar empresa",
 )
 async def delete_company(
-    id: str,
+    company_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "delete")),
     use_case: DeleteCompanyUseCase = Depends(get_delete_company_use_case),
 ) -> None:
-    await use_case.execute(id)
+    await use_case.execute(company_id)

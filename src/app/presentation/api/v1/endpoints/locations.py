@@ -2,6 +2,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, status
 
+from app.application.dtos.auth_dtos import UserResponse
 from app.application.dtos.location_dtos import (
     CreateLocationRequest as CreateLocationDTO,
 )
@@ -29,8 +30,8 @@ from app.composition.container import (
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
-    get_current_active_user,
     require_permission,
+    require_tenant_read,
 )
 from app.presentation.api.v1.schemas.location import (
     CreateLocationRequest,
@@ -87,7 +88,7 @@ async def create_location(
 )
 async def get_location_tree(
     company_id: str,
-    current_user: Any = Depends(get_current_active_user),
+    current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetLocationTreeUseCase = Depends(provide_location_tree_use_case),
 ) -> LocationTreeDocument:
     tree = await use_case.execute(company_id)
@@ -107,17 +108,17 @@ async def get_location_tree(
 
 
 @router.get(
-    "/{id}",
+    "/{location_id}",
     response_model=LocationDocument,
     summary="Obtener ubicación por ID",
 )
 async def get_location(
     company_id: str,
-    id: str,
-    current_user: Any = Depends(get_current_active_user),
+    location_id: str,
+    current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetLocationUseCase = Depends(provide_location_use_case),
 ) -> LocationDocument:
-    res = await use_case.execute(company_id, id)
+    res = await use_case.execute(company_id, location_id)
     return LocationDocument(
         data=LocationResource(
             id=res.id,
@@ -133,13 +134,13 @@ async def get_location(
 
 
 @router.patch(
-    "/{id}",
+    "/{location_id}",
     response_model=LocationDocument,
     summary="Actualizar ubicación",
 )
 async def update_location(
     company_id: str,
-    id: str,
+    location_id: str,
     request: UpdateLocationRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateLocationUseCase = Depends(get_update_location_use_case),
@@ -150,7 +151,7 @@ async def update_location(
         parent_id=request.data.attributes.parent_id,
         descripcion=request.data.attributes.descripcion,
     )
-    res = await use_case.execute(company_id, id, dto)
+    res = await use_case.execute(company_id, location_id, dto)
     return LocationDocument(
         data=LocationResource(
             id=res.id,
@@ -166,31 +167,31 @@ async def update_location(
 
 
 @router.delete(
-    "/{id}",
+    "/{location_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Eliminar ubicación",
 )
 async def delete_location(
     company_id: str,
-    id: str,
+    location_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "delete")),
     use_case: DeleteLocationUseCase = Depends(get_delete_location_use_case),
 ) -> None:
-    await use_case.execute(company_id, id)
+    await use_case.execute(company_id, location_id)
 
 
 @router.get(
-    "/{id}/children",
+    "/{location_id}/children",
     response_model=LocationListDocument,
     summary="Obtener ubicaciones hijas directas",
 )
 async def get_location_children(
     company_id: str,
-    id: str,
-    current_user: Any = Depends(get_current_active_user),
+    location_id: str,
+    current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetLocationChildrenUseCase = Depends(provide_location_children_use_case),
 ) -> LocationListDocument:
-    children = await use_case.execute(company_id, id)
+    children = await use_case.execute(company_id, location_id)
     return LocationListDocument(
         data=[
             LocationResource(
