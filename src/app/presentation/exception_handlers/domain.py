@@ -5,7 +5,9 @@ from app.domain.exceptions import (
     AssetCodeExistsError,
     AssetNotFoundError,
     AssetSerialExistsError,
+    CompanyAlreadyCancelledError,
     CompanyNotFoundError,
+    CompanyNotSuspendedError,
     CompanySlugExistsError,
     DomainException,
     EmptyCompanyNameError,
@@ -112,6 +114,14 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     InvalidSlugError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY, 
         "ERR_INVALID_SLUG"
+    ),
+    CompanyAlreadyCancelledError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_COMPANY_ALREADY_CANCELLED",
+    ),
+    CompanyNotSuspendedError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_COMPANY_NOT_SUSPENDED",
     ),
     EmptyCompanyNameError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY, 
