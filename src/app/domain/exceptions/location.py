@@ -1,3 +1,5 @@
+"""Excepciones del módulo de ubicaciones."""
+
 from app.domain.exceptions.base import DomainException
 
 
@@ -20,6 +22,14 @@ class LocationCircularReferenceError(LocationException):
 
 
 class LocationInvalidTypeHierarchyError(LocationException):
-    """Lanzada cuando se intenta establecer una relación de jerarquía inválida entre tipos de ubicación."""
+    """Lanzada cuando se intenta establecer una relación de jerarquía inválida
+    entre tipos de ubicación.
+    """
+
+    pass
+
+
+class EmptyLocationNameError(LocationException):
+    """Lanzada cuando se intenta asignar un nombre vacío a una ubicación."""
 
     pass
