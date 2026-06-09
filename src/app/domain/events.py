@@ -1,3 +1,5 @@
+"""Eventos de dominio del sistema GEMA."""
+
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -8,7 +10,14 @@ _EVENT_REGISTRY: dict[str, type["DomainEvent"]] = {}
 
 
 def auto_register(cls: type["DomainEvent"]) -> type["DomainEvent"]:
-    """Decorador que registra un DomainEvent en el _EVENT_REGISTRY para su reconstrucción."""
+    """Decorador que registra un DomainEvent en el _EVENT_REGISTRY para su reconstrucción.
+
+    Args:
+        cls: La clase DomainEvent a registrar.
+
+    Returns:
+        La misma clase sin modificar (decorador de identidad).
+    """
     _EVENT_REGISTRY[cls.__name__] = cls
     return cls
 
@@ -110,3 +119,98 @@ class PasswordResetCompleted(DomainEvent):
 
     user_id: str
     email: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class AssetCreated(DomainEvent):
+    """Evento emitido cuando se crea un nuevo activo en el sistema."""
+
+    asset_id: str
+    empresa_id: str
+    codigo_activo: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class AssetMaintenanceStarted(DomainEvent):
+    """Evento emitido cuando un activo pasa a estado de mantenimiento."""
+
+    asset_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class AssetDecommissioned(DomainEvent):
+    """Evento emitido cuando un activo es dado de baja."""
+
+    asset_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class AssetPutInService(DomainEvent):
+    """Evento emitido cuando un activo vuelve a estado operativo."""
+
+    asset_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class AssetOutOfService(DomainEvent):
+    """Evento emitido cuando un activo pasa a fuera de servicio."""
+
+    asset_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class AssetLocationChanged(DomainEvent):
+    """Evento emitido cuando un activo cambia de ubicación."""
+
+    asset_id: str
+    previous_location_id: str | None
+    new_location_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class LocationCreated(DomainEvent):
+    """Evento emitido cuando se crea una nueva ubicación."""
+
+    location_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class LocationMoved(DomainEvent):
+    """Evento emitido cuando una ubicación cambia de padre."""
+
+    location_id: str
+    previous_parent_id: str | None
+    new_parent_id: str | None
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class CompanySuspended(DomainEvent):
+    """Evento emitido cuando una empresa es suspendida."""
+
+    company_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class CompanyActivated(DomainEvent):
+    """Evento emitido cuando una empresa suspendida es reactivada."""
+
+    company_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class CompanyCancelled(DomainEvent):
+    """Evento emitido cuando una empresa es cancelada definitivamente."""
+
+    company_id: str
