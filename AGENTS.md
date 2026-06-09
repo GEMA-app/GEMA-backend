@@ -105,7 +105,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   ├── entities/                    # Paquete modular de entidades
 │   │   │   ├── __init__.py              # Exporta User, Company, Role, Permission, Asset, Location
 │   │   │   ├── user.py                  # Entidad User con empresa_id, nombre, teléfono y roles asignados
-│   │   │   ├── preferences.py           # Entidad UserPreference (método change_theme(), themes, pk)
+│   │   │   ├── preference.py           # Entidad UserPreference (método change_theme(), themes, pk)
 │   │   │   ├── company.py               # Entidad Company
 │   │   │   ├── role.py                  # Entidad Role
 │   │   │   ├── permission.py            # Entidad Permission (Value Object)
@@ -114,11 +114,11 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   ├── exceptions/                  # Paquete modular de excepciones del dominio
 │   │   │   ├── __init__.py              # Re-exporta todas las excepciones para retrocompatibilidad
 │   │   │   ├── base.py                  # Clase base DomainException
-│   │   │   └── auth.py, company.py, role.py, permission.py, asset.py, location.py, preferences.py
+│   │   │   └── auth.py, company.py, role.py, permission.py, asset.py, location.py, preference.py
 │   │   └── value_objects/               # Paquete modular de objetos de valor
 │   │       ├── __init__.py              # Re-exporta todos los value objects
-│   │       ├── credentials.py           # Email, PlainPassword, HashedPassword
-│   │       ├── identifiers.py           # UserId, CompanyId, RoleId, AssetId, LocationId
+│   │       ├── credential.py           # Email, PlainPassword, HashedPassword
+│   │       ├── identifier.py           # UserId, CompanyId, RoleId, AssetId, LocationId
 │   │       └── slug.py                  # Slug URL-friendly para empresas
 │   ├── application/
 │   │   ├── dtos/                        # Paquete modular de DTOs
@@ -167,7 +167,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   │       ├── role.py              # RoleModel, PermissionModel, RoleUserModel
 │   │   │       ├── asset.py             # AssetModel
 │   │   │       ├── location.py          # LocationModel (autocontrol de jerarquía)
-│   │   │       ├── preferences.py       # UserPreferenceModel (modelo ORM de preferencias)
+│   │   │       ├── preference.py       # UserPreferenceModel (modelo ORM de preferencias)
 │   │   │       └── catalog.py           # Modelos de catálogo (placeholder)
 │   │   ├── repositories/                # Adapters concretos de persistencia
 │   │   │   ├── base.py                  # SqlAlchemyRepository genérico con pk_column como atributo de clase
@@ -263,6 +263,12 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 | `LocationInvalidTypeHierarchyError`| 422 | Tipo de ubicación inconsistente con su padre |
 | `PreferenceNotFoundError` | 404 | Preferencias de usuario no encontradas |
 | `PreferenceThemeInvalidError` | 422 | El tema visual especificado no es válido |
+| `AssetInvalidTransitionError` | 422 | Transición de estado no permitida |
+| `EmptySerialError` | 422 | Número de serie vacío |
+| `EmptyAssetCodeError` | 422 | Código de activo vacío |
+| `CompanyAlreadyCancelledError` | 422 | Empresa ya cancelada |
+| `CompanyNotSuspendedError` | 422 | Empresa no está suspendida |
+| `EmptyLocationNameError` | 422 | Nombre de ubicación vacío |
 
 ---
 
