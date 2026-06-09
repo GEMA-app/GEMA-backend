@@ -62,19 +62,19 @@ class UpdateLocationUseCase:
                             f"La ubicación padre con ID '{request.parent_id}' no existe."
                         )
                     new_parent_id = p_id
-                    parent_tipo = parent_loc.tipo
+                    parent_type = parent_loc.tipo
                 else:
                     new_parent_id = None
-                    parent_tipo = None
+                    parent_type = None
             else:
                 if location.parent_id:
                     parent_loc = await self.uow.locations.get_by_id(location.parent_id, company_id)
-                    parent_tipo = parent_loc.tipo if parent_loc else None
+                    parent_type = parent_loc.tipo if parent_loc else None
                 else:
-                    parent_tipo = None
+                    parent_type = None
 
             # Validar jerarquía de tipos
-            Location.validate_hierarchy(new_tipo, parent_tipo)
+            Location.validate_hierarchy(new_tipo, parent_type)
 
             if request.nombre is not None:
                 if not request.nombre.strip():

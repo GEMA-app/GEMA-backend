@@ -24,7 +24,7 @@ class CreateLocationUseCase:
 
         async with self.uow:
             parent_id = None
-            parent_tipo = None
+            parent_type = None
             if request.parent_id:
                 parent_id = LocationId.from_string(request.parent_id)
                 parent_loc = await self.uow.locations.get_by_id(parent_id, company_id)
@@ -32,10 +32,10 @@ class CreateLocationUseCase:
                     raise LocationNotFoundError(
                         f"La ubicación padre con ID '{request.parent_id}' no existe."
                     )
-                parent_tipo = parent_loc.tipo
+                parent_type = parent_loc.tipo
 
             # Validar jerarquía de tipos
-            Location.validate_hierarchy(tipo, parent_tipo)
+            Location.validate_hierarchy(tipo, parent_type)
 
             location = Location(
                 id=LocationId(uuid.uuid4()),
