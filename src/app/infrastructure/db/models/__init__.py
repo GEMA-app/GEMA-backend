@@ -4,7 +4,7 @@ from app.infrastructure.db.models.company import CompanyModel, SubscriptionPlanM
 from app.infrastructure.db.models.location import LocationModel
 from app.infrastructure.db.models.role import PermissionModel, RoleModel, RoleUserModel
 from app.infrastructure.db.models.user import UserModel
-from app.infrastructure.db.models.preferences import UserPreferenceModel
+from app.infrastructure.db.models.preference import UserPreferenceModel
 
 __all__ = [
     "UserModel",

@@ -6,7 +6,7 @@ from app.domain.entities import UserPreference
 from app.domain.enums import Theme
 from app.domain.events import DomainEvent
 from app.domain.value_objects import CompanyId, UserId
-from app.infrastructure.db.models.preferences import UserPreferenceModel
+from app.infrastructure.db.models.preference import UserPreferenceModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
 
 

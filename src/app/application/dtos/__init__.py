@@ -17,6 +17,7 @@ from app.application.dtos.location_dtos import (
     LocationTreeResponse,
     UpdateLocationRequest,
 )
+from app.application.dtos.preference_dtos import PreferenceResponse, UpdatePreferenceRequest
 from app.application.dtos.role_dtos import (
     AssignRoleRequest,
     CreateRoleRequest,
@@ -46,4 +47,6 @@ __all__ = [
     "UpdateLocationRequest",
     "LocationResponse",
     "LocationTreeResponse",
+    "PreferenceResponse",
+    "UpdatePreferenceRequest",
 ]

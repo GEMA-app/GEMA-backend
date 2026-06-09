@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends
 
 from app.application.dtos.auth_dtos import UserResponse
-from app.application.dtos.preferences_dtos import (
+from app.application.dtos.preference_dtos import (
     UpdatePreferenceRequest as UpdatePreferenceDTO,
 )
 from app.application.use_cases.preferences import (
