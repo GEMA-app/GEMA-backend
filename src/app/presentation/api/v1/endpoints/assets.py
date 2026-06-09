@@ -121,17 +121,17 @@ async def list_assets(
 
 
 @router.get(
-    "/{id}",
+    "/{asset_id}",
     response_model=AssetDocument,
     summary="Obtener activo por ID",
 )
 async def get_asset(
     company_id: str,
-    id: str,
+    asset_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "view")),
     use_case: GetAssetUseCase = Depends(provide_asset_use_case),
 ) -> AssetDocument:
-    res = await use_case.execute(company_id, id)
+    res = await use_case.execute(company_id, asset_id)
     return AssetDocument(
         data=AssetResource(
             id=res.id,
@@ -151,13 +151,13 @@ async def get_asset(
 
 
 @router.patch(
-    "/{id}",
+    "/{asset_id}",
     response_model=AssetDocument,
     summary="Actualizar activo",
 )
 async def update_asset(
     company_id: str,
-    id: str,
+    asset_id: str,
     request: UpdateAssetRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "edit")),
     use_case: UpdateAssetUseCase = Depends(get_update_asset_use_case),
@@ -171,7 +171,7 @@ async def update_asset(
         valor_monetario=request.data.attributes.valor_monetario,
         moneda=request.data.attributes.moneda,
     )
-    res = await use_case.execute(company_id, id, dto)
+    res = await use_case.execute(company_id, asset_id, dto)
     return AssetDocument(
         data=AssetResource(
             id=res.id,
@@ -191,14 +191,14 @@ async def update_asset(
 
 
 @router.delete(
-    "/{id}",
+    "/{asset_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Eliminar activo",
 )
 async def delete_asset(
     company_id: str,
-    id: str,
+    asset_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "delete")),
     use_case: DeleteAssetUseCase = Depends(get_delete_asset_use_case),
 ) -> None:
-    await use_case.execute(company_id, id)
+    await use_case.execute(company_id, asset_id)
