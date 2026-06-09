@@ -92,16 +92,18 @@ class Role(EventProducer):
         Returns:
             True si el rol tiene el permiso solicitado, False en caso contrario.
         """
+        action_map = {
+            "view": "can_view",
+            "create": "can_create",
+            "edit": "can_edit",
+            "delete": "can_delete",
+        }
+        attr = action_map.get(action)
+        if attr is None:
+            return False
         for p in self.permisos:
             if p.module == module:
-                if action == "view":
-                    return p.can_view
-                elif action == "create":
-                    return p.can_create
-                elif action == "edit":
-                    return p.can_edit
-                elif action == "delete":
-                    return p.can_delete
+                return getattr(p, attr)
         return False
 
     def grant(
