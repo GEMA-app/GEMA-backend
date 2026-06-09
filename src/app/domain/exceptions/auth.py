@@ -1,5 +1,6 @@
+"""Excepciones del módulo de autenticación."""
+
 from app.domain.exceptions.base import DomainException
-from app.domain.exceptions.validation import ValidationException
 
 
 class AuthException(DomainException):
@@ -44,7 +45,7 @@ class InvalidTokenError(AuthException):
     pass
 
 
-class EmptyHashedPasswordError(AuthException, ValidationException):
+class EmptyHashedPasswordError(AuthException):
     """Se lanza cuando el hash de la contraseña está vacío."""
 
     pass
