@@ -277,31 +277,94 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 | `GET` | `/v1/auth/me` | Perfil del usuario actual | Bearer | - |
 | `POST` | `/v1/companies` | Crear una nueva empresa | Bearer | `admin:create` |
 | `GET` | `/v1/companies` | Listar empresas | Bearer | - |
-| `GET` | `/v1/companies/{id}` | Obtener una empresa | Bearer | - |
-| `PATCH` | `/v1/companies/{id}` | Actualizar datos de empresa | Bearer | `admin:edit` |
-| `DELETE` | `/v1/companies/{id}` | Eliminar empresa | Bearer | `admin:delete` |
+| `GET` | `/v1/companies/{company_id}` | Obtener una empresa | Bearer | - |
+| `PATCH` | `/v1/companies/{company_id}` | Actualizar datos de empresa | Bearer | `admin:edit` |
+| `DELETE` | `/v1/companies/{company_id}` | Eliminar empresa | Bearer | `admin:delete` |
 | `POST` | `/v1/companies/{cid}/roles` | Crear nuevo rol | Bearer | `admin:create` |
 | `GET` | `/v1/companies/{cid}/roles` | Listar todos los roles | Bearer | - |
-| `GET` | `/v1/companies/{cid}/roles/{id}` | Obtener detalles de un rol | Bearer | - |
-| `PATCH` | `/v1/companies/{cid}/roles/{id}`| Actualizar rol y permisos | Bearer | `admin:edit` |
-| `DELETE` | `/v1/companies/{cid}/roles/{id}`| Eliminar un rol | Bearer | `admin:delete` |
-| `POST` | `/v1/companies/{cid}/roles/{id}/assign`| Asignar rol a usuario | Bearer | `admin:edit` |
-| `DELETE`| `/v1/companies/{cid}/roles/{id}/revoke`| Revocar rol a usuario (query: `usuario_id`)| Bearer | `admin:edit` |
+| `GET` | `/v1/companies/{cid}/roles/{role_id}` | Obtener detalles de un rol | Bearer | - |
+| `PATCH` | `/v1/companies/{cid}/roles/{role_id}`| Actualizar rol y permisos | Bearer | `admin:edit` |
+| `DELETE` | `/v1/companies/{cid}/roles/{role_id}`| Eliminar un rol | Bearer | `admin:delete` |
+| `POST` | `/v1/companies/{cid}/roles/{role_id}/assign`| Asignar rol a usuario | Bearer | `admin:edit` |
+| `DELETE`| `/v1/companies/{cid}/roles/{role_id}/revoke`| Revocar rol a usuario (query: `usuario_id`)| Bearer | `admin:edit` |
 | `POST` | `/v1/companies/{cid}/assets` | Crear un activo físico | Bearer | `assets:create` |
 | `GET` | `/v1/companies/{cid}/assets` | Listar activos (filtros: `estado`, `ubicacion_id`)| Bearer | `assets:view` |
-| `GET` | `/v1/companies/{cid}/assets/{id}` | Obtener detalles de un activo | Bearer | `assets:view` |
-| `PATCH` | `/v1/companies/{cid}/assets/{id}` | Actualizar datos de activo | Bearer | `assets:edit` |
-| `DELETE` | `/v1/companies/{cid}/assets/{id}` | Eliminar activo | Bearer | `assets:delete` |
+| `GET` | `/v1/companies/{cid}/assets/{asset_id}` | Obtener detalles de un activo | Bearer | `assets:view` |
+| `PATCH` | `/v1/companies/{cid}/assets/{asset_id}` | Actualizar datos de activo | Bearer | `assets:edit` |
+| `DELETE` | `/v1/companies/{cid}/assets/{asset_id}` | Eliminar activo | Bearer | `assets:delete` |
 | `POST` | `/v1/companies/{cid}/locations` | Crear ubicación jerárquica | Bearer | `admin:create` |
 | `GET` | `/v1/companies/{cid}/locations` | Obtener árbol de ubicaciones completo | Bearer | - |
-| `GET` | `/v1/companies/{cid}/locations/{id}`| Obtener detalles de ubicación | Bearer | - |
-| `PATCH` | `/v1/companies/{cid}/locations/{id}`| Actualizar ubicación | Bearer | `admin:edit` |
-| `DELETE` | `/v1/companies/{cid}/locations/{id}`| Eliminar ubicación | Bearer | `admin:delete` |
-| `GET` | `/v1/companies/{cid}/locations/{id}/children`| Listar ubicaciones hijas directas | Bearer | - |
+| `GET` | `/v1/companies/{cid}/locations/{location_id}`| Obtener detalles de ubicación | Bearer | - |
+| `PATCH` | `/v1/companies/{cid}/locations/{location_id}`| Actualizar ubicación | Bearer | `admin:edit` |
+| `DELETE` | `/v1/companies/{cid}/locations/{location_id}`| Eliminar ubicación | Bearer | `admin:delete` |
+| `GET` | `/v1/companies/{cid}/locations/{location_id}/children`| Listar ubicaciones hijas directas | Bearer | - |
 | `GET` | `/v1/companies/{cid}/me/preferences` | Obtener preferencias del usuario actual | Bearer | `preferencias:view` |
 | `PATCH` | `/v1/companies/{cid}/me/preferences` | Actualizar preferencias del usuario actual | Bearer | `preferencias:edit` |
 | `GET` | `/health/live` | Liveness probe | No | - |
 | `GET` | `/health/ready` | Readiness probe (DB + Redis) | No | - |
+
+### Convención de Seguridad
+
+#### 1. Validación de Tenant (UUID Normalization)
+
+Todos los endpoints que reciben `company_id` en el path DEBEN normalizar el UUID antes de compararlo con el tenant del usuario autenticado. Esto previene bypass por diferencias de formato (con/sin guiones, mayúsculas/minúsculas).
+
+```python
+# CORRECTO: Normalización vía UUID()
+if UUID(company_id) != UUID(user_empresa_id):
+    raise InsufficientPermissionsError("No tienes acceso a esta empresa")
+```
+
+La función `validate_tenant_access()` en `dependencies.py` implementa esta normalización y se usa en:
+
+- `require_tenant_read()` — endpoints GET que solo necesitan validación de tenant (sin RBAC)
+- `require_permission()` — endpoints que necesitan tenant + RBAC
+
+#### 2. Tres Patrones de Dependencia
+
+| Patrón | Función | Cuándo usarlo |
+|--------|---------|---------------|
+| **Platform** | `require_platform_permission(module, action)` | Endpoints SIN `company_id` en el path (ej: `POST /companies`) |
+| **Tenant + RBAC** | `require_permission(module, action)` | Endpoints CON `company_id` en el path que requieren permiso específico |
+| **Solo Tenant** | `require_tenant_read` | Endpoints GET que solo necesitan verificar acceso al tenant (sin RBAC) |
+
+#### 3. Nomenclatura de Parámetros de Path
+
+Todos los parámetros de ID en los paths DEBEN usar el nombre específico de la entidad:
+
+| Endpoint | Incorrecto | Correcto |
+|----------|-----------|----------|
+| `/companies/{id}` | `{id}` | `{company_id}` |
+| `/roles/{id}` | `{id}` | `{role_id}` |
+| `/assets/{id}` | `{id}` | `{asset_id}` |
+| `/locations/{id}` | `{id}` | `{location_id}` |
+| `/locations/{id}/children` | `{id}` | `{location_id}` |
+
+Esto elimina ambigüedad y previene errores de tipo IDOR.
+
+#### 4. Mapeo de IntegrityError a 409 Conflict
+
+Las violaciones de unicidad en PostgreSQL se capturan en `integrity_error_handler` (Presentation) y se mapean a excepciones de dominio con HTTP 409 Conflict. El handler usa doble mecanismo de parsing:
+
+1. `__cause__.constraint_name` — asyncpg expone el nombre directamente
+2. `str(exc.orig)` — fallback para todos los drivers
+
+#### 5. Type Hints Correctos
+
+- `require_permission()` retorna `UserResponse`, no `Any`
+- `get_current_active_user()` retorna `UserResponse`, no `Any`
+- `require_tenant_read()` retorna `UserResponse`, no `Any`
+
+#### 6. Endpoints GET sin RBAC pero con Tenant Check
+
+Los siguientes endpoints GET usan `require_tenant_read` en lugar de `require_permission` porque no requieren un permiso RBAC específico, pero SÍ necesitan validar que el usuario pertenece al tenant:
+
+- `GET /v1/companies/{company_id}`
+- `GET /v1/companies/{company_id}/locations`
+- `GET /v1/companies/{company_id}/locations/{location_id}`
+- `GET /v1/companies/{company_id}/locations/{location_id}/children`
+- `GET /v1/companies/{company_id}/roles`
+- `GET /v1/companies/{company_id}/roles/{role_id}`
 
 ---
 
