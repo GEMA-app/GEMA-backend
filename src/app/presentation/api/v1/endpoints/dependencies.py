@@ -1,7 +1,7 @@
 from typing import Any
 from uuid import UUID
 
-from fastapi import Depends
+from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.application.dtos.auth_dtos import UserResponse
@@ -11,6 +11,7 @@ from app.composition.container import get_authorization_service, provide_current
 from app.domain.enums import PermissionModule
 from app.domain.exceptions import InsufficientPermissionsError, InvalidUUIDError
 from app.domain.value_objects import CompanyId, UserId
+from app.infrastructure.cache.redis import redis_client
 
 security = HTTPBearer()
 
@@ -79,3 +80,49 @@ async def require_tenant_read(
     """Valida solo tenant access, sin RBAC (UUID normalization)."""
     validate_tenant_access(company_id, current_user.empresa_id)
     return current_user
+
+
+EMAIL_LUA_SCRIPT = """
+local current = redis.call('INCR', KEYS[1])
+if current == 1 then
+    redis.call('EXPIRE', KEYS[1], ARGV[1])
+end
+return current
+"""
+
+email_rate_limit_script = redis_client.register_script(EMAIL_LUA_SCRIPT)
+
+
+async def rate_limit_by_email(request: Request) -> None:
+    """Limita intentos por email en endpoints de autenticación."""
+    from fastapi import HTTPException, status
+    from redis.exceptions import RedisError
+
+
+    try:
+        body = await request.json()
+    except Exception:
+        return  # Fail-open
+
+    email = body.get("data", {}).get("attributes", {}).get("email", "")
+    if not email:
+        return
+
+    email_clean = str(email).lower().strip()
+    path = request.url.path.rstrip("/")
+
+    limit = 5
+    if path.endswith("/register"):
+        limit = 3
+
+    key = f"rate_limit:email:{email_clean}"
+    try:
+        current = await email_rate_limit_script(keys=[key], args=["60"])
+        if current > limit:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Has excedido el límite de {limit} solicitudes por minuto para este correo.",
+            )
+    except RedisError:
+        pass  # Fail-open
+

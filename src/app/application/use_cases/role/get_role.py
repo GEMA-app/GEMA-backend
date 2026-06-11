@@ -34,4 +34,5 @@ class GetRoleUseCase:
                     )
                     for p in role.permisos
                 ],
+                version=role.version,
             )

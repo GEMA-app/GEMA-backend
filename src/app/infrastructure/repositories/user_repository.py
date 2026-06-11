@@ -22,7 +22,11 @@ class SqlAlchemyUserRepository(
 
 
     async def get_by_email(self, email: Email) -> User | None:
-        """Busca un usuario por email globalmente en la base de datos."""
+        """Busca un usuario por email globalmente en la base de datos.
+
+        Nota: En el modelo SaaS actual, el email es único por tenant (uq_usuarios_empresa_email).
+        Esta búsqueda global es correcta para el flujo de login donde el tenant no se conoce a priori.
+        """
         stmt = select(UserModel).where(UserModel.email == email.value)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
@@ -31,7 +35,10 @@ class SqlAlchemyUserRepository(
         return self._to_entity(model)
 
     async def get_by_email_and_company(self, email: Email, empresa_id: CompanyId) -> User | None:
-        """Busca un usuario por email dentro de una empresa específica."""
+        """Busca un usuario por email dentro de una empresa específica.
+
+        NOTE: Reservado para flujo de invitación (Sprint futuro).
+        """
         stmt = select(UserModel).where(
             UserModel.email == email.value, UserModel.empresa_id == empresa_id.value
         )
@@ -40,6 +47,16 @@ class SqlAlchemyUserRepository(
         if not model:
             return None
         return self._to_entity(model)
+
+    async def get_by_id(self, id: UserId) -> User | None:
+        """Busca un usuario por ID.
+
+        Nota: El aislamiento de tenant (tenant isolation) para la búsqueda de usuario
+        por ID se garantiza en la capa de presentación (dependencies.py y endpoints)
+        mediante la validación de que el empresa_id del token JWT coincide con el de la petición,
+        o porque el ID consultado proviene directamente del token JWT ('sub').
+        """
+        return await super().get_by_id(id)
 
     def _to_model(self, entity: User) -> UserModel:
         return UserModel(

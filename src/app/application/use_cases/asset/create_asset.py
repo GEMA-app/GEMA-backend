@@ -63,4 +63,5 @@ class CreateAssetUseCase:
                 else None,
                 valor_monetario=asset.valor_monetario,
                 moneda=asset.moneda,
+                version=asset.version,
             )

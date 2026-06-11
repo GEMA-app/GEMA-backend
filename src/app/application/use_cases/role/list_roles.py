@@ -29,6 +29,7 @@ class ListRolesUseCase:
                         )
                         for p in r.permisos
                     ],
+                    version=r.version,
                 )
                 for r in roles
             ]

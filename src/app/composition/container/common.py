@@ -88,16 +88,26 @@ def get_password_hasher() -> PasswordHasherPort:
     return BcryptPasswordHasher()
 
 
+def create_token_service(redis_client: Redis) -> TokenServicePort:
+    """Crea una instancia pura del servicio de tokens JWT."""
+    return PyJwtTokenService(redis_client)
+
+
+def create_authorization_service(uow: UnitOfWorkPort) -> AuthorizationService:
+    """Crea una instancia pura del servicio de autorización RBAC."""
+    return RbacAuthorizationService(uow)
+
+
 async def get_token_service(redis: Redis = Depends(get_redis)) -> TokenServicePort:
     """Fábrica de dependencias para el servicio de tokens JWT con Redis."""
-    return PyJwtTokenService(redis)
+    return create_token_service(redis)
 
 
 async def get_authorization_service(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> AuthorizationService:
     """Fábrica de dependencias para el servicio de autorización RBAC."""
-    return RbacAuthorizationService(uow)
+    return create_authorization_service(uow)
 
 
 def get_db_engine() -> AsyncEngine:
@@ -107,4 +117,5 @@ def get_db_engine() -> AsyncEngine:
 
 def get_redis_client() -> Redis:
     """Devuelve el cliente global de Redis."""
-    return redis_client  # type: ignore[no-any-return]
+    from typing import cast
+    return cast(Redis, redis_client)

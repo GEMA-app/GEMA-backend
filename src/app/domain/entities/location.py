@@ -30,6 +30,7 @@ class Location(EventProducer):
     nombre: str
     tipo: LocationType
     descripcion: str | None = None
+    version: int = 1
     created_at: datetime | None = None
     updated_at: datetime | None = None
     _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)

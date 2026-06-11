@@ -73,6 +73,7 @@ async def create_asset(
                 fecha_adquisicion=res.fecha_adquisicion,
                 valor_monetario=res.valor_monetario,
                 moneda=res.moneda,
+                version=res.version,
             ),
         )
     )
@@ -116,6 +117,7 @@ async def list_assets(
                     fecha_adquisicion=a.fecha_adquisicion,
                     valor_monetario=a.valor_monetario,
                     moneda=a.moneda,
+                    version=a.version,
                 ),
             )
             for a in assets
@@ -149,6 +151,7 @@ async def get_asset(
                 fecha_adquisicion=res.fecha_adquisicion,
                 valor_monetario=res.valor_monetario,
                 moneda=res.moneda,
+                version=res.version,
             ),
         )
     )
@@ -176,6 +179,7 @@ async def update_asset(
         fecha_adquisicion=sent.get("fecha_adquisicion") if "fecha_adquisicion" in sent else None,
         valor_monetario=sent.get("valor_monetario") if "valor_monetario" in sent else None,
         moneda=sent.get("moneda") if "moneda" in sent else None,
+        version=sent.get("version") if "version" in sent else None,
         _fields_set=frozenset(sent.keys()),
     )
     res = await use_case.execute(company_id, asset_id, dto)
@@ -192,6 +196,7 @@ async def update_asset(
                 fecha_adquisicion=res.fecha_adquisicion,
                 valor_monetario=res.valor_monetario,
                 moneda=res.moneda,
+                version=res.version,
             ),
         )
     )

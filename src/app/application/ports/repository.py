@@ -16,7 +16,10 @@ class UserRepositoryPort(Protocol):
         ...
 
     async def get_by_email_and_company(self, email: Email, empresa_id: CompanyId) -> User | None:
-        """Busca un usuario por email dentro de una empresa específica."""
+        """Busca un usuario por email dentro de una empresa específica.
+
+        NOTE: Reservado para flujo de invitación (Sprint futuro).
+        """
         ...
 
     async def get_by_id(self, id: UserId) -> User | None:

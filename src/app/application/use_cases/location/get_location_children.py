@@ -30,6 +30,7 @@ class GetLocationChildrenUseCase:
                     nombre=c.nombre,
                     tipo=c.tipo.value,
                     descripcion=c.descripcion,
+                    version=c.version,
                 )
                 for c in children
             ]

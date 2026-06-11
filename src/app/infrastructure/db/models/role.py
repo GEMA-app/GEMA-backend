@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.domain.enums import PermissionModule
 from app.infrastructure.db.base import Base
-from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
+from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin, VersionMixin
 
 if TYPE_CHECKING:
     from app.infrastructure.db.models.user import UserModel
@@ -53,10 +53,11 @@ class PermissionModel(TenantMixin, TimestampMixin, Base):
     rol: Mapped["RoleModel"] = relationship("RoleModel", back_populates="permisos")
 
 
-class RoleModel(TenantMixin, TimestampMixin, Base):
+class RoleModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla de roles."""
 
     __tablename__ = "roles"
+    __mapper_args__ = {"version_id_col": "version"}
     __table_args__ = (UniqueConstraint("empresa_id", "nombre", name="uq_roles_empresa_nombre"),)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

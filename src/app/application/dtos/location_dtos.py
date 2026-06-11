@@ -17,6 +17,7 @@ class UpdateLocationRequest:
     tipo: str | None = None
     parent_id: str | None = None
     descripcion: str | None = None
+    version: int | None = None
     _fields_set: frozenset[str] = field(default_factory=frozenset, repr=False, compare=False)
 
     def __post_init__(self) -> None:
@@ -36,6 +37,7 @@ class LocationResponse:
     nombre: str
     tipo: str
     descripcion: str | None
+    version: int
 
 
 @dataclass(frozen=True)

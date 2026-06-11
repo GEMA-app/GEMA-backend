@@ -23,18 +23,19 @@ from app.domain.exceptions import (
     InvalidSlugError,
     InvalidTokenError,
     InvalidUUIDError,
+    LastAdminRevocationError,
     LocationCircularReferenceError,
     LocationInvalidTypeHierarchyError,
     LocationNotFoundError,
+    PreferenceNotFoundError,
+    PreferenceThemeInvalidError,
     RoleNameExistsError,
     RoleNotFoundError,
+    StaleDataError,
     UserAlreadyExistsError,
     UserInactiveError,
     ValidationException,
     WeakPasswordError,
-    PreferenceNotFoundError,
-    PreferenceThemeInvalidError,
-    LastAdminRevocationError,
 )
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers.base import jsonapi_response
@@ -45,63 +46,63 @@ from app.presentation.exception_handlers.base import jsonapi_response
 # ---------------------------------------------------------------------------
 _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     WeakPasswordError: (
-        status.HTTP_422_UNPROCESSABLE_ENTITY, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_WEAK_PASSWORD"
     ),
     InvalidEmailError: (
-        status.HTTP_422_UNPROCESSABLE_ENTITY, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_INVALID_EMAIL"
     ),
     UserAlreadyExistsError: (
-        status.HTTP_409_CONFLICT, 
+        status.HTTP_409_CONFLICT,
         "ERR_USER_ALREADY_EXISTS"
     ),
     InvalidCredentialsError: (
-        status.HTTP_401_UNAUTHORIZED, 
+        status.HTTP_401_UNAUTHORIZED,
         "ERR_INVALID_CREDENTIALS"
     ),
     UserInactiveError: (
-        status.HTTP_403_FORBIDDEN, 
+        status.HTTP_403_FORBIDDEN,
         "ERR_USER_INACTIVE"
     ),
     InvalidTokenError: (
-        status.HTTP_401_UNAUTHORIZED, 
+        status.HTTP_401_UNAUTHORIZED,
         "ERR_INVALID_TOKEN"
     ),
     CompanyNotFoundError: (
-        status.HTTP_404_NOT_FOUND, 
+        status.HTTP_404_NOT_FOUND,
         "ERR_COMPANY_NOT_FOUND"
     ),
     CompanySlugExistsError: (
-        status.HTTP_409_CONFLICT, 
+        status.HTTP_409_CONFLICT,
         "ERR_COMPANY_SLUG_EXISTS"
     ),
     RoleNotFoundError: (
-        status.HTTP_404_NOT_FOUND, 
+        status.HTTP_404_NOT_FOUND,
         "ERR_ROLE_NOT_FOUND"
     ),
     RoleNameExistsError: (
-        status.HTTP_409_CONFLICT, 
+        status.HTTP_409_CONFLICT,
         "ERR_ROLE_NAME_EXISTS"
     ),
     InsufficientPermissionsError: (
-        status.HTTP_403_FORBIDDEN, 
+        status.HTTP_403_FORBIDDEN,
         "ERR_INSUFFICIENT_PERMISSIONS"
     ),
     AssetNotFoundError: (
-        status.HTTP_404_NOT_FOUND, 
+        status.HTTP_404_NOT_FOUND,
         "ERR_ASSET_NOT_FOUND"
     ),
     AssetCodeExistsError: (
-        status.HTTP_409_CONFLICT, 
+        status.HTTP_409_CONFLICT,
         "ERR_ASSET_CODE_EXISTS"
     ),
     AssetSerialExistsError: (
-        status.HTTP_409_CONFLICT, 
+        status.HTTP_409_CONFLICT,
         "ERR_ASSET_SERIAL_EXISTS"
     ),
     LocationNotFoundError: (
-        status.HTTP_404_NOT_FOUND, 
+        status.HTTP_404_NOT_FOUND,
         "ERR_LOCATION_NOT_FOUND"
     ),
     LocationCircularReferenceError: (
@@ -113,11 +114,11 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         "ERR_LOCATION_INVALID_TYPE_HIERARCHY",
     ),
     InvalidUUIDError: (
-        status.HTTP_422_UNPROCESSABLE_ENTITY, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_INVALID_UUID"
     ),
     InvalidSlugError: (
-        status.HTTP_422_UNPROCESSABLE_ENTITY, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_INVALID_SLUG"
     ),
     CompanyAlreadyCancelledError: (
@@ -129,15 +130,15 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         "ERR_COMPANY_NOT_SUSPENDED",
     ),
     EmptyCompanyNameError: (
-        status.HTTP_422_UNPROCESSABLE_ENTITY, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_EMPTY_COMPANY_NAME"
     ),
     EmptyRoleNameError: (
-        status.HTTP_422_UNPROCESSABLE_ENTITY, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_EMPTY_ROLE_NAME"
     ),
     EmptyHashedPasswordError: (
-        status.HTTP_422_UNPROCESSABLE_ENTITY, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_EMPTY_HASHED_PASSWORD"
     ),
     ValidationException: (
@@ -145,11 +146,11 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         "ERR_VALIDATION",
     ),
     PreferenceNotFoundError: (
-        status.HTTP_404_NOT_FOUND, 
+        status.HTTP_404_NOT_FOUND,
         "ERR_PREFERENCE_NOT_FOUND"
     ),
     PreferenceThemeInvalidError: (
-        status.HTTP_422_UNPROCESSABLE_ENTITY, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_PREFERENCE_THEME_INVALID"
     ),
     AssetInvalidTransitionError: (
@@ -171,6 +172,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     LastAdminRevocationError: (
         status.HTTP_403_FORBIDDEN,
         "ERR_LAST_ADMIN_REVOCATION",
+    ),
+    StaleDataError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_STALE_DATA",
     ),
 }
 

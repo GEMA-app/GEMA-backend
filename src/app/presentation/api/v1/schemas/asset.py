@@ -17,6 +17,7 @@ class AssetAttributes(BaseModel):
     fecha_adquisicion: str | None = None
     valor_monetario: float | None = None
     moneda: str = "USD"
+    version: int
 
 
 class AssetResource(BaseModel):
@@ -67,6 +68,7 @@ class UpdateAssetAttributes(BaseModel):
     fecha_adquisicion: date | None = None
     valor_monetario: float | None = None
     moneda: str | None = None
+    version: int | None = None
 
 
 class UpdateAssetResource(BaseModel):

@@ -40,4 +40,5 @@ class CreateCompanyUseCase:
                 estado=company.estado.value,
                 plan_id=str(company.plan_id) if company.plan_id else None,
                 trial_hasta=company.trial_hasta.isoformat() if company.trial_hasta else None,
+                version=company.version,
             )

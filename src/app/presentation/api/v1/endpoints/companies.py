@@ -71,6 +71,7 @@ async def create_company(
                 email_contacto=res.email_contacto,
                 plan_id=res.plan_id,
                 trial_hasta=res.trial_hasta,
+                version=res.version,
             ),
         )
     )
@@ -100,6 +101,7 @@ async def list_companies(
                     email_contacto=c.email_contacto,
                     plan_id=c.plan_id,
                     trial_hasta=c.trial_hasta,
+                    version=c.version,
                 ),
             )
             for c in companies
@@ -130,6 +132,7 @@ async def get_company(
                 email_contacto=res.email_contacto,
                 plan_id=res.plan_id,
                 trial_hasta=res.trial_hasta,
+                version=res.version,
             ),
         )
     )
@@ -153,6 +156,7 @@ async def update_company(
         rif=sent.get("rif") if "rif" in sent else None,
         email_contacto=sent.get("email_contacto") if "email_contacto" in sent else None,
         estado=attrs.estado.value if ("estado" in sent and attrs.estado) else None,
+        version=sent.get("version") if "version" in sent else None,
         _fields_set=frozenset(sent.keys()),
     )
     res = await use_case.execute(company_id, dto)
@@ -167,6 +171,7 @@ async def update_company(
                 email_contacto=res.email_contacto,
                 plan_id=res.plan_id,
                 trial_hasta=res.trial_hasta,
+                version=res.version,
             ),
         )
     )

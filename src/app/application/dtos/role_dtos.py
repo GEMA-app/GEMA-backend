@@ -22,6 +22,7 @@ class UpdateRoleRequest:
     nombre: str | None = None
     descripcion: str | None = None
     permisos: list[PermissionDTO] | None = None
+    version: int | None = None
     _fields_set: frozenset[str] = field(default_factory=frozenset, repr=False, compare=False)
 
     def __post_init__(self) -> None:
@@ -45,3 +46,4 @@ class RoleResponse:
     nombre: str
     descripcion: str
     permisos: list[PermissionDTO]
+    version: int

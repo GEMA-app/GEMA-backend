@@ -17,6 +17,7 @@ class RoleAttributes(BaseModel):
     nombre: str
     descripcion: str
     permisos: list[PermissionAttributes] = []
+    version: int
 
 
 class RoleResource(BaseModel):
@@ -58,6 +59,7 @@ class UpdateRoleAttributes(BaseModel):
     nombre: str | None = None
     descripcion: str | None = None
     permisos: list[PermissionAttributes] | None = None
+    version: int | None = None
 
 
 class UpdateRoleResource(BaseModel):

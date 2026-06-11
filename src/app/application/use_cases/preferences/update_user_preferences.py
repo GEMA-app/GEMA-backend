@@ -8,8 +8,7 @@ from app.domain.value_objects import CompanyId, UserId
 
 
 class UpdateUserPreferencesUseCase:
-    """
-    Actualiza las preferencias del usuario autenticado.
+    """Actualiza las preferencias del usuario autenticado.
     Si no existen, crea un registro con valores por defecto (upsert).
     """
 

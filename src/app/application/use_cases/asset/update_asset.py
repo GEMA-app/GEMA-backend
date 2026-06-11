@@ -4,6 +4,7 @@ from app.domain.enums import AssetStatus
 from app.domain.exceptions import (
     AssetNotFoundError,
     LocationNotFoundError,
+    StaleDataError,
     ValidationException,
 )
 from app.domain.value_objects import AssetId, CompanyId, LocationId
@@ -28,6 +29,11 @@ class UpdateAssetUseCase:
             if not asset:
                 raise AssetNotFoundError(
                     f"El activo con ID '{asset_id_str}' no existe en esta empresa."
+                )
+
+            if request.version is not None and request.version != asset.version:
+                raise StaleDataError(
+                    f"Conflicto de versión para activo: se esperaba {request.version}, la actual es {asset.version}."
                 )
 
             if 'ubicacion_id' in request._fields_set:
@@ -101,4 +107,5 @@ class UpdateAssetUseCase:
                 else None,
                 valor_monetario=asset.valor_monetario,
                 moneda=asset.moneda,
+                version=asset.version,
             )

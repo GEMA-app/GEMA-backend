@@ -21,6 +21,8 @@ def mock_uow():
     uow.roles.revoke_from_user = AsyncMock()
     uow.roles.count_admin_users = AsyncMock()
     uow.roles.get_user_roles = AsyncMock()
+    uow.roles.assign_to_user = AsyncMock()
+    uow.roles.save = AsyncMock()
     uow.users = MagicMock()
     uow.users.get_by_id = AsyncMock()
     uow.commit = AsyncMock()
@@ -172,6 +174,7 @@ class TestAssignRoleToUserUseCase:
 
         # Simular que el usuario ya tiene el rol
         mock_uow.roles.get_user_roles.return_value = [role]
+        mock_uow.roles.assign_to_user.return_value = False
 
         use_case = AssignRoleToUserUseCase(uow=mock_uow)
         
@@ -181,7 +184,7 @@ class TestAssignRoleToUserUseCase:
         await use_case.execute(str(company_id.value), str(role_id.value), str(user_id.value))
 
         role.record_assignment.assert_not_called()
-        mock_uow.roles.assign_to_user.assert_not_called()
+        mock_uow.roles.assign_to_user.assert_called_once_with(role_id, user_id)
 
     async def test_create_role_with_duplicate_modules_deduplicates(self, mock_uow):
         from app.application.use_cases.role.create_role import CreateRoleUseCase, CreateRoleRequest

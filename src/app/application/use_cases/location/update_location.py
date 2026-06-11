@@ -5,6 +5,7 @@ from app.domain.enums import LocationType
 from app.domain.exceptions import (
     LocationCircularReferenceError,
     LocationNotFoundError,
+    StaleDataError,
     ValidationException,
 )
 from app.domain.value_objects import CompanyId, LocationId
@@ -29,6 +30,11 @@ class UpdateLocationUseCase:
             if not location:
                 raise LocationNotFoundError(
                     f"La ubicación con ID '{location_id_str}' no existe en esta empresa."
+                )
+
+            if request.version is not None and request.version != location.version:
+                raise StaleDataError(
+                    f"Conflicto de versión para ubicación: se esperaba {request.version}, la actual es {location.version}."
                 )
 
             new_parent_id = location.parent_id
@@ -114,4 +120,5 @@ class UpdateLocationUseCase:
                 nombre=location.nombre,
                 tipo=location.tipo.value,
                 descripcion=location.descripcion,
+                version=location.version,
             )

@@ -31,6 +31,7 @@ class SqlAlchemyCompanyRepository(
             estado=entity.estado,
             plan_id=entity.plan_id,
             trial_hasta=entity.trial_hasta,
+            version=entity.version,
         )
 
     def _to_entity(self, model: CompanyModel) -> Company:
@@ -43,6 +44,7 @@ class SqlAlchemyCompanyRepository(
             estado=model.estado,
             plan_id=model.plan_id,
             trial_hasta=model.trial_hasta,
+            version=model.version,
             created_at=model.created_at,
             updated_at=model.updated_at,
         )

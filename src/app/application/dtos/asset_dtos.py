@@ -23,6 +23,7 @@ class UpdateAssetRequest:
     fecha_adquisicion: date | None = None
     valor_monetario: float | None = None
     moneda: str | None = None
+    version: int | None = None
     _fields_set: frozenset[str] = field(default_factory=frozenset, repr=False, compare=False)
 
     def __post_init__(self) -> None:
@@ -46,3 +47,4 @@ class AssetResponse:
     fecha_adquisicion: str | None
     valor_monetario: float | None
     moneda: str
+    version: int

@@ -33,6 +33,7 @@ class ListAssetsUseCase:
                     else None,
                     valor_monetario=a.valor_monetario,
                     moneda=a.moneda,
+                    version=a.version,
                 )
                 for a in assets
             ]

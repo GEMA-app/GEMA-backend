@@ -31,6 +31,9 @@ class GetCurrentUserUseCase:
             if company and company.estado != CompanyStatus.ACTIVE:
                 raise UserInactiveError("La empresa se encuentra suspendida o cancelada.")
 
+            assert user.created_at is not None
+            assert user.updated_at is not None
+
             return UserResponse(
                 id=str(user.id),
                 email=user.email.value,

@@ -1,6 +1,5 @@
 import uuid
 
-from sqlalchemy import delete as sql_delete
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,10 +8,10 @@ from app.domain.entities import Permission, Role
 from app.domain.events import DomainEvent
 from app.domain.value_objects import CompanyId, RoleId, UserId
 from app.infrastructure.db.models.role import PermissionModel, RoleModel, RoleUserModel
-from app.infrastructure.repositories.base import SqlAlchemyRepository
+from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 
 
-class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], RoleRepositoryPort):
+class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleId], RoleRepositoryPort):
     """Implementación en SQLAlchemy para el puerto de repositorio de Roles."""
 
     def __init__(
@@ -32,6 +31,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
         # Actualización: mutar in-place
         existing_model.nombre = entity.nombre
         existing_model.descripcion = entity.descripcion
+        existing_model.version = entity.version
 
         # Sincronizar permisos por módulo
         existing_by_module = {p.modulo: p for p in existing_model.permisos}
@@ -68,6 +68,10 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
 
 
     def _to_model(self, entity: Role) -> RoleModel:
+        """Mapea la entidad Role a su modelo ORM para inserciones nuevas.
+
+        Nota: Para actualizaciones se realiza mutación in-place en save() preservando los UUIDs.
+        """
         # Se genera un UUID para permisos nuevos si no lo tuvieran,
         # pero como Permission es un Value Object de dominio, mapeamos a modelos ORM.
         existing_perms = set()
@@ -93,6 +97,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
             nombre=entity.nombre,
             descripcion=entity.descripcion,
             permisos=permisos_models,
+            version=entity.version,
         )
 
     def _to_entity(self, model: RoleModel) -> Role:
@@ -112,17 +117,8 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
             nombre=model.nombre,
             descripcion=model.descripcion or "",
             permisos=permisos,
+            version=model.version,
         )
-
-    async def get_by_id(self, id: RoleId, empresa_id: CompanyId) -> Role | None:  # type: ignore[override]
-        stmt = select(RoleModel).where(
-            RoleModel.id == id.value, RoleModel.empresa_id == empresa_id.value
-        )
-        result = await self.session.execute(stmt)
-        model = result.scalar_one_or_none()
-        if not model:
-            return None
-        return self._to_entity(model)
 
     async def list_by_company(self, empresa_id: CompanyId) -> list[Role]:
         stmt = select(RoleModel).where(RoleModel.empresa_id == empresa_id.value)
@@ -130,22 +126,21 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
         models = result.scalars().all()
         return [self._to_entity(m) for m in models]
 
-    async def delete(self, id: RoleId, empresa_id: CompanyId) -> None:  # type: ignore[override]
-        stmt = sql_delete(RoleModel).where(
-            RoleModel.id == id.value, RoleModel.empresa_id == empresa_id.value
+    async def assign_to_user(self, role_id: RoleId, user_id: UserId) -> bool:
+        from sqlalchemy import insert
+        from sqlalchemy.exc import IntegrityError
+
+        from app.infrastructure.db.models.role import RoleUserModel
+
+        stmt = insert(RoleUserModel).values(
+            usuario_id=user_id.value, rol_id=role_id.value
         )
-        await self.session.execute(stmt)
-
-    async def assign_to_user(self, role_id: RoleId, user_id: UserId) -> None:
-        from app.infrastructure.db.models.user import UserModel
-
-        await self.session.flush()
-        user_model = await self.session.get(UserModel, user_id.value)
-        role_model = await self.session.get(RoleModel, role_id.value)
-
-        if user_model and role_model:
-            if role_model not in user_model.roles:
-                user_model.roles.append(role_model)
+        try:
+            async with self.session.begin_nested():
+                await self.session.execute(stmt)
+            return True
+        except IntegrityError:
+            return False
 
     async def revoke_from_user(self, role_id: RoleId, user_id: UserId) -> None:
         from app.infrastructure.db.models.user import UserModel
@@ -171,9 +166,10 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
         return [self._to_entity(m) for m in models]
 
     async def count_admin_users(self, empresa_id: CompanyId, exclude_user_id: UserId | None = None) -> int:
+        from sqlalchemy import select
+
         from app.domain.enums import PermissionModule
         from app.infrastructure.db.models.role import PermissionModel, RoleUserModel
-        from sqlalchemy import select
 
         stmt = (
             select(RoleUserModel.usuario_id)

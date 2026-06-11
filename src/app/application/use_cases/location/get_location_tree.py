@@ -1,5 +1,6 @@
-import structlog
 from typing import Any
+
+import structlog
 
 from app.application.dtos.location_dtos import LocationTreeResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort

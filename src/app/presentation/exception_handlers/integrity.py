@@ -8,7 +8,11 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 
-from app.domain.exceptions import AssetCodeExistsError, AssetSerialExistsError, CompanySlugExistsError
+from app.domain.exceptions import (
+    AssetCodeExistsError,
+    AssetSerialExistsError,
+    CompanySlugExistsError,
+)
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers.base import jsonapi_response
 from app.presentation.exception_handlers.domain import domain_exception_handler
@@ -21,8 +25,8 @@ def _map_integrity_error(exc: IntegrityError) -> tuple[int, str] | None:
     Estrategia 2: Fallback por nombre de constraint (driver-agnostic).
     """
     # Estrategia 1: asyncpg nativo (SQLSTATE directo)
-    if hasattr(exc.orig, 'sqlstate'):
-        sqlstate = exc.orig.sqlstate
+    if exc.orig is not None and hasattr(exc.orig, 'sqlstate'):
+        sqlstate = getattr(exc.orig, 'sqlstate', None)
         mapping = {
             "23505": (409, "El registro ya existe"),
             "23503": (409, "Referencia inválida: el recurso relacionado no existe"),
@@ -46,6 +50,8 @@ def _map_integrity_error(exc: IntegrityError) -> tuple[int, str] | None:
 
 def _extract_constraint_name(exc: IntegrityError) -> str | None:
     """Extrae el nombre del constraint violado de forma driver-agnostic."""
+    if exc.orig is None:
+        return None
     # intentar directamente en exc.orig (asyncpg)
     constraint_name = getattr(exc.orig, "constraint_name", None)
     if constraint_name and isinstance(constraint_name, str):
@@ -76,6 +82,7 @@ def _extract_constraint_name(exc: IntegrityError) -> str | None:
 async def integrity_error_handler(
     request: Request, exc: IntegrityError
 ) -> JSONResponse:
+    """Manejador de excepciones de tipo IntegrityError para retornar JSON:API."""
     result = _map_integrity_error(exc)
 
     if result:

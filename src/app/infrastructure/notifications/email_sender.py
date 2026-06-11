@@ -1,7 +1,6 @@
 import smtplib
 import time
 from email.mime.text import MIMEText
-from pathlib import Path
 from string import Template
 
 import anyio

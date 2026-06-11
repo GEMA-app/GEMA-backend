@@ -1,10 +1,11 @@
+import structlog
+
 from app.application.dtos import AuthTokensDTO, RefreshTokenRequest
 from app.application.ports.auth import TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import CompanyStatus
 from app.domain.exceptions import InvalidTokenError, UserInactiveError
 from app.domain.value_objects import UserId
-import structlog
 
 logger = structlog.get_logger()
 

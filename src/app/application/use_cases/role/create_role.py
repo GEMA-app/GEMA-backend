@@ -58,4 +58,5 @@ class CreateRoleUseCase:
                     )
                     for p in role.permisos
                 ],
+                version=role.version,
             )

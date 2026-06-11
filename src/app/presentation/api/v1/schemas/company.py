@@ -14,6 +14,7 @@ class CompanyAttributes(BaseModel):
     email_contacto: str | None = None
     plan_id: str | None = None
     trial_hasta: str | None = None
+    version: int
 
 
 class CompanyResource(BaseModel):
@@ -57,6 +58,7 @@ class UpdateCompanyAttributes(BaseModel):
     rif: str | None = None
     email_contacto: str | None = None
     estado: CompanyStatus | None = None
+    version: int | None = None
 
 
 class UpdateCompanyResource(BaseModel):

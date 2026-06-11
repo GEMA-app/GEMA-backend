@@ -93,6 +93,7 @@ async def create_role(
                     )
                     for p in res.permisos
                 ],
+                version=res.version,
             ),
         )
     )
@@ -126,6 +127,7 @@ async def list_roles(
                         )
                         for p in r.permisos
                     ],
+                    version=r.version,
                 ),
             )
             for r in roles
@@ -161,6 +163,7 @@ async def get_role(
                     )
                     for p in res.permisos
                 ],
+                version=res.version,
             ),
         )
     )
@@ -196,6 +199,7 @@ async def update_role(
         nombre=sent.get("nombre") if "nombre" in sent else None,
         descripcion=sent.get("descripcion") if "descripcion" in sent else None,
         permisos=permisos_dto,
+        version=sent.get("version") if "version" in sent else None,
         _fields_set=frozenset(sent.keys()),
     )
     res = await use_case.execute(company_id, role_id, dto)
@@ -215,6 +219,7 @@ async def update_role(
                     )
                     for p in res.permisos
                 ],
+                version=res.version,
             ),
         )
     )

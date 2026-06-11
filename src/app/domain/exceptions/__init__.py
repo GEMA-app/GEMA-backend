@@ -55,6 +55,7 @@ from app.domain.exceptions.role import (
     RoleNameExistsError,
     RoleNotFoundError,
 )
+from app.domain.exceptions.stale_data import StaleDataError
 from app.domain.exceptions.validation import (
     InvalidSlugError,
     InvalidUUIDError,
@@ -102,4 +103,5 @@ __all__ = [
     "PreferenceNotFoundError",
     "PreferenceThemeInvalidError",
     "LastAdminRevocationError",
+    "StaleDataError",
 ]

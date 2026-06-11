@@ -76,6 +76,7 @@ async def create_location(
                 tipo=res.tipo,
                 parent_id=res.parent_id,
                 descripcion=res.descripcion,
+                version=res.version,
             ),
         )
     )
@@ -128,6 +129,7 @@ async def get_location(
                 tipo=res.tipo,
                 parent_id=res.parent_id,
                 descripcion=res.descripcion,
+                version=res.version,
             ),
         )
     )
@@ -152,6 +154,7 @@ async def update_location(
         tipo=attrs.tipo.value if ("tipo" in sent and attrs.tipo) else None,
         parent_id=sent.get("parent_id") if "parent_id" in sent else None,
         descripcion=sent.get("descripcion") if "descripcion" in sent else None,
+        version=sent.get("version") if "version" in sent else None,
         _fields_set=frozenset(sent.keys()),
     )
     res = await use_case.execute(company_id, location_id, dto)
@@ -164,6 +167,7 @@ async def update_location(
                 tipo=res.tipo,
                 parent_id=res.parent_id,
                 descripcion=res.descripcion,
+                version=res.version,
             ),
         )
     )
@@ -205,6 +209,7 @@ async def get_location_children(
                     tipo=c.tipo,
                     parent_id=c.parent_id,
                     descripcion=c.descripcion,
+                    version=c.version,
                 ),
             )
             for c in children

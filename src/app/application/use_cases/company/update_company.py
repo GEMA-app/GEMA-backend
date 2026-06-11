@@ -1,7 +1,7 @@
 from app.application.dtos.company_dtos import CompanyResponse, UpdateCompanyRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import CompanyStatus
-from app.domain.exceptions import CompanyNotFoundError, ValidationException
+from app.domain.exceptions import CompanyNotFoundError, StaleDataError, ValidationException
 from app.domain.value_objects import CompanyId
 
 
@@ -19,6 +19,11 @@ class UpdateCompanyUseCase:
             company = await self.uow.companies.get_by_id(company_id)
             if not company:
                 raise CompanyNotFoundError(f"La empresa con ID '{company_id_str}' no existe.")
+
+            if request.version is not None and request.version != company.version:
+                raise StaleDataError(
+                    f"Conflicto de versión para empresa: se esperaba {request.version}, la actual es {company.version}."
+                )
 
             if 'nombre' in request._fields_set:
                 if request.nombre is None or not request.nombre.strip():
@@ -58,4 +63,5 @@ class UpdateCompanyUseCase:
                 estado=company.estado.value,
                 plan_id=str(company.plan_id) if company.plan_id else None,
                 trial_hasta=company.trial_hasta.isoformat() if company.trial_hasta else None,
+                version=company.version,
             )

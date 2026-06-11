@@ -53,4 +53,5 @@ class CreateLocationUseCase:
                 nombre=location.nombre,
                 tipo=location.tipo.value,
                 descripcion=location.descripcion,
+                version=location.version,
             )

@@ -23,8 +23,8 @@ class RoleRepositoryPort(Protocol):
         """Elimina un rol por su identificador único dentro de una empresa."""
         ...
 
-    async def assign_to_user(self, role_id: RoleId, user_id: UserId) -> None:
-        """Asigna un rol a un usuario (tabla asociativa)."""
+    async def assign_to_user(self, role_id: RoleId, user_id: UserId) -> bool:
+        """Asigna un rol a un usuario (tabla asociativa). Retorna True si se asignó, False si ya existía."""
         ...
 
     async def revoke_from_user(self, role_id: RoleId, user_id: UserId) -> None:

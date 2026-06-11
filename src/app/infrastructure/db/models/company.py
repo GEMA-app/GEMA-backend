@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.domain.enums import CompanyStatus
 from app.infrastructure.db.base import Base
-from app.infrastructure.db.models.mixins import TimestampMixin
+from app.infrastructure.db.models.mixins import TimestampMixin, VersionMixin
 
 
 class SubscriptionPlanModel(TimestampMixin, Base):
@@ -25,10 +25,11 @@ class SubscriptionPlanModel(TimestampMixin, Base):
     empresas: Mapped[list["CompanyModel"]] = relationship("CompanyModel", back_populates="plan")
 
 
-class CompanyModel(TimestampMixin, Base):
+class CompanyModel(VersionMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla de empresas (tenants)."""
 
     __tablename__ = "empresas"
+    __mapper_args__ = {"version_id_col": "version"}
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     plan_id: Mapped[uuid.UUID | None] = mapped_column(

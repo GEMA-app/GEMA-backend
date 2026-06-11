@@ -2,7 +2,12 @@ from app.application.dtos.role_dtos import PermissionDTO, RoleResponse, UpdateRo
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Permission
 from app.domain.enums import PermissionModule
-from app.domain.exceptions import RoleNameExistsError, RoleNotFoundError, ValidationException
+from app.domain.exceptions import (
+    RoleNameExistsError,
+    RoleNotFoundError,
+    StaleDataError,
+    ValidationException,
+)
 from app.domain.value_objects import CompanyId, RoleId
 
 
@@ -25,6 +30,11 @@ class UpdateRoleUseCase:
             if not role:
                 raise RoleNotFoundError(f"El rol con ID '{role_id_str}' no existe en esta empresa.")
 
+            if request.version is not None and request.version != role.version:
+                raise StaleDataError(
+                    f"Conflicto de versión para rol: se esperaba {request.version}, la actual es {role.version}."
+                )
+
             if 'nombre' in request._fields_set:
                 if request.nombre is None:
                     raise ValidationException("El nombre del rol no puede ser nulo.")
@@ -42,7 +52,7 @@ class UpdateRoleUseCase:
                 role.nombre = new_name
 
             if 'descripcion' in request._fields_set:
-                role.descripcion = request.descripcion
+                role.descripcion = request.descripcion or ""
 
             if 'permisos' in request._fields_set:
                 if request.permisos is None:
@@ -76,4 +86,5 @@ class UpdateRoleUseCase:
                     )
                     for p in role.permisos
                 ],
+                version=role.version,
             )

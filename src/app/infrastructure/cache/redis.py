@@ -43,7 +43,7 @@ class RedisClient:
         if self._client is None:
             self._client = aioredis.from_url(
                 settings.REDIS_URL,
-                decode_responses=True,  # type: ignore[no-untyped-call]
+                decode_responses=True,
             )
         return self._client
 

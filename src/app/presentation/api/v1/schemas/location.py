@@ -12,6 +12,7 @@ class LocationAttributes(BaseModel):
     tipo: LocationType
     parent_id: str | None = None
     descripcion: str | None = None
+    version: int
 
 
 class LocationResource(BaseModel):
@@ -75,6 +76,7 @@ class UpdateLocationAttributes(BaseModel):
     tipo: LocationType | None = None
     parent_id: str | None = None
     descripcion: str | None = None
+    version: int | None = None
 
 
 class UpdateLocationResource(BaseModel):

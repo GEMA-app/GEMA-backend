@@ -25,3 +25,10 @@ class TimestampMixin:
         onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
+
+
+class VersionMixin:
+    """Mixin para optimistic locking con columna de versión."""
+
+    version: Mapped[int] = mapped_column(default=1, nullable=False)
+

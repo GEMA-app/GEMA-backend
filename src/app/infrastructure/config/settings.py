@@ -34,7 +34,6 @@ class Settings(BaseSettings):
     EMAIL_FROM_NAME: str = "GEMA"
     EMAIL_TEMPLATES_DIR: Path = Path("app/infrastructure/notifications/templates")
     FRONTEND_URL: str = "http://localhost:3000"
-    OUTBOX_ENABLED: bool = False
 
     @field_validator("JWT_SECRET_KEY")
     @classmethod

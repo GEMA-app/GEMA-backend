@@ -3,6 +3,7 @@
 import uuid
 from dataclasses import dataclass, field
 from datetime import date, datetime
+from typing import ClassVar
 
 from app.domain.enums import AssetStatus
 from app.domain.events import (
@@ -38,11 +39,12 @@ class Asset(EventProducer):
     fecha_adquisicion: date | None = None
     valor_monetario: float | None = None
     moneda: str = "USD"
+    version: int = 1
     created_at: datetime | None = None
     updated_at: datetime | None = None
     _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
-    _VALID_TRANSITIONS: dict[AssetStatus, set[AssetStatus]] = {
+    _VALID_TRANSITIONS: ClassVar[dict[AssetStatus, set[AssetStatus]]] = {
         AssetStatus.OPERATIONAL: {
             AssetStatus.UNDER_MAINTENANCE,
             AssetStatus.OUT_OF_SERVICE,

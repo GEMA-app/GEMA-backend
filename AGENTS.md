@@ -402,19 +402,19 @@ Cada entrada indica en qué plan se resolvió (si aplica).
 
 | # | Decisión | Plan que la difirió | Plan que la resolvió | Estado |
 |----|----------|---------------------|----------------------|--------|
-| 1 | Control de concurrencia en PATCH (lost updates) | v6 / v7 | — | Pendiente |
-| 2 | Composition Root acoplado a FastAPI (Depends directo) | v6 / v7 | — | Pendiente |
+| 1 | Control de concurrencia en PATCH (lost updates) | v6 / v7 | **v8 — Optimistic Locking** | ✅ Resuelto |
+| 2 | Composition Root acoplado a FastAPI (Depends directo) | v6 / v7 | **v8 — Fábricas puras** | ✅ Resuelto |
 | 3 | `id` → `entity_id` en `base.py` (LSP violation, 6 repos) | v6 | **v7 — pk_column** | ✅ Resuelto |
 | 4 | Observabilidad (logging en use cases) | v6 / v7 | — | 🚫 Descartado |
 | 5 | Testing de módulo preferences | v6 / v7 | — | 🚫 Descartado |
-| 6 | H14: JWT no valida usuario activo en cada request | v4 v6 | — | Pendiente |
-| 7 | H15: Race condition en assign_role sin unique constraint en tabla pivote | v4 v6 | — | Pendiente |
-| 8 | H16: IDOR potencial: get_by_id no filtra por empresa (tenant isolation) | v4 v6 | — | Pendiente |
-| 9 | H17: Lost updates en PATCH sin optimistic locking | v4 v6 | — | Pendiente |
-| 10 | H18: Permisos regeneran UUID en cada _to_model (cubierto en P3k) | v4 v6 | — | Pendiente |
-| 11 | H19: Email regex básico (no RFC 5321) en credential.py | v4 v6 | — | Pendiente |
-| 12 | H20: Sin rate limiting por email en rate_limit.py | v4 v6 | — | Pendiente |
-| 13 | `# type: ignore[override]` en repositorios multi-tenant (violación LSP documentada; `*args`/`**kwargs` descartado porque empeora type safety) | Infra v8 | — | Pendiente |
-| 14 | Código muerto: `get_by_email_and_company()` en `UserRepositoryPort` — definido e implementado pero ningún use case lo invoca | Infra v8 | — | Pendiente |
-| 15 | `OUTBOX_ENABLED` flag muerta en settings.py (no consultada en uow.py ni en ningún otro lado) + latencia del bus síncrono dentro del request HTTP | Infra v8 | — | Pendiente |
-| 16 | `email` en UserModel sin `unique=True` global; `get_by_email()` en `user_repository.py` no filtra por `empresa_id` | Infra v8 | — | Pendiente |
+| 6 | H14: JWT no valida usuario activo en cada request | v4 v6 | **v8 — Ya cubierto** | ✅ Resuelto |
+| 7 | H15: Race condition en assign_role sin unique constraint en tabla pivote | v4 v6 | **v8 — INSERT + savepoint** | ✅ Resuelto |
+| 8 | H16: IDOR potencial: get_by_id no filtra por empresa (tenant isolation) | v4 v6 | **v8 — Repos tenant-aware** | ✅ Resuelto |
+| 9 | H17: Lost updates en PATCH sin optimistic locking | v4 v6 | **v8 — Optimistic Locking** | ✅ Resuelto |
+| 10 | H18: Permisos regeneran UUID en cada _to_model (cubierto en P3k) | v4 v6 | **v8 — Documentado** | ✅ Resuelto |
+| 11 | H19: Email regex básico (no RFC 5321) en credential.py | v4 v6 | **v8 — Regex RFC 5321** | ✅ Resuelto |
+| 12 | H20: Sin rate limiting por email en rate_limit.py | v4 v6 | **v8 — Dependencia FastAPI** | ✅ Resuelto |
+| 13 | `# type: ignore[override]` en repositorios multi-tenant (violación LSP documentada; `*args`/`**kwargs` descartado porque empeora type safety) | Infra v8 | **v8 — TenantRepository** | ✅ Resuelto |
+| 14 | Código muerto: `get_by_email_and_company()` en `UserRepositoryPort` — definido e implementado pero ningún use case lo invoca | Infra v8 | **v8 — Documentado** | ✅ Resuelto |
+| 15 | `OUTBOX_ENABLED` flag muerta en settings.py (no consultada en uow.py ni en ningún otro lado) + latencia del bus síncrono dentro del request HTTP | Infra v8 | **v8 — Eliminado** | ✅ Resuelto |
+| 16 | `email` en UserModel sin `unique=True` global; `get_by_email()` en `user_repository.py` no filtra por `empresa_id` | Infra v8 | **v8 — Documentado global** | ✅ Resuelto |

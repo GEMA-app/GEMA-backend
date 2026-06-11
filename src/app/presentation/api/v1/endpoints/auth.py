@@ -25,11 +25,15 @@ from app.composition.container import (
     provide_request_password_reset_use_case,
     provide_reset_password_use_case,
 )
-from app.presentation.api.v1.endpoints.dependencies import get_current_active_user
+from app.presentation.api.v1.endpoints.dependencies import (
+    get_current_active_user,
+    rate_limit_by_email,
+)
 from app.presentation.api.v1.schemas.auth import (
     ChangePasswordRequest,
     ForgotPasswordRequest,
     LoginRequest,
+    LogoutRequest,
     RefreshRequest,
     RegisterRequest,
     ResetPasswordRequest,
@@ -39,7 +43,6 @@ from app.presentation.api.v1.schemas.auth import (
     UserAttributes,
     UserDocument,
     UserResource,
-    LogoutRequest,
 )
 
 router = APIRouter()
@@ -51,6 +54,7 @@ security = HTTPBearer()
     response_model=TokenDocument,
     status_code=status.HTTP_201_CREATED,
     summary="Registrar nuevo usuario",
+    dependencies=[Depends(rate_limit_by_email)],
 )
 async def register(
     request: RegisterRequest,
@@ -80,6 +84,7 @@ async def register(
     response_model=TokenDocument,
     status_code=status.HTTP_200_OK,
     summary="Iniciar sesión",
+    dependencies=[Depends(rate_limit_by_email)],
 )
 async def login(
     request: LoginRequest,

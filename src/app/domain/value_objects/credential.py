@@ -16,14 +16,16 @@ class Email:
         """Valida y normaliza la dirección de correo electrónico.
 
         Raises:
-            InvalidEmailError: Si el email está vacío o tiene formato inválido.
+            InvalidEmailError: Si el email está vacío, no es un string o tiene formato inválido.
         """
-        object.__setattr__(self, 'value', self.value.strip().lower())
-        if not self.value or not isinstance(self.value, str):
+        if self.value is None or not isinstance(self.value, str):
             raise InvalidEmailError("El correo electrónico no puede estar vacío.")
 
-        # H19: Email regex básico (no RFC 5321)
-        pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+        object.__setattr__(self, 'value', self.value.strip().lower())
+        if not self.value:
+            raise InvalidEmailError("El correo electrónico no puede estar vacío.")
+
+        pattern = r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
         if not re.match(pattern, self.value):
             raise InvalidEmailError(
                 f"El correo electrónico '{self.value}' tiene un formato inválido."
