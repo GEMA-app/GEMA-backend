@@ -1,5 +1,6 @@
 import uuid
 from datetime import date
+from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
@@ -48,7 +49,7 @@ class AssetModel(TenantMixin, TimestampMixin, Base):
         nullable=False,
     )
     fecha_adquisicion: Mapped[date | None] = mapped_column(Date, nullable=True)
-    valor_monetario: Mapped[float | None] = mapped_column(Numeric(12, 2), nullable=True)
+    valor_monetario: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True)
     moneda: Mapped[str] = mapped_column(String(3), default="USD", nullable=False)
 
     # Relaciones

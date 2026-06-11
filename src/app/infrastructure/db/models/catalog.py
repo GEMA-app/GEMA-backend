@@ -21,7 +21,7 @@ class ArticleCategoryModel(TenantMixin, TimestampMixin, Base):
 
     # Relación con artículos del catálogo
     articulos: Mapped[list["CatalogArticleModel"]] = relationship(
-        "CatalogArticleModel", back_populates="categoria", cascade="all, delete-orphan"
+        "CatalogArticleModel", back_populates="categoria", cascade="save-update, merge"
     )
 
 
