@@ -95,7 +95,7 @@ class SqlAlchemyAssetRepository(
         count_res = await self.session.execute(count_stmt)
         total = count_res.scalar_one()
 
-        stmt = stmt.offset(offset).limit(limit)
+        stmt = stmt.offset(offset).limit(limit).order_by(AssetModel.id)
         result = await self.session.execute(stmt)
         models = result.scalars().all()
         return [self._to_entity(m) for m in models], total
