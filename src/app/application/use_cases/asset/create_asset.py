@@ -7,7 +7,7 @@ from app.domain.enums import AssetStatus
 from app.domain.exceptions import (
     LocationNotFoundError,
 )
-from app.domain.value_objects import AssetId, CompanyId, LocationId
+from app.domain.value_objects import CompanyId, LocationId
 
 
 class CreateAssetUseCase:
@@ -35,8 +35,7 @@ class CreateAssetUseCase:
             # índice funcional LOWER() en PostgreSQL. Si hay violación, el
             # IntegrityError handler la captura y responde con 409 Conflict.
 
-            asset = Asset(
-                id=AssetId(uuid.uuid4()),
+            asset = Asset.create(
                 empresa_id=company_id,
                 articulo_id=uuid.UUID(request.articulo_id),
                 ubicacion_id=loc_id,

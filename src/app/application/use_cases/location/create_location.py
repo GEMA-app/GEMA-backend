@@ -1,4 +1,4 @@
-import uuid
+
 
 from app.application.dtos.location_dtos import CreateLocationRequest, LocationResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
@@ -34,15 +34,12 @@ class CreateLocationUseCase:
                     )
                 parent_type = parent_loc.tipo
 
-            # Validar jerarquía de tipos
-            Location.validate_hierarchy(tipo, parent_type)
-
-            location = Location(
-                id=LocationId(uuid.uuid4()),
+            location = Location.create(
                 empresa_id=company_id,
                 parent_id=parent_id,
                 nombre=request.nombre.strip(),
                 tipo=tipo,
+                parent_type=parent_type,
                 descripcion=request.descripcion,
             )
 
