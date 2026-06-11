@@ -7,8 +7,11 @@ imports existentes (``from app.domain.exceptions import X``).
 from app.domain.exceptions.asset import (
     AssetCodeExistsError,
     AssetException,
+    AssetInvalidTransitionError,
     AssetNotFoundError,
     AssetSerialExistsError,
+    EmptyAssetCodeError,
+    EmptySerialError,
 )
 from app.domain.exceptions.auth import (
     AuthException,
@@ -30,6 +33,7 @@ from app.domain.exceptions.company import (
     EmptyCompanyNameError,
 )
 from app.domain.exceptions.location import (
+    EmptyLocationNameError,
     LocationCircularReferenceError,
     LocationException,
     LocationInvalidTypeHierarchyError,
@@ -82,6 +86,10 @@ __all__ = [
     "AssetNotFoundError",
     "AssetCodeExistsError",
     "AssetSerialExistsError",
+    "AssetInvalidTransitionError",
+    "EmptySerialError",
+    "EmptyAssetCodeError",
+    "EmptyLocationNameError",
     "CompanyAlreadyCancelledError",
     "CompanyNotSuspendedError",
     "LocationException",
