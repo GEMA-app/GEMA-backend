@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Any
 
 
 @dataclass(frozen=True)
@@ -34,4 +35,4 @@ class LocationTreeResponse:
     nombre: str
     tipo: str
     descripcion: str | None
-    children: list[Any]  # Lista de LocationTreeResponse
+    children: list[LocationTreeResponse]

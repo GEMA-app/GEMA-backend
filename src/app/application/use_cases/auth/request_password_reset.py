@@ -11,8 +11,8 @@ from app.domain.value_objects import Email
 
 logger = structlog.get_logger()
 
-RESET_TOKEN_TTL_SECONDS = 1800
-RESET_TOKEN_EXPIRE_MINUTES = 30
+_RESET_TOKEN_TTL_SECONDS = 1800
+_RESET_TOKEN_EXPIRE_MINUTES = 30
 
 
 class RequestPasswordResetUseCase:
@@ -54,7 +54,7 @@ class RequestPasswordResetUseCase:
             await self.token_service.store_reset_token(
                 token_hash=token_hash,
                 user_id=str(user.id),
-                ttl_seconds=RESET_TOKEN_TTL_SECONDS,
+                ttl_seconds=_RESET_TOKEN_TTL_SECONDS,
             )
 
             # El email se envía directamente desde el use case para que el raw_token
@@ -62,7 +62,7 @@ class RequestPasswordResetUseCase:
             await self.notification.send_password_reset(
                 email=user.email.value,
                 reset_url=f"{self.frontend_url}/reset-password?token={raw_token}",
-                expire_minutes=RESET_TOKEN_EXPIRE_MINUTES,
+                expire_minutes=_RESET_TOKEN_EXPIRE_MINUTES,
             )
 
             # Evento solo para auditoría, sin el token.
