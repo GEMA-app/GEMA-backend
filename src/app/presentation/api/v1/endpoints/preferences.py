@@ -34,12 +34,12 @@ router = APIRouter()
     summary="Obtener preferencias del usuario actual",
 )
 async def get_preferences(
-    company_id: str,
+    empresa_id: str,
     current_user: UserResponse = Depends(require_permission(PermissionModule.PREFERENCES, "view")),
     use_case: GetUserPreferencesUseCase = Depends(provide_user_preferences_use_case),
 ) -> PreferenceDocument:
     """Obtiene las preferencias del usuario autenticado."""
-    res = await use_case.execute(company_id, current_user.id)
+    res = await use_case.execute(empresa_id, current_user.id)
     return PreferenceDocument(
         data=PreferenceResource(
             id=res.usuario_id,
@@ -58,7 +58,7 @@ async def get_preferences(
     summary="Actualizar preferencias del usuario actual",
 )
 async def update_preferences(
-    company_id: str,
+    empresa_id: str,
     request: UpdatePreferenceRequest,
     current_user: UserResponse = Depends(require_permission(PermissionModule.PREFERENCES, "edit")),
     use_case: UpdateUserPreferencesUseCase = Depends(get_update_preferences_use_case),
@@ -71,7 +71,7 @@ async def update_preferences(
     dto = UpdatePreferenceDTO(
         tema=request.data.attributes.tema,
     )
-    res = await use_case.execute(company_id, current_user.id, dto)
+    res = await use_case.execute(empresa_id, current_user.id, dto)
     return PreferenceDocument(
         data=PreferenceResource(
             id=res.usuario_id,

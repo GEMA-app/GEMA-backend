@@ -37,7 +37,7 @@ async def run_manual_test() -> None:
             }
         }
         res_register = await client.post(
-            "/v1/auth/register",
+            "/v1/auth/registrar",
             json=register_payload,
             headers={"Content-Type": "application/vnd.api+json", "Accept": "application/vnd.api+json"}
         )
@@ -58,7 +58,7 @@ async def run_manual_test() -> None:
             }
         }
         res_login = await client.post(
-            "/v1/auth/login",
+            "/v1/auth/ingresar",
             json=login_payload,
             headers={"Content-Type": "application/vnd.api+json", "Accept": "application/vnd.api+json"}
         )
@@ -75,8 +75,8 @@ async def run_manual_test() -> None:
         # =====================================================================
         # 3. Obtener perfil de usuario actual y extraer empresa_id
         # =====================================================================
-        print("\n--- 3. Probando Perfil (/v1/auth/me) ---")
-        res_me = await client.get("/v1/auth/me", headers=auth_headers)
+        print("\n--- 3. Probando Perfil (/v1/auth/yo) ---")
+        res_me = await client.get("/v1/auth/yo", headers=auth_headers)
         assert res_me.status_code == 200, f"Error al consultar perfil: {res_me.text}"
         user_data = res_me.json()["data"]
         empresa_id = user_data["attributes"]["empresa_id"]
@@ -115,7 +115,7 @@ async def run_manual_test() -> None:
             }
         }
         res_loc = await client.post(
-            f"/v1/companies/{empresa_id}/locations",
+            f"/v1/empresas/{empresa_id}/ubicaciones",
             json=location_payload,
             headers=auth_headers
         )
@@ -140,7 +140,7 @@ async def run_manual_test() -> None:
             }
         }
         res_sub_loc = await client.post(
-            f"/v1/companies/{empresa_id}/locations",
+            f"/v1/empresas/{empresa_id}/ubicaciones",
             json=sub_location_payload,
             headers=auth_headers
         )
@@ -153,7 +153,7 @@ async def run_manual_test() -> None:
         # 7. Obtener Árbol de Ubicaciones
         # =====================================================================
         print("\n--- 7. Probando Obtener Árbol de Ubicaciones ---")
-        res_tree = await client.get(f"/v1/companies/{empresa_id}/locations", headers=auth_headers)
+        res_tree = await client.get(f"/v1/empresas/{empresa_id}/ubicaciones", headers=auth_headers)
         assert res_tree.status_code == 200, f"Error al obtener árbol: {res_tree.text}"
         tree_data = res_tree.json()["data"]
         assert len(tree_data) > 0, "El árbol debería tener al menos una raíz"
@@ -179,7 +179,7 @@ async def run_manual_test() -> None:
             }
         }
         res_asset = await client.post(
-            f"/v1/companies/{empresa_id}/assets",
+            f"/v1/empresas/{empresa_id}/activos",
             json=asset_payload,
             headers=auth_headers
         )
@@ -193,7 +193,7 @@ async def run_manual_test() -> None:
         # =====================================================================
         print("\n--- 9. Probando Listar Activos con Filtros ---")
         res_list = await client.get(
-            f"/v1/companies/{empresa_id}/assets?estado=operativo&ubicacion_id={sub_location_id}",
+            f"/v1/empresas/{empresa_id}/activos?estado=operativo&ubicacion_id={sub_location_id}",
             headers=auth_headers
         )
         assert res_list.status_code == 200, f"Error al listar activos: {res_list.text}"
@@ -215,7 +215,7 @@ async def run_manual_test() -> None:
             }
         }
         res_update = await client.patch(
-            f"/v1/companies/{empresa_id}/assets/{asset_id}",
+            f"/v1/empresas/{empresa_id}/activos/{asset_id}",
             json=update_payload,
             headers=auth_headers
         )
@@ -228,7 +228,7 @@ async def run_manual_test() -> None:
         # =====================================================================
         print("\n--- 11. Probando Eliminar Activo ---")
         res_delete_asset = await client.delete(
-            f"/v1/companies/{empresa_id}/assets/{asset_id}",
+            f"/v1/empresas/{empresa_id}/activos/{asset_id}",
             headers=auth_headers
         )
         assert res_delete_asset.status_code == 204, f"Error al eliminar activo: {res_delete_asset.text}"
@@ -239,12 +239,12 @@ async def run_manual_test() -> None:
         # =====================================================================
         print("\n--- 12. Probando Eliminar Ubicaciones ---")
         res_del_sub = await client.delete(
-            f"/v1/companies/{empresa_id}/locations/{sub_location_id}",
+            f"/v1/empresas/{empresa_id}/ubicaciones/{sub_location_id}",
             headers=auth_headers
         )
         assert res_del_sub.status_code == 204, f"Error al eliminar sub-ubicación: {res_del_sub.text}"
         res_del_parent = await client.delete(
-            f"/v1/companies/{empresa_id}/locations/{location_id}",
+            f"/v1/empresas/{empresa_id}/ubicaciones/{location_id}",
             headers=auth_headers
         )
         assert res_del_parent.status_code == 204, f"Error al eliminar ubicación padre: {res_del_parent.text}"

@@ -41,22 +41,22 @@ def test_get_location_children_uses_require_tenant_read():
 
 def test_get_location_uses_location_id_param():
     sig = inspect.signature(get_location)
-    assert "location_id" in sig.parameters
+    assert "ubicacion_id" in sig.parameters
 
 
 def test_update_location_uses_location_id_param():
     sig = inspect.signature(update_location)
-    assert "location_id" in sig.parameters
+    assert "ubicacion_id" in sig.parameters
 
 
 def test_delete_location_uses_location_id_param():
     sig = inspect.signature(delete_location)
-    assert "location_id" in sig.parameters
+    assert "ubicacion_id" in sig.parameters
 
 
 def test_get_location_children_uses_location_id_param():
     sig = inspect.signature(get_location_children)
-    assert "location_id" in sig.parameters
+    assert "ubicacion_id" in sig.parameters
 
 
 def test_create_location_keeps_require_permission():

@@ -17,31 +17,31 @@ v1_router.include_router(
 
 v1_router.include_router(
     companies_router,
-    prefix="/companies",
-    tags=["companies"]
+    prefix="/empresas",
+    tags=["empresas"]
 )
 
 v1_router.include_router(
     roles_router,
-    prefix="/companies/{company_id}/roles",
+    prefix="/empresas/{empresa_id}/roles",
     tags=["roles"]
 )
 
 v1_router.include_router(
     assets_router,
-    prefix="/companies/{company_id}/assets",
-    tags=["assets"]
+    prefix="/empresas/{empresa_id}/activos",
+    tags=["activos"]
 )
 
 v1_router.include_router(
     locations_router,
-    prefix="/companies/{company_id}/locations",
-    tags=["locations"]
+    prefix="/empresas/{empresa_id}/ubicaciones",
+    tags=["ubicaciones"]
 )
 
 v1_router.include_router(
     preferences_router,
-    prefix="/companies/{company_id}/me/preferences",
-    tags=["preferences"],
+    prefix="/empresas/{empresa_id}/yo/preferencias",
+    tags=["preferencias"],
 )
 

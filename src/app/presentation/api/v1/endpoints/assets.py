@@ -44,7 +44,7 @@ router = APIRouter()
     summary="Crear un nuevo activo",
 )
 async def create_asset(
-    company_id: str,
+    empresa_id: str,
     request: CreateAssetRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "create")),
     use_case: CreateAssetUseCase = Depends(get_create_asset_use_case),
@@ -59,7 +59,7 @@ async def create_asset(
         valor_monetario=request.data.attributes.valor_monetario,
         moneda=request.data.attributes.moneda,
     )
-    res = await use_case.execute(company_id, dto)
+    res = await use_case.execute(empresa_id, dto)
     return AssetDocument(
         data=AssetResource(
             id=res.id,
@@ -85,7 +85,7 @@ async def create_asset(
     summary="Listar activos de la empresa con filtros",
 )
 async def list_assets(
-    company_id: str,
+    empresa_id: str,
     offset: int = 0,
     limit: int = 10,
     estado: str | None = Query(None, description="Filtrar por estado del activo"),
@@ -102,7 +102,7 @@ async def list_assets(
     if search is not None:
         filters["search"] = search
 
-    assets, total = await use_case.execute(company_id, offset, limit, filters)
+    assets, total = await use_case.execute(empresa_id, offset, limit, filters)
     return AssetListDocument(
         data=[
             AssetResource(
@@ -127,17 +127,17 @@ async def list_assets(
 
 
 @router.get(
-    "/{asset_id}",
+    "/{activo_id}",
     response_model=AssetDocument,
     summary="Obtener activo por ID",
 )
 async def get_asset(
-    company_id: str,
-    asset_id: str,
+    empresa_id: str,
+    activo_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "view")),
     use_case: GetAssetUseCase = Depends(provide_asset_use_case),
 ) -> AssetDocument:
-    res = await use_case.execute(company_id, asset_id)
+    res = await use_case.execute(empresa_id, activo_id)
     return AssetDocument(
         data=AssetResource(
             id=res.id,
@@ -158,13 +158,13 @@ async def get_asset(
 
 
 @router.patch(
-    "/{asset_id}",
+    "/{activo_id}",
     response_model=AssetDocument,
     summary="Actualizar activo",
 )
 async def update_asset(
-    company_id: str,
-    asset_id: str,
+    empresa_id: str,
+    activo_id: str,
     request: UpdateAssetRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "edit")),
     use_case: UpdateAssetUseCase = Depends(get_update_asset_use_case),
@@ -182,7 +182,7 @@ async def update_asset(
         version=sent.get("version") if "version" in sent else None,
         _fields_set=frozenset(sent.keys()),
     )
-    res = await use_case.execute(company_id, asset_id, dto)
+    res = await use_case.execute(empresa_id, activo_id, dto)
     return AssetDocument(
         data=AssetResource(
             id=res.id,
@@ -203,14 +203,14 @@ async def update_asset(
 
 
 @router.delete(
-    "/{asset_id}",
+    "/{activo_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Eliminar activo",
 )
 async def delete_asset(
-    company_id: str,
-    asset_id: str,
+    empresa_id: str,
+    activo_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "delete")),
     use_case: DeleteAssetUseCase = Depends(get_delete_asset_use_case),
 ) -> None:
-    await use_case.execute(company_id, asset_id)
+    await use_case.execute(empresa_id, activo_id)

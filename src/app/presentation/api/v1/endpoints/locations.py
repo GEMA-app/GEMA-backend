@@ -55,7 +55,7 @@ router = APIRouter()
     summary="Crear una nueva ubicación",
 )
 async def create_location(
-    company_id: str,
+    empresa_id: str,
     request: CreateLocationRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "create")),
     use_case: CreateLocationUseCase = Depends(get_create_location_use_case),
@@ -66,7 +66,7 @@ async def create_location(
         parent_id=request.data.attributes.parent_id,
         descripcion=request.data.attributes.descripcion,
     )
-    res = await use_case.execute(company_id, dto)
+    res = await use_case.execute(empresa_id, dto)
     return LocationDocument(
         data=LocationResource(
             id=res.id,
@@ -88,11 +88,11 @@ async def create_location(
     summary="Obtener el árbol jerárquico de ubicaciones",
 )
 async def get_location_tree(
-    company_id: str,
+    empresa_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetLocationTreeUseCase = Depends(provide_location_tree_use_case),
 ) -> LocationTreeDocument:
-    tree = await use_case.execute(company_id)
+    tree = await use_case.execute(empresa_id)
 
     def map_tree_node(node: LocationTreeResponse) -> LocationTreeResource:
         return LocationTreeResource(
@@ -109,17 +109,17 @@ async def get_location_tree(
 
 
 @router.get(
-    "/{location_id}",
+    "/{ubicacion_id}",
     response_model=LocationDocument,
     summary="Obtener ubicación por ID",
 )
 async def get_location(
-    company_id: str,
-    location_id: str,
+    empresa_id: str,
+    ubicacion_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetLocationUseCase = Depends(provide_location_use_case),
 ) -> LocationDocument:
-    res = await use_case.execute(company_id, location_id)
+    res = await use_case.execute(empresa_id, ubicacion_id)
     return LocationDocument(
         data=LocationResource(
             id=res.id,
@@ -136,13 +136,13 @@ async def get_location(
 
 
 @router.patch(
-    "/{location_id}",
+    "/{ubicacion_id}",
     response_model=LocationDocument,
     summary="Actualizar ubicación",
 )
 async def update_location(
-    company_id: str,
-    location_id: str,
+    empresa_id: str,
+    ubicacion_id: str,
     request: UpdateLocationRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateLocationUseCase = Depends(get_update_location_use_case),
@@ -157,7 +157,7 @@ async def update_location(
         version=sent.get("version") if "version" in sent else None,
         _fields_set=frozenset(sent.keys()),
     )
-    res = await use_case.execute(company_id, location_id, dto)
+    res = await use_case.execute(empresa_id, ubicacion_id, dto)
     return LocationDocument(
         data=LocationResource(
             id=res.id,
@@ -174,31 +174,31 @@ async def update_location(
 
 
 @router.delete(
-    "/{location_id}",
+    "/{ubicacion_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Eliminar ubicación",
 )
 async def delete_location(
-    company_id: str,
-    location_id: str,
+    empresa_id: str,
+    ubicacion_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "delete")),
     use_case: DeleteLocationUseCase = Depends(get_delete_location_use_case),
 ) -> None:
-    await use_case.execute(company_id, location_id)
+    await use_case.execute(empresa_id, ubicacion_id)
 
 
 @router.get(
-    "/{location_id}/children",
+    "/{ubicacion_id}/hijos",
     response_model=LocationListDocument,
     summary="Obtener ubicaciones hijas directas",
 )
 async def get_location_children(
-    company_id: str,
-    location_id: str,
+    empresa_id: str,
+    ubicacion_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetLocationChildrenUseCase = Depends(provide_location_children_use_case),
 ) -> LocationListDocument:
-    children = await use_case.execute(company_id, location_id)
+    children = await use_case.execute(empresa_id, ubicacion_id)
     return LocationListDocument(
         data=[
             LocationResource(

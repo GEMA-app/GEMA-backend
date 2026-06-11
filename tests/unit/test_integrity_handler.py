@@ -45,7 +45,7 @@ class TestIntegrityHandler:
         request = AsyncMock(spec=Request)
         request.method = "POST"
         request.url = MagicMock()
-        request.url.path = "/v1/companies/123/assets"
+        request.url.path = "/v1/empresas/123/activos"
 
         orig = MagicMock()
         cause = MagicMock()

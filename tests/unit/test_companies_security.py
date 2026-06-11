@@ -36,17 +36,17 @@ def test_get_company_uses_require_tenant_read():
 
 def test_get_company_uses_company_id_param():
     sig = inspect.signature(get_company)
-    assert "company_id" in sig.parameters
+    assert "empresa_id" in sig.parameters
 
 
 def test_update_company_uses_company_id_param():
     sig = inspect.signature(update_company)
-    assert "company_id" in sig.parameters
+    assert "empresa_id" in sig.parameters
 
 
 def test_delete_company_uses_company_id_param():
     sig = inspect.signature(delete_company)
-    assert "company_id" in sig.parameters
+    assert "empresa_id" in sig.parameters
 
 
 def test_list_companies_passes_company_id():

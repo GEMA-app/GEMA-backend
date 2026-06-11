@@ -111,16 +111,16 @@ async def list_companies(
 
 
 @router.get(
-    "/{company_id}",
+    "/{empresa_id}",
     response_model=CompanyDocument,
     summary="Obtener empresa por ID",
 )
 async def get_company(
-    company_id: str,
+    empresa_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetCompanyUseCase = Depends(provide_company_use_case),
 ) -> CompanyDocument:
-    res = await use_case.execute(company_id)
+    res = await use_case.execute(empresa_id)
     return CompanyDocument(
         data=CompanyResource(
             id=res.id,
@@ -139,12 +139,12 @@ async def get_company(
 
 
 @router.patch(
-    "/{company_id}",
+    "/{empresa_id}",
     response_model=CompanyDocument,
     summary="Actualizar empresa",
 )
 async def update_company(
-    company_id: str,
+    empresa_id: str,
     request: UpdateCompanyRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateCompanyUseCase = Depends(get_update_company_use_case),
@@ -159,7 +159,7 @@ async def update_company(
         version=sent.get("version") if "version" in sent else None,
         _fields_set=frozenset(sent.keys()),
     )
-    res = await use_case.execute(company_id, dto)
+    res = await use_case.execute(empresa_id, dto)
     return CompanyDocument(
         data=CompanyResource(
             id=res.id,
@@ -178,13 +178,13 @@ async def update_company(
 
 
 @router.delete(
-    "/{company_id}",
+    "/{empresa_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Eliminar empresa",
 )
 async def delete_company(
-    company_id: str,
+    empresa_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "delete")),
     use_case: DeleteCompanyUseCase = Depends(get_delete_company_use_case),
 ) -> None:
-    await use_case.execute(company_id)
+    await use_case.execute(empresa_id)

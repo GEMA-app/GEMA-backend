@@ -50,7 +50,7 @@ security = HTTPBearer()
 
 
 @router.post(
-    "/register",
+    "/registrar",
     response_model=TokenDocument,
     status_code=status.HTTP_201_CREATED,
     summary="Registrar nuevo usuario",
@@ -80,7 +80,7 @@ async def register(
 
 
 @router.post(
-    "/login",
+    "/ingresar",
     response_model=TokenDocument,
     status_code=status.HTTP_200_OK,
     summary="Iniciar sesión",
@@ -108,7 +108,7 @@ async def login(
 
 
 @router.post(
-    "/refresh",
+    "/refrescar",
     response_model=TokenDocument,
     status_code=status.HTTP_200_OK,
     summary="Rotar tokens de autenticación",
@@ -134,7 +134,7 @@ async def refresh(
 
 
 @router.post(
-    "/logout",
+    "/cerrar-sesion",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Cerrar sesión",
 )
@@ -151,7 +151,7 @@ async def logout(
 
 
 @router.get(
-    "/me",
+    "/yo",
     response_model=UserDocument,
     status_code=status.HTTP_200_OK,
     summary="Consultar perfil del usuario actual",
@@ -179,7 +179,7 @@ async def get_current_user(
 
 
 @router.post(
-    "/change-password",
+    "/cambiar-contrasena",
     status_code=status.HTTP_200_OK,
     summary="Cambiar contraseña del usuario actual",
 )
@@ -202,7 +202,7 @@ async def change_password(
 
 
 @router.post(
-    "/forgot-password",
+    "/olvide-contrasena",
     status_code=status.HTTP_202_ACCEPTED,
     summary="Solicitar reset de contraseña",
 )
@@ -216,7 +216,7 @@ async def forgot_password(
 
 
 @router.post(
-    "/reset-password",
+    "/restablecer-contrasena",
     status_code=status.HTTP_200_OK,
     summary="Restablecer contraseña con token",
 )

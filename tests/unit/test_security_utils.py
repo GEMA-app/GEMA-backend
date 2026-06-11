@@ -64,7 +64,7 @@ class TestGetCurrentActiveUserType:
 
 class TestAssetsIdRenamed:
 
-    def test_assets_id_renamed_to_asset_id(self):
+    def test_assets_id_renamed_to_activo_id(self):
         sig = inspect.signature(get_asset)
         params = list(sig.parameters.keys())
-        assert "asset_id" in params, "El parámetro debe llamarse asset_id, no id"
+        assert "activo_id" in params, "El parámetro debe llamarse activo_id, no id"

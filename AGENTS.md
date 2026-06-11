@@ -52,7 +52,7 @@ La dependencia siempre fluye hacia adentro: las capas externas dependen de las i
 GEMA es una plataforma SaaS multi-tenant que implementa aislamiento a nivel de base de datos usando discriminación por columna.
 - **Tenant**: Cada empresa registrada representa un tenant único con su `empresa_id` (UUID).
 - **Aislamiento**: Los modelos ORM multi-tenant heredan de `TenantMixin` el cual añade automáticamente la clave foránea `empresa_id` con índice a nivel de base de datos.
-- **Flujo de Onboarding SaaS**: Al registrar un nuevo usuario mediante `/v1/auth/register`, el sistema:
+- **Flujo de Onboarding SaaS**: Al registrar un nuevo usuario mediante `/v1/auth/registrar`, el sistema:
   1. Crea automáticamente una nueva empresa (`Company`).
   2. Crea el usuario (`User`) vinculado a dicha empresa (`empresa_id`).
   3. Genera un rol con nombre "Administrador" que contiene todos los permisos del sistema.
@@ -200,12 +200,12 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │       └── v1/
 │   │           ├── router.py            # v1_router con endpoints registrados
 │   │           ├── endpoints/
-│   │           │   ├── auth.py          # /v1/auth/ (register, login, logout, refresh, me)
-│   │           │   ├── companies.py     # /v1/companies
-│   │           │   ├── roles.py         # /v1/companies/{company_id}/roles
-│   │           │   ├── assets.py        # /v1/companies/{company_id}/assets
-│   │           │   ├── locations.py     # /v1/companies/{company_id}/locations
-│   │           │   └── preferences.py   # /v1/companies/{cid}/me/preferences (protegido con require_permission)
+│   │           │   ├── auth.py          # /v1/auth/ (registrar, ingresar, refrescar, cerrar-sesion, yo)
+│   │           │   ├── companies.py     # /v1/empresas
+│   │           │   ├── roles.py         # /v1/empresas/{empresa_id}/roles
+│   │           │   ├── assets.py        # /v1/empresas/{empresa_id}/activos
+│   │           │   ├── locations.py     # /v1/empresas/{empresa_id}/ubicaciones
+│   │           │   └── preferences.py   # /v1/empresas/{empresa_id}/yo/preferencias (protegido con require_permission)
 │   │           └── schemas/             # Schemas de validación y representación JSON:API
 │   │               ├── jsonapi_base.py
 │   │               ├── auth.py
@@ -236,6 +236,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 ### Idioma
 
 - **Código fuente**: identificadores en inglés (`User`, `register`, `get_by_email`)
+- **Rutas de la API REST**: en español (ej: `/v1/auth/registrar`, `/v1/empresas/{empresa_id}/activos`)
 - **Docstrings y comentarios**: en español
 - **Mensajes de error de dominio**: en español
 - **Nombres de archivos**: snake_case en inglés
@@ -276,48 +277,48 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 
 | Método | Ruta | Descripción | Auth | Permiso RBAC |
 |--------|------|-------------|------|--------------|
-| `POST` | `/v1/auth/register` | Registro de usuario (Onboarding SaaS) | No | - |
-| `POST` | `/v1/auth/login` | Inicio de sesión | No | - |
-| `POST` | `/v1/auth/refresh` | Rotación de tokens | No | - |
-| `POST` | `/v1/auth/logout` | Cierre de sesión | Bearer | - |
-| `GET` | `/v1/auth/me` | Perfil del usuario actual | Bearer | - |
-| `POST` | `/v1/companies` | Crear una nueva empresa | Bearer | `admin:create` |
-| `GET` | `/v1/companies` | Listar empresas | Bearer | - |
-| `GET` | `/v1/companies/{company_id}` | Obtener una empresa | Bearer | - |
-| `PATCH` | `/v1/companies/{company_id}` | Actualizar datos de empresa | Bearer | `admin:edit` |
-| `DELETE` | `/v1/companies/{company_id}` | Eliminar empresa | Bearer | `admin:delete` |
-| `POST` | `/v1/companies/{cid}/roles` | Crear nuevo rol | Bearer | `admin:create` |
-| `GET` | `/v1/companies/{cid}/roles` | Listar todos los roles | Bearer | - |
-| `GET` | `/v1/companies/{cid}/roles/{role_id}` | Obtener detalles de un rol | Bearer | - |
-| `PATCH` | `/v1/companies/{cid}/roles/{role_id}`| Actualizar rol y permisos | Bearer | `admin:edit` |
-| `DELETE` | `/v1/companies/{cid}/roles/{role_id}`| Eliminar un rol | Bearer | `admin:delete` |
-| `POST` | `/v1/companies/{cid}/roles/{role_id}/assign`| Asignar rol a usuario | Bearer | `admin:edit` |
-| `DELETE`| `/v1/companies/{cid}/roles/{role_id}/revoke`| Revocar rol a usuario (query: `usuario_id`)| Bearer | `admin:edit` |
-| `POST` | `/v1/companies/{cid}/assets` | Crear un activo físico | Bearer | `assets:create` |
-| `GET` | `/v1/companies/{cid}/assets` | Listar activos (filtros: `estado`, `ubicacion_id`)| Bearer | `assets:view` |
-| `GET` | `/v1/companies/{cid}/assets/{asset_id}` | Obtener detalles de un activo | Bearer | `assets:view` |
-| `PATCH` | `/v1/companies/{cid}/assets/{asset_id}` | Actualizar datos de activo | Bearer | `assets:edit` |
-| `DELETE` | `/v1/companies/{cid}/assets/{asset_id}` | Eliminar activo | Bearer | `assets:delete` |
-| `POST` | `/v1/companies/{cid}/locations` | Crear ubicación jerárquica | Bearer | `admin:create` |
-| `GET` | `/v1/companies/{cid}/locations` | Obtener árbol de ubicaciones completo | Bearer | - |
-| `GET` | `/v1/companies/{cid}/locations/{location_id}`| Obtener detalles de ubicación | Bearer | - |
-| `PATCH` | `/v1/companies/{cid}/locations/{location_id}`| Actualizar ubicación | Bearer | `admin:edit` |
-| `DELETE` | `/v1/companies/{cid}/locations/{location_id}`| Eliminar ubicación | Bearer | `admin:delete` |
-| `GET` | `/v1/companies/{cid}/locations/{location_id}/children`| Listar ubicaciones hijas directas | Bearer | - |
-| `GET` | `/v1/companies/{cid}/me/preferences` | Obtener preferencias del usuario actual | Bearer | `preferencias:view` |
-| `PATCH` | `/v1/companies/{cid}/me/preferences` | Actualizar preferencias del usuario actual | Bearer | `preferencias:edit` |
-| `GET` | `/health/live` | Liveness probe | No | - |
-| `GET` | `/health/ready` | Readiness probe (DB + Redis) | No | - |
+| `POST` | `/v1/auth/registrar` | Registro de usuario (Onboarding SaaS) | No | - |
+| `POST` | `/v1/auth/ingresar` | Inicio de sesión | No | - |
+| `POST` | `/v1/auth/refrescar` | Rotación de tokens | No | - |
+| `POST` | `/v1/auth/cerrar-sesion` | Cierre de sesión | Bearer | - |
+| `GET` | `/v1/auth/yo` | Perfil del usuario actual | Bearer | - |
+| `POST` | `/v1/empresas` | Crear una nueva empresa | Bearer | `admin:create` |
+| `GET` | `/v1/empresas` | Listar empresas | Bearer | - |
+| `GET` | `/v1/empresas/{empresa_id}` | Obtener una empresa | Bearer | - |
+| `PATCH` | `/v1/empresas/{empresa_id}` | Actualizar datos de empresa | Bearer | `admin:edit` |
+| `DELETE` | `/v1/empresas/{empresa_id}` | Eliminar empresa | Bearer | `admin:delete` |
+| `POST` | `/v1/empresas/{empresa_id}/roles` | Crear nuevo rol | Bearer | `admin:create` |
+| `GET` | `/v1/empresas/{empresa_id}/roles` | Listar todos los roles | Bearer | - |
+| `GET` | `/v1/empresas/{empresa_id}/roles/{rol_id}` | Obtener detalles de un rol | Bearer | - |
+| `PATCH` | `/v1/empresas/{empresa_id}/roles/{rol_id}`| Actualizar rol y permisos | Bearer | `admin:edit` |
+| `DELETE` | `/v1/empresas/{empresa_id}/roles/{rol_id}`| Eliminar un rol | Bearer | `admin:delete` |
+| `POST` | `/v1/empresas/{empresa_id}/roles/{rol_id}/asignar`| Asignar rol a usuario | Bearer | `admin:edit` |
+| `DELETE`| `/v1/empresas/{empresa_id}/roles/{rol_id}/revocar`| Revocar rol a usuario (query: `usuario_id`)| Bearer | `admin:edit` |
+| `POST` | `/v1/empresas/{empresa_id}/activos` | Crear un activo físico | Bearer | `assets:create` |
+| `GET` | `/v1/empresas/{empresa_id}/activos` | Listar activos (filtros: `estado`, `ubicacion_id`)| Bearer | `assets:view` |
+| `GET` | `/v1/empresas/{empresa_id}/activos/{activo_id}` | Obtener detalles de un activo | Bearer | `assets:view` |
+| `PATCH` | `/v1/empresas/{empresa_id}/activos/{activo_id}` | Actualizar datos de activo | Bearer | `assets:edit` |
+| `DELETE` | `/v1/empresas/{empresa_id}/activos/{activo_id}` | Eliminar activo | Bearer | `assets:delete` |
+| `POST` | `/v1/empresas/{empresa_id}/ubicaciones` | Crear ubicación jerárquica | Bearer | `admin:create` |
+| `GET` | `/v1/empresas/{empresa_id}/ubicaciones` | Obtener árbol de ubicaciones completo | Bearer | - |
+| `GET` | `/v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}`| Obtener detalles de ubicación | Bearer | - |
+| `PATCH` | `/v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}`| Actualizar ubicación | Bearer | `admin:edit` |
+| `DELETE` | `/v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}`| Eliminar ubicación | Bearer | `admin:delete` |
+| `GET` | `/v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}/hijos`| Listar ubicaciones hijas directas | Bearer | - |
+| `GET` | `/v1/empresas/{empresa_id}/yo/preferencias` | Obtener preferencias del usuario actual | Bearer | `preferencias:view` |
+| `PATCH` | `/v1/empresas/{empresa_id}/yo/preferencias` | Actualizar preferencias del usuario actual | Bearer | `preferencias:edit` |
+| `GET` | `/salud/activo` | Liveness probe | No | - |
+| `GET` | `/salud/listo` | Readiness probe (DB + Redis) | No | - |
 
 ### Convención de Seguridad
 
 #### 1. Validación de Tenant (UUID Normalization)
 
-Todos los endpoints que reciben `company_id` en el path DEBEN normalizar el UUID antes de compararlo con el tenant del usuario autenticado. Esto previene bypass por diferencias de formato (con/sin guiones, mayúsculas/minúsculas).
+Todos los endpoints que reciben `empresa_id` en el path DEBEN normalizar el UUID antes de compararlo con el tenant del usuario autenticado. Esto previene bypass por diferencias de formato (con/sin guiones, mayúsculas/minúsculas).
 
 ```python
 # CORRECTO: Normalización vía UUID()
-if UUID(company_id) != UUID(user_empresa_id):
+if UUID(empresa_id) != UUID(user_empresa_id):
     raise InsufficientPermissionsError("No tienes acceso a esta empresa")
 ```
 
@@ -330,8 +331,8 @@ La función `validate_tenant_access()` en `dependencies.py` implementa esta norm
 
 | Patrón | Función | Cuándo usarlo |
 |--------|---------|---------------|
-| **Platform** | `require_platform_permission(module, action)` | Endpoints SIN `company_id` en el path (ej: `POST /companies`) |
-| **Tenant + RBAC** | `require_permission(module, action)` | Endpoints CON `company_id` en el path que requieren permiso específico |
+| **Platform** | `require_platform_permission(module, action)` | Endpoints SIN `empresa_id` en el path (ej: `POST /v1/empresas`) |
+| **Tenant + RBAC** | `require_permission(module, action)` | Endpoints CON `empresa_id` en el path que requieren permiso específico |
 | **Solo Tenant** | `require_tenant_read` | Endpoints GET que solo necesitan verificar acceso al tenant (sin RBAC) |
 
 #### 3. Nomenclatura de Parámetros de Path
@@ -340,11 +341,11 @@ Todos los parámetros de ID en los paths DEBEN usar el nombre específico de la 
 
 | Endpoint | Incorrecto | Correcto |
 |----------|-----------|----------|
-| `/companies/{id}` | `{id}` | `{company_id}` |
-| `/roles/{id}` | `{id}` | `{role_id}` |
-| `/assets/{id}` | `{id}` | `{asset_id}` |
-| `/locations/{id}` | `{id}` | `{location_id}` |
-| `/locations/{id}/children` | `{id}` | `{location_id}` |
+| `/empresas/{id}` | `{id}` | `{empresa_id}` |
+| `/roles/{id}` | `{id}` | `{rol_id}` |
+| `/activos/{id}` | `{id}` | `{activo_id}` |
+| `/ubicaciones/{id}` | `{id}` | `{ubicacion_id}` |
+| `/ubicaciones/{id}/hijos` | `{id}` | `{ubicacion_id}` |
 
 Esto elimina ambigüedad y previene errores de tipo IDOR.
 
@@ -365,12 +366,12 @@ Las violaciones de unicidad en PostgreSQL se capturan en `integrity_error_handle
 
 Los siguientes endpoints GET usan `require_tenant_read` en lugar de `require_permission` porque no requieren un permiso RBAC específico, pero SÍ necesitan validar que el usuario pertenece al tenant:
 
-- `GET /v1/companies/{company_id}`
-- `GET /v1/companies/{company_id}/locations`
-- `GET /v1/companies/{company_id}/locations/{location_id}`
-- `GET /v1/companies/{company_id}/locations/{location_id}/children`
-- `GET /v1/companies/{company_id}/roles`
-- `GET /v1/companies/{company_id}/roles/{role_id}`
+- `GET /v1/empresas/{empresa_id}`
+- `GET /v1/empresas/{empresa_id}/ubicaciones`
+- `GET /v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}`
+- `GET /v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}/hijos`
+- `GET /v1/empresas/{empresa_id}/roles`
+- `GET /v1/empresas/{empresa_id}/roles/{rol_id}`
 
 
 ---
@@ -411,7 +412,7 @@ Para mantener el alcance de entrega acotado y enfocado en el núcleo de negocio 
    - *Pendiente*: Módulos CRUD de negocio, use cases, y endpoints REST para la gestión de categorías y artículos de catálogo.
 
 3. **Flujo de Invitación de Usuarios a Empresas**:
-   - *Estado actual*: El registro actual (`/register`) implementa onboarding directo, el cual asume que cada registro crea una empresa nueva.
+   - *Estado actual*: El registro actual (`/v1/auth/registrar`) implementa onboarding directo, el cual asume que cada registro crea una empresa nueva.
    - *Pendiente*: Flujo de invitación por correo electrónico, validación de tokens de invitación y unión de usuarios a tenants preexistentes.
 
 4. **Outbox Pattern e integración asíncrona**:

@@ -56,7 +56,7 @@ router = APIRouter()
     summary="Crear un nuevo rol",
 )
 async def create_role(
-    company_id: str,
+    empresa_id: str,
     request: CreateRoleRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "create")),
     use_case: CreateRoleUseCase = Depends(get_create_role_use_case),
@@ -76,7 +76,7 @@ async def create_role(
         descripcion=request.data.attributes.descripcion,
         permisos=permisos_dto,
     )
-    res = await use_case.execute(company_id, dto)
+    res = await use_case.execute(empresa_id, dto)
     return RoleDocument(
         data=RoleResource(
             id=res.id,
@@ -105,11 +105,11 @@ async def create_role(
     summary="Listar roles de la empresa",
 )
 async def list_roles(
-    company_id: str,
+    empresa_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
     use_case: ListRolesUseCase = Depends(get_list_roles_use_case),
 ) -> RoleListDocument:
-    roles = await use_case.execute(company_id)
+    roles = await use_case.execute(empresa_id)
     return RoleListDocument(
         data=[
             RoleResource(
@@ -136,17 +136,17 @@ async def list_roles(
 
 
 @router.get(
-    "/{role_id}",
+    "/{rol_id}",
     response_model=RoleDocument,
     summary="Obtener rol por ID",
 )
 async def get_role(
-    company_id: str,
-    role_id: str,
+    empresa_id: str,
+    rol_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetRoleUseCase = Depends(provide_role_use_case),
 ) -> RoleDocument:
-    res = await use_case.execute(company_id, role_id)
+    res = await use_case.execute(empresa_id, rol_id)
     return RoleDocument(
         data=RoleResource(
             id=res.id,
@@ -170,13 +170,13 @@ async def get_role(
 
 
 @router.patch(
-    "/{role_id}",
+    "/{rol_id}",
     response_model=RoleDocument,
     summary="Actualizar rol",
 )
 async def update_role(
-    company_id: str,
-    role_id: str,
+    empresa_id: str,
+    rol_id: str,
     request: UpdateRoleRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateRoleUseCase = Depends(get_update_role_use_case),
@@ -202,7 +202,7 @@ async def update_role(
         version=sent.get("version") if "version" in sent else None,
         _fields_set=frozenset(sent.keys()),
     )
-    res = await use_case.execute(company_id, role_id, dto)
+    res = await use_case.execute(empresa_id, rol_id, dto)
     return RoleDocument(
         data=RoleResource(
             id=res.id,
@@ -226,44 +226,44 @@ async def update_role(
 
 
 @router.delete(
-    "/{role_id}",
+    "/{rol_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Eliminar rol",
 )
 async def delete_role(
-    company_id: str,
-    role_id: str,
+    empresa_id: str,
+    rol_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "delete")),
     use_case: DeleteRoleUseCase = Depends(get_delete_role_use_case),
 ) -> None:
-    await use_case.execute(company_id, role_id)
+    await use_case.execute(empresa_id, rol_id)
 
 
 @router.post(
-    "/{role_id}/assign",
+    "/{rol_id}/asignar",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Asignar rol a un usuario",
 )
 async def assign_role(
-    company_id: str,
-    role_id: str,
+    empresa_id: str,
+    rol_id: str,
     request: AssignRoleRequest,
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: AssignRoleToUserUseCase = Depends(get_assign_role_to_user_use_case),
 ) -> None:
-    await use_case.execute(company_id, role_id, request.data.attributes.usuario_id)
+    await use_case.execute(empresa_id, rol_id, request.data.attributes.usuario_id)
 
 
 @router.delete(
-    "/{role_id}/revoke",
+    "/{rol_id}/revocar",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Revocar rol a un usuario",
 )
 async def revoke_role(
-    company_id: str,
-    role_id: str,
+    empresa_id: str,
+    rol_id: str,
     usuario_id: str = Query(..., description="ID del usuario al que se le revoca el rol"),
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: RevokeRoleFromUserUseCase = Depends(get_revoke_role_from_user_use_case),
 ) -> None:
-    await use_case.execute(company_id, role_id, usuario_id)
+    await use_case.execute(empresa_id, rol_id, usuario_id)
