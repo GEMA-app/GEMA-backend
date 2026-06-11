@@ -1,4 +1,4 @@
-from app.application.dtos.preferences_dtos import (
+from app.application.dtos.preference_dtos import (
     PreferenceResponse,
     UpdatePreferenceRequest,
 )

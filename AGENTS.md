@@ -127,7 +127,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   │   ├── role_dtos.py
 │   │   │   ├── asset_dtos.py
 │   │   │   ├── location_dtos.py
-│   │   │   └── preferences_dtos.py
+│   │   │   └── preference_dtos.py
 │   │   ├── ports/
 │   │   │   ├── auth.py                  # PasswordHasherPort, TokenServicePort
 │   │   │   ├── company_repository.py
@@ -213,7 +213,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │               ├── role.py
 │   │               ├── asset.py
 │   │               ├── location.py
-│   │               └── preferences.py
+│   │               └── preference_dtos.py
 │   └── composition/
 │       └── container/                   # Paquete modular de inyección de dependencias
 │           ├── __init__.py              # Re-exporta todas las fábricas
