@@ -25,3 +25,13 @@ class EmptyRoleNameError(RoleException):
     """Se lanza cuando el nombre de un rol está vacío."""
 
     pass
+
+
+class LastAdminRevocationError(RoleException):
+    """Se intentó revocar/eliminar el último rol de administrador de la empresa."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            "No se puede revocar el último rol de administrador de la empresa. "
+            "Asigne el rol a otro usuario primero."
+        )

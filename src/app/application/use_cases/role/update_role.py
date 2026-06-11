@@ -25,7 +25,9 @@ class UpdateRoleUseCase:
             if not role:
                 raise RoleNotFoundError(f"El rol con ID '{role_id_str}' no existe en esta empresa.")
 
-            if request.nombre is not None:
+            if 'nombre' in request._fields_set:
+                if request.nombre is None:
+                    raise ValidationException("El nombre del rol no puede ser nulo.")
                 new_name = request.nombre.strip()
                 if not new_name:
                     raise ValidationException("El nombre del rol no puede estar vacío.")
@@ -39,10 +41,12 @@ class UpdateRoleUseCase:
                     )
                 role.nombre = new_name
 
-            if request.descripcion is not None:
+            if 'descripcion' in request._fields_set:
                 role.descripcion = request.descripcion
 
-            if request.permisos is not None:
+            if 'permisos' in request._fields_set:
+                if request.permisos is None:
+                    raise ValidationException("Los permisos no pueden ser nulos.")
                 role.permisos = [
                     Permission(
                         module=PermissionModule(p.module),

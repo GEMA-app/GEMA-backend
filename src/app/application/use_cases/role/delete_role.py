@@ -18,5 +18,18 @@ class DeleteRoleUseCase:
             if not role:
                 raise RoleNotFoundError(f"El rol con ID '{role_id_str}' no existe en esta empresa.")
 
+            from app.domain.enums import PermissionModule
+            from app.domain.exceptions import LastAdminRevocationError, ValidationException
+
+            if role.nombre == "Administrador":
+                raise ValidationException(
+                    "No se puede eliminar el rol de Administrador del sistema."
+                )
+
+            if any(p.module == PermissionModule.ADMIN and p.can_delete for p in role.permisos):
+                remaining_admins = await self.uow.roles.count_admin_users(empresa_id=company_id)
+                if remaining_admins <= 1:
+                    raise LastAdminRevocationError()
+
             await self.uow.roles.delete(role_id, company_id)
             await self.uow.commit()

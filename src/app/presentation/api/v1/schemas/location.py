@@ -2,6 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from app.domain.enums import LocationType
 from app.presentation.api.v1.schemas.jsonapi_base import LinksObject
 
 
@@ -55,7 +56,7 @@ class LocationTreeDocument(BaseModel):
 # Solicitudes (Requests)
 class CreateLocationAttributes(BaseModel):
     nombre: str
-    tipo: str
+    tipo: LocationType
     parent_id: str | None = None
     descripcion: str | None = None
 
@@ -71,7 +72,7 @@ class CreateLocationRequest(BaseModel):
 
 class UpdateLocationAttributes(BaseModel):
     nombre: str | None = None
-    tipo: str | None = None
+    tipo: LocationType | None = None
     parent_id: str | None = None
     descripcion: str | None = None
 

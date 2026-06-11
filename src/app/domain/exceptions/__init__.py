@@ -50,6 +50,7 @@ from app.domain.exceptions.preference import (
 )
 from app.domain.exceptions.role import (
     EmptyRoleNameError,
+    LastAdminRevocationError,
     RoleException,
     RoleNameExistsError,
     RoleNotFoundError,
@@ -100,4 +101,5 @@ __all__ = [
     "PreferenceException",
     "PreferenceNotFoundError",
     "PreferenceThemeInvalidError",
+    "LastAdminRevocationError",
 ]

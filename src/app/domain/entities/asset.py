@@ -158,7 +158,7 @@ class Asset(EventProducer):
             AssetOutOfService(asset_id=str(self.id)),
         )
 
-    def transfer_location(self, new_location_id: LocationId) -> None:
+    def transfer_location(self, new_location_id: LocationId | None) -> None:
         """Cambia la ubicación del activo y emite el evento."""
         old_location = self.ubicacion_id
         self.ubicacion_id = new_location_id
@@ -166,6 +166,6 @@ class Asset(EventProducer):
             AssetLocationChanged(
                 asset_id=str(self.id),
                 previous_location_id=str(old_location) if old_location else None,
-                new_location_id=str(new_location_id),
+                new_location_id=str(new_location_id) if new_location_id else None,
             )
         )

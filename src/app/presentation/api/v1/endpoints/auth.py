@@ -133,11 +133,15 @@ async def refresh(
     summary="Cerrar sesión",
 )
 async def logout(
+    request: LogoutRequest | None = None,
     token: HTTPAuthorizationCredentials = Depends(security),
     use_case: LogoutUserUseCase = Depends(get_logout_user_use_case),
 ) -> None:
-    """Revoca el token de acceso actual añadiendo su JTI a la lista de bloqueo en Redis."""
-    await use_case.execute(token.credentials)
+    """Revoca el token de acceso actual añadiendo su JTI a la lista de bloqueo en Redis y opcionalmente el de refresco."""
+    refresh_token = None
+    if request and request.data and request.data.attributes:
+        refresh_token = request.data.attributes.refresh_token
+    await use_case.execute(token.credentials, refresh_token)
 
 
 @router.get(

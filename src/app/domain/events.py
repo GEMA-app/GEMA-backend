@@ -170,7 +170,7 @@ class AssetLocationChanged(DomainEvent):
 
     asset_id: str
     previous_location_id: str | None
-    new_location_id: str
+    new_location_id: str | None
 
 
 @auto_register

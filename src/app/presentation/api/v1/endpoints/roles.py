@@ -178,8 +178,10 @@ async def update_role(
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateRoleUseCase = Depends(get_update_role_use_case),
 ) -> RoleDocument:
+    attrs = request.data.attributes
+    sent = attrs.model_dump(exclude_unset=True)
     permisos_dto = None
-    if request.data.attributes.permisos is not None:
+    if "permisos" in sent and attrs.permisos is not None:
         permisos_dto = [
             PermissionDTO(
                 module=p.module,
@@ -188,12 +190,13 @@ async def update_role(
                 can_edit=p.can_edit,
                 can_delete=p.can_delete,
             )
-            for p in request.data.attributes.permisos
+            for p in attrs.permisos
         ]
     dto = UpdateRoleDTO(
-        nombre=request.data.attributes.nombre,
-        descripcion=request.data.attributes.descripcion,
+        nombre=sent.get("nombre") if "nombre" in sent else None,
+        descripcion=sent.get("descripcion") if "descripcion" in sent else None,
         permisos=permisos_dto,
+        _fields_set=frozenset(sent.keys()),
     )
     res = await use_case.execute(company_id, role_id, dto)
     return RoleDocument(

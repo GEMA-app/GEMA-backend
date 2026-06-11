@@ -20,19 +20,32 @@ class UpdateCompanyUseCase:
             if not company:
                 raise CompanyNotFoundError(f"La empresa con ID '{company_id_str}' no existe.")
 
-            if request.nombre is not None:
-                if not request.nombre.strip():
+            if 'nombre' in request._fields_set:
+                if request.nombre is None or not request.nombre.strip():
                     raise ValidationException("El nombre de la empresa no puede estar vacío.")
                 company.nombre = request.nombre.strip()
 
-            if request.rif is not None:
+            if 'rif' in request._fields_set:
                 company.rif = request.rif
 
-            if request.email_contacto is not None:
+            if 'email_contacto' in request._fields_set:
                 company.email_contacto = request.email_contacto
 
-            if request.estado is not None:
-                company.estado = CompanyStatus(request.estado)
+            if 'estado' in request._fields_set:
+                if request.estado is None:
+                    raise ValidationException("El estado no puede ser nulo.")
+                target = CompanyStatus(request.estado)
+                if target != company.estado:
+                    if target == CompanyStatus.SUSPENDED:
+                        company.suspend()
+                    elif target == CompanyStatus.ACTIVE:
+                        company.activate()
+                    elif target == CompanyStatus.CANCELLED:
+                        company.cancel()
+                    else:
+                        raise ValidationException(
+                            f"Transición de '{company.estado.value}' a '{target.value}' no permitida."
+                        )
 
             await self.uow.companies.save(company)
             await self.uow.commit()

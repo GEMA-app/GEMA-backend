@@ -42,6 +42,10 @@ class TokenServicePort(Protocol):
         """Devuelve el user_id asociado al token si es válido, None si no."""
         ...
 
+    async def consume_reset_token(self, token_hash: str) -> str | None:
+        """Obtiene y elimina el token de reset de forma atómica (GETDEL)."""
+        ...
+
     async def delete_reset_token(self, token_hash: str) -> None:
         """Elimina un token de reset de contraseña (single-use)."""
         ...

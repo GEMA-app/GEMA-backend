@@ -53,7 +53,7 @@ async def create_asset(
         articulo_id=request.data.attributes.articulo_id,
         serial_interno=request.data.attributes.serial_interno,
         codigo_activo=request.data.attributes.codigo_activo,
-        estado=request.data.attributes.estado,
+        estado=request.data.attributes.estado.value,
         ubicacion_id=request.data.attributes.ubicacion_id,
         fecha_adquisicion=request.data.attributes.fecha_adquisicion,
         valor_monetario=request.data.attributes.valor_monetario,
@@ -166,14 +166,17 @@ async def update_asset(
     current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "edit")),
     use_case: UpdateAssetUseCase = Depends(get_update_asset_use_case),
 ) -> AssetDocument:
+    attrs = request.data.attributes
+    sent = attrs.model_dump(exclude_unset=True)
     dto = UpdateAssetDTO(
-        serial_interno=request.data.attributes.serial_interno,
-        codigo_activo=request.data.attributes.codigo_activo,
-        estado=request.data.attributes.estado,
-        ubicacion_id=request.data.attributes.ubicacion_id,
-        fecha_adquisicion=request.data.attributes.fecha_adquisicion,
-        valor_monetario=request.data.attributes.valor_monetario,
-        moneda=request.data.attributes.moneda,
+        serial_interno=sent.get("serial_interno") if "serial_interno" in sent else None,
+        codigo_activo=sent.get("codigo_activo") if "codigo_activo" in sent else None,
+        estado=attrs.estado.value if ("estado" in sent and attrs.estado) else None,
+        ubicacion_id=sent.get("ubicacion_id") if "ubicacion_id" in sent else None,
+        fecha_adquisicion=sent.get("fecha_adquisicion") if "fecha_adquisicion" in sent else None,
+        valor_monetario=sent.get("valor_monetario") if "valor_monetario" in sent else None,
+        moneda=sent.get("moneda") if "moneda" in sent else None,
+        _fields_set=frozenset(sent.keys()),
     )
     res = await use_case.execute(company_id, asset_id, dto)
     return AssetDocument(

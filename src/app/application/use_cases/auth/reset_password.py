@@ -31,7 +31,7 @@ class ResetPasswordUseCase:
         """Valida el token, actualiza la contraseña y elimina el token."""
         token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
 
-        user_id = await self.token_service.verify_reset_token(token_hash)
+        user_id = await self.token_service.consume_reset_token(token_hash)
         if not user_id:
             logger.warning(
                 "reset_token_fallido",
@@ -39,26 +39,35 @@ class ResetPasswordUseCase:
             )
             raise InvalidTokenError("Token inválido o expirado")
 
-        async with self.uow:
-            user = await self.uow.users.get_by_id(UserId(value=uuid.UUID(user_id)))
-            if not user:
-                logger.error(
-                    "reset_token_usuario_inexistente",
-                    user_id=user_id,
+        try:
+            async with self.uow:
+                user = await self.uow.users.get_by_id(UserId(value=uuid.UUID(user_id)))
+                if not user:
+                    logger.error(
+                        "reset_token_usuario_inexistente",
+                        user_id=user_id,
+                    )
+                    raise InvalidTokenError("Token inválido o expirado")
+
+                validated = PlainPassword(value=new_password)
+                user.complete_password_reset(self.hasher.hash(validated.value))
+                await self.uow.users.save(user)
+                await self.uow.commit()
+        except Exception as err:
+            # Restaurar token si el commit/proceso falla (rollback automático de BD)
+            # ⚠️ SIEMPRE propagar error original, incluso si Redis falla
+            try:
+                await self.token_service.store_reset_token(
+                    token_hash, user_id, 1800
                 )
-                raise InvalidTokenError("Token inválido o expirado")
+            except Exception as cache_err:
+                logger.error(
+                    "Fallo al restaurar token en cache tras rollback de BD",
+                    redis_error=str(cache_err),
+                )
+            raise err
 
-            validated = PlainPassword(value=new_password)
-            user.complete_password_reset(self.hasher.hash(validated.value))
-            await self.uow.users.save(user)
-
-            # Eliminar el token dentro de la misma transacción que el cambio de contraseña.
-            # Si Redis falla, el commit se revierte y la contraseña no cambia.
-            await self.token_service.delete_reset_token(token_hash)
-
-            await self.uow.commit()
-
-            await self.notification.send_password_reset_confirmation(
-                email=user.email.value,
-            )
-            logger.info("reset_password_completado", user_id=user_id)
+        await self.notification.send_password_reset_confirmation(
+            email=user.email.value,
+        )
+        logger.info("reset_password_completado", user_id=user_id)

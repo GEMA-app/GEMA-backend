@@ -46,27 +46,28 @@ class RequestPasswordResetUseCase:
             if not user:
                 return
 
-            # Invalidar tokens anteriores del mismo usuario (S-02: máximo 1 token activo).
-            await self.token_service.delete_user_reset_tokens(str(user.id))
-
-            raw_token = secrets.token_urlsafe(32)
-            token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
-            await self.token_service.store_reset_token(
-                token_hash=token_hash,
-                user_id=str(user.id),
-                ttl_seconds=_RESET_TOKEN_TTL_SECONDS,
-            )
-
-            # El email se envía directamente desde el use case para que el raw_token
-            # nunca toque el bus de eventos ni la tabla outbox.
-            await self.notification.send_password_reset(
-                email=user.email.value,
-                reset_url=f"{self.frontend_url}/reset-password?token={raw_token}",
-                expire_minutes=_RESET_TOKEN_EXPIRE_MINUTES,
-            )
-
             # Evento solo para auditoría, sin el token.
             user.request_password_reset()
             await self.uow.users.save(user)
             await self.uow.commit()
-            logger.info("password_reset_requested", user_id=str(user.id))
+
+        # Invalidar tokens anteriores del mismo usuario (S-02: máximo 1 token activo).
+        await self.token_service.delete_user_reset_tokens(str(user.id))
+
+        raw_token = secrets.token_urlsafe(32)
+        token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+        await self.token_service.store_reset_token(
+            token_hash=token_hash,
+            user_id=str(user.id),
+            ttl_seconds=_RESET_TOKEN_TTL_SECONDS,
+        )
+
+        # El email se envía directamente desde el use case para que el raw_token
+        # nunca toque el bus de eventos ni la tabla outbox.
+        await self.notification.send_password_reset(
+            email=user.email.value,
+            reset_url=f"{self.frontend_url}/reset-password?token={raw_token}",
+            expire_minutes=_RESET_TOKEN_EXPIRE_MINUTES,
+        )
+
+        logger.info("password_reset_requested", user_id=str(user.id))

@@ -2,6 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from app.domain.enums import CompanyStatus
 from app.presentation.api.v1.schemas.jsonapi_base import LinksObject
 
 
@@ -55,7 +56,7 @@ class UpdateCompanyAttributes(BaseModel):
     nombre: str | None = None
     rif: str | None = None
     email_contacto: str | None = None
-    estado: str | None = None
+    estado: CompanyStatus | None = None
 
 
 class UpdateCompanyResource(BaseModel):

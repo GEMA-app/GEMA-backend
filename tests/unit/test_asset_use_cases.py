@@ -192,3 +192,27 @@ class TestCreateAssetLocationValidation:
 
         with pytest.raises(LocationNotFoundError):
             await use_case.execute(str(uuid4()), request)
+
+
+class TestUpdateAssetNullification:
+
+    async def test_update_asset_nullifies_location(self, mock_uow):
+        from app.application.dtos.asset_dtos import UpdateAssetRequest
+        from app.application.use_cases.asset.update_asset import UpdateAssetUseCase
+        from app.domain.value_objects import LocationId
+
+        mock_asset = MagicMock()
+        mock_asset.ubicacion_id = LocationId(uuid4())
+        mock_asset.codigo_activo = "old-code"
+        mock_asset.serial_interno = "old-serial"
+        mock_asset.estado = AssetStatus.OPERATIONAL
+        mock_uow.assets.get_by_id.return_value = mock_asset
+
+        use_case = UpdateAssetUseCase(uow=mock_uow)
+        request = UpdateAssetRequest(
+            ubicacion_id=None,
+            _fields_set=frozenset(["ubicacion_id"])
+        )
+
+        await use_case.execute(str(uuid4()), str(uuid4()), request)
+        mock_asset.transfer_location.assert_called_once_with(None)

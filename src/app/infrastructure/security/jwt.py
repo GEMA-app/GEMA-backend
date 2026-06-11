@@ -1,3 +1,4 @@
+import contextlib
 import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any, cast
@@ -90,6 +91,18 @@ class PyJwtTokenService(TokenServicePort):
         key = f"{RESET_TOKEN_PREFIX}{token_hash}"
         result = await self.redis.get(key)
         return cast("str | None", result)
+
+    async def consume_reset_token(self, token_hash: str) -> str | None:
+        """GETDEL atómico: obtiene user_id Y elimina el token en una operación."""
+        key = f"{RESET_TOKEN_PREFIX}{token_hash}"
+        user_id = await self.redis.getdel(key)
+        if user_id:
+            user_id_str = cast(str, user_id)
+            user_key = f"{RESET_TOKEN_USER_SET_PREFIX}{user_id_str}"
+            with contextlib.suppress(Exception):
+                await self.redis.srem(user_key, token_hash)
+            return user_id_str
+        return None
 
     async def delete_reset_token(self, token_hash: str) -> None:
         """Elimina el token y lo quita del set de tokens del usuario."""

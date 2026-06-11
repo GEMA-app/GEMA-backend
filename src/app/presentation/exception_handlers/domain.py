@@ -34,6 +34,7 @@ from app.domain.exceptions import (
     WeakPasswordError,
     PreferenceNotFoundError,
     PreferenceThemeInvalidError,
+    LastAdminRevocationError,
 )
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers.base import jsonapi_response
@@ -166,6 +167,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     EmptyLocationNameError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_EMPTY_LOCATION_NAME",
+    ),
+    LastAdminRevocationError: (
+        status.HTTP_403_FORBIDDEN,
+        "ERR_LAST_ADMIN_REVOCATION",
     ),
 }
 

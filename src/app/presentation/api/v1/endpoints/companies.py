@@ -146,11 +146,14 @@ async def update_company(
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateCompanyUseCase = Depends(get_update_company_use_case),
 ) -> CompanyDocument:
+    attrs = request.data.attributes
+    sent = attrs.model_dump(exclude_unset=True)
     dto = UpdateCompanyDTO(
-        nombre=request.data.attributes.nombre,
-        rif=request.data.attributes.rif,
-        email_contacto=request.data.attributes.email_contacto,
-        estado=request.data.attributes.estado,
+        nombre=sent.get("nombre") if "nombre" in sent else None,
+        rif=sent.get("rif") if "rif" in sent else None,
+        email_contacto=sent.get("email_contacto") if "email_contacto" in sent else None,
+        estado=attrs.estado.value if ("estado" in sent and attrs.estado) else None,
+        _fields_set=frozenset(sent.keys()),
     )
     res = await use_case.execute(company_id, dto)
     return CompanyDocument(

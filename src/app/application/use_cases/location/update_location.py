@@ -33,29 +33,34 @@ class UpdateLocationUseCase:
 
             new_parent_id = location.parent_id
 
-            if request.parent_id is not None:
-                if request.parent_id:
-                    p_id = LocationId.from_string(request.parent_id)
+            if 'parent_id' in request._fields_set:
+                if request.parent_id is not None:
+                    p_id_str = request.parent_id.strip()
+                    if not p_id_str:
+                        raise ValidationException("El parent_id no puede estar vacío.")
+                    p_id = LocationId.from_string(p_id_str)
                     if p_id == location.id:
                         raise LocationCircularReferenceError(
                             "Una ubicación no puede ser su propio padre."
                         )
 
                     curr_id: LocationId | None = p_id
+                    visited_set = {location.id}
                     while curr_id is not None:
-                        curr_loc = await self.uow.locations.get_by_id(curr_id, company_id)
-                        if not curr_loc:
-                            break
-                        if curr_loc.id == location.id:
+                        if curr_id in visited_set:
                             raise LocationCircularReferenceError(
                                 "Referencia circular detectada en la jerarquía de ubicaciones."
                             )
+                        visited_set.add(curr_id)
+                        curr_loc = await self.uow.locations.get_by_id(curr_id, company_id)
+                        if not curr_loc:
+                            break
                         curr_id = curr_loc.parent_id
 
                     parent_loc = await self.uow.locations.get_by_id(p_id, company_id)
                     if not parent_loc:
                         raise LocationNotFoundError(
-                            f"La ubicación padre con ID '{request.parent_id}' no existe."
+                            f"La ubicación padre con ID '{p_id_str}' no existe."
                         )
                     new_parent_id = p_id
                     parent_type = parent_loc.tipo
@@ -69,18 +74,34 @@ class UpdateLocationUseCase:
                 else:
                     parent_type = None
 
-            if request.nombre is not None:
-                if not request.nombre.strip():
+            if 'nombre' in request._fields_set:
+                if request.nombre is None or not request.nombre.strip():
                     raise ValidationException("El nombre de la ubicación no puede estar vacío.")
                 location.nombre = request.nombre.strip()
 
-            if request.descripcion is not None:
+            if 'descripcion' in request._fields_set:
                 location.descripcion = request.descripcion
 
-            # Delegar cambio de parent y/o tipo al método de dominio move()
-            # que valida jerarquía, detecta auto-referencia y emite LocationMoved
-            if request.tipo is not None or request.parent_id is not None:
-                new_tipo_enum = LocationType(request.tipo) if request.tipo is not None else None
+            if 'tipo' in request._fields_set or 'parent_id' in request._fields_set:
+                if 'tipo' in request._fields_set and request.tipo is None:
+                    raise ValidationException("El tipo de ubicación no puede ser nulo.")
+                new_tipo_enum = LocationType(request.tipo) if ('tipo' in request._fields_set and request.tipo is not None) else None
+
+                # P3h: Validar descendientes al cambiar tipo
+                old_tipo = location.tipo
+                new_tipo = new_tipo_enum if new_tipo_enum is not None else old_tipo
+                if new_tipo != old_tipo:
+                    from app.domain.exceptions import LocationInvalidTypeHierarchyError
+                    children = await self.uow.locations.get_children(location.id, company_id)
+                    for child in children:
+                        try:
+                            Location.validate_hierarchy(child.tipo, new_tipo)
+                        except LocationInvalidTypeHierarchyError:
+                            raise ValidationException(
+                                f"El cambio a {new_tipo.value} invalida la ubicación hija "
+                                f"'{child.nombre}' (tipo: {child.tipo.value})."
+                            )
+
                 location.move(new_parent_id, parent_type, new_tipo=new_tipo_enum)
 
             await self.uow.locations.save(location)

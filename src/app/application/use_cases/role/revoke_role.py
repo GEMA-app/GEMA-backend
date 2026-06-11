@@ -25,10 +25,25 @@ class RevokeRoleFromUserUseCase:
             if not user or user.empresa_id != company_id:
                 raise ValidationException("El usuario no existe o no pertenece a esta empresa.")
 
-            # Registrar evento de revocación en la entidad e invocar guardado
-            role.record_revocation(user_id)
-            await self.uow.roles.save(role)
+            from app.domain.enums import PermissionModule
+            from app.domain.exceptions import LastAdminRevocationError
 
-            await self.uow.roles.revoke_from_user(role_id, user_id)
+            user_roles = await self.uow.roles.get_user_roles(user_id, company_id)
+            has_role = any(r.id == role.id for r in user_roles)
+
+            if has_role:
+                # Verificar si el rol es administrador y es el último en la empresa
+                if any(p.module == PermissionModule.ADMIN and p.can_delete for p in role.permisos):
+                    remaining_admins = await self.uow.roles.count_admin_users(
+                        empresa_id=company_id, exclude_user_id=user_id
+                    )
+                    if remaining_admins == 0:
+                        raise LastAdminRevocationError()
+
+                # Registrar evento de revocación en la entidad e invocar guardado
+                role.record_revocation(user_id)
+                await self.uow.roles.save(role)
+                await self.uow.roles.revoke_from_user(role_id, user_id)
+
             await self.uow.commit()
 

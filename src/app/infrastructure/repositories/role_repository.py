@@ -71,19 +71,23 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
     def _to_model(self, entity: Role) -> RoleModel:
         # Se genera un UUID para permisos nuevos si no lo tuvieran,
         # pero como Permission es un Value Object de dominio, mapeamos a modelos ORM.
-        permisos_models = [
-            PermissionModel(
-                id=uuid.uuid4(),
-                empresa_id=entity.empresa_id.value,
-                rol_id=entity.id.value,
-                modulo=p.module,
-                puede_ver=p.can_view,
-                puede_crear=p.can_create,
-                puede_editar=p.can_edit,
-                puede_eliminar=p.can_delete,
-            )
-            for p in entity.permisos
-        ]
+        existing_perms = set()
+        permisos_models = []
+        for p in entity.permisos:
+            if p.module not in existing_perms:
+                permisos_models.append(
+                    PermissionModel(
+                        id=uuid.uuid4(),
+                        empresa_id=entity.empresa_id.value,
+                        rol_id=entity.id.value,
+                        modulo=p.module,
+                        puede_ver=p.can_view,
+                        puede_crear=p.can_create,
+                        puede_editar=p.can_edit,
+                        puede_eliminar=p.can_delete,
+                    )
+                )
+                existing_perms.add(p.module)
         return RoleModel(
             id=entity.id.value,
             empresa_id=entity.empresa_id.value,
@@ -166,3 +170,25 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
         result = await self.session.execute(stmt)
         models = result.scalars().all()
         return [self._to_entity(m) for m in models]
+
+    async def count_admin_users(self, empresa_id: CompanyId, exclude_user_id: UserId | None = None) -> int:
+        from app.domain.enums import PermissionModule
+        from app.infrastructure.db.models.role import PermissionModel, RoleUserModel
+        from sqlalchemy import select
+
+        stmt = (
+            select(RoleUserModel.usuario_id)
+            .join(PermissionModel, RoleUserModel.rol_id == PermissionModel.rol_id)
+            .where(
+                PermissionModel.empresa_id == empresa_id.value,
+                PermissionModel.modulo == PermissionModule.ADMIN,
+                PermissionModel.puede_eliminar == True,
+            )
+        )
+        if exclude_user_id:
+            stmt = stmt.where(RoleUserModel.usuario_id != exclude_user_id.value)
+
+        stmt = stmt.with_for_update()
+        result = await self.session.execute(stmt)
+        rows = result.fetchall()
+        return len(set(row[0] for row in rows))

@@ -62,7 +62,7 @@ async def create_location(
 ) -> LocationDocument:
     dto = CreateLocationDTO(
         nombre=request.data.attributes.nombre,
-        tipo=request.data.attributes.tipo,
+        tipo=request.data.attributes.tipo.value,
         parent_id=request.data.attributes.parent_id,
         descripcion=request.data.attributes.descripcion,
     )
@@ -145,11 +145,14 @@ async def update_location(
     current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateLocationUseCase = Depends(get_update_location_use_case),
 ) -> LocationDocument:
+    attrs = request.data.attributes
+    sent = attrs.model_dump(exclude_unset=True)
     dto = UpdateLocationDTO(
-        nombre=request.data.attributes.nombre,
-        tipo=request.data.attributes.tipo,
-        parent_id=request.data.attributes.parent_id,
-        descripcion=request.data.attributes.descripcion,
+        nombre=sent.get("nombre") if "nombre" in sent else None,
+        tipo=attrs.tipo.value if ("tipo" in sent and attrs.tipo) else None,
+        parent_id=sent.get("parent_id") if "parent_id" in sent else None,
+        descripcion=sent.get("descripcion") if "descripcion" in sent else None,
+        _fields_set=frozenset(sent.keys()),
     )
     res = await use_case.execute(company_id, location_id, dto)
     return LocationDocument(

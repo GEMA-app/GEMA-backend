@@ -120,6 +120,7 @@ class RefreshRequest(BaseModel):
 
 class LogoutAttributes(BaseModel):
     access_token: str | None = Field(None, description="Token de acceso a revocar")
+    refresh_token: str | None = Field(None, description="Token de refresco a revocar")
 
 
 class LogoutResource(BaseModel):

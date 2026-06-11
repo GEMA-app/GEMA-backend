@@ -3,6 +3,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from app.domain.enums import AssetStatus
 from app.presentation.api.v1.schemas.jsonapi_base import LinksObject
 
 
@@ -11,7 +12,7 @@ class AssetAttributes(BaseModel):
     articulo_id: str
     serial_interno: str
     codigo_activo: str
-    estado: str
+    estado: AssetStatus
     ubicacion_id: str | None = None
     fecha_adquisicion: str | None = None
     valor_monetario: float | None = None
@@ -42,7 +43,7 @@ class CreateAssetAttributes(BaseModel):
     articulo_id: str
     serial_interno: str
     codigo_activo: str
-    estado: str
+    estado: AssetStatus
     ubicacion_id: str | None = None
     fecha_adquisicion: date | None = None
     valor_monetario: float | None = None
@@ -61,7 +62,7 @@ class CreateAssetRequest(BaseModel):
 class UpdateAssetAttributes(BaseModel):
     serial_interno: str | None = None
     codigo_activo: str | None = None
-    estado: str | None = None
+    estado: AssetStatus | None = None
     ubicacion_id: str | None = None
     fecha_adquisicion: date | None = None
     valor_monetario: float | None = None
