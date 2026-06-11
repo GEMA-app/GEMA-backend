@@ -1,4 +1,5 @@
 import smtplib
+import time
 from email.mime.text import MIMEText
 from pathlib import Path
 from string import Template
@@ -84,11 +85,14 @@ class SmtpNotificationSender(NotificationPort):
             )
             msg["To"] = to
 
-            with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+            start = time.monotonic()
+            with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=5) as server:
                 if settings.SMTP_USE_TLS:
                     server.starttls()
                 if settings.SMTP_USER and settings.SMTP_PASSWORD:
                     server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
                 server.send_message(msg)
+            elapsed = time.monotonic() - start
+            logger.info("email_sent", to=to, elapsed_ms=round(elapsed * 1000))
 
         await anyio.to_thread.run_sync(_blocking_send)
