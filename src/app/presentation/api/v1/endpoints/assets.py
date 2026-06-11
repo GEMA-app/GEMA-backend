@@ -1,4 +1,5 @@
 from typing import Any
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, status
 
@@ -87,7 +88,8 @@ async def list_assets(
     offset: int = 0,
     limit: int = 10,
     estado: str | None = Query(None, description="Filtrar por estado del activo"),
-    ubicacion_id: str | None = Query(None, description="Filtrar por ID de ubicación"),
+    ubicacion_id: UUID | None = Query(None, description="Filtrar por ID de ubicación"),
+    search: str | None = Query(None, min_length=2, max_length=100, description="Buscar por codigo o serial"),
     current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "view")),
     use_case: ListAssetsUseCase = Depends(get_list_assets_use_case),
 ) -> AssetListDocument:
@@ -95,7 +97,9 @@ async def list_assets(
     if estado is not None:
         filters["estado"] = estado
     if ubicacion_id is not None:
-        filters["ubicacion_id"] = ubicacion_id
+        filters["ubicacion_id"] = str(ubicacion_id)
+    if search is not None:
+        filters["search"] = search
 
     assets, total = await use_case.execute(company_id, offset, limit, filters)
     return AssetListDocument(
