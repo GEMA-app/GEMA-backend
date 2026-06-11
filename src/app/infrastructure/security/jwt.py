@@ -125,3 +125,9 @@ class PyJwtTokenService(TokenServicePort):
                 pipe.delete(*keys)
                 pipe.delete(user_key)
                 await pipe.execute()
+
+    async def claim_token(self, jti: str, exp: int) -> bool:
+        """Intenta reclamar un token de forma atómica en Redis con un SET NX y TTL de 10s."""
+        key = f"claim:{jti}"
+        result = await self.redis.set(key, "claimed", ex=10, nx=True)
+        return bool(result)

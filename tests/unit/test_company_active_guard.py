@@ -35,6 +35,7 @@ def mock_token_service():
     token_service.generate_access_token = AsyncMock()
     token_service.generate_refresh_token = AsyncMock()
     token_service.revoke_token = AsyncMock()
+    token_service.claim_token = AsyncMock(return_value=True)
     return token_service
 
 
@@ -132,3 +133,26 @@ class TestCompanyActiveGuard:
             await use_case.execute(request)
             
         assert "La empresa se encuentra suspendida o cancelada." in str(exc_info.value)
+
+    async def test_refresh_token_replay_raises_invalid_token_error(self, mock_uow, mock_token_service):
+        from app.domain.exceptions import InvalidTokenError
+        user_id = UserId(uuid4())
+        
+        # Mock token service decode
+        mock_token_service.decode_token.return_value = {
+            "type": "refresh",
+            "sub": str(user_id.value),
+            "jti": "fake-jti",
+            "exp": 123456
+        }
+        
+        # Mock claim_token to return False (already claimed)
+        mock_token_service.claim_token.return_value = False
+        
+        use_case = RefreshTokenUseCase(uow=mock_uow, token_service=mock_token_service)
+        request = RefreshTokenRequest(refresh_token="fake-refresh-token")
+        
+        with pytest.raises(InvalidTokenError) as exc_info:
+            await use_case.execute(request)
+            
+        assert "Token de refresco ya fue utilizado." in str(exc_info.value)

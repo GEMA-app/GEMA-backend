@@ -53,3 +53,9 @@ class TokenServicePort(Protocol):
     async def delete_user_reset_tokens(self, user_id: str) -> None:
         """Invalida todos los tokens de reset activos para un usuario."""
         ...
+
+    async def claim_token(self, jti: str, exp: int) -> bool:
+        """Intenta reclamar un token de forma atómica en Redis con un SET NX y TTL de 10s.
+        Devuelve True si el token fue reclamado con éxito, False si ya existía.
+        """
+        ...
