@@ -214,3 +214,11 @@ class CompanyCancelled(DomainEvent):
     """Evento emitido cuando una empresa es cancelada definitivamente."""
 
     company_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class CompanyProfileUpdated(DomainEvent):
+    """Evento emitido cuando se actualiza el perfil de una empresa."""
+
+    company_id: str

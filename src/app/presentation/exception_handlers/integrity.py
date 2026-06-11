@@ -14,27 +14,51 @@ from app.presentation.exception_handlers.base import jsonapi_response
 from app.presentation.exception_handlers.domain import domain_exception_handler
 
 
-def _extract_constraint_name(exc: IntegrityError) -> str | None:
-    """Extrae el nombre del constraint violado de forma driver-agnostic.
+def _map_integrity_error(exc: IntegrityError) -> tuple[int, str] | None:
+    """Mapea IntegrityError a HTTP status + mensaje. Soporta asyncpg y otros drivers.
 
-    Estrategias en orden de precisión:
-    1. __cause__.constraint_name — para compatibilidad con mocks de test
-    2. constraint_name directamente en exc.orig — asyncpg nativo en producción
-    3. String parsing sobre str(exc.orig) — fallback para todos los drivers
+    Estrategia 1: SQLSTATE directo (asyncpg nativo, más confiable que __cause__).
+    Estrategia 2: Fallback por nombre de constraint (driver-agnostic).
     """
-    # Estrategia 1: via __cause__ (para compatibilidad con tests)
+    # Estrategia 1: asyncpg nativo (SQLSTATE directo)
+    if hasattr(exc.orig, 'sqlstate'):
+        sqlstate = exc.orig.sqlstate
+        mapping = {
+            "23505": (409, "El registro ya existe"),
+            "23503": (409, "Referencia inválida: el recurso relacionado no existe"),
+            "23502": (422, "Campo obligatorio sin valor"),
+        }
+        if sqlstate in mapping:
+            return mapping[sqlstate]
+
+    # Estrategia 2: Fallback por nombre de constraint
+    constraint_name = _extract_constraint_name(exc)
+    if constraint_name:
+        if "codigo_activo" in constraint_name:
+            return (409, "Ya existe un activo con ese código en la empresa.")
+        if "serial_interno" in constraint_name:
+            return (409, "Ya existe un activo con ese número de serie en la empresa.")
+        if "slug" in constraint_name or "empresas_slug_key" in constraint_name:
+            return (409, "El slug identificador de empresa ya existe.")
+
+    return None
+
+
+def _extract_constraint_name(exc: IntegrityError) -> str | None:
+    """Extrae el nombre del constraint violado de forma driver-agnostic."""
+    # intentar directamente en exc.orig (asyncpg)
+    constraint_name = getattr(exc.orig, "constraint_name", None)
+    if constraint_name and isinstance(constraint_name, str):
+        return constraint_name
+
+    # via __cause__ (para compatibilidad con mocks de test)
     cause = getattr(exc.orig, "__cause__", None)
     if cause:
         name = getattr(cause, "constraint_name", None)
         if name and isinstance(name, str):
             return name
 
-    # Estrategia 1b: asyncpg nativo directamente en exc.orig en producción
-    constraint_name = getattr(exc.orig, "constraint_name", None)
-    if constraint_name and isinstance(constraint_name, str):
-        return constraint_name
-
-    # Estrategia 2: Fallback robusto — str() contiene el nombre del constraint
+    # Fallback: string parsing
     error_msg = str(exc.orig)
     for name in (
         "uq_activos_empresa_codigo_activo",
@@ -52,49 +76,37 @@ def _extract_constraint_name(exc: IntegrityError) -> str | None:
 async def integrity_error_handler(
     request: Request, exc: IntegrityError
 ) -> JSONResponse:
-    constraint_name = _extract_constraint_name(exc)
+    result = _map_integrity_error(exc)
 
-    if constraint_name:
-        if "codigo_activo" in constraint_name:
+    if result:
+        status_code, detail = result
+        if "código" in detail:
             return await domain_exception_handler(
                 request,
-                AssetCodeExistsError(
-                    "Ya existe un activo con ese código en la empresa."
-                ),
+                AssetCodeExistsError(detail),
             )
-
-        if "serial_interno" in constraint_name:
+        if "serial" in detail:
             return await domain_exception_handler(
                 request,
-                AssetSerialExistsError(
-                    "Ya existe un activo con ese número de serie en la empresa."
-                ),
+                AssetSerialExistsError(detail),
             )
-
-        if "slug" in constraint_name or "empresas_slug_key" in constraint_name:
+        if "slug" in detail:
             return await domain_exception_handler(
                 request,
-                CompanySlugExistsError("El slug identificador de empresa ya existe."),
+                CompanySlugExistsError(detail),
             )
-
-    # Fallback genérico mapeado por SQLSTATE si está disponible
-    status_code = status.HTTP_409_CONFLICT
-    detail = "La operación viola una restricción de unicidad en la persistencia."
-
-    if hasattr(exc.orig, "sqlstate"):
-        sqlstate = exc.orig.sqlstate
-        if sqlstate == "23503":
-            detail = "Referencia inválida: el recurso relacionado no existe"
-        elif sqlstate == "23502":
-            status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
-            detail = "Campo obligatorio sin valor"
-        elif sqlstate == "23505":
-            detail = "El registro ya existe (violación de unicidad)."
+        error = ErrorObject(
+            status=str(status_code),
+            code="ERR_DB_INTEGRITY",
+            title="Conflicto de integridad en base de datos",
+            detail=detail,
+        )
+        return jsonapi_response(status_code, [error])
 
     error = ErrorObject(
-        status=str(status_code),
+        status=str(status.HTTP_409_CONFLICT),
         code="ERR_DB_INTEGRITY",
         title="Conflicto de integridad en base de datos",
-        detail=detail,
+        detail="La operación viola una restricción de unicidad en la persistencia.",
     )
-    return jsonapi_response(status_code, [error])
+    return jsonapi_response(status.HTTP_409_CONFLICT, [error])

@@ -9,6 +9,7 @@ from app.domain.events import (
     CompanyActivated,
     CompanyCancelled,
     CompanyCreated,
+    CompanyProfileUpdated,
     CompanySuspended,
     DomainEvent,
     EventProducer,
@@ -107,6 +108,7 @@ class Company(EventProducer):
         """Actualiza los campos de perfil de la empresa."""
         self.rif = rif
         self.email_contacto = email_contacto
+        self._events.append(CompanyProfileUpdated(company_id=str(self.id)))
 
     def suspend(self) -> None:
         """Suspende la empresa. No se puede suspender si ya está cancelada."""
