@@ -1,7 +1,8 @@
 from app.application.dtos import AuthTokensDTO, LoginUserRequest
 from app.application.ports.auth import PasswordHasherPort, TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.domain.exceptions import InvalidCredentialsError
+from app.domain.enums import CompanyStatus
+from app.domain.exceptions import InvalidCredentialsError, UserInactiveError
 from app.domain.value_objects import Email
 
 # Hash bcrypt real de 60 caracteres generado con bcrypt.hashpw(b"dummy", bcrypt.gensalt(12)).
@@ -37,6 +38,10 @@ class LoginUserUseCase:
 
             if not user:
                 raise InvalidCredentialsError("Credenciales inválidas.")
+
+            company = await self.uow.companies.get_by_id(user.empresa_id)
+            if company and company.estado != CompanyStatus.ACTIVE:
+                raise UserInactiveError("La empresa se encuentra suspendida o cancelada.")
 
             user.login()
             await self.uow.users.save(user)

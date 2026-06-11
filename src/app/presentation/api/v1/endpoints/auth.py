@@ -39,6 +39,7 @@ from app.presentation.api.v1.schemas.auth import (
     UserAttributes,
     UserDocument,
     UserResource,
+    LogoutRequest,
 )
 
 router = APIRouter()

@@ -1,6 +1,7 @@
 from app.application.dtos import AuthTokensDTO, RefreshTokenRequest
 from app.application.ports.auth import TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.enums import CompanyStatus
 from app.domain.exceptions import InvalidTokenError, UserInactiveError
 from app.domain.value_objects import UserId
 
@@ -28,6 +29,10 @@ class RefreshTokenUseCase:
             user = await self.uow.users.get_by_id(UserId.from_string(sub))
             if not user or not user.activo:
                 raise UserInactiveError("El usuario no existe o se encuentra inactivo.")
+
+            company = await self.uow.companies.get_by_id(user.empresa_id)
+            if company and company.estado != CompanyStatus.ACTIVE:
+                raise UserInactiveError("La empresa se encuentra suspendida o cancelada.")
 
             access_token = await self.token_service.generate_access_token(str(user.id))
             refresh_token = await self.token_service.generate_refresh_token(str(user.id))
