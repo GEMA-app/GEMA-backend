@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = ""
     EMAIL_FROM_ADDRESS: str = "noreply@gema.unegia.com"
     EMAIL_FROM_NAME: str = "GEMA"
-    EMAIL_TEMPLATES_DIR: Path = Path("app/infrastructure/notifications/templates")
+    EMAIL_TEMPLATES_DIR: Path = Path("src/app/infrastructure/notifications/templates")
     FRONTEND_URL: str = "http://localhost:3000"
 
     @field_validator("JWT_SECRET_KEY")
