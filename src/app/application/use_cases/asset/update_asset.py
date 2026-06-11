@@ -38,7 +38,7 @@ class UpdateAssetUseCase:
                         raise LocationNotFoundError(
                             f"La ubicación con ID '{request.ubicacion_id}' no existe."
                         )
-                    asset.ubicacion_id = loc_id
+                    asset.transfer_location(loc_id)
                 else:
                     asset.ubicacion_id = None
 
@@ -55,7 +55,15 @@ class UpdateAssetUseCase:
                 asset.serial_interno = new_serial
 
             if request.estado is not None:
-                asset.estado = AssetStatus(request.estado)
+                estado_destino = AssetStatus(request.estado)
+                if estado_destino == AssetStatus.UNDER_MAINTENANCE:
+                    asset.mark_as_under_maintenance()
+                elif estado_destino == AssetStatus.DECOMMISSIONED:
+                    asset.decommission()
+                elif estado_destino == AssetStatus.OPERATIONAL:
+                    asset.put_in_service()
+                elif estado_destino == AssetStatus.OUT_OF_SERVICE:
+                    asset.take_out_of_service()
 
             if request.fecha_adquisicion is not None:
                 asset.fecha_adquisicion = request.fecha_adquisicion
