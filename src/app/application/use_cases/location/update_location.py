@@ -32,10 +32,6 @@ class UpdateLocationUseCase:
                 )
 
             new_parent_id = location.parent_id
-            new_tipo = location.tipo
-
-            if request.tipo is not None:
-                new_tipo = LocationType(request.tipo)
 
             if request.parent_id is not None:
                 if request.parent_id:
@@ -73,9 +69,6 @@ class UpdateLocationUseCase:
                 else:
                     parent_type = None
 
-            # Validar jerarquía de tipos
-            Location.validate_hierarchy(new_tipo, parent_type)
-
             if request.nombre is not None:
                 if not request.nombre.strip():
                     raise ValidationException("El nombre de la ubicación no puede estar vacío.")
@@ -84,8 +77,11 @@ class UpdateLocationUseCase:
             if request.descripcion is not None:
                 location.descripcion = request.descripcion
 
-            location.tipo = new_tipo
-            location.parent_id = new_parent_id
+            # Delegar cambio de parent y/o tipo al método de dominio move()
+            # que valida jerarquía, detecta auto-referencia y emite LocationMoved
+            if request.tipo is not None or request.parent_id is not None:
+                new_tipo_enum = LocationType(request.tipo) if request.tipo is not None else None
+                location.move(new_parent_id, parent_type, new_tipo=new_tipo_enum)
 
             await self.uow.locations.save(location)
             await self.uow.commit()

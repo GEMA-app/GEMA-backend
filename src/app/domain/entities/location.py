@@ -101,12 +101,18 @@ class Location(EventProducer):
         )
         return location
 
-    def move(self, new_parent_id: LocationId | None, new_parent_type: LocationType | None) -> None:
-        """Cambia el padre de la ubicación y re-valida su jerarquía de tipos.
+    def move(
+        self,
+        new_parent_id: LocationId | None,
+        new_parent_type: LocationType | None,
+        new_tipo: LocationType | None = None,
+    ) -> None:
+        """Cambia el padre y/o tipo de la ubicación, re-validando jerarquía.
 
         Args:
             new_parent_id: El ID de la nueva ubicación padre, o None si pasa a ser raíz.
             new_parent_type: El tipo de la ubicación padre, o None si pasa a ser raíz.
+            new_tipo: Nuevo tipo de ubicación, o None para mantener el actual.
 
         Raises:
             LocationCircularReferenceError: Si se intenta asignar la ubicación como su propio padre.
@@ -114,9 +120,12 @@ class Location(EventProducer):
         """
         if new_parent_id is not None and new_parent_id == self.id:
             raise LocationCircularReferenceError("Una ubicación no puede ser padre de sí misma.")
-        Location.validate_hierarchy(self.tipo, new_parent_type)
+        effective_tipo = new_tipo if new_tipo is not None else self.tipo
+        Location.validate_hierarchy(effective_tipo, new_parent_type)
         old_parent = self.parent_id
         self.parent_id = new_parent_id
+        if new_tipo is not None:
+            self.tipo = new_tipo
         self._events.append(
             LocationMoved(
                 location_id=str(self.id),
