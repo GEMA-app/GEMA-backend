@@ -25,7 +25,7 @@ class SmtpNotificationSender(NotificationPort):
     """Adaptador SMTP construido sobre la librería estándar."""
 
     def __init__(self) -> None:
-        self._templates_dir = Path(__file__).parent / "templates"
+        self._templates_dir = settings.EMAIL_TEMPLATES_DIR
         self._cache: dict[str, Template] = {}
 
         for f in self._templates_dir.glob("*.html"):
@@ -57,7 +57,7 @@ class SmtpNotificationSender(NotificationPort):
         body = self._render(
             "password_reset",
             reset_url=reset_url,
-            expire_minutos=str(expire_minutes),
+            expire_minutes=str(expire_minutes),
         )
         await self._send(email, "Restablece tu contraseña de GEMA", body)
 
@@ -86,12 +86,15 @@ class SmtpNotificationSender(NotificationPort):
             msg["To"] = to
 
             start = time.monotonic()
-            with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=5) as server:
-                if settings.SMTP_USE_TLS:
-                    server.starttls()
-                if settings.SMTP_USER and settings.SMTP_PASSWORD:
-                    server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-                server.send_message(msg)
+            try:
+                with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=5) as server:
+                    if settings.SMTP_USE_TLS:
+                        server.starttls()
+                    if settings.SMTP_USER and settings.SMTP_PASSWORD:
+                        server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                    server.send_message(msg)
+            except (smtplib.SMTPException, OSError) as e:
+                raise NotificationError(f"Error al enviar email SMTP: {e}") from e
             elapsed = time.monotonic() - start
             logger.info("email_sent", to=to, elapsed_ms=round(elapsed * 1000))
 
