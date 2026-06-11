@@ -39,6 +39,10 @@ class ResetPasswordUseCase:
             )
             raise InvalidTokenError("Token inválido o expirado")
 
+        validated = PlainPassword(value=new_password)
+        import asyncio
+        new_hashed = await asyncio.to_thread(self.hasher.hash, validated.value)
+
         try:
             async with self.uow:
                 user = await self.uow.users.get_by_id(UserId(value=uuid.UUID(user_id)))
@@ -49,8 +53,7 @@ class ResetPasswordUseCase:
                     )
                     raise InvalidTokenError("Token inválido o expirado")
 
-                validated = PlainPassword(value=new_password)
-                user.complete_password_reset(self.hasher.hash(validated.value))
+                user.complete_password_reset(new_hashed)
                 await self.uow.users.save(user)
                 await self.uow.commit()
         except Exception as err:

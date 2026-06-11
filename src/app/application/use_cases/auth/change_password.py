@@ -25,13 +25,23 @@ class ChangePasswordUseCase:
         self, user_id: str, old_password: str, new_password: str
     ) -> None:
         """Valida la contraseña actual y emite PasswordChanged al reemplazarla."""
+        validated = PlainPassword(value=new_password)
+        import asyncio
+        new_hashed = await asyncio.to_thread(self.hasher.hash, validated.value)
+
         async with self.uow:
             user = await self.uow.users.get_by_id(UserId(value=uuid.UUID(user_id)))
-            if not user or not self.hasher.verify(old_password, user.password_hash.value):
+            if not user:
                 logger.warning("change_password_failed", user_id=user_id)
                 raise InvalidCredentialsError("No se pudo cambiar la contraseña")
 
-            validated = PlainPassword(value=new_password)
-            user.change_password(self.hasher.hash(validated.value))
+            is_valid = await asyncio.to_thread(
+                self.hasher.verify, old_password, user.password_hash.value
+            )
+            if not is_valid:
+                logger.warning("change_password_failed", user_id=user_id)
+                raise InvalidCredentialsError("No se pudo cambiar la contraseña")
+
+            user.change_password(new_hashed)
             await self.uow.users.save(user)
             await self.uow.commit()

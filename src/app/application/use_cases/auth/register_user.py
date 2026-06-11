@@ -23,6 +23,9 @@ class RegisterUserUseCase:
         """Ejecuta el flujo de registro (onboarding SaaS) y genera los tokens iniciales."""
         email = Email(value=request.email)
         plain_password = PlainPassword(value=request.password)
+        import asyncio
+        hashed_val = await asyncio.to_thread(self.hasher.hash, plain_password.value)
+        hashed_password = HashedPassword(value=hashed_val)
 
         async with self.uow:
             # 1. Verificar si el email ya está registrado globalmente
@@ -47,8 +50,6 @@ class RegisterUserUseCase:
             await self.uow.companies.save(company)
 
             # 4. Crear usuario vinculado a la nueva empresa
-            hashed_val = self.hasher.hash(plain_password.value)
-            hashed_password = HashedPassword(value=hashed_val)
             user = User.register(
                 email=email,
                 password_hash=hashed_password,

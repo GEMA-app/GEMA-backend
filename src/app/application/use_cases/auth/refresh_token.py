@@ -34,8 +34,8 @@ class RefreshTokenUseCase:
             if company and company.estado != CompanyStatus.ACTIVE:
                 raise UserInactiveError("La empresa se encuentra suspendida o cancelada.")
 
-            access_token = await self.token_service.generate_access_token(str(user.id))
-            refresh_token = await self.token_service.generate_refresh_token(str(user.id))
+        access_token = await self.token_service.generate_access_token(str(user.id))
+        refresh_token = await self.token_service.generate_refresh_token(str(user.id))
 
         await self.token_service.revoke_token(jti=jti, exp=exp)
 

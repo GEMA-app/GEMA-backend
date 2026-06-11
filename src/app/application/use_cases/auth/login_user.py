@@ -33,7 +33,11 @@ class LoginUserUseCase:
             user = await self.uow.users.get_by_email(email)
             stored_hash = user.password_hash.value if user else _FAKE_HASH
 
-            if not self.hasher.verify(request.password, stored_hash):
+            import asyncio
+            is_valid = await asyncio.to_thread(
+                self.hasher.verify, request.password, stored_hash
+            )
+            if not is_valid:
                 raise InvalidCredentialsError("Credenciales inválidas.")
 
             if not user:
