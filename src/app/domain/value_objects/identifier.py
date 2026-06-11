@@ -15,9 +15,13 @@ class UserId:
 
     @classmethod
     def from_string(cls, user_id_str: str) -> "UserId":
+        if not isinstance(user_id_str, str) or not user_id_str:
+            raise InvalidUUIDError(
+                f"El identificador debe ser un string no vacío, se recibió: {type(user_id_str).__name__}"
+            )
         try:
             return cls(value=uuid.UUID(user_id_str))
-        except ValueError as e:
+        except (ValueError, AttributeError) as e:
             raise InvalidUUIDError(f"El identificador '{user_id_str}' no es un UUID válido.") from e
 
 
@@ -32,9 +36,13 @@ class CompanyId:
 
     @classmethod
     def from_string(cls, value: str) -> "CompanyId":
+        if not isinstance(value, str) or not value:
+            raise InvalidUUIDError(
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
+            )
         try:
             return cls(value=uuid.UUID(value))
-        except ValueError as e:
+        except (ValueError, AttributeError) as e:
             raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
 
 
@@ -49,9 +57,13 @@ class RoleId:
 
     @classmethod
     def from_string(cls, value: str) -> "RoleId":
+        if not isinstance(value, str) or not value:
+            raise InvalidUUIDError(
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
+            )
         try:
             return cls(value=uuid.UUID(value))
-        except ValueError as e:
+        except (ValueError, AttributeError) as e:
             raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
 
 
@@ -66,9 +78,13 @@ class AssetId:
 
     @classmethod
     def from_string(cls, value: str) -> "AssetId":
+        if not isinstance(value, str) or not value:
+            raise InvalidUUIDError(
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
+            )
         try:
             return cls(value=uuid.UUID(value))
-        except ValueError as e:
+        except (ValueError, AttributeError) as e:
             raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
 
 
@@ -83,7 +99,11 @@ class LocationId:
 
     @classmethod
     def from_string(cls, value: str) -> "LocationId":
+        if not isinstance(value, str) or not value:
+            raise InvalidUUIDError(
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
+            )
         try:
             return cls(value=uuid.UUID(value))
-        except ValueError as e:
+        except (ValueError, AttributeError) as e:
             raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
