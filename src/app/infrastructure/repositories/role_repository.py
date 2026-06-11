@@ -26,45 +26,44 @@ class SqlAlchemyRoleRepository(SqlAlchemyRepository[RoleModel, Role, RoleId], Ro
         existing_model = await self.session.get(RoleModel, entity.id.value)
 
         if existing_model is None:
-            # Nuevo rol: generar UUIDs para permisos nuevos
-            model = self._to_model(entity)
-            await self.session.merge(model)
-        else:
-            # Actualización: mutar in-place
-            existing_model.nombre = entity.nombre
-            existing_model.descripcion = entity.descripcion
+            # Nuevo rol: delegar en save() genérico de la clase base
+            return await super().save(entity)
 
-            # Sincronizar permisos por módulo
-            existing_by_module = {p.modulo: p for p in existing_model.permisos}
-            new_permisos = []
+        # Actualización: mutar in-place
+        existing_model.nombre = entity.nombre
+        existing_model.descripcion = entity.descripcion
 
-            for p in entity.permisos:
-                existing_perm = existing_by_module.get(p.module)
-                if existing_perm:
-                    # Preservar UUID existente, actualizar valores
-                    existing_perm.puede_ver = p.can_view
-                    existing_perm.puede_crear = p.can_create
-                    existing_perm.puede_editar = p.can_edit
-                    existing_perm.puede_eliminar = p.can_delete
-                    new_permisos.append(existing_perm)
-                else:
-                    # Permiso nuevo: generar UUID
-                    new_permisos.append(
-                        PermissionModel(
-                            id=uuid.uuid4(),
-                            empresa_id=entity.empresa_id.value,
-                            rol_id=entity.id.value,
-                            modulo=p.module,
-                            puede_ver=p.can_view,
-                            puede_crear=p.can_create,
-                            puede_editar=p.can_edit,
-                            puede_eliminar=p.can_delete,
-                        )
+        # Sincronizar permisos por módulo
+        existing_by_module = {p.modulo: p for p in existing_model.permisos}
+        new_permisos = []
+
+        for p in entity.permisos:
+            existing_perm = existing_by_module.get(p.module)
+            if existing_perm:
+                # Preservar UUID existente, actualizar valores
+                existing_perm.puede_ver = p.can_view
+                existing_perm.puede_crear = p.can_create
+                existing_perm.puede_editar = p.can_edit
+                existing_perm.puede_eliminar = p.can_delete
+                new_permisos.append(existing_perm)
+            else:
+                # Permiso nuevo: generar UUID
+                new_permisos.append(
+                    PermissionModel(
+                        id=uuid.uuid4(),
+                        empresa_id=entity.empresa_id.value,
+                        rol_id=entity.id.value,
+                        modulo=p.module,
+                        puede_ver=p.can_view,
+                        puede_crear=p.can_create,
+                        puede_editar=p.can_edit,
+                        puede_eliminar=p.can_delete,
                     )
+                )
 
-            existing_model.permisos = new_permisos
+        existing_model.permisos = new_permisos
 
-        # Recolectar eventos (no se invoca super().save() para preservar UUIDs de permisos)
+        # Recolectar eventos
         self._collect_events(entity)
 
 
