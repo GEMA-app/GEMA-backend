@@ -51,13 +51,25 @@ class GetLocationTreeUseCase:
                     roots.append(node)
 
             # Convertir diccionarios recursivamente a DTOs de árbol
-            def to_dto(n: dict[str, Any]) -> LocationTreeResponse:
+            def to_dto(n: dict[str, Any], visited: set[str] | None = None) -> LocationTreeResponse:
+                if visited is None:
+                    visited = set()
+                if n["id"] in visited:
+                    logger.error("cycle_detected_in_location_tree", location_id=n["id"])
+                    return LocationTreeResponse(
+                        id=n["id"],
+                        nombre=n["nombre"],
+                        tipo=n["tipo"],
+                        descripcion=n["descripcion"],
+                        children=[],
+                    )
+                visited.add(n["id"])
                 return LocationTreeResponse(
                     id=n["id"],
                     nombre=n["nombre"],
                     tipo=n["tipo"],
                     descripcion=n["descripcion"],
-                    children=[to_dto(c) for c in n["children"]],
+                    children=[to_dto(c, visited.copy()) for c in n["children"]],
                 )
 
             return [to_dto(r) for r in roots]

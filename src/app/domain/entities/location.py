@@ -4,6 +4,8 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from collections.abc import Callable
+
 from app.domain.enums import LocationType
 from app.domain.events import (
     DomainEvent,
@@ -106,6 +108,7 @@ class Location(EventProducer):
         new_parent_id: LocationId | None,
         new_parent_type: LocationType | None,
         new_tipo: LocationType | None = None,
+        is_descendant_of: Callable[[LocationId], bool] | None = None,
     ) -> None:
         """Cambia el padre y/o tipo de la ubicación, re-validando jerarquía.
 
@@ -113,13 +116,19 @@ class Location(EventProducer):
             new_parent_id: El ID de la nueva ubicación padre, o None si pasa a ser raíz.
             new_parent_type: El tipo de la ubicación padre, o None si pasa a ser raíz.
             new_tipo: Nuevo tipo de ubicación, o None para mantener el actual.
+            is_descendant_of: Callable opcional que verifica si un LocationId es descendiente.
 
         Raises:
-            LocationCircularReferenceError: Si se intenta asignar la ubicación como su propio padre.
+            LocationCircularReferenceError: Si se intenta asignar la ubicación como su propio padre
+                o si new_parent_id es descendiente de self.
             LocationInvalidTypeHierarchyError: Si la combinación de tipos padre/hijo no es válida.
         """
         if new_parent_id is not None and new_parent_id == self.id:
             raise LocationCircularReferenceError("Una ubicación no puede ser padre de sí misma.")
+        if new_parent_id is not None and is_descendant_of and is_descendant_of(new_parent_id):
+            raise LocationCircularReferenceError(
+                "No se puede mover una ubicación bajo uno de sus propios descendientes."
+            )
         effective_tipo = new_tipo if new_tipo is not None else self.tipo
         Location.validate_hierarchy(effective_tipo, new_parent_type)
         old_parent = self.parent_id
