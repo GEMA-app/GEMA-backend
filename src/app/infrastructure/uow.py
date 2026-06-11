@@ -53,7 +53,8 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
                 await self.rollback()
         finally:
             self._pending_events.clear()
-            await self.session.close()
+            if hasattr(self, "session"):
+                await self.session.close()
 
     async def commit(self) -> None:
         """Confirma la transacción actual en la base de datos.
@@ -80,4 +81,3 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         """Deshace los cambios pendientes en la transacción actual y limpia eventos."""
         await self.session.rollback()
         self._pending_events.clear()
-
