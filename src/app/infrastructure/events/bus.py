@@ -9,7 +9,12 @@ logger = structlog.get_logger()
 
 
 class InProcessEventBus(EventBusPort):
-    """Bus de eventos en proceso con registro de handlers y dispatch síncrono."""
+    """Bus de eventos en proceso con registro de handlers y dispatch síncrono.
+
+    Los eventos sin handlers registrados se descartan silenciosamente
+    (solo se registra un log informativo). Esto es un diseño intencional:
+    el bus no debe fallar si un evento no tiene consumidores.
+    """
 
     def __init__(self) -> None:
         self._handlers: dict[type[DomainEvent], list[EventHandler]] = {}
