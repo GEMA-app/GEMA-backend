@@ -407,3 +407,10 @@ Cada entrada indica en qué plan se resolvió (si aplica).
 | 3 | `id` → `entity_id` en `base.py` (LSP violation, 6 repos) | v6 | **v7 — pk_column** | ✅ Resuelto |
 | 4 | Observabilidad (logging en use cases) | v6 / v7 | — | 🚫 Descartado |
 | 5 | Testing de módulo preferences | v6 / v7 | — | 🚫 Descartado |
+| 6 | H14: JWT no valida usuario activo en cada request | v4 v6 | — | Pendiente |
+| 7 | H15: Race condition en assign_role sin unique constraint en tabla pivote | v4 v6 | — | Pendiente |
+| 8 | H16: IDOR potencial: get_by_id no filtra por empresa (tenant isolation) | v4 v6 | — | Pendiente |
+| 9 | H17: Lost updates en PATCH sin optimistic locking | v4 v6 | — | Pendiente |
+| 10 | H18: Permisos regeneran UUID en cada _to_model (cubierto en P3k) | v4 v6 | — | Pendiente |
+| 11 | H19: Email regex básico (no RFC 5321) en credential.py | v4 v6 | — | Pendiente |
+| 12 | H20: Sin rate limiting por email en rate_limit.py | v4 v6 | — | Pendiente |
