@@ -372,6 +372,30 @@ Los siguientes endpoints GET usan `require_tenant_read` en lugar de `require_per
 - `GET /v1/companies/{company_id}/roles`
 - `GET /v1/companies/{company_id}/roles/{role_id}`
 
+
+---
+
+## Estructura de Migraciones y Semillas (Seeds)
+
+### 1. Separación de Migraciones (DDL) y Semillas (DML)
+- **Migraciones (Esquema/DDL):** Ubicadas en `migrations/versions/`. Son inmutables una vez aplicadas en producción. Deben formar una cadena estrictamente lineal.
+  - *Regla Crítica:* Para que `alembic revision --autogenerate` detecte todos los modelos, `migrations/env.py` debe importar todos los modelos ORM (o el paquete `models` que los registra en `Base.metadata`).
+- **Semillas (Datos/DML):** Ubicadas en `migrations/seeds/`. Son archivos de datos de prueba volátiles y deben diseñarse para ser idempotentes (poder ejecutarse varias veces sin duplicar registros).
+
+### 2. Estructura de Semillas de Personal y Roles
+Para la inicialización del sistema en desarrollo y staging, se define una estructura estándar con **6 roles** granularizados por módulo en la empresa de pruebas:
+- **Administrador:** Acceso completo (puede_ver/crear/editar/eliminar) en todos los módulos.
+- **Supervisor de Activos:** CRUD en Activos, solo lectura en el resto (excepto Admin).
+- **Técnico de Mantenimiento:** CRUD en Mantenimiento, lectura en Activos e Inventario, creación en Reportes.
+- **Almacenista:** CRUD en Inventario, lectura en Activos y Reportes.
+- **Supervisor de Operaciones:** CRUD en Reportes, Mantenimiento e Inventario, lectura en Administración.
+- **Consultor:** Solo lectura en todos los módulos.
+
+El runner CLI en `migrations/seeds/runner.py` permite la ejecución unificada para entornos:
+```bash
+python -m migrations.seeds.runner [dev|staging|test]
+```
+
 ---
 
 ## Componentes Diferidos (Pendientes de futuros Sprints)
@@ -418,3 +442,5 @@ Cada entrada indica en qué plan se resolvió (si aplica).
 | 14 | Código muerto: `get_by_email_and_company()` en `UserRepositoryPort` — definido e implementado pero ningún use case lo invoca | Infra v8 | **v8 — Documentado** | ✅ Resuelto |
 | 15 | `OUTBOX_ENABLED` flag muerta en settings.py (no consultada en uow.py ni en ningún otro lado) + latencia del bus síncrono dentro del request HTTP | Infra v8 | **v8 — Eliminado** | ✅ Resuelto |
 | 16 | `email` en UserModel sin `unique=True` global; `get_by_email()` en `user_repository.py` no filtra por `empresa_id` | Infra v8 | **v8 — Documentado global** | ✅ Resuelto |
+| 17 | Bug en save() de repositorios base (state.key era siempre None en modelos transientes, forzando session.add() en lugar de merge(), lo que rompía updates) | Infra v8 | **v8.1 — session.merge()** | ✅ Resuelto |
+
