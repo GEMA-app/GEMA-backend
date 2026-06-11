@@ -1,12 +1,15 @@
+import structlog
 from typing import Any
 
 from app.application.dtos.location_dtos import LocationTreeResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.value_objects import CompanyId
 
+logger = structlog.get_logger()
+
 
 class GetLocationTreeUseCase:
-    """Caso de uso para reconstruir y retornar el árbol jerárquico de ubicaciones de una empresa."""
+    """Reconstruye y retorna el árbol jerárquico de ubicaciones de una empresa."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
@@ -37,6 +40,13 @@ class GetLocationTreeUseCase:
                     pid_str = str(loc.parent_id)
                     if pid_str in nodes:
                         nodes[pid_str]["children"].append(node)
+                    else:
+                        logger.warning(
+                            "orphan_location_detected",
+                            location_id=str(loc.id),
+                            parent_id=pid_str,
+                        )
+                        roots.append(node)  # Promover a raiz para visibilidad
                 else:
                     roots.append(node)
 
