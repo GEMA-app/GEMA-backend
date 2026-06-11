@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Configuración de la aplicación basada en Pydantic Settings."""
 
-    model_config = SettingsConfigDict(env_file=".env", extra="forbid", case_sensitive=False)
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", case_sensitive=False)
 
     DATABASE_URL: str
     REDIS_URL: str
@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = ""
     EMAIL_FROM_ADDRESS: str = "noreply@gema.unegia.com"
     EMAIL_FROM_NAME: str = "GEMA"
-    EMAIL_TEMPLATES_DIR: Path = Path("src/app/infrastructure/notifications/templates")
+    EMAIL_TEMPLATES_DIR: Path = Path("app/infrastructure/notifications/templates")
     FRONTEND_URL: str = "http://localhost:3000"
     OUTBOX_ENABLED: bool = False
 
