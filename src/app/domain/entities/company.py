@@ -92,6 +92,22 @@ class Company(EventProducer):
         self._events.clear()
         return events
 
+    def rename(self, new_name: str) -> None:
+        """Cambia el nombre de la empresa y realiza validaciones."""
+        stripped = new_name.strip()
+        if not stripped:
+            raise EmptyCompanyNameError("El nombre de la empresa no puede estar vacío.")
+        self.nombre = stripped
+
+    def update_profile(
+        self,
+        rif: str | None = None,
+        email_contacto: str | None = None,
+    ) -> None:
+        """Actualiza los campos de perfil de la empresa."""
+        self.rif = rif
+        self.email_contacto = email_contacto
+
     def suspend(self) -> None:
         """Suspende la empresa. No se puede suspender si ya está cancelada."""
         if self.estado == CompanyStatus.CANCELLED:

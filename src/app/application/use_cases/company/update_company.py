@@ -23,13 +23,12 @@ class UpdateCompanyUseCase:
             if 'nombre' in request._fields_set:
                 if request.nombre is None or not request.nombre.strip():
                     raise ValidationException("El nombre de la empresa no puede estar vacío.")
-                company.nombre = request.nombre.strip()
+                company.rename(request.nombre)
 
-            if 'rif' in request._fields_set:
-                company.rif = request.rif
-
-            if 'email_contacto' in request._fields_set:
-                company.email_contacto = request.email_contacto
+            if 'rif' in request._fields_set or 'email_contacto' in request._fields_set:
+                rif = request.rif if 'rif' in request._fields_set else company.rif
+                email_contacto = request.email_contacto if 'email_contacto' in request._fields_set else company.email_contacto
+                company.update_profile(rif=rif, email_contacto=email_contacto)
 
             if 'estado' in request._fields_set:
                 if request.estado is None:
