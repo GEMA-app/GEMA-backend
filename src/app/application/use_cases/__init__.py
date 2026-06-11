@@ -1,0 +1,1 @@
+"""Paquete de casos de uso — orquestación de la lógica de negocio por módulo."""
