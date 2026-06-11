@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 from app.presentation.api.v1.schemas.jsonapi_base import LinksObject
 
@@ -157,7 +157,7 @@ class ChangePasswordRequest(BaseModel):
 
 
 class ForgotPasswordAttributes(BaseModel):
-    email: str = Field(..., description="Correo electrónico de la cuenta")
+    email: EmailStr = Field(..., description="Correo electrónico de la cuenta")
 
 
 class ForgotPasswordResource(BaseModel):
