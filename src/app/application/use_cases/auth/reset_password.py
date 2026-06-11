@@ -7,7 +7,7 @@ from app.application.ports.auth import PasswordHasherPort, TokenServicePort
 from app.application.ports.notifications import NotificationPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import InvalidTokenError
-from app.domain.value_objects import UserId
+from app.domain.value_objects import PlainPassword, UserId
 
 logger = structlog.get_logger()
 
@@ -36,7 +36,6 @@ class ResetPasswordUseCase:
             logger.warning(
                 "reset_token_fallido",
                 motivo="token_invalido_o_expirado",
-                token_hash_parcial=token_hash[:8],
             )
             raise InvalidTokenError("Token inválido o expirado")
 
@@ -46,11 +45,11 @@ class ResetPasswordUseCase:
                 logger.error(
                     "reset_token_usuario_inexistente",
                     user_id=user_id,
-                    token_hash_parcial=token_hash[:8],
                 )
                 raise InvalidTokenError("Token inválido o expirado")
 
-            user.complete_password_reset(self.hasher.hash(new_password))
+            validated = PlainPassword(value=new_password)
+            user.complete_password_reset(self.hasher.hash(validated.value))
             await self.uow.users.save(user)
 
             # Eliminar el token dentro de la misma transacción que el cambio de contraseña.

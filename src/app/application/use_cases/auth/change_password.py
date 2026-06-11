@@ -5,7 +5,7 @@ import structlog
 from app.application.ports.auth import PasswordHasherPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import InvalidCredentialsError
-from app.domain.value_objects import UserId
+from app.domain.value_objects import PlainPassword, UserId
 
 logger = structlog.get_logger()
 
@@ -31,6 +31,7 @@ class ChangePasswordUseCase:
                 logger.warning("change_password_failed", user_id=user_id)
                 raise InvalidCredentialsError("No se pudo cambiar la contraseña")
 
-            user.change_password(self.hasher.hash(new_password))
+            validated = PlainPassword(value=new_password)
+            user.change_password(self.hasher.hash(validated.value))
             await self.uow.users.save(user)
             await self.uow.commit()
