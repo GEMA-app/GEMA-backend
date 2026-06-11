@@ -50,6 +50,15 @@ class Role(EventProducer):
         """
         if not nombre or not nombre.strip():
             raise EmptyRoleNameError("El nombre del rol no puede estar vacío.")
+        
+        if permisos:
+            from app.domain.exceptions import ValidationException
+            seen = set()
+            for p in permisos:
+                if p.module in seen:
+                    raise ValidationException(f"Módulo duplicado en permisos: {p.module.value}")
+                seen.add(p.module)
+
         return cls(
             id=RoleId(uuid.uuid4()),
             empresa_id=empresa_id,

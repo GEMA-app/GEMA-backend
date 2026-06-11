@@ -183,3 +183,25 @@ class TestAssignRoleToUserUseCase:
         role.record_assignment.assert_not_called()
         mock_uow.roles.assign_to_user.assert_not_called()
 
+    async def test_create_role_with_duplicate_modules_deduplicates(self, mock_uow):
+        from app.application.use_cases.role.create_role import CreateRoleUseCase, CreateRoleRequest
+        from app.application.dtos.role_dtos import PermissionDTO
+
+        company_id = CompanyId(uuid4())
+        mock_uow.roles.list_by_company = AsyncMock(return_value=[])
+        mock_uow.roles.save = AsyncMock()
+
+        use_case = CreateRoleUseCase(uow=mock_uow)
+        request = CreateRoleRequest(
+            nombre="CustomRole",
+            descripcion="Desc",
+            permisos=[
+                PermissionDTO(module="activos", can_view=True, can_create=False, can_edit=False, can_delete=False),
+                PermissionDTO(module="activos", can_view=False, can_create=True, can_edit=True, can_delete=True),
+            ]
+        )
+
+        resp = await use_case.execute(str(company_id.value), request)
+        assert len(resp.permisos) == 1
+        assert resp.permisos[0].can_create is True
+
