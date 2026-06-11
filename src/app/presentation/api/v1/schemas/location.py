@@ -9,7 +9,7 @@ from app.presentation.api.v1.schemas.jsonapi_base import LinksObject
 class LocationAttributes(BaseModel):
     empresa_id: str
     nombre: str
-    tipo: str
+    tipo: LocationType
     parent_id: str | None = None
     descripcion: str | None = None
 
@@ -36,7 +36,7 @@ class LocationListDocument(BaseModel):
 # Representación del Árbol (Tree)
 class LocationTreeAttributes(BaseModel):
     nombre: str
-    tipo: str
+    tipo: LocationType
     descripcion: str | None = None
     children: list[Any] = []  # Lista de LocationTreeResource
 

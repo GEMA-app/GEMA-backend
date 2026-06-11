@@ -9,7 +9,7 @@ from app.presentation.api.v1.schemas.jsonapi_base import LinksObject
 class CompanyAttributes(BaseModel):
     nombre: str
     slug: str
-    estado: str
+    estado: CompanyStatus
     rif: str | None = None
     email_contacto: str | None = None
     plan_id: str | None = None
