@@ -70,5 +70,5 @@ class RoleModel(TenantMixin, TimestampMixin, Base):
 
     # Relación muchos-a-muchos con usuarios
     usuarios: Mapped[list["UserModel"]] = relationship(
-        "UserModel", secondary="roles_usuarios", back_populates="roles"
+        "UserModel", secondary="roles_usuarios", back_populates="roles", lazy="selectin"
     )
