@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 
 from app.domain.exceptions import (
     AssetCodeExistsError,
+    AssetInvalidTransitionError,
     AssetNotFoundError,
     AssetSerialExistsError,
     CompanyAlreadyCancelledError,
@@ -10,9 +11,12 @@ from app.domain.exceptions import (
     CompanyNotSuspendedError,
     CompanySlugExistsError,
     DomainException,
+    EmptyAssetCodeError,
     EmptyCompanyNameError,
     EmptyHashedPasswordError,
+    EmptyLocationNameError,
     EmptyRoleNameError,
+    EmptySerialError,
     InsufficientPermissionsError,
     InvalidCredentialsError,
     InvalidEmailError,
@@ -146,6 +150,22 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     PreferenceThemeInvalidError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY, 
         "ERR_PREFERENCE_THEME_INVALID"
+    ),
+    AssetInvalidTransitionError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_ASSET_INVALID_TRANSITION",
+    ),
+    EmptySerialError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_SERIAL",
+    ),
+    EmptyAssetCodeError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_ASSET_CODE",
+    ),
+    EmptyLocationNameError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_LOCATION_NAME",
     ),
 }
 
