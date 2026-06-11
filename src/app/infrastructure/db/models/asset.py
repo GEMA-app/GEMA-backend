@@ -19,7 +19,6 @@ class AssetModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla de activos físicos."""
 
     __tablename__ = "activos"
-    __mapper_args__ = {"version_id_col": "version"}
     __table_args__ = (
         Index(
             "uq_activos_empresa_codigo_activo_lower",

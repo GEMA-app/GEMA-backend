@@ -46,16 +46,11 @@ class SqlAlchemyRepository(Generic[ModelT, EntityT, IdT], ABC):
     async def save(self, entity: EntityT) -> None:
         """Persiste o actualiza una entidad en el repositorio sin confirmar la transacción.
 
-        Para entidades nuevas usa session.add() (INSERT directo, evita SELECT previo).
-        Para entidades existentes usa session.merge() (UPDATE).
+        Utiliza session.merge() para soportar correctamente operaciones de creación
+        y actualización sobre modelos con IDs generados en la aplicación.
         """
         model = self._to_model(entity)
-        from sqlalchemy import inspect
-        state = inspect(model)
-        if state and state.key:
-            await self.session.merge(model)
-        else:
-            self.session.add(model)
+        await self.session.merge(model)
         self._collect_events(entity)
 
 

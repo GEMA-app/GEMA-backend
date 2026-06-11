@@ -29,7 +29,6 @@ class CompanyModel(VersionMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla de empresas (tenants)."""
 
     __tablename__ = "empresas"
-    __mapper_args__ = {"version_id_col": "version"}
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     plan_id: Mapped[uuid.UUID | None] = mapped_column(

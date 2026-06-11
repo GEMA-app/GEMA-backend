@@ -57,7 +57,6 @@ class RoleModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla de roles."""
 
     __tablename__ = "roles"
-    __mapper_args__ = {"version_id_col": "version"}
     __table_args__ = (UniqueConstraint("empresa_id", "nombre", name="uq_roles_empresa_nombre"),)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

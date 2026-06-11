@@ -13,7 +13,6 @@ class LocationModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla de ubicaciones jerárquicas."""
 
     __tablename__ = "ubicaciones"
-    __mapper_args__ = {"version_id_col": "version"}
     __table_args__ = (Index("idx_ubicaciones_empresa_parent", "empresa_id", "parent_id"),)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

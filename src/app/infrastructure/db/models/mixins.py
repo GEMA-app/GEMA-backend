@@ -2,7 +2,7 @@ import uuid
 from datetime import UTC, datetime
 
 from sqlalchemy import DateTime, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, declared_attr, mapped_column
 
 
 class TenantMixin:
@@ -32,3 +32,6 @@ class VersionMixin:
 
     version: Mapped[int] = mapped_column(default=1, nullable=False)
 
+    @declared_attr
+    def __mapper_args__(cls):
+        return {"version_id_col": cls.version}

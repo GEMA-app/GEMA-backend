@@ -109,7 +109,7 @@ async def run_manual_test() -> None:
                 "type": "locations",
                 "attributes": {
                     "nombre": "Sede Principal UNEGIA",
-                    "tipo": "headquarters",
+                    "tipo": "sede",
                     "descripcion": "Oficina principal administrativa"
                 }
             }
@@ -133,7 +133,7 @@ async def run_manual_test() -> None:
                 "type": "locations",
                 "attributes": {
                     "nombre": "Planta de Ensamblaje A",
-                    "tipo": "plant",
+                    "tipo": "planta",
                     "parent_id": location_id,
                     "descripcion": "Línea de producción principal"
                 }
@@ -170,7 +170,7 @@ async def run_manual_test() -> None:
                     "articulo_id": str(article_id),
                     "serial_interno": f"SN-{unique_id}",
                     "codigo_activo": f"ACT-{unique_id}",
-                    "estado": "operational",
+                    "estado": "operativo",
                     "ubicacion_id": sub_location_id,
                     "fecha_adquisicion": "2026-06-04",
                     "valor_monetario": 12500.0,
@@ -193,7 +193,7 @@ async def run_manual_test() -> None:
         # =====================================================================
         print("\n--- 9. Probando Listar Activos con Filtros ---")
         res_list = await client.get(
-            f"/v1/companies/{empresa_id}/assets?estado=operational&ubicacion_id={sub_location_id}",
+            f"/v1/companies/{empresa_id}/assets?estado=operativo&ubicacion_id={sub_location_id}",
             headers=auth_headers
         )
         assert res_list.status_code == 200, f"Error al listar activos: {res_list.text}"
@@ -209,7 +209,7 @@ async def run_manual_test() -> None:
             "data": {
                 "type": "assets",
                 "attributes": {
-                    "estado": "under_maintenance",
+                    "estado": "en_mantenimiento",
                     "valor_monetario": 13000.0
                 }
             }
@@ -220,8 +220,8 @@ async def run_manual_test() -> None:
             headers=auth_headers
         )
         assert res_update.status_code == 200, f"Error al actualizar activo: {res_update.text}"
-        assert res_update.json()["data"]["attributes"]["estado"] == "under_maintenance"
-        print("Activo actualizado correctamente a estado 'under_maintenance'.")
+        assert res_update.json()["data"]["attributes"]["estado"] == "en_mantenimiento"
+        print("Activo actualizado correctamente a estado 'en_mantenimiento'.")
 
         # =====================================================================
         # 11. Eliminar Activo
