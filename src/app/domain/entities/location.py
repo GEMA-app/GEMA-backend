@@ -1,10 +1,9 @@
 """Entidad Location — ubicación física jerárquica con validación de tipos."""
 
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
-
-from collections.abc import Callable
 
 from app.domain.enums import LocationType
 from app.domain.events import (
@@ -64,7 +63,11 @@ class Location(EventProducer):
             )
 
     def pull_events(self) -> list[DomainEvent]:
-        """Extrae y limpia la lista de eventos acumulados."""
+        """Extrae y limpia la lista de eventos acumulados.
+
+        Returns:
+            La lista de eventos de dominio acumulados, vaciando la lista interna.
+        """
         events = self._events.copy()
         self._events.clear()
         return events
@@ -88,6 +91,9 @@ class Location(EventProducer):
             tipo: Tipo de ubicación (HEADQUARTERS, PLANT, AREA, SECTION).
             parent_type: Tipo de la ubicación padre, necesario para validar jerarquía.
             descripcion: Descripción opcional de la ubicación.
+
+        Returns:
+            La nueva ubicación creada con el evento LocationCreated emitido.
         """
         cls.validate_hierarchy(tipo, parent_type)
         location = cls(
@@ -142,6 +148,10 @@ class Location(EventProducer):
                 new_parent_id=str(new_parent_id) if new_parent_id else None,
             )
         )
+
+    def deactivate(self) -> None:
+        """Desactiva la ubicación. No puede asignarse a nuevos activos."""
+        self.nombre = f"{self.nombre}__inactivo"
 
     def rename(self, new_name: str) -> None:
         """Cambia el nombre de la ubicación.

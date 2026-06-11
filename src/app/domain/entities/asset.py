@@ -12,6 +12,7 @@ from app.domain.events import (
     AssetMaintenanceStarted,
     AssetOutOfService,
     AssetPutInService,
+    AssetUpdated,
     DomainEvent,
     EventProducer,
 )
@@ -21,25 +22,6 @@ from app.domain.exceptions import (
     EmptySerialError,
 )
 from app.domain.value_objects import AssetId, CompanyId, LocationId
-
-_VALID_TRANSITIONS: dict[AssetStatus, set[AssetStatus]] = {
-    AssetStatus.OPERATIONAL: {
-        AssetStatus.UNDER_MAINTENANCE,
-        AssetStatus.OUT_OF_SERVICE,
-        AssetStatus.DECOMMISSIONED,
-    },
-    AssetStatus.UNDER_MAINTENANCE: {
-        AssetStatus.OPERATIONAL,
-        AssetStatus.OUT_OF_SERVICE,
-        AssetStatus.DECOMMISSIONED,
-    },
-    AssetStatus.OUT_OF_SERVICE: {
-        AssetStatus.OPERATIONAL,
-        AssetStatus.UNDER_MAINTENANCE,
-        AssetStatus.DECOMMISSIONED,
-    },
-    AssetStatus.DECOMMISSIONED: set(),
-}
 
 
 @dataclass
@@ -60,8 +42,31 @@ class Asset(EventProducer):
     updated_at: datetime | None = None
     _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
+    _VALID_TRANSITIONS: dict[AssetStatus, set[AssetStatus]] = {
+        AssetStatus.OPERATIONAL: {
+            AssetStatus.UNDER_MAINTENANCE,
+            AssetStatus.OUT_OF_SERVICE,
+            AssetStatus.DECOMMISSIONED,
+        },
+        AssetStatus.UNDER_MAINTENANCE: {
+            AssetStatus.OPERATIONAL,
+            AssetStatus.OUT_OF_SERVICE,
+            AssetStatus.DECOMMISSIONED,
+        },
+        AssetStatus.OUT_OF_SERVICE: {
+            AssetStatus.OPERATIONAL,
+            AssetStatus.UNDER_MAINTENANCE,
+            AssetStatus.DECOMMISSIONED,
+        },
+        AssetStatus.DECOMMISSIONED: set(),
+    }
+
     def pull_events(self) -> list[DomainEvent]:
-        """Extrae y limpia la lista de eventos acumulados."""
+        """Extrae y limpia la lista de eventos acumulados.
+
+        Returns:
+            La lista de eventos de dominio acumulados, vaciando la lista interna.
+        """
         events = self._events.copy()
         self._events.clear()
         return events
@@ -79,7 +84,26 @@ class Asset(EventProducer):
         valor_monetario: float | None = None,
         moneda: str = "USD",
     ) -> "Asset":
-        """Crea un nuevo activo y emite AssetCreated."""
+        """Crea un nuevo activo y emite AssetCreated.
+
+        Args:
+            empresa_id: Identificador de la empresa propietaria.
+            articulo_id: Identificador del artículo de catálogo.
+            ubicacion_id: Identificador de la ubicación del activo.
+            serial_interno: Número de serie interno del activo.
+            codigo_activo: Código único del activo en la empresa.
+            estado: Estado inicial del activo.
+            fecha_adquisicion: Fecha de adquisición del activo.
+            valor_monetario: Valor monetario del activo.
+            moneda: Moneda del valor monetario.
+
+        Returns:
+            El nuevo activo creado con el evento AssetCreated emitido.
+
+        Raises:
+            EmptySerialError: Si el número de serie está vacío.
+            EmptyAssetCodeError: Si el código del activo está vacío.
+        """
         if not serial_interno or not serial_interno.strip():
             raise EmptySerialError("El número de serie no puede estar vacío.")
         if not codigo_activo or not codigo_activo.strip():
@@ -119,7 +143,7 @@ class Asset(EventProducer):
         """
         if new_status == self.estado:
             return
-        allowed = _VALID_TRANSITIONS.get(self.estado, set())
+        allowed = self._VALID_TRANSITIONS.get(self.estado, set())
         if new_status not in allowed:
             raise AssetInvalidTransitionError(
                 f"No se puede transicionar de '{self.estado.value}' a '{new_status.value}'."
@@ -159,7 +183,11 @@ class Asset(EventProducer):
         )
 
     def transfer_location(self, new_location_id: LocationId | None) -> None:
-        """Cambia la ubicación del activo y emite el evento."""
+        """Cambia la ubicación del activo y emite el evento.
+
+        Args:
+            new_location_id: Identificador de la nueva ubicación, o None para desvincular.
+        """
         old_location = self.ubicacion_id
         self.ubicacion_id = new_location_id
         self._events.append(
@@ -167,5 +195,48 @@ class Asset(EventProducer):
                 asset_id=str(self.id),
                 previous_location_id=str(old_location) if old_location else None,
                 new_location_id=str(new_location_id) if new_location_id else None,
+            )
+        )
+
+    def update_attributes(
+        self,
+        serial_interno: str | None = None,
+        codigo_activo: str | None = None,
+        valor_monetario: float | None = None,
+        moneda: str | None = None,
+        fecha_adquisicion: date | None = None,
+    ) -> None:
+        """Actualiza los atributos base del activo y emite AssetUpdated.
+
+        Args:
+            serial_interno: Nuevo número de serie (opcional).
+            codigo_activo: Nuevo código del activo (opcional).
+            valor_monetario: Nuevo valor monetario (opcional).
+            moneda: Nueva moneda (opcional).
+            fecha_adquisicion: Nueva fecha de adquisición (opcional).
+
+        Raises:
+            EmptySerialError: Si el nuevo serial está vacío.
+            EmptyAssetCodeError: Si el nuevo código está vacío.
+        """
+        if serial_interno is not None:
+            if not serial_interno.strip():
+                raise EmptySerialError("El número de serie no puede estar vacío.")
+            self.serial_interno = serial_interno.strip()
+        if codigo_activo is not None:
+            if not codigo_activo.strip():
+                raise EmptyAssetCodeError("El código del activo no puede estar vacío.")
+            self.codigo_activo = codigo_activo.strip()
+        if valor_monetario is not None:
+            self.valor_monetario = valor_monetario
+        if moneda is not None:
+            self.moneda = moneda
+        if fecha_adquisicion is not None:
+            self.fecha_adquisicion = fecha_adquisicion
+        self._events.append(
+            AssetUpdated(
+                asset_id=str(self.id),
+                empresa_id=str(self.empresa_id),
+                codigo_activo=self.codigo_activo,
             )
         )

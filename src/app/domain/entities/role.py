@@ -7,14 +7,15 @@ from datetime import datetime
 from app.domain.entities.permission import Permission
 from app.domain.enums import PermissionModule
 from app.domain.events import DomainEvent, EventProducer, RoleAssigned, RoleRevoked
-from app.domain.exceptions import EmptyRoleNameError
+from app.domain.exceptions import EmptyRoleNameError, ValidationException
 from app.domain.value_objects import CompanyId, RoleId, UserId
 
 
 @dataclass
 class Role(EventProducer):
-    """Entidad con comportamiento (Rich Entity) que representa un Rol
-    con permisos asignados para cada módulo.
+    """Entidad con comportamiento (Rich Entity) que representa un Rol.
+
+    Tiene permisos asignados para cada módulo.
     """
 
     id: RoleId
@@ -47,12 +48,12 @@ class Role(EventProducer):
 
         Raises:
             EmptyRoleNameError: Si el nombre del rol está vacío o solo contiene espacios.
+            ValidationException: Si la lista de permisos contiene módulos duplicados.
         """
         if not nombre or not nombre.strip():
             raise EmptyRoleNameError("El nombre del rol no puede estar vacío.")
-        
+
         if permisos:
-            from app.domain.exceptions import ValidationException
             seen = set()
             for p in permisos:
                 if p.module in seen:
@@ -112,7 +113,7 @@ class Role(EventProducer):
             return False
         for p in self.permisos:
             if p.module == module:
-                return getattr(p, attr)
+                return bool(getattr(p, attr))
         return False
 
     def grant(
@@ -145,6 +146,26 @@ class Role(EventProducer):
                 return
         self.permisos.append(new_perm)
 
+    def rename(self, new_name: str, new_description: str | None = None) -> None:
+        """Cambia el nombre y/o descripción del rol.
+
+        Args:
+            new_name: Nuevo nombre del rol (no puede estar vacío).
+            new_description: Nueva descripción del rol (opcional).
+
+        Raises:
+            EmptyRoleNameError: Si el nuevo nombre está vacío o solo contiene espacios.
+        """
+        if not new_name or not new_name.strip():
+            raise EmptyRoleNameError("El nombre del rol no puede estar vacío.")
+        self.nombre = new_name.strip()
+        if new_description is not None:
+            self.descripcion = new_description
+
+    def deactivate(self) -> None:
+        """Desactiva el rol. No puede asignarse a nuevos usuarios."""
+        self.nombre = f"{self.nombre}__inactivo"
+
     def record_assignment(self, user_id: UserId) -> None:
         """Registra la asignación de este rol a un usuario.
 
@@ -174,7 +195,11 @@ class Role(EventProducer):
         )
 
     def pull_events(self) -> list[DomainEvent]:
-        """Devuelve los eventos de dominio acumulados y limpia la lista interna."""
+        """Devuelve los eventos de dominio acumulados y limpia la lista interna.
+
+        Returns:
+            La lista de eventos de dominio acumulados, vaciando la lista interna.
+        """
         events = self._events.copy()
         self._events.clear()
         return events

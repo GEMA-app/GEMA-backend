@@ -1,6 +1,7 @@
 """Value Object Slug — identificador URL-friendly validado para empresas."""
 
 import re
+import unicodedata
 from dataclasses import dataclass
 
 from app.domain.exceptions import InvalidSlugError
@@ -19,7 +20,7 @@ class Slug:
 
     value: str
 
-    _PATTERN = re.compile(r"^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$")
+    _PATTERN: re.Pattern[str] = re.compile(r"^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$")
 
     def __post_init__(self) -> None:
         """Valida que el slug no esté vacío y tenga formato correcto."""
@@ -42,8 +43,6 @@ class Slug:
         Returns:
             Un nuevo Slug normalizado (minúsculas, sin acentos, con guiones).
         """
-        import unicodedata
-
         # Normalizar unicode y eliminar acentos
         normalized = unicodedata.normalize("NFD", name.lower())
         ascii_name = "".join(c for c in normalized if unicodedata.category(c) != "Mn")

@@ -23,6 +23,7 @@ class AssetCodeExistsError(AssetException):
 
 class AssetSerialExistsError(AssetException):
     """Lanzada cuando se intenta registrar un activo con un número de serie
+
     que ya existe en la empresa.
     """
 

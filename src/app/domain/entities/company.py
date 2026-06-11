@@ -88,13 +88,24 @@ class Company(EventProducer):
         return company
 
     def pull_events(self) -> list[DomainEvent]:
-        """Devuelve los eventos de dominio acumulados y limpia la lista interna."""
+        """Devuelve los eventos de dominio acumulados y limpia la lista interna.
+
+        Returns:
+            La lista de eventos de dominio acumulados, vaciando la lista interna.
+        """
         events = self._events.copy()
         self._events.clear()
         return events
 
     def rename(self, new_name: str) -> None:
-        """Cambia el nombre de la empresa y realiza validaciones."""
+        """Cambia el nombre de la empresa y realiza validaciones.
+
+        Args:
+            new_name: Nuevo nombre para la empresa.
+
+        Raises:
+            EmptyCompanyNameError: Si el nuevo nombre está vacío.
+        """
         stripped = new_name.strip()
         if not stripped:
             raise EmptyCompanyNameError("El nombre de la empresa no puede estar vacío.")
@@ -105,20 +116,33 @@ class Company(EventProducer):
         rif: str | None = None,
         email_contacto: str | None = None,
     ) -> None:
-        """Actualiza los campos de perfil de la empresa."""
+        """Actualiza los campos de perfil de la empresa.
+
+        Args:
+            rif: Nuevo RIF de la empresa (opcional).
+            email_contacto: Nuevo correo de contacto (opcional).
+        """
         self.rif = rif
         self.email_contacto = email_contacto
         self._events.append(CompanyProfileUpdated(company_id=str(self.id)))
 
     def suspend(self) -> None:
-        """Suspende la empresa. No se puede suspender si ya está cancelada."""
+        """Suspende la empresa. No se puede suspender si ya está cancelada.
+
+        Raises:
+            CompanyAlreadyCancelledError: Si la empresa ya está cancelada.
+        """
         if self.estado == CompanyStatus.CANCELLED:
             raise CompanyAlreadyCancelledError("No se puede suspender una empresa cancelada.")
         self.estado = CompanyStatus.SUSPENDED
         self._events.append(CompanySuspended(company_id=str(self.id)))
 
     def activate(self) -> None:
-        """Reactiva una empresa suspendida."""
+        """Reactiva una empresa suspendida.
+
+        Raises:
+            CompanyNotSuspendedError: Si la empresa no está suspendida.
+        """
         if self.estado != CompanyStatus.SUSPENDED:
             raise CompanyNotSuspendedError("Solo se pueden reactivar empresas suspendidas.")
         self.estado = CompanyStatus.ACTIVE

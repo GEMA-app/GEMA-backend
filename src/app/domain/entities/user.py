@@ -1,6 +1,7 @@
 """Entidad User del sistema."""
 
 import uuid
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
 from app.domain.entities.role import Role
@@ -17,33 +18,28 @@ from app.domain.exceptions import UserInactiveError
 from app.domain.value_objects import CompanyId, Email, HashedPassword, UserId
 
 
+@dataclass
 class User(EventProducer):
     """Entidad con comportamiento (Rich Entity) que representa a un usuario en el sistema."""
 
-    def __init__(
-        self,
-        id: UserId,
-        email: Email,
-        password_hash: HashedPassword,
-        empresa_id: CompanyId,
-        nombre: str,
-        telefono: str | None = None,
-        activo: bool = True,
-        roles: list[Role] | None = None,
-        created_at: datetime | None = None,
-        updated_at: datetime | None = None,
-    ) -> None:
-        self.id = id
-        self.email = email
-        self.password_hash = password_hash
-        self.empresa_id = empresa_id
-        self.nombre = nombre
-        self.telefono = telefono
-        self.activo = activo
-        self.roles = roles or []
-        self.created_at = created_at or datetime.now(UTC)
-        self.updated_at = updated_at or datetime.now(UTC)
-        self._events: list[DomainEvent] = []
+    id: UserId
+    email: Email
+    password_hash: HashedPassword
+    empresa_id: CompanyId
+    nombre: str
+    telefono: str | None = None
+    activo: bool = True
+    roles: list[Role] = field(default_factory=list)
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        """Inicializa los campos de fecha por defecto si no están definidos."""
+        if self.created_at is None:
+            self.created_at = datetime.now(UTC)
+        if self.updated_at is None:
+            self.updated_at = datetime.now(UTC)
 
     @classmethod
     def register(
@@ -93,9 +89,6 @@ class User(EventProducer):
     def login(self) -> None:
         """Inicia sesión validando que el usuario esté activo.
 
-        Returns:
-            La entidad User si está activa.
-
         Raises:
             UserInactiveError: Si el usuario está marcado como inactivo.
         """
@@ -140,7 +133,11 @@ class User(EventProducer):
         self._events.append(PasswordResetCompleted(user_id=str(self.id), email=self.email.value))
 
     def pull_events(self) -> list[DomainEvent]:
-        """Devuelve los eventos de dominio acumulados y limpia la lista interna."""
+        """Devuelve los eventos de dominio acumulados y limpia la lista interna.
+
+        Returns:
+            La lista de eventos de dominio acumulados, vaciando la lista interna.
+        """
         events = self._events.copy()
         self._events.clear()
         return events

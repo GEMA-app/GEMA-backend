@@ -35,7 +35,11 @@ class EventProducer(Protocol):
     """Protocol para entidades de dominio que producen eventos (reemplaza hasattr)."""
 
     def pull_events(self) -> list[DomainEvent]:
-        """Extrae y limpia la lista de eventos acumulados."""
+        """Extrae y limpia la lista de eventos acumulados.
+
+        Returns:
+            La lista de eventos de dominio acumulados, vaciando la lista interna.
+        """
         ...
 
 
@@ -161,6 +165,16 @@ class AssetOutOfService(DomainEvent):
     """Evento emitido cuando un activo pasa a fuera de servicio."""
 
     asset_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class AssetUpdated(DomainEvent):
+    """Evento emitido cuando se actualizan los atributos base de un activo."""
+
+    asset_id: str
+    empresa_id: str
+    codigo_activo: str
 
 
 @auto_register

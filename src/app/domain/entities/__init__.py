@@ -1,3 +1,5 @@
+"""Re-exporta todas las entidades del dominio para imports planos."""
+
 from app.domain.entities.asset import Asset
 from app.domain.entities.catalog import ArticleCategory, CatalogArticle
 from app.domain.entities.company import Company
