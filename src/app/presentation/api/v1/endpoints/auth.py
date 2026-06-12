@@ -19,14 +19,14 @@ from app.application.use_cases.auth import (
     ResetPasswordUseCase,
 )
 from app.composition.container import (
+    get_change_password_use_case,
+    get_current_user_use_case,
     get_login_user_use_case,
     get_logout_user_use_case,
     get_refresh_token_use_case,
     get_register_user_use_case,
-    provide_change_password_use_case,
-    provide_current_user_use_case,
-    provide_request_password_reset_use_case,
-    provide_reset_password_use_case,
+    get_request_password_reset_use_case,
+    get_reset_password_use_case,
 )
 from app.presentation.api.v1.endpoints.dependencies import (
     get_current_active_user,
@@ -175,7 +175,7 @@ async def logout(
 )
 async def get_current_user(
     token: HTTPAuthorizationCredentials = Depends(security),
-    use_case: GetCurrentUserUseCase = Depends(provide_current_user_use_case),
+    use_case: GetCurrentUserUseCase = Depends(get_current_user_use_case),
 ) -> UserDocument:
     """Obtiene la información del perfil del usuario autenticado actual en formato JSON:API."""
     user_resp = await use_case.execute(token.credentials)
@@ -203,7 +203,7 @@ async def get_current_user(
 async def change_password(
     request: ChangePasswordRequest,
     current_user: UserResponse = Depends(get_current_active_user),
-    use_case: ChangePasswordUseCase = Depends(provide_change_password_use_case),
+    use_case: ChangePasswordUseCase = Depends(get_change_password_use_case),
 ) -> JSONResponse:
     """Cambia la contraseña del usuario autenticado y emite la alerta de seguridad."""
     await use_case.execute(
@@ -225,7 +225,7 @@ async def change_password(
 )
 async def forgot_password(
     request: ForgotPasswordRequest,
-    use_case: RequestPasswordResetUseCase = Depends(provide_request_password_reset_use_case),
+    use_case: RequestPasswordResetUseCase = Depends(get_request_password_reset_use_case),
 ) -> Response:
     """Envía un email con un enlace de reset. Siempre responde 202 para evitar enumeración."""
     await use_case.execute(request.data.attributes.email)
@@ -239,7 +239,7 @@ async def forgot_password(
 )
 async def reset_password(
     request: ResetPasswordRequest,
-    use_case: ResetPasswordUseCase = Depends(provide_reset_password_use_case),
+    use_case: ResetPasswordUseCase = Depends(get_reset_password_use_case),
 ) -> JSONResponse:
     """Consume el token de un solo uso, actualiza la contraseña y envía la confirmación."""
     await use_case.execute(

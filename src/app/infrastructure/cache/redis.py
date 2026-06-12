@@ -41,7 +41,7 @@ class RedisClient:
     async def _ensure_connected(self) -> aioredis.Redis:
         """Establece la conexión Redis si aún no se ha hecho."""
         if self._client is None:
-            self._client = aioredis.from_url(  # type: ignore[no-untyped-call]
+            self._client = aioredis.from_url(
                 settings.REDIS_URL,
                 decode_responses=True,
             )

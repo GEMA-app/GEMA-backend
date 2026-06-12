@@ -14,7 +14,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.application.dtos.auth_dtos import UserResponse
 from app.application.services.authorization_service import AuthorizationService
 from app.application.use_cases.auth import GetCurrentUserUseCase
-from app.composition.container import get_authorization_service, provide_current_user_use_case
+from app.composition.container import get_authorization_service, get_current_user_use_case
 from app.domain.enums import PermissionModule
 from app.domain.exceptions import InsufficientPermissionsError, InvalidUUIDError
 from app.domain.value_objects import CompanyId, UserId
@@ -40,7 +40,7 @@ def require_platform_permission(module: PermissionModule, action: str) -> Any:
     """Auth + RBAC para endpoints SIN empresa_id en el path (ej: POST /v1/empresas)."""
     async def dependency(
         token: HTTPAuthorizationCredentials = Depends(security),
-        auth_use_case: GetCurrentUserUseCase = Depends(provide_current_user_use_case),
+        auth_use_case: GetCurrentUserUseCase = Depends(get_current_user_use_case),
         auth_service: AuthorizationService = Depends(get_authorization_service),
     ) -> UserResponse:
         user_resp = await auth_use_case.execute(token.credentials)
@@ -57,7 +57,7 @@ def require_permission(module: PermissionModule, action: str) -> Any:
     async def dependency(
         empresa_id: str,
         token: HTTPAuthorizationCredentials = Depends(security),
-        auth_use_case: GetCurrentUserUseCase = Depends(provide_current_user_use_case),
+        auth_use_case: GetCurrentUserUseCase = Depends(get_current_user_use_case),
         auth_service: AuthorizationService = Depends(get_authorization_service),
     ) -> UserResponse:
         user_resp = await auth_use_case.execute(token.credentials)
@@ -74,7 +74,7 @@ def require_permission(module: PermissionModule, action: str) -> Any:
 
 async def get_current_active_user(
     token: HTTPAuthorizationCredentials = Depends(security),
-    auth_use_case: GetCurrentUserUseCase = Depends(provide_current_user_use_case),
+    auth_use_case: GetCurrentUserUseCase = Depends(get_current_user_use_case),
 ) -> UserResponse:
     """Dependencia para obtener el usuario autenticado activo."""
     return await auth_use_case.execute(token.credentials)

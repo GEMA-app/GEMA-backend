@@ -19,11 +19,11 @@ from app.application.use_cases.company import (
     UpdateCompanyUseCase,
 )
 from app.composition.container import (
+    get_company_use_case,
     get_create_company_use_case,
     get_delete_company_use_case,
     get_list_companies_use_case,
     get_update_company_use_case,
-    provide_company_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
@@ -143,7 +143,7 @@ async def list_companies(
 async def get_company(
     empresa_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
-    use_case: GetCompanyUseCase = Depends(provide_company_use_case),
+    use_case: GetCompanyUseCase = Depends(get_company_use_case),
 ) -> CompanyDocument:
     """Obtiene los detalles de una empresa por su ID.
 

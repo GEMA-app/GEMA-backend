@@ -29,8 +29,8 @@ from app.composition.container import (
     get_delete_role_use_case,
     get_list_roles_use_case,
     get_revoke_role_from_user_use_case,
+    get_role_use_case,
     get_update_role_use_case,
-    provide_role_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
@@ -162,7 +162,7 @@ async def get_role(
     empresa_id: str,
     rol_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
-    use_case: GetRoleUseCase = Depends(provide_role_use_case),
+    use_case: GetRoleUseCase = Depends(get_role_use_case),
 ) -> RoleDocument:
     """Obtiene los detalles de un rol por su ID.
 

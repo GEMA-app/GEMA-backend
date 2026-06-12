@@ -25,10 +25,10 @@ from app.application.use_cases.location import (
 from app.composition.container import (
     get_create_location_use_case,
     get_delete_location_use_case,
+    get_location_children_use_case,
+    get_location_tree_use_case,
+    get_location_use_case,
     get_update_location_use_case,
-    provide_location_children_use_case,
-    provide_location_tree_use_case,
-    provide_location_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
@@ -103,7 +103,7 @@ async def create_location(
 async def get_location_tree(
     empresa_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
-    use_case: GetLocationTreeUseCase = Depends(provide_location_tree_use_case),
+    use_case: GetLocationTreeUseCase = Depends(get_location_tree_use_case),
 ) -> LocationTreeDocument:
     """Obtiene el árbol jerárquico completo de ubicaciones de la empresa.
 
@@ -140,7 +140,7 @@ async def get_location(
     empresa_id: str,
     ubicacion_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
-    use_case: GetLocationUseCase = Depends(provide_location_use_case),
+    use_case: GetLocationUseCase = Depends(get_location_use_case),
 ) -> LocationDocument:
     """Obtiene los detalles de una ubicación por su ID.
 
@@ -250,7 +250,7 @@ async def get_location_children(
     empresa_id: str,
     ubicacion_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
-    use_case: GetLocationChildrenUseCase = Depends(provide_location_children_use_case),
+    use_case: GetLocationChildrenUseCase = Depends(get_location_children_use_case),
 ) -> LocationListDocument:
     """Obtiene las ubicaciones hijas directas de una ubicación padre.
 

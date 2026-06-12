@@ -21,11 +21,11 @@ from app.application.use_cases.asset import (
     UpdateAssetUseCase,
 )
 from app.composition.container import (
+    get_asset_use_case,
     get_create_asset_use_case,
     get_delete_asset_use_case,
     get_list_assets_use_case,
     get_update_asset_use_case,
-    provide_asset_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import require_permission
@@ -167,7 +167,7 @@ async def get_asset(
     empresa_id: str,
     activo_id: str,
     current_user: UserResponse = Depends(require_permission(PermissionModule.ASSETS, "view")),
-    use_case: GetAssetUseCase = Depends(provide_asset_use_case),
+    use_case: GetAssetUseCase = Depends(get_asset_use_case),
 ) -> AssetDocument:
     """Obtiene los detalles de un activo físico por su ID.
 
