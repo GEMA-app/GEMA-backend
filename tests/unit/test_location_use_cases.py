@@ -1,9 +1,11 @@
-import pytest
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
-from app.application.use_cases.location.update_location import UpdateLocationUseCase
+import pytest
+
 from app.application.dtos.location_dtos import UpdateLocationRequest
+from app.application.use_cases.location.update_location import UpdateLocationUseCase
 from app.domain.entities import Location
 from app.domain.enums import LocationType
 from app.domain.exceptions import ValidationException
@@ -11,7 +13,7 @@ from app.domain.value_objects import CompanyId, LocationId
 
 
 @pytest.fixture
-def mock_uow():
+def mock_uow() -> Any:
     uow = MagicMock()
     uow.__aenter__ = AsyncMock(return_value=uow)
     uow.__aexit__ = AsyncMock(return_value=None)
@@ -25,10 +27,10 @@ def mock_uow():
 
 class TestUpdateLocationUseCaseDescendants:
 
-    async def test_update_location_type_change_invalidates_child_raises_validation_exception(self, mock_uow):
+    async def test_update_location_type_change_invalidates_child_raises_validation_exception(self, mock_uow: Any) -> None:
         company_id = CompanyId(uuid4())
         location_id = LocationId(uuid4())
-        
+
         # Simular ubicacion B de tipo PLANT
         location_b = Location(
             id=location_id,
@@ -41,7 +43,7 @@ class TestUpdateLocationUseCaseDescendants:
         mock_uow.locations.get_by_id.side_effect = lambda lid, cid: (
             location_b if lid == location_id else None
         )
-        
+
         # Simular hijo C de tipo AREA
         location_c = Location(
             id=LocationId(uuid4()),
@@ -54,7 +56,7 @@ class TestUpdateLocationUseCaseDescendants:
         mock_uow.locations.get_children.return_value = [location_c]
 
         use_case = UpdateLocationUseCase(uow=mock_uow)
-        
+
         # Intentamos cambiar B a HEADQUARTERS.
         # HEADQUARTERS no permite hijos de tipo AREA directamente (AREA requiere PLANT).
         request = UpdateLocationRequest(
@@ -64,6 +66,6 @@ class TestUpdateLocationUseCaseDescendants:
 
         with pytest.raises(ValidationException) as exc_info:
             await use_case.execute(str(company_id.value), str(location_id.value), request)
-        
+
         assert "invalida la ubicación hija" in str(exc_info.value)
         mock_uow.locations.save.assert_not_called()

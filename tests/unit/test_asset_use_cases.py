@@ -1,5 +1,6 @@
 """Tests para casos de uso de activos (create_asset, update_asset)."""
-from unittest.mock import AsyncMock, MagicMock, patch
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
 import pytest
@@ -8,7 +9,7 @@ from app.domain.enums import AssetStatus
 
 
 @pytest.fixture
-def mock_uow():
+def mock_uow() -> Any:
     uow = MagicMock()
     uow.__aenter__ = AsyncMock(return_value=uow)
     uow.__aexit__ = AsyncMock(return_value=None)
@@ -24,7 +25,7 @@ def mock_uow():
 
 class TestCreateAssetNoON:
 
-    async def test_create_asset_eliminated_o_n(self, mock_uow):
+    async def test_create_asset_eliminated_o_n(self, mock_uow: Any) -> None:
         from app.application.dtos.asset_dtos import CreateAssetRequest
         from app.application.use_cases.asset.create_asset import CreateAssetUseCase
 
@@ -42,7 +43,7 @@ class TestCreateAssetNoON:
             moneda="USD",
         )
 
-        result = await use_case.execute(str(uuid4()), request)
+        await use_case.execute(str(uuid4()), request)
 
         mock_uow.assets.list_by_company.assert_not_called()
         assert mock_uow.assets.save.called
@@ -50,7 +51,7 @@ class TestCreateAssetNoON:
 
 class TestUpdateAssetNoON:
 
-    async def test_update_asset_eliminated_o_n_code(self, mock_uow):
+    async def test_update_asset_eliminated_o_n_code(self, mock_uow: Any) -> None:
         from app.application.dtos.asset_dtos import UpdateAssetRequest
         from app.application.use_cases.asset.update_asset import UpdateAssetUseCase
 
@@ -75,11 +76,11 @@ class TestUpdateAssetNoON:
             moneda=None,
         )
 
-        result = await use_case.execute(str(uuid4()), str(uuid4()), request)
+        await use_case.execute(str(uuid4()), str(uuid4()), request)
 
         mock_uow.assets.list_by_company.assert_not_called()
 
-    async def test_update_asset_eliminated_o_n_serial(self, mock_uow):
+    async def test_update_asset_eliminated_o_n_serial(self, mock_uow: Any) -> None:
         from app.application.dtos.asset_dtos import UpdateAssetRequest
         from app.application.use_cases.asset.update_asset import UpdateAssetUseCase
 
@@ -104,14 +105,14 @@ class TestUpdateAssetNoON:
             moneda=None,
         )
 
-        result = await use_case.execute(str(uuid4()), str(uuid4()), request)
+        await use_case.execute(str(uuid4()), str(uuid4()), request)
 
         mock_uow.assets.list_by_company.assert_not_called()
 
 
 class TestCreateAssetNormalizes:
 
-    async def test_create_asset_normalizes_lowercase(self, mock_uow):
+    async def test_create_asset_normalizes_lowercase(self, mock_uow: Any) -> None:
         from app.application.dtos.asset_dtos import CreateAssetRequest
         from app.application.use_cases.asset.create_asset import CreateAssetUseCase
 
@@ -129,7 +130,7 @@ class TestCreateAssetNormalizes:
             moneda="USD",
         )
 
-        result = await use_case.execute(str(uuid4()), request)
+        await use_case.execute(str(uuid4()), request)
 
         saved_asset = mock_uow.assets.save.call_args[0][0]
         assert saved_asset.serial_interno == "serial-upper-001"
@@ -138,7 +139,7 @@ class TestCreateAssetNormalizes:
 
 class TestUpdateAssetNormalizes:
 
-    async def test_update_asset_normalizes_lowercase(self, mock_uow):
+    async def test_update_asset_normalizes_lowercase(self, mock_uow: Any) -> None:
         from app.application.dtos.asset_dtos import UpdateAssetRequest
         from app.application.use_cases.asset.update_asset import UpdateAssetUseCase
 
@@ -163,7 +164,7 @@ class TestUpdateAssetNormalizes:
             moneda=None,
         )
 
-        result = await use_case.execute(str(uuid4()), str(uuid4()), request)
+        await use_case.execute(str(uuid4()), str(uuid4()), request)
 
         assert mock_asset.serial_interno == "new-serial-upper"
         assert mock_asset.codigo_activo == "new-code-upper"
@@ -171,7 +172,7 @@ class TestUpdateAssetNormalizes:
 
 class TestCreateAssetLocationValidation:
 
-    async def test_create_asset_preserves_location_validation(self, mock_uow):
+    async def test_create_asset_preserves_location_validation(self, mock_uow: Any) -> None:
         from app.application.dtos.asset_dtos import CreateAssetRequest
         from app.application.use_cases.asset.create_asset import CreateAssetUseCase
         from app.domain.exceptions import LocationNotFoundError
@@ -196,7 +197,7 @@ class TestCreateAssetLocationValidation:
 
 class TestUpdateAssetNullification:
 
-    async def test_update_asset_nullifies_location(self, mock_uow):
+    async def test_update_asset_nullifies_location(self, mock_uow: Any) -> None:
         from app.application.dtos.asset_dtos import UpdateAssetRequest
         from app.application.use_cases.asset.update_asset import UpdateAssetUseCase
         from app.domain.value_objects import LocationId

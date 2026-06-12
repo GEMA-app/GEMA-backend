@@ -149,9 +149,8 @@ class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleI
         user_model = await self.session.get(UserModel, user_id.value)
         role_model = await self.session.get(RoleModel, role_id.value)
 
-        if user_model and role_model:
-            if role_model in user_model.roles:
-                user_model.roles.remove(role_model)
+        if user_model and role_model and role_model in user_model.roles:
+            user_model.roles.remove(role_model)
 
     async def get_user_roles(self, user_id: UserId, empresa_id: CompanyId) -> list[Role]:
         stmt = (
@@ -177,7 +176,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleI
             .where(
                 PermissionModel.empresa_id == empresa_id.value,
                 PermissionModel.modulo == PermissionModule.ADMIN,
-                PermissionModel.puede_eliminar == True,
+                PermissionModel.puede_eliminar,
             )
         )
         if exclude_user_id:

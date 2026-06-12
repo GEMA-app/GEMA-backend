@@ -16,24 +16,24 @@ from app.presentation.api.v1.endpoints.dependencies import (
 
 class TestValidateTenantAccess:
 
-    def test_validate_tenant_access_same_uuid(self):
+    def test_validate_tenant_access_same_uuid(self) -> None:
         uid = "550e8400-e29b-41d4-a716-446655440000"
         uid_no_hyphens = "550e8400e29b41d4a716446655440000"
         validate_tenant_access(uid, uid)
         validate_tenant_access(uid_no_hyphens, uid)
         validate_tenant_access(uid, uid_no_hyphens)
 
-    def test_validate_tenant_access_different_uuid(self):
+    def test_validate_tenant_access_different_uuid(self) -> None:
         uid_a = "550e8400-e29b-41d4-a716-446655440000"
         uid_b = "550e8400-e29b-41d4-a716-446655440001"
         with pytest.raises(InsufficientPermissionsError):
             validate_tenant_access(uid_a, uid_b)
 
-    def test_validate_tenant_access_invalid_uuid(self):
+    def test_validate_tenant_access_invalid_uuid(self) -> None:
         with pytest.raises(InvalidUUIDError):
             validate_tenant_access("not-a-uuid", "550e8400-e29b-41d4-a716-446655440000")
 
-    def test_validate_tenant_access_case_insensitive(self):
+    def test_validate_tenant_access_case_insensitive(self) -> None:
         uid_upper = "550E8400-E29B-41D4-A716-446655440000"
         uid_lower = "550e8400-e29b-41d4-a716-446655440000"
         assert UUID(uid_upper) == UUID(uid_lower)
@@ -43,11 +43,10 @@ class TestValidateTenantAccess:
 
 class TestRequirePermissionType:
 
-    def test_require_permission_returns_user_response_type(self):
+    def test_require_permission_returns_user_response_type(self) -> None:
         inner_func = require_permission.__wrapped__ if hasattr(require_permission, "__wrapped__") else None
         if inner_func is None:
-            import types
-            module = inspect.getmodule(require_permission)
+            inspect.getmodule(require_permission)
             source = inspect.getsource(require_permission)
             assert "UserResponse" in source or "-> UserResponse" in source
         else:
@@ -57,14 +56,14 @@ class TestRequirePermissionType:
 
 class TestGetCurrentActiveUserType:
 
-    def test_get_current_active_user_returns_user_response_type(self):
+    def test_get_current_active_user_returns_user_response_type(self) -> None:
         sig = inspect.signature(get_current_active_user)
         assert sig.return_annotation is UserResponse
 
 
 class TestAssetsIdRenamed:
 
-    def test_assets_id_renamed_to_activo_id(self):
+    def test_assets_id_renamed_to_activo_id(self) -> None:
         sig = inspect.signature(get_asset)
         params = list(sig.parameters.keys())
         assert "activo_id" in params, "El parámetro debe llamarse activo_id, no id"

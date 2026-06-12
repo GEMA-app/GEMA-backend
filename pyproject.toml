@@ -31,11 +31,19 @@ line-length = 100
 target-version = "py312"
 exclude = [
     "migrations/versions",
+    ".venv",
+    ".git",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
 ]
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "UP", "B", "SIM", "D"]
 ignore = ["D100", "D104", "B008", "D107", "D200", "D205", "D400", "D401", "D402", "D415"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D", "E501"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

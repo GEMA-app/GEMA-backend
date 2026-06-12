@@ -1,12 +1,13 @@
 """Tests para ListCompaniesUseCase."""
-from unittest.mock import AsyncMock, MagicMock, patch
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
 import pytest
 
 
 @pytest.fixture
-def mock_uow():
+def mock_uow() -> Any:
     uow = MagicMock()
     uow.__aenter__ = AsyncMock(return_value=uow)
     uow.__aexit__ = AsyncMock(return_value=None)
@@ -18,7 +19,7 @@ def mock_uow():
 
 class TestListCompanies:
 
-    async def test_execute_without_company_id(self, mock_uow):
+    async def test_execute_without_company_id(self, mock_uow: Any) -> None:
         from app.application.use_cases.company.list_companies import ListCompaniesUseCase
 
         mock_company = MagicMock()
@@ -44,7 +45,7 @@ class TestListCompanies:
         assert len(companies) == 1
         assert companies[0].nombre == "Empresa A"
 
-    async def test_execute_with_company_id_found(self, mock_uow):
+    async def test_execute_with_company_id_found(self, mock_uow: Any) -> None:
         from app.application.use_cases.company.list_companies import ListCompaniesUseCase
 
         company_uuid = str(uuid4())
@@ -71,7 +72,7 @@ class TestListCompanies:
         assert len(companies) == 1
         assert companies[0].nombre == "Empresa A"
 
-    async def test_execute_with_company_id_not_found(self, mock_uow):
+    async def test_execute_with_company_id_not_found(self, mock_uow: Any) -> None:
         from app.application.use_cases.company.list_companies import ListCompaniesUseCase
 
         company_uuid = str(uuid4())

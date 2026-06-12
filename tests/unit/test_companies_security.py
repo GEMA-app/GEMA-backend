@@ -1,5 +1,7 @@
 """Tests para seguridad de endpoints de empresas."""
 import inspect
+from collections.abc import Callable
+from typing import Any
 from unittest.mock import AsyncMock
 
 from app.presentation.api.v1.endpoints.companies import (
@@ -14,7 +16,7 @@ from app.presentation.api.v1.endpoints.dependencies import (
 )
 
 
-def _get_dependency(func, param_name):
+def _get_dependency(func: Callable[..., Any], param_name: str) -> Any:
     sig = inspect.signature(func)
     param = sig.parameters[param_name]
     default = param.default
@@ -23,33 +25,33 @@ def _get_dependency(func, param_name):
     return None
 
 
-def test_create_company_uses_require_platform_permission():
+def test_create_company_uses_require_platform_permission() -> None:
     dep = _get_dependency(create_company, "current_user")
     assert dep is not None
     assert callable(dep)
 
 
-def test_get_company_uses_require_tenant_read():
+def test_get_company_uses_require_tenant_read() -> None:
     dep = _get_dependency(get_company, "current_user")
     assert dep is require_tenant_read
 
 
-def test_get_company_uses_company_id_param():
+def test_get_company_uses_company_id_param() -> None:
     sig = inspect.signature(get_company)
     assert "empresa_id" in sig.parameters
 
 
-def test_update_company_uses_company_id_param():
+def test_update_company_uses_company_id_param() -> None:
     sig = inspect.signature(update_company)
     assert "empresa_id" in sig.parameters
 
 
-def test_delete_company_uses_company_id_param():
+def test_delete_company_uses_company_id_param() -> None:
     sig = inspect.signature(delete_company)
     assert "empresa_id" in sig.parameters
 
 
-def test_list_companies_passes_company_id():
+def test_list_companies_passes_company_id() -> None:
     sig = inspect.signature(list_companies)
     params = list(sig.parameters.keys())
     assert "company_id" not in params
@@ -58,7 +60,7 @@ def test_list_companies_passes_company_id():
     assert "company_id=current_user.empresa_id" in source
 
 
-async def test_list_companies_passes_company_id_to_use_case():
+async def test_list_companies_passes_company_id_to_use_case() -> None:
     current_user_mock = type("UserMock", (), {"empresa_id": "test-company-id"})()
     use_case_mock = AsyncMock()
     use_case_mock.execute = AsyncMock(return_value=([], 0))

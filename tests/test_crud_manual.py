@@ -1,12 +1,13 @@
 import asyncio
 import uuid
-from httpx import AsyncClient, ASGITransport
-from sqlalchemy import delete as sql_delete
+
+from httpx import ASGITransport, AsyncClient
+
+from app.infrastructure.db.models.catalog import CatalogArticleModel
+from app.infrastructure.db.session import async_session_factory
 
 # Importar aplicación y configuraciones
 from app.main import app
-from app.infrastructure.db.session import async_session_factory
-from app.infrastructure.db.models.catalog import CatalogArticleModel
 
 
 async def run_manual_test() -> None:
