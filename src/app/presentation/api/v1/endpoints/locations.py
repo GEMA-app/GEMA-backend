@@ -1,4 +1,6 @@
-from typing import Any
+"""Endpoints CRUD de ubicaciones jerárquicas: creación, árbol completo,
+obtención, actualización, eliminación y consulta de hijos directos.
+"""
 
 from fastapi import APIRouter, Depends, status
 
@@ -57,9 +59,20 @@ router = APIRouter()
 async def create_location(
     empresa_id: str,
     request: CreateLocationRequest,
-    current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "create")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "create")),
     use_case: CreateLocationUseCase = Depends(get_create_location_use_case),
 ) -> LocationDocument:
+    """Crea una nueva ubicación jerárquica en la empresa.
+
+    Args:
+        empresa_id: Identificador de la empresa.
+        request: Datos de la ubicación en formato JSON:API.
+        current_user: Usuario autenticado con permiso de administración.
+        use_case: Caso de uso de creación de ubicación.
+
+    Returns:
+        Documento JSON:API con los datos de la ubicación creada.
+    """
     dto = CreateLocationDTO(
         nombre=request.data.attributes.nombre,
         tipo=request.data.attributes.tipo.value,
@@ -92,6 +105,16 @@ async def get_location_tree(
     current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetLocationTreeUseCase = Depends(provide_location_tree_use_case),
 ) -> LocationTreeDocument:
+    """Obtiene el árbol jerárquico completo de ubicaciones de la empresa.
+
+    Args:
+        empresa_id: Identificador de la empresa.
+        current_user: Usuario autenticado con acceso al tenant.
+        use_case: Caso de uso de obtención del árbol de ubicaciones.
+
+    Returns:
+        Documento JSON:API con la estructura jerárquica de ubicaciones.
+    """
     tree = await use_case.execute(empresa_id)
 
     def map_tree_node(node: LocationTreeResponse) -> LocationTreeResource:
@@ -119,6 +142,17 @@ async def get_location(
     current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetLocationUseCase = Depends(provide_location_use_case),
 ) -> LocationDocument:
+    """Obtiene los detalles de una ubicación por su ID.
+
+    Args:
+        empresa_id: Identificador de la empresa.
+        ubicacion_id: Identificador único de la ubicación.
+        current_user: Usuario autenticado con acceso al tenant.
+        use_case: Caso de uso de obtención de ubicación.
+
+    Returns:
+        Documento JSON:API con los datos de la ubicación.
+    """
     res = await use_case.execute(empresa_id, ubicacion_id)
     return LocationDocument(
         data=LocationResource(
@@ -144,9 +178,21 @@ async def update_location(
     empresa_id: str,
     ubicacion_id: str,
     request: UpdateLocationRequest,
-    current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateLocationUseCase = Depends(get_update_location_use_case),
 ) -> LocationDocument:
+    """Actualiza los datos de una ubicación existente.
+
+    Args:
+        empresa_id: Identificador de la empresa.
+        ubicacion_id: Identificador único de la ubicación.
+        request: Datos actualizados en formato JSON:API.
+        current_user: Usuario autenticado con permiso de edición.
+        use_case: Caso de uso de actualización de ubicación.
+
+    Returns:
+        Documento JSON:API con los datos actualizados de la ubicación.
+    """
     attrs = request.data.attributes
     sent = attrs.model_dump(exclude_unset=True)
     dto = UpdateLocationDTO(
@@ -181,9 +227,17 @@ async def update_location(
 async def delete_location(
     empresa_id: str,
     ubicacion_id: str,
-    current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "delete")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "delete")),
     use_case: DeleteLocationUseCase = Depends(get_delete_location_use_case),
 ) -> None:
+    """Elimina una ubicación de la empresa.
+
+    Args:
+        empresa_id: Identificador de la empresa.
+        ubicacion_id: Identificador único de la ubicación a eliminar.
+        current_user: Usuario autenticado con permiso de eliminación.
+        use_case: Caso de uso de eliminación de ubicación.
+    """
     await use_case.execute(empresa_id, ubicacion_id)
 
 
@@ -198,6 +252,17 @@ async def get_location_children(
     current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetLocationChildrenUseCase = Depends(provide_location_children_use_case),
 ) -> LocationListDocument:
+    """Obtiene las ubicaciones hijas directas de una ubicación padre.
+
+    Args:
+        empresa_id: Identificador de la empresa.
+        ubicacion_id: Identificador único de la ubicación padre.
+        current_user: Usuario autenticado con acceso al tenant.
+        use_case: Caso de uso de obtención de hijos de ubicación.
+
+    Returns:
+        Documento JSON:API con la lista de ubicaciones hijas directas.
+    """
     children = await use_case.execute(empresa_id, ubicacion_id)
     return LocationListDocument(
         data=[

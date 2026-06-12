@@ -1,3 +1,7 @@
+"""Middleware que valida el Content-Type de las solicitudes entrantes
+y fuerza el tipo application/vnd.api+json para endpoints JSON:API.
+"""
+
 from typing import Any
 
 from fastapi import status

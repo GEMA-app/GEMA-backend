@@ -1,4 +1,7 @@
-from typing import Any
+"""Endpoints CRUD de activos físicos: creación, listado con filtros,
+obtención, actualización y eliminación de activos.
+"""
+
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, status
@@ -9,6 +12,7 @@ from app.application.dtos.asset_dtos import (
 from app.application.dtos.asset_dtos import (
     UpdateAssetRequest as UpdateAssetDTO,
 )
+from app.application.dtos.auth_dtos import UserResponse
 from app.application.use_cases.asset import (
     CreateAssetUseCase,
     DeleteAssetUseCase,
@@ -46,9 +50,20 @@ router = APIRouter()
 async def create_asset(
     empresa_id: str,
     request: CreateAssetRequest,
-    current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "create")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ASSETS, "create")),
     use_case: CreateAssetUseCase = Depends(get_create_asset_use_case),
 ) -> AssetDocument:
+    """Crea un nuevo activo físico en la empresa.
+
+    Args:
+        empresa_id: Identificador de la empresa.
+        request: Datos del activo en formato JSON:API.
+        current_user: Usuario autenticado con permiso de creación.
+        use_case: Caso de uso de creación de activo.
+
+    Returns:
+        Documento JSON:API con los datos del activo creado.
+    """
     dto = CreateAssetDTO(
         articulo_id=request.data.attributes.articulo_id,
         serial_interno=request.data.attributes.serial_interno,
@@ -90,10 +105,27 @@ async def list_assets(
     limit: int = 10,
     estado: str | None = Query(None, description="Filtrar por estado del activo"),
     ubicacion_id: UUID | None = Query(None, description="Filtrar por ID de ubicación"),
-    search: str | None = Query(None, min_length=2, max_length=100, description="Buscar por codigo o serial"),
-    current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "view")),
+    search: str | None = Query(
+        None, min_length=2, max_length=100, description="Buscar por codigo o serial"
+    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ASSETS, "view")),
     use_case: ListAssetsUseCase = Depends(get_list_assets_use_case),
 ) -> AssetListDocument:
+    """Lista los activos físicos de la empresa con filtros opcionales.
+
+    Args:
+        empresa_id: Identificador de la empresa.
+        offset: Número de registros a omitir (paginación).
+        limit: Máximo de registros a retornar (paginación).
+        estado: Filtrar por estado del activo.
+        ubicacion_id: Filtrar por ID de ubicación.
+        search: Término de búsqueda por código o serial.
+        current_user: Usuario autenticado con permiso de visualización.
+        use_case: Caso de uso de listado de activos.
+
+    Returns:
+        Documento JSON:API con la lista de activos y metadatos de paginación.
+    """
     filters = {}
     if estado is not None:
         filters["estado"] = estado
@@ -134,9 +166,20 @@ async def list_assets(
 async def get_asset(
     empresa_id: str,
     activo_id: str,
-    current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "view")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ASSETS, "view")),
     use_case: GetAssetUseCase = Depends(provide_asset_use_case),
 ) -> AssetDocument:
+    """Obtiene los detalles de un activo físico por su ID.
+
+    Args:
+        empresa_id: Identificador de la empresa.
+        activo_id: Identificador único del activo.
+        current_user: Usuario autenticado con permiso de visualización.
+        use_case: Caso de uso de obtención de activo.
+
+    Returns:
+        Documento JSON:API con los datos del activo.
+    """
     res = await use_case.execute(empresa_id, activo_id)
     return AssetDocument(
         data=AssetResource(
@@ -166,9 +209,21 @@ async def update_asset(
     empresa_id: str,
     activo_id: str,
     request: UpdateAssetRequest,
-    current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "edit")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ASSETS, "edit")),
     use_case: UpdateAssetUseCase = Depends(get_update_asset_use_case),
 ) -> AssetDocument:
+    """Actualiza los datos de un activo físico existente.
+
+    Args:
+        empresa_id: Identificador de la empresa.
+        activo_id: Identificador único del activo.
+        request: Datos actualizados en formato JSON:API.
+        current_user: Usuario autenticado con permiso de edición.
+        use_case: Caso de uso de actualización de activo.
+
+    Returns:
+        Documento JSON:API con los datos actualizados del activo.
+    """
     attrs = request.data.attributes
     sent = attrs.model_dump(exclude_unset=True)
     dto = UpdateAssetDTO(
@@ -210,7 +265,15 @@ async def update_asset(
 async def delete_asset(
     empresa_id: str,
     activo_id: str,
-    current_user: Any = Depends(require_permission(PermissionModule.ASSETS, "delete")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ASSETS, "delete")),
     use_case: DeleteAssetUseCase = Depends(get_delete_asset_use_case),
 ) -> None:
+    """Elimina un activo físico de la empresa.
+
+    Args:
+        empresa_id: Identificador de la empresa.
+        activo_id: Identificador único del activo a eliminar.
+        current_user: Usuario autenticado con permiso de eliminación.
+        use_case: Caso de uso de eliminación de activo.
+    """
     await use_case.execute(empresa_id, activo_id)

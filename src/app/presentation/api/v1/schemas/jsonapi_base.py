@@ -1,3 +1,7 @@
+"""Estructuras base JSON:API: ResourceIdentifier, Links, Error,
+Meta y documentos de error estándar según la especificación JSON:API.
+"""
+
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field

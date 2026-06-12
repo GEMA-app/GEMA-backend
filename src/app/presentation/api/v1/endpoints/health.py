@@ -1,3 +1,10 @@
+"""Endpoints de verificación de salud (liveness y readiness) de la aplicación.
+
+Define los probes de salud que permiten a los orquestadores
+(kubernetes, docker) verificar que la aplicación y sus dependencias
+externas (base de datos, Redis) están operativas.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncEngine

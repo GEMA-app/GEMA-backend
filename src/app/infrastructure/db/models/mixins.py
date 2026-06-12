@@ -1,5 +1,6 @@
 import uuid
 from datetime import UTC, datetime
+from typing import Any
 
 from sqlalchemy import DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column
@@ -32,6 +33,6 @@ class VersionMixin:
 
     version: Mapped[int] = mapped_column(default=1, nullable=False)
 
-    @declared_attr
-    def __mapper_args__(cls):
+    @declared_attr  # type: ignore[arg-type]
+    def __mapper_args__(cls) -> dict[str, Any]:
         return {"version_id_col": cls.version}

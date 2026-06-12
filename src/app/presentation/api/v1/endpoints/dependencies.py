@@ -1,3 +1,10 @@
+"""Dependencias compartidas para los endpoints de la API v1.
+
+Define funciones de dependencia para FastAPI: autenticación (token JWT),
+validación de tenant (UUID normalization), autorización RBAC y rate
+limiting por correo electrónico.
+"""
+
 from typing import Any
 from uuid import UUID
 
@@ -121,7 +128,10 @@ async def rate_limit_by_email(request: Request) -> None:
         if current > limit:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail=f"Has excedido el límite de {limit} solicitudes por minuto para este correo.",
+                detail=(
+                    f"Has excedido el límite de {limit}"
+                    " solicitudes por minuto para este correo."
+                ),
             )
     except RedisError:
         pass  # Fail-open

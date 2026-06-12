@@ -1,3 +1,7 @@
+"""Middleware que valida el header Accept de las solicitudes entrantes
+y rechaza peticiones que no acepten application/vnd.api+json.
+"""
+
 from typing import Any
 
 from fastapi import status
@@ -13,17 +17,22 @@ class AcceptMiddleware(BaseHTTPMiddleware):
     """Middleware que valida el encabezado Accept para garantizar la compatibilidad con JSON:API."""
 
     async def dispatch(self, request: Request, call_next: Any) -> Response:
+        """Ejecuta la validación del encabezado Accept."""
         accept = request.headers.get("Accept", "*/*")
         if (
             "application/vnd.api+json" not in accept
             and "*/*" not in accept
             and "application/json" not in accept
         ):
+            detail = (
+                "El servidor solo puede generar respuestas con"
+                " Content-Type: application/vnd.api+json."
+            )
             error = ErrorObject(
                 status=str(status.HTTP_406_NOT_ACCEPTABLE),
                 code="ERR_NOT_ACCEPTABLE",
                 title="Encabezado Accept no aceptable",
-                detail="El servidor solo puede generar respuestas con Content-Type: application/vnd.api+json.",
+                detail=detail,
             )
             return jsonapi_response(status.HTTP_406_NOT_ACCEPTABLE, [error])
 

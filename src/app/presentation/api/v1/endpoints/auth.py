@@ -1,10 +1,13 @@
-from typing import Any
+"""Endpoints de autenticación: registro, inicio de sesión, rotación
+de tokens y gestión de contraseñas.
+"""
 
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.application.dtos import LoginUserRequest, RefreshTokenRequest, RegisterUserRequest
+from app.application.dtos.auth_dtos import UserResponse
 from app.application.use_cases.auth import (
     ChangePasswordUseCase,
     GetCurrentUserUseCase,
@@ -60,6 +63,18 @@ async def register(
     request: RegisterRequest,
     use_case: RegisterUserUseCase = Depends(get_register_user_use_case),
 ) -> TokenDocument:
+    """Registra un nuevo usuario con onboarding SaaS.
+
+    Crea una nueva empresa, un usuario administrador y un rol con todos
+    los permisos, y devuelve los tokens de acceso y refresco.
+
+    Args:
+        request: Datos del registro en formato JSON:API.
+        use_case: Caso de uso de registro de usuario.
+
+    Returns:
+        Documento JSON:API con los tokens de acceso y refresco.
+    """
     dto_req = RegisterUserRequest(
         email=request.data.attributes.email,
         password=request.data.attributes.password,
@@ -143,7 +158,9 @@ async def logout(
     token: HTTPAuthorizationCredentials = Depends(security),
     use_case: LogoutUserUseCase = Depends(get_logout_user_use_case),
 ) -> None:
-    """Revoca el token de acceso actual añadiendo su JTI a la lista de bloqueo en Redis y opcionalmente el de refresco."""
+    """Revoca el token de acceso actual añadiendo su JTI a la lista de bloqueo
+    en Redis y opcionalmente el de refresco.
+    """
     refresh_token = None
     if request and request.data and request.data.attributes:
         refresh_token = request.data.attributes.refresh_token
@@ -185,7 +202,7 @@ async def get_current_user(
 )
 async def change_password(
     request: ChangePasswordRequest,
-    current_user: Any = Depends(get_current_active_user),
+    current_user: UserResponse = Depends(get_current_active_user),
     use_case: ChangePasswordUseCase = Depends(provide_change_password_use_case),
 ) -> JSONResponse:
     """Cambia la contraseña del usuario autenticado y emite la alerta de seguridad."""

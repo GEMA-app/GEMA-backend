@@ -1,3 +1,8 @@
+"""Manejador de errores de validación de Pydantic (RequestValidationError).
+Convierte errores de validación en una respuesta JSON:API con la
+lista de errores campo por campo.
+"""
+
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse

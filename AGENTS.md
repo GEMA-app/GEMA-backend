@@ -213,7 +213,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │               ├── role.py
 │   │               ├── asset.py
 │   │               ├── location.py
-│   │               └── preference_dtos.py
+│   │               └── preferences.py
 │   └── composition/
 │       └── container/                   # Paquete modular de inyección de dependencias
 │           ├── __init__.py              # Re-exporta todas las fábricas

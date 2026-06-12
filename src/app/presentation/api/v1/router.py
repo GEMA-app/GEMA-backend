@@ -1,3 +1,7 @@
+"""Enrutador principal de la API v1. Agrega todos los submódulos
+de endpoints bajo el prefijo /v1.
+"""
+
 from fastapi import APIRouter
 
 from app.presentation.api.v1.endpoints.assets import router as assets_router

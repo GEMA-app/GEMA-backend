@@ -1,3 +1,7 @@
+"""Middleware de rate limiting que limita el número de solicitudes
+por dirección IP usando Redis como almacén de contadores.
+"""
+
 import logging
 from typing import Any
 

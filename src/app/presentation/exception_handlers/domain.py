@@ -1,3 +1,8 @@
+"""Manejador de excepciones de dominio. Mapea cada excepción de
+dominio (DomainException) a su código HTTP correspondiente según
+la tabla definida en AGENTS.md.
+"""
+
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 

@@ -1,4 +1,6 @@
-from typing import Any
+"""Endpoints CRUD de empresas: creación, listado, obtención,
+actualización y eliminación de empresas (tenants).
+"""
 
 from fastapi import APIRouter, Depends, status
 
@@ -50,9 +52,21 @@ router = APIRouter()
 )
 async def create_company(
     request: CreateCompanyRequest,
-    current_user: UserResponse = Depends(require_platform_permission(PermissionModule.ADMIN, "create")),
+    current_user: UserResponse = Depends(
+        require_platform_permission(PermissionModule.ADMIN, "create")
+    ),
     use_case: CreateCompanyUseCase = Depends(get_create_company_use_case),
 ) -> CompanyDocument:
+    """Crea una nueva empresa en el sistema.
+
+    Args:
+        request: Datos de la empresa en formato JSON:API.
+        current_user: Usuario autenticado con permiso de administración.
+        use_case: Caso de uso de creación de empresa.
+
+    Returns:
+        Documento JSON:API con los datos de la empresa creada.
+    """
     dto = CreateCompanyDTO(
         nombre=request.data.attributes.nombre,
         slug=request.data.attributes.slug,
@@ -85,9 +99,20 @@ async def create_company(
 async def list_companies(
     offset: int = 0,
     limit: int = 10,
-    current_user: Any = Depends(get_current_active_user),
+    current_user: UserResponse = Depends(get_current_active_user),
     use_case: ListCompaniesUseCase = Depends(get_list_companies_use_case),
 ) -> CompanyListDocument:
+    """Lista las empresas disponibles según el tenant del usuario autenticado.
+
+    Args:
+        offset: Número de registros a omitir (paginación).
+        limit: Máximo de registros a retornar (paginación).
+        current_user: Usuario autenticado.
+        use_case: Caso de uso de listado de empresas.
+
+    Returns:
+        Documento JSON:API con la lista de empresas y metadatos de paginación.
+    """
     companies, total = await use_case.execute(offset, limit, company_id=current_user.empresa_id)
     return CompanyListDocument(
         data=[
@@ -120,6 +145,16 @@ async def get_company(
     current_user: UserResponse = Depends(require_tenant_read),
     use_case: GetCompanyUseCase = Depends(provide_company_use_case),
 ) -> CompanyDocument:
+    """Obtiene los detalles de una empresa por su ID.
+
+    Args:
+        empresa_id: Identificador único de la empresa.
+        current_user: Usuario autenticado con acceso al tenant.
+        use_case: Caso de uso de obtención de empresa.
+
+    Returns:
+        Documento JSON:API con los datos de la empresa.
+    """
     res = await use_case.execute(empresa_id)
     return CompanyDocument(
         data=CompanyResource(
@@ -146,9 +181,20 @@ async def get_company(
 async def update_company(
     empresa_id: str,
     request: UpdateCompanyRequest,
-    current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "edit")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateCompanyUseCase = Depends(get_update_company_use_case),
 ) -> CompanyDocument:
+    """Actualiza los datos de una empresa existente.
+
+    Args:
+        empresa_id: Identificador único de la empresa.
+        request: Datos actualizados en formato JSON:API.
+        current_user: Usuario autenticado con permiso de edición.
+        use_case: Caso de uso de actualización de empresa.
+
+    Returns:
+        Documento JSON:API con los datos actualizados de la empresa.
+    """
     attrs = request.data.attributes
     sent = attrs.model_dump(exclude_unset=True)
     dto = UpdateCompanyDTO(
@@ -184,7 +230,14 @@ async def update_company(
 )
 async def delete_company(
     empresa_id: str,
-    current_user: Any = Depends(require_permission(PermissionModule.ADMIN, "delete")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "delete")),
     use_case: DeleteCompanyUseCase = Depends(get_delete_company_use_case),
 ) -> None:
+    """Elimina una empresa del sistema.
+
+    Args:
+        empresa_id: Identificador único de la empresa a eliminar.
+        current_user: Usuario autenticado con permiso de eliminación.
+        use_case: Caso de uso de eliminación de empresa.
+    """
     await use_case.execute(empresa_id)

@@ -21,10 +21,20 @@ from app.presentation.exception_handlers.domain import domain_exception_handler
 def _map_integrity_error(exc: IntegrityError) -> tuple[int, str] | None:
     """Mapea IntegrityError a HTTP status + mensaje. Soporta asyncpg y otros drivers.
 
-    Estrategia 1: SQLSTATE directo (asyncpg nativo, más confiable que __cause__).
-    Estrategia 2: Fallback por nombre de constraint (driver-agnostic).
+    Estrategia 1: Extracción por nombre de constraint (driver-agnostic, específico).
+    Estrategia 2: Fallback por SQLSTATE (genérico, para casos no mapeados).
     """
-    # Estrategia 1: asyncpg nativo (SQLSTATE directo)
+    # Estrategia 1: Nombre de constraint (específico por dominio)
+    constraint_name = _extract_constraint_name(exc)
+    if constraint_name:
+        if "codigo_activo" in constraint_name:
+            return (409, "Ya existe un activo con ese código en la empresa.")
+        if "serial_interno" in constraint_name:
+            return (409, "Ya existe un activo con ese número de serie en la empresa.")
+        if "slug" in constraint_name or "empresas_slug_key" in constraint_name:
+            return (409, "El slug identificador de empresa ya existe.")
+
+    # Estrategia 2: SQLSTATE directo (fallback genérico)
     if exc.orig is not None and hasattr(exc.orig, 'sqlstate'):
         sqlstate = getattr(exc.orig, 'sqlstate', None)
         mapping = {
@@ -34,16 +44,6 @@ def _map_integrity_error(exc: IntegrityError) -> tuple[int, str] | None:
         }
         if sqlstate in mapping:
             return mapping[sqlstate]
-
-    # Estrategia 2: Fallback por nombre de constraint
-    constraint_name = _extract_constraint_name(exc)
-    if constraint_name:
-        if "codigo_activo" in constraint_name:
-            return (409, "Ya existe un activo con ese código en la empresa.")
-        if "serial_interno" in constraint_name:
-            return (409, "Ya existe un activo con ese número de serie en la empresa.")
-        if "slug" in constraint_name or "empresas_slug_key" in constraint_name:
-            return (409, "El slug identificador de empresa ya existe.")
 
     return None
 

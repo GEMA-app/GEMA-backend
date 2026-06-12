@@ -1,3 +1,6 @@
+"""Endpoints de preferencias de usuario: obtención y actualización
+de las preferencias visuales del usuario autenticado.
+"""
 
 from fastapi import APIRouter, Depends
 
@@ -46,6 +49,7 @@ async def get_preferences(
             attributes=PreferenceAttributes(
                 empresa_id=res.empresa_id,
                 tema=res.tema,
+                version=res.version,
             ),
         )
     )
@@ -70,6 +74,7 @@ async def update_preferences(
     # que un cliente malintencionado intente actualizar otro perfil.
     dto = UpdatePreferenceDTO(
         tema=request.data.attributes.tema,
+        version=request.data.attributes.version,
     )
     res = await use_case.execute(empresa_id, current_user.id, dto)
     return PreferenceDocument(
@@ -78,6 +83,7 @@ async def update_preferences(
             attributes=PreferenceAttributes(
                 empresa_id=res.empresa_id,
                 tema=res.tema,
+                version=res.version,
             ),
         )
     )
