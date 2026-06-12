@@ -55,14 +55,14 @@ def _extract_constraint_name(exc: IntegrityError) -> str | None:
     # intentar directamente en exc.orig (asyncpg)
     constraint_name = getattr(exc.orig, "constraint_name", None)
     if constraint_name and isinstance(constraint_name, str):
-        return constraint_name
+        return str(constraint_name)
 
     # via __cause__ (para compatibilidad con mocks de test)
     cause = getattr(exc.orig, "__cause__", None)
     if cause:
         name = getattr(cause, "constraint_name", None)
         if name and isinstance(name, str):
-            return name
+            return str(name)
 
     # Fallback: string parsing
     error_msg = str(exc.orig)

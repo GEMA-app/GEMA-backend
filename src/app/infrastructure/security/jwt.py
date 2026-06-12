@@ -100,7 +100,9 @@ class PyJwtTokenService(TokenServicePort):
             user_id_str = cast(str, user_id)
             user_key = f"{RESET_TOKEN_USER_SET_PREFIX}{user_id_str}"
             with contextlib.suppress(Exception):
-                await self.redis.srem(user_key, token_hash)
+                res_srem = self.redis.srem(user_key, token_hash)
+                if not isinstance(res_srem, int):
+                    await res_srem
             return user_id_str
         return None
 
@@ -118,7 +120,11 @@ class PyJwtTokenService(TokenServicePort):
     async def delete_user_reset_tokens(self, user_id: str) -> None:
         """Invalida todos los tokens de reset activos de un usuario."""
         user_key = f"{RESET_TOKEN_USER_SET_PREFIX}{user_id}"
-        token_hashes = await self.redis.smembers(user_key)
+        res_smembers = self.redis.smembers(user_key)
+        if not isinstance(res_smembers, set):
+            token_hashes = await res_smembers
+        else:
+            token_hashes = res_smembers
         if token_hashes:
             keys = [f"{RESET_TOKEN_PREFIX}{cast(str, th)}" for th in token_hashes]
             async with self.redis.pipeline(transaction=True) as pipe:
