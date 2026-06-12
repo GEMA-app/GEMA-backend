@@ -392,9 +392,9 @@ Para la inicialización del sistema en desarrollo y staging, se define una estru
 - **Supervisor de Operaciones:** CRUD en Reportes, Mantenimiento e Inventario, lectura en Administración.
 - **Consultor:** Solo lectura en todos los módulos.
 
-El runner CLI en `migrations/seeds/runner.py` permite la ejecución unificada para entornos:
+El runner CLI en `migrations/seeds/runner.py` se ejecuta dentro del contenedor de la aplicación:
 ```bash
-python -m migrations.seeds.runner [dev|staging|test]
+docker compose exec app python -m migrations.seeds.runner [dev|staging|test]
 ```
 
 ---
