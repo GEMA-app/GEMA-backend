@@ -1,5 +1,8 @@
+"""Repositorio de roles, permisos y asignaciones con SQLAlchemy asíncrono."""
+
 import uuid
 
+import structlog
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,8 +13,12 @@ from app.domain.value_objects import CompanyId, RoleId, UserId
 from app.infrastructure.db.models.role import PermissionModel, RoleModel, RoleUserModel
 from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 
+logger = structlog.get_logger()
 
-class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleId], RoleRepositoryPort):
+
+class SqlAlchemyRoleRepository(
+    SqlAlchemyTenantRepository[RoleModel, Role, RoleId], RoleRepositoryPort
+):
     """Implementación en SQLAlchemy para el puerto de repositorio de Roles."""
 
     def __init__(
@@ -35,7 +42,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleI
 
         # Sincronizar permisos por módulo
         existing_by_module = {p.modulo: p for p in existing_model.permisos}
-        new_permisos = []
+        new_permissions = []
 
         for p in entity.permisos:
             existing_perm = existing_by_module.get(p.module)
@@ -45,10 +52,10 @@ class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleI
                 existing_perm.puede_crear = p.can_create
                 existing_perm.puede_editar = p.can_edit
                 existing_perm.puede_eliminar = p.can_delete
-                new_permisos.append(existing_perm)
+                new_permissions.append(existing_perm)
             else:
                 # Permiso nuevo: generar UUID
-                new_permisos.append(
+                new_permissions.append(
                     PermissionModel(
                         id=uuid.uuid4(),
                         empresa_id=entity.empresa_id.value,
@@ -61,7 +68,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleI
                     )
                 )
 
-        existing_model.permisos = new_permisos
+        existing_model.permisos = new_permissions
 
         # Recolectar eventos
         self._collect_events(entity)
@@ -75,10 +82,10 @@ class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleI
         # Se genera un UUID para permisos nuevos si no lo tuvieran,
         # pero como Permission es un Value Object de dominio, mapeamos a modelos ORM.
         existing_perms = set()
-        permisos_models = []
+        permissions_models = []
         for p in entity.permisos:
             if p.module not in existing_perms:
-                permisos_models.append(
+                permissions_models.append(
                     PermissionModel(
                         id=uuid.uuid4(),
                         empresa_id=entity.empresa_id.value,
@@ -96,7 +103,7 @@ class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleI
             empresa_id=entity.empresa_id.value,
             nombre=entity.nombre,
             descripcion=entity.descripcion,
-            permisos=permisos_models,
+            permisos=permissions_models,
             version=entity.version,
         )
 
@@ -121,12 +128,29 @@ class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleI
         )
 
     async def list_by_company(self, empresa_id: CompanyId) -> list[Role]:
+        """Devuelve todos los roles asociados a una empresa.
+
+        Args:
+            empresa_id: Identificador de la empresa.
+
+        Returns:
+            Lista de entidades de tipo Role.
+        """
         stmt = select(RoleModel).where(RoleModel.empresa_id == empresa_id.value)
         result = await self.session.execute(stmt)
         models = result.scalars().all()
         return [self._to_entity(m) for m in models]
 
     async def assign_to_user(self, role_id: RoleId, user_id: UserId) -> bool:
+        """Asigna un rol a un usuario en la tabla asociativa.
+
+        Args:
+            role_id: Identificador del rol.
+            user_id: Identificador del usuario.
+
+        Returns:
+            True si se asignó exitosamente, False si ya existía la relación.
+        """
         from sqlalchemy import insert
         from sqlalchemy.exc import IntegrityError
 
@@ -139,10 +163,22 @@ class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleI
             async with self.session.begin_nested():
                 await self.session.execute(stmt)
             return True
-        except IntegrityError:
+        except IntegrityError as e:
+            logger.warning(
+                "No se pudo asignar rol al usuario: relación ya existe o inconsistencia",
+                role_id=str(role_id.value),
+                user_id=str(user_id.value),
+                error=str(e),
+            )
             return False
 
     async def revoke_from_user(self, role_id: RoleId, user_id: UserId) -> None:
+        """Revoca un rol a un usuario.
+
+        Args:
+            role_id: Identificador del rol.
+            user_id: Identificador del usuario.
+        """
         from app.infrastructure.db.models.user import UserModel
 
         await self.session.flush()
@@ -153,18 +189,39 @@ class SqlAlchemyRoleRepository(SqlAlchemyTenantRepository[RoleModel, Role, RoleI
             user_model.roles.remove(role_model)
 
     async def get_user_roles(self, user_id: UserId, empresa_id: CompanyId) -> list[Role]:
+        """Obtiene todos los roles asignados a un usuario dentro de una empresa.
+
+        Args:
+            user_id: Identificador del usuario.
+            empresa_id: Identificador de la empresa.
+
+        Returns:
+            Lista de entidades de tipo Role asignadas al usuario.
+        """
         stmt = (
             select(RoleModel)
             .join(RoleUserModel)
             .where(
-                RoleUserModel.usuario_id == user_id.value, RoleModel.empresa_id == empresa_id.value
+                RoleUserModel.usuario_id == user_id.value,
+                RoleModel.empresa_id == empresa_id.value,
             )
         )
         result = await self.session.execute(stmt)
         models = result.scalars().all()
         return [self._to_entity(m) for m in models]
 
-    async def count_admin_users(self, empresa_id: CompanyId, exclude_user_id: UserId | None = None) -> int:
+    async def count_admin_users(
+        self, empresa_id: CompanyId, exclude_user_id: UserId | None = None
+    ) -> int:
+        """Cuenta usuarios con permiso admin:delete en la empresa.
+
+        Args:
+            empresa_id: Identificador de la empresa.
+            exclude_user_id: Opcionalmente, usuario a excluir del conteo.
+
+        Returns:
+            La cantidad de usuarios administradores con permisos de eliminación.
+        """
         from sqlalchemy import select
 
         from app.domain.enums import PermissionModule

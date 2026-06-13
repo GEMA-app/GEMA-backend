@@ -1,4 +1,6 @@
-from typing import Any
+"""Cliente Redis asíncrono con inicialización lazy y soporte para scripts Lua."""
+
+from typing import Any, cast
 
 import redis.asyncio as aioredis
 
@@ -41,14 +43,21 @@ class RedisClient:
     async def _ensure_connected(self) -> aioredis.Redis:
         """Establece la conexión Redis si aún no se ha hecho."""
         if self._client is None:
-            self._client = aioredis.from_url(  # type: ignore[no-untyped-call]
+            self._client = cast(aioredis.Redis, cast(Any, aioredis).from_url(
                 settings.REDIS_URL,
                 decode_responses=True,
-            )
+            ))
         return self._client
 
     def register_script(self, script: str) -> _LazyScript:
-        """Registra un script Lua para ejecución posterior (lazy connect)."""
+        """Registra un script Lua para ejecución posterior (lazy connect).
+
+        Args:
+            script: El texto del script Lua.
+
+        Returns:
+            Un objeto _LazyScript que cargará y ejecutará el script cuando sea invocado.
+        """
         return _LazyScript(script, self)
 
     def __getattr__(self, name: str) -> Any:
@@ -65,7 +74,11 @@ class RedisClient:
         return _proxy
 
     async def get_client(self) -> aioredis.Redis:
-        """Devuelve la instancia del cliente Redis, conectando si es necesario."""
+        """Devuelve la instancia del cliente Redis, conectando si es necesario.
+
+        Returns:
+            La instancia de aioredis.Redis conectada.
+        """
         return await self._ensure_connected()
 
     async def close(self) -> None:
@@ -80,5 +93,9 @@ redis_client = RedisClient()
 
 
 async def get_redis() -> aioredis.Redis:
-    """Devuelve la instancia del cliente asíncrono de Redis (lazy connect)."""
+    """Devuelve la instancia del cliente asíncrono de Redis (lazy connect).
+
+    Returns:
+        El cliente asíncrono de Redis.
+    """
     return await redis_client.get_client()

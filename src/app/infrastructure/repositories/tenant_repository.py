@@ -1,3 +1,5 @@
+"""Repositorio base para entidades multi-tenant con filtro por empresa_id."""
+
 from abc import ABC
 
 from sqlalchemy import delete, select

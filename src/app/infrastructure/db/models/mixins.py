@@ -1,3 +1,5 @@
+"""Mixins reutilizables para modelos ORM: multi-tenant, timestamps y optimistic locking."""
+
 import uuid
 from datetime import UTC, datetime
 from typing import Any
@@ -35,4 +37,5 @@ class VersionMixin:
 
     @declared_attr  # type: ignore[arg-type]
     def __mapper_args__(cls) -> dict[str, Any]:
+        """Configura los argumentos del mapeador para el control de versiones."""
         return {"version_id_col": cls.version}

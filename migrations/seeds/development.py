@@ -315,7 +315,7 @@ async def seed() -> None:
                 codigo_activo="ACT-MOT-001",
                 estado=AssetStatus.OPERATIONAL,
                 fecha_adquisicion=date(2026, 1, 15),
-                valor_monetario=450.00,
+                valor_monetario=Decimal("450.00"),
                 moneda="USD"
             )
             await uow.assets.save(asset)

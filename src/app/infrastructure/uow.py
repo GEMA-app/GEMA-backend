@@ -1,10 +1,14 @@
+"""Unidad de Trabajo (Unit of Work) con SQLAlchemy asíncrono."""
+
 from typing import Any, Self
 
+import structlog
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.application.ports.event_bus import EventBusPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.events import DomainEvent
+from app.domain.exceptions import EventPublishError
 from app.infrastructure.db.session import async_session_factory
 from app.infrastructure.repositories.asset_repository import SqlAlchemyAssetRepository
 from app.infrastructure.repositories.company_repository import SqlAlchemyCompanyRepository
@@ -12,6 +16,8 @@ from app.infrastructure.repositories.location_repository import SqlAlchemyLocati
 from app.infrastructure.repositories.preference_repository import SqlAlchemyPreferenceRepository
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
+
+logger = structlog.get_logger()
 
 
 class SqlAlchemyUnitOfWork(UnitOfWorkPort):
@@ -22,6 +28,7 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         session_factory: async_sessionmaker[AsyncSession] = async_session_factory,
         event_bus: EventBusPort | None = None,
     ) -> None:
+        """Inicializa el Unit of Work con una fábrica de sesiones y un bus de eventos opcional."""
         self.session_factory = session_factory
         if event_bus is None:
             from app.infrastructure.events.bus import InProcessEventBus
@@ -47,10 +54,18 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         """Cierra la sesión de base de datos.
 
         Ejecuta rollback si ocurrió una excepción o limpia transacciones exitosas.
+
+        Args:
+            exc_type: Tipo de excepción que ocurrió dentro del contexto, o None.
+            exc_val: Valor de la excepción que ocurrió, o None.
+            tb: Traceback de la excepción que ocurrió, o None.
         """
         try:
             if exc_type is not None:
-                await self.rollback()
+                try:
+                    await self.rollback()
+                except Exception as e:
+                    logger.error("Rollback falló en __aexit__", error=str(e))
         finally:
             self._pending_events.clear()
             if hasattr(self, "session"):
@@ -69,13 +84,14 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
             try:
                 await self.event_bus.publish(events_to_publish)
             except Exception as e:
-                import structlog
-                logger = structlog.get_logger()
                 logger.error(
                     "Fallo al publicar eventos de dominio después del commit",
                     error=str(e),
                     event_count=len(events_to_publish),
                 )
+                raise EventPublishError(
+                    f"Error al publicar {len(events_to_publish)} eventos de dominio: {e}"
+                ) from e
 
     async def rollback(self) -> None:
         """Deshace los cambios pendientes en la transacción actual y limpia eventos."""

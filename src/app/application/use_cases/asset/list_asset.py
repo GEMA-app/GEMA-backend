@@ -32,7 +32,11 @@ class ListAssetsUseCase:
                     fecha_adquisicion=a.fecha_adquisicion.isoformat()
                     if a.fecha_adquisicion
                     else None,
-                    valor_monetario=a.valor_monetario,
+                    valor_monetario=(
+                        float(a.valor_monetario)
+                        if a.valor_monetario is not None
+                        else None
+                    ),
                     moneda=a.moneda,
                     version=a.version,
                 )

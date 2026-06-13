@@ -11,6 +11,7 @@ from app.infrastructure.uow import SqlAlchemyUnitOfWork
 
 
 async def seed_admin() -> None:
+    """Siembra el usuario administrador base y la empresa por defecto en la base de datos."""
     print("Sembrando usuario base admin@gima.com...")
     event_bus = InProcessEventBus()
     uow = SqlAlchemyUnitOfWork(event_bus=event_bus)

@@ -1,3 +1,5 @@
+"""Repositorio de activos físicos con SQLAlchemy asíncrono."""
+
 from typing import Any
 
 from sqlalchemy import select
@@ -48,9 +50,7 @@ class SqlAlchemyAssetRepository(
             codigo_activo=model.codigo_activo,
             estado=model.estado,
             fecha_adquisicion=model.fecha_adquisicion,
-            valor_monetario=float(model.valor_monetario)
-            if model.valor_monetario is not None
-            else None,
+            valor_monetario=model.valor_monetario,
             moneda=model.moneda,
             version=model.version,
         )
@@ -58,6 +58,17 @@ class SqlAlchemyAssetRepository(
     async def list_by_company(
         self, empresa_id: CompanyId, offset: int, limit: int, filters: dict[str, Any] | None = None
     ) -> tuple[list[Asset], int]:
+        """Lista los activos de una empresa con soporte de filtros y paginación.
+
+        Args:
+            empresa_id: Identificador de la empresa.
+            offset: Número de registros a omitir.
+            limit: Número máximo de registros a retornar.
+            filters: Diccionario opcional con filtros de búsqueda (estado, ubicacion_id, search).
+
+        Returns:
+            Una tupla con la lista de entidades de tipo Asset encontradas y el conteo total.
+        """
         from sqlalchemy import func
 
         stmt = select(AssetModel).where(AssetModel.empresa_id == empresa_id.value)

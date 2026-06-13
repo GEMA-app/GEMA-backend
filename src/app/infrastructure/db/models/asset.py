@@ -1,7 +1,11 @@
+"""Modelo ORM de SQLAlchemy para la tabla de activos físicos."""
+
+from __future__ import annotations
+
 import uuid
 from datetime import date
 from decimal import Decimal
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.infrastructure.db.models.catalog import CatalogArticleModel
@@ -52,6 +56,5 @@ class AssetModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     valor_monetario: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True)
     moneda: Mapped[str] = mapped_column(String(3), default="USD", nullable=False)
 
-    # Relaciones
-    articulo: Mapped["CatalogArticleModel"] = relationship("CatalogArticleModel")
-    ubicacion: Mapped[Optional["LocationModel"]] = relationship("LocationModel")
+    articulo: Mapped[CatalogArticleModel] = relationship("CatalogArticleModel")
+    ubicacion: Mapped[LocationModel | None] = relationship("LocationModel")

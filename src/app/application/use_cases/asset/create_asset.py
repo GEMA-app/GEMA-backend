@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal
 
 from app.application.dtos.asset_dtos import AssetResponse, CreateAssetRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
@@ -44,7 +45,11 @@ class CreateAssetUseCase:
                 codigo_activo=request.codigo_activo.lower().strip(),
                 estado=AssetStatus(request.estado),
                 fecha_adquisicion=request.fecha_adquisicion,
-                valor_monetario=request.valor_monetario,
+                valor_monetario=(
+                    Decimal(request.valor_monetario)
+                    if request.valor_monetario is not None
+                    else None
+                ),
                 moneda=request.moneda,
             )
 
@@ -62,7 +67,11 @@ class CreateAssetUseCase:
                 fecha_adquisicion=asset.fecha_adquisicion.isoformat()
                 if asset.fecha_adquisicion
                 else None,
-                valor_monetario=asset.valor_monetario,
+                valor_monetario=(
+                    float(asset.valor_monetario)
+                    if asset.valor_monetario is not None
+                    else None
+                ),
                 moneda=asset.moneda,
                 version=asset.version,
             )

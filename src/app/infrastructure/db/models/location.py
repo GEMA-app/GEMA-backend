@@ -1,5 +1,8 @@
+"""Modelo ORM de SQLAlchemy para la tabla de ubicaciones jerárquicas."""
+
+from __future__ import annotations
+
 import uuid
-from typing import Optional
 
 from sqlalchemy import Enum, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -26,9 +29,9 @@ class LocationModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relación jerárquica auto-referencial
-    parent: Mapped[Optional["LocationModel"]] = relationship(
+    parent: Mapped[LocationModel | None] = relationship(
         "LocationModel", remote_side=[id], back_populates="children"
     )
-    children: Mapped[list["LocationModel"]] = relationship(
+    children: Mapped[list[LocationModel]] = relationship(
         "LocationModel", back_populates="parent", cascade="all, delete-orphan"
     )

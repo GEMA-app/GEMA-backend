@@ -22,6 +22,7 @@ from app.domain.exceptions import (
     EmptyLocationNameError,
     EmptyRoleNameError,
     EmptySerialError,
+    EventPublishError,
     InsufficientPermissionsError,
     InvalidCredentialsError,
     InvalidEmailError,
@@ -42,6 +43,7 @@ from app.domain.exceptions import (
     ValidationException,
     WeakPasswordError,
 )
+from app.infrastructure.notifications.email_sender import NotificationError, TemplateNotFoundError
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers.base import jsonapi_response
 
@@ -181,6 +183,18 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     StaleDataError: (
         status.HTTP_409_CONFLICT,
         "ERR_STALE_DATA",
+    ),
+    EventPublishError: (
+        status.HTTP_502_BAD_GATEWAY,
+        "ERR_EVENT_PUBLISH",
+    ),
+    NotificationError: (
+        status.HTTP_502_BAD_GATEWAY,
+        "ERR_NOTIFICATION",
+    ),
+    TemplateNotFoundError: (
+        status.HTTP_502_BAD_GATEWAY,
+        "ERR_TEMPLATE_NOT_FOUND",
     ),
 }
 

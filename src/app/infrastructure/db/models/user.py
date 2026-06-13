@@ -1,3 +1,5 @@
+"""Modelo ORM de SQLAlchemy para la tabla de usuarios."""
+
 import uuid
 from typing import TYPE_CHECKING
 

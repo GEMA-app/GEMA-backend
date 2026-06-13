@@ -1,3 +1,5 @@
+"""Repositorio de ubicaciones jerárquicas con SQLAlchemy asíncrono."""
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -44,16 +46,34 @@ class SqlAlchemyLocationRepository(
         )
 
     async def get_tree(self, empresa_id: CompanyId) -> list[Location]:
-        # Para obtener el árbol completo de la empresa, consultamos todos sus nodos.
-        # Luego la jerarquía se construye en memoria en la capa de aplicación o presentación.
+        """Obtiene todos los nodos de ubicación para construir el árbol en memoria.
+
+        Args:
+            empresa_id: Identificador de la empresa.
+
+        Returns:
+            Lista con todas las ubicaciones registradas para la empresa.
+        """
         stmt = select(LocationModel).where(LocationModel.empresa_id == empresa_id.value)
         result = await self.session.execute(stmt)
         models = result.scalars().all()
         return [self._to_entity(m) for m in models]
 
-    async def get_children(self, parent_id: LocationId, empresa_id: CompanyId) -> list[Location]:
+    async def get_children(
+        self, parent_id: LocationId, empresa_id: CompanyId
+    ) -> list[Location]:
+        """Obtiene las ubicaciones hijas directas de un nodo padre.
+
+        Args:
+            parent_id: Identificador de la ubicación padre.
+            empresa_id: Identificador de la empresa.
+
+        Returns:
+            Lista de ubicaciones hijas directas.
+        """
         stmt = select(LocationModel).where(
-            LocationModel.parent_id == parent_id.value, LocationModel.empresa_id == empresa_id.value
+            LocationModel.parent_id == parent_id.value,
+            LocationModel.empresa_id == empresa_id.value,
         )
         result = await self.session.execute(stmt)
         models = result.scalars().all()

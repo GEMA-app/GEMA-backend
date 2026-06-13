@@ -32,6 +32,7 @@ from app.domain.exceptions.company import (
     CompanySlugExistsError,
     EmptyCompanyNameError,
 )
+from app.domain.exceptions.event_bus import EventPublishError
 from app.domain.exceptions.location import (
     EmptyLocationNameError,
     LocationCircularReferenceError,
@@ -104,4 +105,5 @@ __all__ = [
     "PreferenceThemeInvalidError",
     "LastAdminRevocationError",
     "StaleDataError",
+    "EventPublishError",
 ]

@@ -1,3 +1,5 @@
+"""Repositorio de preferencias de usuario con SQLAlchemy asíncrono."""
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from app.application.dtos.asset_dtos import AssetResponse, UpdateAssetRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import AssetStatus
@@ -85,7 +87,11 @@ class UpdateAssetUseCase:
                 asset.fecha_adquisicion = request.fecha_adquisicion
 
             if 'valor_monetario' in request._fields_set:
-                asset.valor_monetario = request.valor_monetario
+                asset.valor_monetario = (
+                    Decimal(request.valor_monetario)
+                    if request.valor_monetario is not None
+                    else None
+                )
 
             if 'moneda' in request._fields_set:
                 if request.moneda is None:
@@ -106,7 +112,11 @@ class UpdateAssetUseCase:
                 fecha_adquisicion=asset.fecha_adquisicion.isoformat()
                 if asset.fecha_adquisicion
                 else None,
-                valor_monetario=asset.valor_monetario,
+                valor_monetario=(
+                    float(asset.valor_monetario)
+                    if asset.valor_monetario is not None
+                    else None
+                ),
                 moneda=asset.moneda,
                 version=asset.version,
             )

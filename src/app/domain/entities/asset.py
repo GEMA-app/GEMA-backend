@@ -3,6 +3,7 @@
 import uuid
 from dataclasses import dataclass, field
 from datetime import date, datetime
+from decimal import Decimal
 from typing import ClassVar
 
 from app.domain.enums import AssetStatus
@@ -37,7 +38,7 @@ class Asset(EventProducer):
     codigo_activo: str
     estado: AssetStatus
     fecha_adquisicion: date | None = None
-    valor_monetario: float | None = None
+    valor_monetario: Decimal | None = None
     moneda: str = "USD"
     version: int = 1
     created_at: datetime | None = None
@@ -83,7 +84,7 @@ class Asset(EventProducer):
         codigo_activo: str,
         estado: AssetStatus = AssetStatus.OPERATIONAL,
         fecha_adquisicion: date | None = None,
-        valor_monetario: float | None = None,
+        valor_monetario: Decimal | None = None,
         moneda: str = "USD",
     ) -> "Asset":
         """Crea un nuevo activo y emite AssetCreated.
@@ -204,7 +205,7 @@ class Asset(EventProducer):
         self,
         serial_interno: str | None = None,
         codigo_activo: str | None = None,
-        valor_monetario: float | None = None,
+        valor_monetario: Decimal | None = None,
         moneda: str | None = None,
         fecha_adquisicion: date | None = None,
     ) -> None:

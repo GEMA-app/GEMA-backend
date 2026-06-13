@@ -1,3 +1,5 @@
+"""Handlers de eventos de dominio que despachan notificaciones por correo."""
+
 import structlog
 
 from app.application.ports.notifications import NotificationPort

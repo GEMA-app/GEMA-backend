@@ -1,10 +1,16 @@
+"""Configuración del sistema de logging estructurado con structlog."""
+
 import logging
 
 import structlog
 
 
 def setup_logging(app_env: str) -> None:
-    """Configura structlog y el logging estándar según el entorno de la aplicación."""
+    """Configura structlog y el logging estándar según el entorno de la aplicación.
+
+    Args:
+        app_env: Entorno de la aplicación ('development', 'production', etc.).
+    """
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     structlog.configure(

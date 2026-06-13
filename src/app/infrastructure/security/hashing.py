@@ -1,3 +1,5 @@
+"""Implementación de PasswordHasherPort utilizando bcrypt."""
+
 import bcrypt
 import structlog
 
