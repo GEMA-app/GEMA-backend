@@ -34,7 +34,8 @@ class UpdateLocationUseCase:
 
             if request.version is not None and request.version != location.version:
                 raise StaleDataError(
-                    f"Conflicto de versión para ubicación: se esperaba {request.version}, la actual es {location.version}."
+                    f"Conflicto de versión para ubicación: se esperaba {request.version}, "
+                    f"la actual es {location.version}."
                 )
 
             new_parent_id = location.parent_id
@@ -91,7 +92,11 @@ class UpdateLocationUseCase:
             if 'tipo' in request._fields_set or 'parent_id' in request._fields_set:
                 if 'tipo' in request._fields_set and request.tipo is None:
                     raise ValidationException("El tipo de ubicación no puede ser nulo.")
-                new_tipo_enum = LocationType(request.tipo) if ('tipo' in request._fields_set and request.tipo is not None) else None
+                new_tipo_enum = (
+                    LocationType(request.tipo)
+                    if ('tipo' in request._fields_set and request.tipo is not None)
+                    else None
+                )
 
                 # P3h: Validar descendientes al cambiar tipo
                 old_tipo = location.tipo
@@ -102,11 +107,11 @@ class UpdateLocationUseCase:
                     for child in children:
                         try:
                             Location.validate_hierarchy(child.tipo, new_tipo)
-                        except LocationInvalidTypeHierarchyError:
+                        except LocationInvalidTypeHierarchyError as err:
                             raise ValidationException(
                                 f"El cambio a {new_tipo.value} invalida la ubicación hija "
                                 f"'{child.nombre}' (tipo: {child.tipo.value})."
-                            )
+                            ) from err
 
                 location.move(new_parent_id, parent_type, new_tipo=new_tipo_enum)
 

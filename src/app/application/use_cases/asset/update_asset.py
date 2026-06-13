@@ -33,7 +33,8 @@ class UpdateAssetUseCase:
 
             if request.version is not None and request.version != asset.version:
                 raise StaleDataError(
-                    f"Conflicto de versión para activo: se esperaba {request.version}, la actual es {asset.version}."
+                    f"Conflicto de versión para activo: se esperaba {request.version}, "
+                    f"la actual es {asset.version}."
                 )
 
             if 'ubicacion_id' in request._fields_set:

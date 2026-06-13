@@ -10,6 +10,7 @@ class ListRolesUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str) -> list[RoleResponse]:
+        """Obtiene la lista de todos los roles registrados en la empresa."""
         company_id = CompanyId.from_string(company_id_str)
         async with self.uow:
             roles = await self.uow.roles.list_by_company(company_id)

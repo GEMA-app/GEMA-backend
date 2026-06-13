@@ -19,7 +19,10 @@ class RefreshTokenUseCase:
         self.token_service = token_service
 
     async def execute(self, request: RefreshTokenRequest) -> AuthTokensDTO:
-        """Genera un nuevo par de tokens tras validar el token de refresco y prevenir ataques replay."""
+        """Genera un nuevo par de tokens tras validar el token de refresco.
+
+        Previene ataques replay.
+        """
         claims = await self.token_service.decode_token(request.refresh_token)
 
         if claims.get("type") != "refresh":

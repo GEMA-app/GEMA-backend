@@ -1,7 +1,9 @@
+import asyncio
 import uuid
 
 import structlog
 
+from app.application.dtos import ChangePasswordRequest
 from app.application.ports.auth import PasswordHasherPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import InvalidCredentialsError
@@ -21,25 +23,22 @@ class ChangePasswordUseCase:
         self.uow = uow
         self.hasher = hasher
 
-    async def execute(
-        self, user_id: str, old_password: str, new_password: str
-    ) -> None:
+    async def execute(self, request: ChangePasswordRequest) -> None:
         """Valida la contraseña actual y emite PasswordChanged al reemplazarla."""
-        validated = PlainPassword(value=new_password)
-        import asyncio
+        validated = PlainPassword(value=request.new_password)
         new_hashed = await asyncio.to_thread(self.hasher.hash, validated.value)
 
         async with self.uow:
-            user = await self.uow.users.get_by_id(UserId(value=uuid.UUID(user_id)))
+            user = await self.uow.users.get_by_id(UserId(value=uuid.UUID(request.user_id)))
             if not user:
-                logger.warning("change_password_failed", user_id=user_id)
+                logger.warning("change_password_failed", user_id=request.user_id)
                 raise InvalidCredentialsError("No se pudo cambiar la contraseña")
 
             is_valid = await asyncio.to_thread(
-                self.hasher.verify, old_password, user.password_hash.value
+                self.hasher.verify, request.old_password, user.password_hash.value
             )
             if not is_valid:
-                logger.warning("change_password_failed", user_id=user_id)
+                logger.warning("change_password_failed", user_id=request.user_id)
                 raise InvalidCredentialsError("No se pudo cambiar la contraseña")
 
             user.change_password(new_hashed)

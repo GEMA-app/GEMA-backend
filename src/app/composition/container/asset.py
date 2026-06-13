@@ -7,9 +7,9 @@ from app.application.use_cases.asset import (
     CreateAssetUseCase,
     DeleteAssetUseCase,
     GetAssetUseCase,
-    ListAssetsUseCase,
     UpdateAssetUseCase,
 )
+from app.application.use_cases.asset.list_asset import ListAssetsUseCase
 from app.composition.container.common import get_uow
 
 

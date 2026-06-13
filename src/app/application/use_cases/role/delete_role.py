@@ -10,6 +10,7 @@ class DeleteRoleUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str, role_id_str: str) -> None:
+        """Elimina un rol por su ID."""
         company_id = CompanyId.from_string(company_id_str)
         role_id = RoleId.from_string(role_id_str)
 

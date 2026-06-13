@@ -20,7 +20,7 @@ def mock_uow() -> Any:
 class TestListCompanies:
 
     async def test_execute_without_company_id(self, mock_uow: Any) -> None:
-        from app.application.use_cases.company.list_companies import ListCompaniesUseCase
+        from app.application.use_cases.company.list_company import ListCompaniesUseCase
 
         mock_company = MagicMock()
         mock_company.id = str(uuid4())
@@ -46,7 +46,7 @@ class TestListCompanies:
         assert companies[0].nombre == "Empresa A"
 
     async def test_execute_with_company_id_found(self, mock_uow: Any) -> None:
-        from app.application.use_cases.company.list_companies import ListCompaniesUseCase
+        from app.application.use_cases.company.list_company import ListCompaniesUseCase
 
         company_uuid = str(uuid4())
         mock_company = MagicMock()
@@ -73,7 +73,7 @@ class TestListCompanies:
         assert companies[0].nombre == "Empresa A"
 
     async def test_execute_with_company_id_not_found(self, mock_uow: Any) -> None:
-        from app.application.use_cases.company.list_companies import ListCompaniesUseCase
+        from app.application.use_cases.company.list_company import ListCompaniesUseCase
 
         company_uuid = str(uuid4())
         mock_uow.companies.get_by_id.return_value = None

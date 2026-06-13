@@ -11,6 +11,7 @@ class ListCompaniesUseCase:
     async def execute(
         self, offset: int, limit: int, company_id: str | None = None
     ) -> tuple[list[CompanyResponse], int]:
+        """Lista empresas paginadas, opcionalmente filtrando por ID."""
         async with self.uow:
             if company_id is not None:
                 from app.domain.value_objects import CompanyId

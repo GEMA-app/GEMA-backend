@@ -6,8 +6,29 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.application.dtos import LoginUserRequest, RefreshTokenRequest, RegisterUserRequest
-from app.application.dtos.auth_dtos import UserResponse
+from app.application.dtos import (
+    LoginUserRequest,
+    RefreshTokenRequest,
+    RegisterUserRequest,
+)
+from app.application.dtos.auth_dtos import (
+    ChangePasswordRequest as ChangePasswordDTO,
+)
+from app.application.dtos.auth_dtos import (
+    GetCurrentUserRequest as GetCurrentUserDTO,
+)
+from app.application.dtos.auth_dtos import (
+    LogoutUserRequest as LogoutUserDTO,
+)
+from app.application.dtos.auth_dtos import (
+    RequestPasswordResetRequest as RequestPasswordResetDTO,
+)
+from app.application.dtos.auth_dtos import (
+    ResetPasswordRequest as ResetPasswordDTO,
+)
+from app.application.dtos.auth_dtos import (
+    UserResponse,
+)
 from app.application.use_cases.auth import (
     ChangePasswordUseCase,
     GetCurrentUserUseCase,
@@ -164,7 +185,8 @@ async def logout(
     refresh_token = None
     if request and request.data and request.data.attributes:
         refresh_token = request.data.attributes.refresh_token
-    await use_case.execute(token.credentials, refresh_token)
+    dto = LogoutUserDTO(access_token=token.credentials, refresh_token=refresh_token)
+    await use_case.execute(dto)
 
 
 @router.get(
@@ -178,7 +200,8 @@ async def get_current_user(
     use_case: GetCurrentUserUseCase = Depends(get_current_user_use_case),
 ) -> UserDocument:
     """Obtiene la información del perfil del usuario autenticado actual en formato JSON:API."""
-    user_resp = await use_case.execute(token.credentials)
+    dto = GetCurrentUserDTO(access_token=token.credentials)
+    user_resp = await use_case.execute(dto)
     return UserDocument(
         data=UserResource(
             id=user_resp.id,
@@ -206,11 +229,12 @@ async def change_password(
     use_case: ChangePasswordUseCase = Depends(get_change_password_use_case),
 ) -> JSONResponse:
     """Cambia la contraseña del usuario autenticado y emite la alerta de seguridad."""
-    await use_case.execute(
+    dto = ChangePasswordDTO(
         user_id=current_user.id,
         old_password=request.data.attributes.old_password,
         new_password=request.data.attributes.new_password,
     )
+    await use_case.execute(dto)
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={"meta": {"message": "Contraseña cambiada exitosamente"}},
@@ -228,7 +252,8 @@ async def forgot_password(
     use_case: RequestPasswordResetUseCase = Depends(get_request_password_reset_use_case),
 ) -> Response:
     """Envía un email con un enlace de reset. Siempre responde 202 para evitar enumeración."""
-    await use_case.execute(request.data.attributes.email)
+    dto = RequestPasswordResetDTO(email=request.data.attributes.email)
+    await use_case.execute(dto)
     return Response(status_code=status.HTTP_202_ACCEPTED)
 
 
@@ -242,10 +267,11 @@ async def reset_password(
     use_case: ResetPasswordUseCase = Depends(get_reset_password_use_case),
 ) -> JSONResponse:
     """Consume el token de un solo uso, actualiza la contraseña y envía la confirmación."""
-    await use_case.execute(
+    dto = ResetPasswordDTO(
         raw_token=request.data.attributes.token,
         new_password=request.data.attributes.new_password,
     )
+    await use_case.execute(dto)
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={"meta": {"message": "Contraseña restablecida exitosamente"}},

@@ -13,6 +13,7 @@ class GetUserPreferencesUseCase:
     async def execute(
         self, company_id_str: str, user_id_str: str
     ) -> PreferenceResponse:
+        """Obtiene las preferencias del usuario."""
         company_id = CompanyId.from_string(company_id_str)
         user_id = UserId.from_string(user_id_str)
 

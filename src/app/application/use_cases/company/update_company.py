@@ -22,7 +22,8 @@ class UpdateCompanyUseCase:
 
             if request.version is not None and request.version != company.version:
                 raise StaleDataError(
-                    f"Conflicto de versión para empresa: se esperaba {request.version}, la actual es {company.version}."
+                    f"Conflicto de versión para empresa: se esperaba {request.version}, "
+                    f"la actual es {company.version}."
                 )
 
             if 'nombre' in request._fields_set:
@@ -32,7 +33,11 @@ class UpdateCompanyUseCase:
 
             if 'rif' in request._fields_set or 'email_contacto' in request._fields_set:
                 rif = request.rif if 'rif' in request._fields_set else company.rif
-                email_contacto = request.email_contacto if 'email_contacto' in request._fields_set else company.email_contacto
+                email_contacto = (
+                    request.email_contacto
+                    if 'email_contacto' in request._fields_set
+                    else company.email_contacto
+                )
                 company.update_profile(rif=rif, email_contacto=email_contacto)
 
             if 'estado' in request._fields_set:
@@ -48,7 +53,8 @@ class UpdateCompanyUseCase:
                         company.cancel()
                     else:
                         raise ValidationException(
-                            f"Transición de '{company.estado.value}' a '{target.value}' no permitida."
+                            f"Transición de '{company.estado.value}' a "
+                            f"'{target.value}' no permitida."
                         )
 
             await self.uow.companies.save(company)

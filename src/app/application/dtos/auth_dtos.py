@@ -49,3 +49,42 @@ class RefreshTokenRequest:
     """DTO de entrada para la solicitud de rotación de tokens."""
 
     refresh_token: str
+
+
+@dataclass(frozen=True)
+class ChangePasswordRequest:
+    """DTO de entrada para el cambio de contraseña."""
+
+    user_id: str
+    old_password: str
+    new_password: str
+
+
+@dataclass(frozen=True)
+class LogoutUserRequest:
+    """DTO de entrada para el cierre de sesión."""
+
+    access_token: str
+    refresh_token: str | None = None
+
+
+@dataclass(frozen=True)
+class GetCurrentUserRequest:
+    """DTO de entrada para la consulta del usuario autenticado."""
+
+    access_token: str
+
+
+@dataclass(frozen=True)
+class RequestPasswordResetRequest:
+    """DTO de entrada para solicitar restablecimiento de contraseña."""
+
+    email: str
+
+
+@dataclass(frozen=True)
+class ResetPasswordRequest:
+    """DTO de entrada para completar el restablecimiento de contraseña."""
+
+    raw_token: str
+    new_password: str

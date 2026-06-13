@@ -1,9 +1,14 @@
 from app.application.dtos.asset_dtos import AssetResponse, CreateAssetRequest, UpdateAssetRequest
 from app.application.dtos.auth_dtos import (
     AuthTokensDTO,
+    ChangePasswordRequest,
+    GetCurrentUserRequest,
     LoginUserRequest,
+    LogoutUserRequest,
     RefreshTokenRequest,
     RegisterUserRequest,
+    RequestPasswordResetRequest,
+    ResetPasswordRequest,
     UserResponse,
 )
 from app.application.dtos.company_dtos import (
@@ -28,9 +33,14 @@ from app.application.dtos.role_dtos import (
 
 __all__ = [
     "AuthTokensDTO",
+    "ChangePasswordRequest",
+    "GetCurrentUserRequest",
     "LoginUserRequest",
+    "LogoutUserRequest",
     "RefreshTokenRequest",
     "RegisterUserRequest",
+    "RequestPasswordResetRequest",
+    "ResetPasswordRequest",
     "UserResponse",
     "CreateCompanyRequest",
     "UpdateCompanyRequest",

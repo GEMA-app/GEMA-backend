@@ -11,6 +11,7 @@ class GetAssetUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str, asset_id_str: str) -> AssetResponse:
+        """Obtiene un activo por su ID."""
         company_id = CompanyId.from_string(company_id_str)
         asset_id = AssetId.from_string(asset_id_str)
 

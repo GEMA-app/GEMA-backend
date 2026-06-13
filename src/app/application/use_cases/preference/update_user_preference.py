@@ -21,6 +21,7 @@ class UpdateUserPreferencesUseCase:
         user_id_str: str,
         request: UpdatePreferenceRequest,
     ) -> PreferenceResponse:
+        """Actualiza las preferencias del usuario o crea unas por defecto."""
         company_id = CompanyId.from_string(company_id_str)
         user_id = UserId.from_string(user_id_str)
 

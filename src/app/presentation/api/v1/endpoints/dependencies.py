@@ -11,7 +11,7 @@ from uuid import UUID
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.application.dtos.auth_dtos import UserResponse
+from app.application.dtos.auth_dtos import GetCurrentUserRequest, UserResponse
 from app.application.services.authorization_service import AuthorizationService
 from app.application.use_cases.auth import GetCurrentUserUseCase
 from app.composition.container import get_authorization_service, get_current_user_use_case
@@ -43,7 +43,8 @@ def require_platform_permission(module: PermissionModule, action: str) -> Any:
         auth_use_case: GetCurrentUserUseCase = Depends(get_current_user_use_case),
         auth_service: AuthorizationService = Depends(get_authorization_service),
     ) -> UserResponse:
-        user_resp = await auth_use_case.execute(token.credentials)
+        dto = GetCurrentUserRequest(access_token=token.credentials)
+        user_resp = await auth_use_case.execute(dto)
         user_id = UserId.from_string(user_resp.id)
         empresa_id = CompanyId.from_string(user_resp.empresa_id)
         await auth_service.check_permission(user_id, empresa_id, module, action)
@@ -60,7 +61,8 @@ def require_permission(module: PermissionModule, action: str) -> Any:
         auth_use_case: GetCurrentUserUseCase = Depends(get_current_user_use_case),
         auth_service: AuthorizationService = Depends(get_authorization_service),
     ) -> UserResponse:
-        user_resp = await auth_use_case.execute(token.credentials)
+        dto = GetCurrentUserRequest(access_token=token.credentials)
+        user_resp = await auth_use_case.execute(dto)
         # 1. Tenant validation (UUID normalization)
         validate_tenant_access(empresa_id, user_resp.empresa_id)
         # 2. RBAC check
@@ -77,7 +79,8 @@ async def get_current_active_user(
     auth_use_case: GetCurrentUserUseCase = Depends(get_current_user_use_case),
 ) -> UserResponse:
     """Dependencia para obtener el usuario autenticado activo."""
-    return await auth_use_case.execute(token.credentials)
+    dto = GetCurrentUserRequest(access_token=token.credentials)
+    return await auth_use_case.execute(dto)
 
 
 async def require_tenant_read(

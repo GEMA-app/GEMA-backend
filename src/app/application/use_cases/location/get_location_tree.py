@@ -16,6 +16,7 @@ class GetLocationTreeUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str) -> list[LocationTreeResponse]:
+        """Reconstruye y retorna el árbol jerárquico de ubicaciones."""
         company_id = CompanyId.from_string(company_id_str)
 
         async with self.uow:

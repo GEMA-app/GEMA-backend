@@ -1,4 +1,4 @@
-from app.application.dtos import UserResponse
+from app.application.dtos import GetCurrentUserRequest, UserResponse
 from app.application.ports.auth import TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import CompanyStatus
@@ -13,9 +13,12 @@ class GetCurrentUserUseCase:
         self.uow = uow
         self.token_service = token_service
 
-    async def execute(self, access_token: str) -> UserResponse:
-        """Decodifica el token de acceso, valida el estado del usuario y de su empresa, y devuelve su perfil."""
-        claims = await self.token_service.decode_token(access_token)
+    async def execute(self, request: GetCurrentUserRequest) -> UserResponse:
+        """Decodifica el token de acceso, valida el estado del usuario y su empresa.
+
+        Devuelve su perfil.
+        """
+        claims = await self.token_service.decode_token(request.access_token)
 
         if claims.get("type") != "access":
             raise InvalidTokenError("Se requiere un token de acceso válido para esta operación.")

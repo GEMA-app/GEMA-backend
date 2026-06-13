@@ -17,6 +17,7 @@ class CreateAssetUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str, request: CreateAssetRequest) -> AssetResponse:
+        """Crea un activo y lo persiste."""
         company_id = CompanyId.from_string(company_id_str)
 
         async with self.uow:

@@ -46,8 +46,8 @@ from app.composition.container.location import (
     get_update_location_use_case,
 )
 from app.composition.container.preference import (
-    get_update_preferences_use_case,
-    get_user_preferences_use_case,
+    get_update_preference_use_case,
+    get_user_preference_use_case,
 )
 from app.composition.container.role import (
     get_assign_role_to_user_use_case,
@@ -105,6 +105,6 @@ __all__ = [
     "get_update_location_use_case",
     "get_delete_location_use_case",
     # Preferences
-    "get_update_preferences_use_case",
-    "get_user_preferences_use_case",
+    "get_update_preference_use_case",
+    "get_user_preference_use_case",
 ]

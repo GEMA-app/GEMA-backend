@@ -8,10 +8,10 @@ from app.application.use_cases.role import (
     CreateRoleUseCase,
     DeleteRoleUseCase,
     GetRoleUseCase,
-    ListRolesUseCase,
     RevokeRoleFromUserUseCase,
     UpdateRoleUseCase,
 )
+from app.application.use_cases.role.list_role import ListRolesUseCase
 from app.composition.container.common import get_uow
 
 

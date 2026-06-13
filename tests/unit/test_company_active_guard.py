@@ -4,7 +4,11 @@ from uuid import uuid4
 
 import pytest
 
-from app.application.dtos.auth_dtos import LoginUserRequest, RefreshTokenRequest
+from app.application.dtos.auth_dtos import (
+    GetCurrentUserRequest,
+    LoginUserRequest,
+    RefreshTokenRequest,
+)
 from app.application.use_cases.auth.get_current_user import GetCurrentUserUseCase
 from app.application.use_cases.auth.login_user import LoginUserUseCase
 from app.application.use_cases.auth.refresh_token import RefreshTokenUseCase
@@ -75,8 +79,9 @@ class TestCompanyActiveGuard:
 
         use_case = GetCurrentUserUseCase(uow=mock_uow, token_service=mock_token_service)
 
+        request = GetCurrentUserRequest(access_token="fake-access-token")
         with pytest.raises(UserInactiveError) as exc_info:
-            await use_case.execute("fake-access-token")
+            await use_case.execute(request)
 
         assert "La empresa se encuentra suspendida o cancelada." in str(exc_info.value)
 

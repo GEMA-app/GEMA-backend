@@ -1,8 +1,10 @@
+import asyncio
 import hashlib
 import uuid
 
 import structlog
 
+from app.application.dtos import ResetPasswordRequest
 from app.application.ports.auth import PasswordHasherPort, TokenServicePort
 from app.application.ports.notifications import NotificationPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
@@ -27,9 +29,9 @@ class ResetPasswordUseCase:
         self.token_service = token_service
         self.notification = notification
 
-    async def execute(self, raw_token: str, new_password: str) -> None:
+    async def execute(self, request: ResetPasswordRequest) -> None:
         """Valida el token, actualiza la contraseña y elimina el token."""
-        token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+        token_hash = hashlib.sha256(request.raw_token.encode()).hexdigest()
 
         user_id = await self.token_service.consume_reset_token(token_hash)
         if not user_id:
@@ -39,8 +41,7 @@ class ResetPasswordUseCase:
             )
             raise InvalidTokenError("Token inválido o expirado")
 
-        validated = PlainPassword(value=new_password)
-        import asyncio
+        validated = PlainPassword(value=request.new_password)
         new_hashed = await asyncio.to_thread(self.hasher.hash, validated.value)
 
         try:

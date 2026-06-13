@@ -15,9 +15,9 @@ from app.application.use_cases.company import (
     CreateCompanyUseCase,
     DeleteCompanyUseCase,
     GetCompanyUseCase,
-    ListCompaniesUseCase,
     UpdateCompanyUseCase,
 )
+from app.application.use_cases.company.list_company import ListCompaniesUseCase
 from app.composition.container import (
     get_company_use_case,
     get_create_company_use_case,

@@ -32,7 +32,8 @@ class UpdateRoleUseCase:
 
             if request.version is not None and request.version != role.version:
                 raise StaleDataError(
-                    f"Conflicto de versión para rol: se esperaba {request.version}, la actual es {role.version}."
+                    f"Conflicto de versión para rol: se esperaba {request.version}, "
+                    f"la actual es {role.version}."
                 )
 
             if 'nombre' in request._fields_set:

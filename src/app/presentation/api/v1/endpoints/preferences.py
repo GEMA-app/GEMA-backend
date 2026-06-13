@@ -8,13 +8,13 @@ from app.application.dtos.auth_dtos import UserResponse
 from app.application.dtos.preference_dtos import (
     UpdatePreferenceRequest as UpdatePreferenceDTO,
 )
-from app.application.use_cases.preferences import (
+from app.application.use_cases.preference import (
     GetUserPreferencesUseCase,
     UpdateUserPreferencesUseCase,
 )
 from app.composition.container import (
-    get_update_preferences_use_case,
-    get_user_preferences_use_case,
+    get_update_preference_use_case,
+    get_user_preference_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
@@ -39,7 +39,7 @@ router = APIRouter()
 async def get_preferences(
     empresa_id: str,
     current_user: UserResponse = Depends(require_permission(PermissionModule.PREFERENCES, "view")),
-    use_case: GetUserPreferencesUseCase = Depends(get_user_preferences_use_case),
+    use_case: GetUserPreferencesUseCase = Depends(get_user_preference_use_case),
 ) -> PreferenceDocument:
     """Obtiene las preferencias del usuario autenticado."""
     res = await use_case.execute(empresa_id, current_user.id)
@@ -65,7 +65,7 @@ async def update_preferences(
     empresa_id: str,
     request: UpdatePreferenceRequest,
     current_user: UserResponse = Depends(require_permission(PermissionModule.PREFERENCES, "edit")),
-    use_case: UpdateUserPreferencesUseCase = Depends(get_update_preferences_use_case),
+    use_case: UpdateUserPreferencesUseCase = Depends(get_update_preference_use_case),
 ) -> PreferenceDocument:
     """Actualiza las preferencias del usuario autenticado."""
     # request.data.id se ignora intencionalmente.

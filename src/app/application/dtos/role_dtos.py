@@ -3,6 +3,8 @@ from dataclasses import dataclass, field
 
 @dataclass(frozen=True)
 class PermissionDTO:
+    """DTO que representa un permiso granular por módulo."""
+
     module: str
     can_view: bool = False
     can_create: bool = False
@@ -12,6 +14,8 @@ class PermissionDTO:
 
 @dataclass(frozen=True)
 class CreateRoleRequest:
+    """DTO de entrada para la creación de un rol."""
+
     nombre: str
     descripcion: str
     permisos: list[PermissionDTO]
@@ -19,6 +23,8 @@ class CreateRoleRequest:
 
 @dataclass(frozen=True)
 class UpdateRoleRequest:
+    """DTO de entrada para la actualización parcial de un rol."""
+
     nombre: str | None = None
     descripcion: str | None = None
     permisos: list[PermissionDTO] | None = None
@@ -26,6 +32,7 @@ class UpdateRoleRequest:
     _fields_set: frozenset[str] = field(default_factory=frozenset, repr=False, compare=False)
 
     def __post_init__(self) -> None:
+        """Calcula el conjunto de campos explícitamente establecidos en la inicialización."""
         if not self._fields_set:
             fields_with_values = {
                 name for name, val in self.__dict__.items()
@@ -36,11 +43,15 @@ class UpdateRoleRequest:
 
 @dataclass(frozen=True)
 class AssignRoleRequest:
+    """DTO de entrada para asignar un rol a un usuario."""
+
     usuario_id: str
 
 
 @dataclass(frozen=True)
 class RoleResponse:
+    """DTO de salida con los datos completos de un rol."""
+
     id: str
     empresa_id: str
     nombre: str

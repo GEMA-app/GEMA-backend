@@ -19,10 +19,10 @@ from app.application.use_cases.role import (
     CreateRoleUseCase,
     DeleteRoleUseCase,
     GetRoleUseCase,
-    ListRolesUseCase,
     RevokeRoleFromUserUseCase,
     UpdateRoleUseCase,
 )
+from app.application.use_cases.role.list_role import ListRolesUseCase
 from app.composition.container import (
     get_assign_role_to_user_use_case,
     get_create_role_use_case,

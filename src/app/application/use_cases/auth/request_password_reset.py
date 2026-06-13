@@ -3,6 +3,7 @@ import secrets
 
 import structlog
 
+from app.application.dtos import RequestPasswordResetRequest
 from app.application.ports.auth import TokenServicePort
 from app.application.ports.notifications import NotificationPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
@@ -30,14 +31,14 @@ class RequestPasswordResetUseCase:
         self.notification = notification
         self.frontend_url = frontend_url
 
-    async def execute(self, email_str: str) -> None:
+    async def execute(self, request: RequestPasswordResetRequest) -> None:
         """Genera un token de reset y envía el email. Siempre retorna en silencio.
 
         Esto evita la enumeración de cuentas: ni un email inválido ni una cuenta
         inexistente producen una respuesta distinguible.
         """
         try:
-            email = Email(value=email_str)
+            email = Email(value=request.email)
         except InvalidEmailError:
             return
 

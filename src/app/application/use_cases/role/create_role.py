@@ -13,6 +13,7 @@ class CreateRoleUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str, request: CreateRoleRequest) -> RoleResponse:
+        """Crea un rol con sus permisos dentro de una empresa."""
         company_id = CompanyId.from_string(company_id_str)
 
         async with self.uow:

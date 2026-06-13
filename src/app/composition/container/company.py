@@ -7,9 +7,9 @@ from app.application.use_cases.company import (
     CreateCompanyUseCase,
     DeleteCompanyUseCase,
     GetCompanyUseCase,
-    ListCompaniesUseCase,
     UpdateCompanyUseCase,
 )
+from app.application.use_cases.company.list_company import ListCompaniesUseCase
 from app.composition.container.common import get_uow
 
 
