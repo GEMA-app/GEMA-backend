@@ -18,6 +18,7 @@ class UserPreference(EventProducer):
     tema: Theme
     created_at: datetime | None = None
     updated_at: datetime | None = None
+    version: int = 1
     _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
     @classmethod

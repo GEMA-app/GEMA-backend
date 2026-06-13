@@ -30,7 +30,7 @@ from app.presentation.api.v1.schemas.preferences import (
 router = APIRouter()
 
 
-# GET /companies/{company_id}/me/preferences
+# GET /empresas/{empresa_id}/yo/preferencias
 @router.get(
     "",
     response_model=PreferenceDocument,
@@ -55,7 +55,7 @@ async def get_preferences(
     )
 
 
-# PATCH /companies/{company_id}/me/preferences
+# PATCH /empresas/{empresa_id}/yo/preferencias
 @router.patch(
     "",
     response_model=PreferenceDocument,

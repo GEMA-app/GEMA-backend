@@ -30,6 +30,7 @@ class SqlAlchemyPreferenceRepository(
             usuario_id=entity.usuario_id.value,
             empresa_id=entity.empresa_id.value,
             tema=entity.tema.value,
+            version=entity.version,
         )
 
     def _to_entity(self, model: UserPreferenceModel) -> UserPreference:
@@ -37,6 +38,7 @@ class SqlAlchemyPreferenceRepository(
             usuario_id=UserId(model.usuario_id),
             empresa_id=CompanyId(model.empresa_id),
             tema=Theme(model.tema),
+            version=model.version,
             created_at=model.created_at,
             updated_at=model.updated_at,
         )

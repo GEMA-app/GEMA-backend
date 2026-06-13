@@ -44,4 +44,5 @@ class UpdateUserPreferencesUseCase:
                 usuario_id=str(pref.usuario_id),
                 empresa_id=str(pref.empresa_id),
                 tema=pref.tema.value,
+                version=pref.version,
             )

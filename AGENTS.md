@@ -150,7 +150,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │       ├── company/                 # CRUD de empresas
 │   │       ├── role/                    # CRUD de roles, assign/revoke a usuario
 │   │       ├── asset/                   # CRUD de activos
-│   │       ├── preferences/             # CRUD de preferencias de usuario
+│   │       ├── preference/              # CRUD de preferencias de usuario
 │   │       └── location/                # CRUD de ubicaciones y reconstrucción de árbol jerárquico
 │   ├── infrastructure/
 │   │   ├── config/
@@ -282,6 +282,9 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 | `POST` | `/v1/auth/refrescar` | Rotación de tokens | No | - |
 | `POST` | `/v1/auth/cerrar-sesion` | Cierre de sesión | Bearer | - |
 | `GET` | `/v1/auth/yo` | Perfil del usuario actual | Bearer | - |
+| `POST` | `/v1/auth/cambiar-contrasena` | Cambiar contraseña del usuario actual | Bearer | - |
+| `POST` | `/v1/auth/olvide-contrasena` | Solicitar reset de contraseña | No | - |
+| `POST` | `/v1/auth/restablecer-contrasena` | Restablecer contraseña con token | No | - |
 | `POST` | `/v1/empresas` | Crear una nueva empresa | Bearer | `admin:create` |
 | `GET` | `/v1/empresas` | Listar empresas | Bearer | - |
 | `GET` | `/v1/empresas/{empresa_id}` | Obtener una empresa | Bearer | - |
