@@ -1,6 +1,9 @@
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+
 from fastapi import FastAPI
+
+from app.infrastructure.cache.redis import redis_client
 from app.infrastructure.config.logger import logger, setup_logging
 from app.infrastructure.config.settings import settings
 from app.infrastructure.db.session import engine
@@ -20,6 +23,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("app_starting", env=settings.APP_ENV, version=settings.APP_VERSION)
     yield
     await engine.dispose()
+    await redis_client.close()
     logger.info("app_shutdown")
 
 
@@ -29,9 +33,9 @@ app = FastAPI(title=settings.APP_TITLE, version=settings.APP_VERSION, lifespan=l
 register_exception_handlers(app)
 
 # --- Registro de Middlewares (el último añadido se ejecuta primero) ---
-app.add_middleware(RateLimitMiddleware)
+app.add_middleware(RateLimitMiddleware, redis_client=redis_client)
 app.add_middleware(AcceptMiddleware)
-app.add_middleware(ContentTypeMiddleware)
+app.add_middleware(ContentTypeMiddleware, strict_jsonapi=settings.STRICT_JSONAPI)
 app.add_middleware(RequestIdMiddleware)
 
 # --- Registro de Enrutadores ---

@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "sigma-backend"
+name = "gema-backend"
 version = "0.1.0"
-description = "UNEGIA - SIGMA Backend"
+description = "UNEGIA - GEMA Backend"
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -29,10 +29,22 @@ black = "^25.0"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+exclude = [
+    "migrations/versions",
+    ".venv",
+    ".git",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".agents",
+]
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "UP", "B", "SIM", "D"]
-ignore = ["D100", "D104"]
+ignore = ["D100", "D104", "B008", "D107", "D200", "D205", "D400", "D401", "D402", "D415", "UP046"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D", "E501"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -44,8 +56,8 @@ target-version = ["py312"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
+plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
-asyncio_default_test_loop_scope = "function"

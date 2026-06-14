@@ -1,16 +1,15 @@
 import asyncio
 from logging.config import fileConfig
+from typing import Any
 
+from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from alembic import context
-
 # Importar metadatos de los modelos ORM sin side-effects de la aplicación
 from app.infrastructure.config.settings import settings
+from app.infrastructure.db import models  # noqa: F401
 from app.infrastructure.db.base import Base
-from app.infrastructure.db.models import UserModel
-
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -50,8 +49,12 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
-def do_run_migrations(connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+def do_run_migrations(connection: Any) -> None:
+    """Ejecuta las migraciones en línea."""
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+    )
 
     with context.begin_transaction():
         context.run_migrations()

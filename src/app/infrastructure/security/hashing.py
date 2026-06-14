@@ -1,5 +1,11 @@
+"""Implementación de PasswordHasherPort utilizando bcrypt."""
+
 import bcrypt
+import structlog
+
 from app.application.ports.auth import PasswordHasherPort
+
+logger = structlog.get_logger()
 
 
 class BcryptPasswordHasher(PasswordHasherPort):
@@ -19,4 +25,5 @@ class BcryptPasswordHasher(PasswordHasherPort):
         try:
             return bcrypt.checkpw(password_bytes, hashed_bytes)
         except ValueError:
+            logger.error("bcrypt_verify_error", hashed_length=len(hashed_password))
             return False

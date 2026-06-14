@@ -1,13 +1,18 @@
+"""Middleware de rate limiting que limita el número de solicitudes
+por dirección IP usando Redis como almacén de contadores.
+"""
+
 import logging
+from typing import Any
+
 from fastapi import status
 from redis.exceptions import RedisError
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
-from app.infrastructure.cache.redis import redis_client
+
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers import jsonapi_response
-
 
 logger = logging.getLogger(__name__)
 
@@ -19,22 +24,35 @@ end
 return current
 """
 
-rate_limit_script = redis_client.register_script(LUA_SCRIPT)
-
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Middleware de limitación de tasa (Rate Limiting) con script Lua atómico en Redis y comportamiento fail-open."""
+    """Middleware de limitación de tasa (Rate Limiting) con Redis."""
 
-    async def dispatch(self, request: Request, call_next) -> Response:
-        path = request.url.path
+    def __init__(
+        self,
+        app: Any,
+        redis_client: Any,
+        rate_limits: dict[str, int] | None = None,
+    ) -> None:
+        """Inicializa el middleware con el cliente Redis y registra el script Lua."""
+        super().__init__(app)
+        self.redis_client = redis_client
+        self.rate_limit_script = redis_client.register_script(LUA_SCRIPT)
+        self.rate_limits = rate_limits or {
+            "/auth/login": 5,
+            "/auth/register": 3,
+            "/auth/refresh": 10,
+        }
+
+    async def dispatch(self, request: Request, call_next: Any) -> Response:
+        """Aplica limitación de tasa a los endpoints configurados."""
+        path = request.url.path.rstrip("/")  # Normalizar trailing slash
 
         limit = None
-        if path.endswith("/auth/login"):
-            limit = 5
-        elif path.endswith("/auth/register"):
-            limit = 3
-        elif path.endswith("/auth/refresh"):
-            limit = 10
+        for suffix, route_limit in self.rate_limits.items():
+            if path.endswith(suffix):
+                limit = route_limit
+                break
 
         if limit is not None:
             client_ip = request.headers.get("X-Forwarded-For")
@@ -46,7 +64,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             key = f"rate_limit:{path}:{client_ip}"
 
             try:
-                current = await rate_limit_script(keys=[key], args=[60])
+                current = await self.rate_limit_script(keys=[key], args=[60])
                 if current > limit:
                     error = ErrorObject(
                         status=str(status.HTTP_429_TOO_MANY_REQUESTS),
@@ -58,4 +76,5 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             except RedisError as e:
                 logger.error("rate_limit_redis_unavailable: %s", e, extra={"path": path})
 
-        return await call_next(request)
+        response: Response = await call_next(request)
+        return response

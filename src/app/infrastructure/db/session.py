@@ -1,5 +1,9 @@
-from typing import AsyncGenerator
+"""Configuración del engine y la fábrica de sesiones asíncronas de SQLAlchemy."""
+
+from collections.abc import AsyncGenerator
+
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
 from app.infrastructure.config.settings import settings
 
 engine = create_async_engine(
@@ -17,6 +21,10 @@ async_session_factory = async_sessionmaker(
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    """Generador asíncrono para inyección de dependencias de la sesión de base de datos."""
+    """Generador asíncrono para inyección de dependencias de la sesión de base de datos.
+
+    Yields:
+        La sesión de base de datos asíncrona de SQLAlchemy.
+    """
     async with async_session_factory() as session:
         yield session
