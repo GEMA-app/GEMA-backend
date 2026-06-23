@@ -39,5 +39,5 @@ app.add_middleware(ContentTypeMiddleware, strict_jsonapi=settings.STRICT_JSONAPI
 app.add_middleware(RequestIdMiddleware)
 
 # --- Registro de Enrutadores ---
-app.include_router(health_router)
+app.include_router(health_router)   
 app.include_router(v1_router)
