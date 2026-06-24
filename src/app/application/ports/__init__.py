@@ -2,6 +2,7 @@ from app.application.ports.asset_repository import AssetRepositoryPort
 from app.application.ports.auth import PasswordHasherPort, TokenServicePort
 from app.application.ports.company_repository import CompanyRepositoryPort
 from app.application.ports.event_bus import EventBusPort
+from app.application.ports.intervencion_repository import IntervencionRepositoryPort
 from app.application.ports.location_repository import LocationRepositoryPort
 from app.application.ports.notifications import NotificationPort
 from app.application.ports.preference_repository import PreferenceRepositoryPort
@@ -21,4 +22,5 @@ __all__ = [
     "PasswordHasherPort",
     "TokenServicePort",
     "NotificationPort",
+    "IntervencionRepositoryPort",
 ]

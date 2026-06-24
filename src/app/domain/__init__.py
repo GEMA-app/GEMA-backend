@@ -20,6 +20,7 @@ from app.domain.entities import (
 from app.domain.enums import (
     AssetStatus,
     CompanyStatus,
+    EstadoIntervencion,
     LocationType,
     MaintenanceType,
     PermissionModule,
@@ -107,6 +108,7 @@ from app.domain.value_objects import (
     CompanyId,
     Email,
     HashedPassword,
+    IntervencionId,
     LocationId,
     PlainPassword,
     RoleId,
@@ -118,6 +120,7 @@ __all__ = [
     # Enums
     "AssetStatus",
     "CompanyStatus",
+    "EstadoIntervencion",
     "LocationType",
     "MaintenanceType",
     "PermissionModule",
@@ -165,6 +168,7 @@ __all__ = [
     "CompanyId",
     "Email",
     "HashedPassword",
+    "IntervencionId",
     "LocationId",
     "PlainPassword",
     "RoleId",

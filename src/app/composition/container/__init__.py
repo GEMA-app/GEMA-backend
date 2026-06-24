@@ -37,6 +37,12 @@ from app.composition.container.company import (
     get_list_companies_use_case,
     get_update_company_use_case,
 )
+from app.composition.container.intervencion import (
+    get_actualizar_intervencion_use_case,
+    get_crear_intervencion_use_case,
+    get_listar_intervenciones_use_case,
+    get_obtener_intervencion_use_case,
+)
 from app.composition.container.location import (
     get_create_location_use_case,
     get_delete_location_use_case,
@@ -107,4 +113,9 @@ __all__ = [
     # Preferences
     "get_update_preference_use_case",
     "get_user_preference_use_case",
+    # Intervenciones
+    "get_actualizar_intervencion_use_case",
+    "get_crear_intervencion_use_case",
+    "get_listar_intervenciones_use_case",
+    "get_obtener_intervencion_use_case",
 ]

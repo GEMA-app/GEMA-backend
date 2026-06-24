@@ -82,3 +82,11 @@ class Theme(StrEnum):
     DARK = "oscuro"
     LIGHT = "claro"
     SYSTEM = "sistema"
+
+class EstadoIntervencion(StrEnum):
+    """Estados posibles de una intervención técnica."""
+
+    PENDIENTE = "pendiente"
+    EN_PROGRESO = "en_progreso"
+    COMPLETADA = "completada"
+    CANCELADA = "cancelada"

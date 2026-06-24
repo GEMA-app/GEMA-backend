@@ -40,6 +40,12 @@ from app.domain.exceptions.location import (
     LocationInvalidTypeHierarchyError,
     LocationNotFoundError,
 )
+from app.domain.exceptions.intervencion import (
+    IntervencionException,
+    IntervencionInvalidDataError,
+    IntervencionInvalidTransitionError,
+    IntervencionNotFoundError,
+)
 from app.domain.exceptions.permission import (
     InsufficientPermissionsError,
     PermissionException,
@@ -106,4 +112,9 @@ __all__ = [
     "LastAdminRevocationError",
     "StaleDataError",
     "EventPublishError",
+    # Excepciones de intervención
+    "IntervencionException",
+    "IntervencionInvalidDataError",
+    "IntervencionInvalidTransitionError",
+    "IntervencionNotFoundError",
 ]
