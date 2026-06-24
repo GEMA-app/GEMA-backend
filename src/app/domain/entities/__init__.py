@@ -8,6 +8,7 @@ from app.domain.entities.permission import Permission
 from app.domain.entities.preference import UserPreference
 from app.domain.entities.role import Role
 from app.domain.entities.user import User
+from app.domain.entities.subscription_plan import SubscriptionPlan
 
 __all__ = [
     "User",
@@ -19,4 +20,5 @@ __all__ = [
     "ArticleCategory",
     "CatalogArticle",
     "UserPreference",
+    "SubscriptionPlan",
 ]

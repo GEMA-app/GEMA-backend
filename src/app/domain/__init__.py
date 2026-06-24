@@ -16,6 +16,7 @@ from app.domain.entities import (
     Role,
     User,
     UserPreference,
+    SubscriptionPlan,
 )
 from app.domain.enums import (
     AssetStatus,
@@ -99,6 +100,12 @@ from app.domain.exceptions import (
     UserInactiveError,
     ValidationException,
     WeakPasswordError,
+    SubscriptionPlanException,
+    SubscriptionPlanNotFoundError,
+    SubscriptionPlanAlreadyExistsError,
+    SubscriptionPlanInvalidDataError,
+    SubscriptionPlanLimitExceededError,
+    SubscriptionPlanPaymentFailedError
 )
 
 # Value Objects
@@ -112,6 +119,7 @@ from app.domain.value_objects import (
     RoleId,
     Slug,
     UserId,
+    SubscriptionPlanId,
 )
 
 __all__ = [
@@ -160,6 +168,7 @@ __all__ = [
     "Role",
     "User",
     "UserPreference",
+    "SubscriptionPlan",
     # Value Objects
     "AssetId",
     "CompanyId",
@@ -170,6 +179,7 @@ __all__ = [
     "RoleId",
     "Slug",
     "UserId",
+    "SubscriptionPlanId",
     # Excepciones
     "AssetCodeExistsError",
     "AssetException",
@@ -211,4 +221,10 @@ __all__ = [
     "UserInactiveError",
     "ValidationException",
     "WeakPasswordError",
+    "SubscriptionPlanException",
+    "SubscriptionPlanNotFoundError",
+    "SubscriptionPlanAlreadyExistsError",
+    "SubscriptionPlanInvalidDataError",
+    "SubscriptionPlanLimitExceededError",
+    "SubscriptionPlanPaymentFailedError"
 ]

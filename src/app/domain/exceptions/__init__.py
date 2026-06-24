@@ -63,6 +63,15 @@ from app.domain.exceptions.validation import (
     ValidationException,
 )
 
+from app.domain.exceptions.subscription_plan import (
+    SubscriptionPlanException,
+    SubscriptionPlanNotFoundError,
+    SubscriptionPlanAlreadyExistsError,
+    SubscriptionPlanInvalidDataError,
+    SubscriptionPlanLimitExceededError,
+    SubscriptionPlanPaymentFailedError
+)
+
 __all__ = [
     "DomainException",
     "EmptyCompanyNameError",
@@ -106,4 +115,10 @@ __all__ = [
     "LastAdminRevocationError",
     "StaleDataError",
     "EventPublishError",
+    "SubscriptionPlanException",
+    "SubscriptionPlanNotFoundError",
+    "SubscriptionPlanAlreadyExistsError",
+    "SubscriptionPlanInvalidDataError",
+    "SubscriptionPlanLimitExceededError",
+    "SubscriptionPlanPaymentFailedError"
 ]
