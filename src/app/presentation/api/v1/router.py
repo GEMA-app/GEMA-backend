@@ -11,6 +11,7 @@ from app.presentation.api.v1.endpoints.locations import router as locations_rout
 from app.presentation.api.v1.endpoints.preferences import router as preferences_router
 from app.presentation.api.v1.endpoints.roles import router as roles_router
 
+
 v1_router = APIRouter(prefix="/v1")
 
 v1_router.include_router(
