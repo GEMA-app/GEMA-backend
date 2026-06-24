@@ -1,4 +1,5 @@
 from app.application.dtos.asset_dtos import AssetResponse, CreateAssetRequest, UpdateAssetRequest
+from app.application.ports.catalog_repository import CatalogArticleRepositoryPort
 from app.application.dtos.auth_dtos import (
     AuthTokensDTO,
     ChangePasswordRequest,
@@ -31,6 +32,14 @@ from app.application.dtos.role_dtos import (
     UpdateRoleRequest,
 )
 
+from app.application.dtos.catalog_article_dtos import (
+    CatalogArticleResponse,
+    CreateCatalogArticleRequest,
+    UpdateCatalogArticleRequest,
+)
+
+
+
 __all__ = [
     "AuthTokensDTO",
     "ChangePasswordRequest",
@@ -59,4 +68,9 @@ __all__ = [
     "LocationTreeResponse",
     "PreferenceResponse",
     "UpdatePreferenceRequest",
+    "CatalogArticleRepositoryPort",
+    "CreateCatalogArticleRequest",
+    "UpdateCatalogArticleRequest",
+    "CatalogArticleResponse",
+
 ]

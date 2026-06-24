@@ -1,6 +1,7 @@
 from typing import Any, Protocol, Self
 
 from app.application.ports.asset_repository import AssetRepositoryPort
+from app.application.ports.catalog_repository import CatalogArticleRepositoryPort
 from app.application.ports.company_repository import CompanyRepositoryPort
 from app.application.ports.event_bus import EventBusPort
 from app.application.ports.location_repository import LocationRepositoryPort
@@ -16,6 +17,7 @@ class UnitOfWorkPort(Protocol):
     companies: CompanyRepositoryPort
     roles: RoleRepositoryPort
     assets: AssetRepositoryPort
+    catalog_articles: CatalogArticleRepositoryPort
     locations: LocationRepositoryPort
     event_bus: EventBusPort
     preferences: PreferenceRepositoryPort

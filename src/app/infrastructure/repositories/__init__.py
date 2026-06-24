@@ -6,6 +6,9 @@ from app.infrastructure.repositories.preference_repository import SqlAlchemyPref
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
 from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
+from app.infrastructure.repositories.catalog_repository import (
+    SqlAlchemyCatalogArticleRepository,
+)
 
 __all__ = [
     "SqlAlchemyRepository",
@@ -16,4 +19,5 @@ __all__ = [
     "SqlAlchemyAssetRepository",
     "SqlAlchemyLocationRepository",
     "SqlAlchemyPreferenceRepository",
+    "SqlAlchemyCatalogArticleRepository",
 ]
