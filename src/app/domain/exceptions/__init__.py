@@ -3,7 +3,12 @@
 Re-exporta todas las excepciones para mantener compatibilidad con los
 imports existentes (``from app.domain.exceptions import X``).
 """
-
+from app.domain.exceptions.base import DomainException, ValidationError
+from app.domain.exceptions.article_category import (
+    ArticleCategoryException,
+    ArticleCategoryNameExistsError,
+    ArticleCategoryNotFoundError,
+)
 from app.domain.exceptions.asset import (
     AssetCodeExistsError,
     AssetException,
@@ -106,4 +111,9 @@ __all__ = [
     "LastAdminRevocationError",
     "StaleDataError",
     "EventPublishError",
+    "DomainException",
+    "ValidationError",
+    "ArticleCategoryException",
+    "ArticleCategoryNameExistsError",
+    "ArticleCategoryNotFoundError",
 ]
