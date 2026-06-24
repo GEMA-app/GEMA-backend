@@ -7,12 +7,13 @@ from app.application.ports.location_repository import LocationRepositoryPort
 from app.application.ports.preference_repository import PreferenceRepositoryPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
-
+from app.application.ports.system_audit_repository import SystemAuditRepositoryPort
 
 class UnitOfWorkPort(Protocol):
     """Puerto para el patrón Unit of Work, gestionando transacciones y repositorios."""
 
     users: UserRepositoryPort
+    system_audits: SystemAuditRepositoryPort
     companies: CompanyRepositoryPort
     roles: RoleRepositoryPort
     assets: AssetRepositoryPort
