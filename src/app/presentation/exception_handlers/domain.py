@@ -43,6 +43,7 @@ from app.domain.exceptions import (
     ValidationException,
     WeakPasswordError,
 )
+from app.domain.exceptions.system_audit import SystemAuditNotFoundError
 from app.infrastructure.notifications.email_sender import NotificationError, TemplateNotFoundError
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers.base import jsonapi_response
@@ -195,6 +196,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     TemplateNotFoundError: (
         status.HTTP_502_BAD_GATEWAY,
         "ERR_TEMPLATE_NOT_FOUND",
+    ),
+    SystemAuditNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_SYSTEM_AUDIT_NOT_FOUND"
     ),
 }
 
