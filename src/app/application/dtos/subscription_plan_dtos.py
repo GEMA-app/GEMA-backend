@@ -1,16 +1,17 @@
 from dataclasses import dataclass
+from decimal import Decimal
 
 @dataclass
 class CreateSubscriptionPlanRequest:
     """DTO de entrada para la creación de un plan de suscripción."""
 
     nombre: str
-    descripcion: str
+    descripcion: str | None = None
     max_activos: int | None = None
     max_usuarios: int | None = None
-    precio_mensual_usd: float = 0.0
-    start_date: str
-    end_date: str
+    precio_mensual_usd: Decimal
+    # start_date: str
+    # end_date: str
 
 @dataclass
 class UpdateSubscriptionPlanRequest:
@@ -20,9 +21,9 @@ class UpdateSubscriptionPlanRequest:
     descripcion: str | None = None
     max_activos: int | None = None
     max_usuarios: int | None = None
-    precio_mensual_usd: float | None = None
-    start_date: str | None = None
-    end_date: str | None = None
+    precio_mensual_usd: Decimal | None = None
+    # start_date: str | None = None
+    # end_date: str | None = None
 
     def __post_init__(self) -> None:
         """Calcula el conjunto de campos explícitamente establecidos en la inicialización."""
@@ -42,8 +43,8 @@ class SubscriptionPlanResponse:
     descripcion: str
     max_activos: int | None
     max_usuarios: int | None
-    precio_mensual_usd: float
-    start_date: str
-    end_date: str
+    precio_mensual_usd: Decimal
+    # start_date: str
+    # end_date: str
     is_active: bool
     version: int

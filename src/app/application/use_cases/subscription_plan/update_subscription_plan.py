@@ -25,15 +25,21 @@ class UpdateSubscriptionPlanUseCase:
             if not plan:
                 raise SubscriptionPlanNotFoundError(f"Plan de suscripción con ID {plan_id_str} no encontrado.")
 
-            # Actualizar los atributos del plan según la solicitud
-            if request.nombre is not None:
-                plan.update_details(request.nombre, request.descripcion)
+            # Actualizar detalles de forma independiente
+            if request.nombre is not None or request.descripcion is not None:
+                nuevo_nombre = request.nombre if request.nombre is not None else plan.nombre
+                nueva_desc = request.descripcion if request.descripcion is not None else plan.descripcion
+                plan.update_details(nuevo_nombre, nueva_desc)
+
             if request.precio_mensual_usd is not None:
                 plan.update_pricing(request.precio_mensual_usd)
-            if request.max_activos is not None and request.max_usuarios is not None:
-                plan.update_limits(request.max_activos, request.max_usuarios)
-            if request.start_date is not None and request.end_date is not None:
-                plan.update_dates(request.start_date, request.end_date)
+
+            # Límites independientes (si uno es None, conserva el que tenía el plan)
+            if request.max_activos is not None or request.max_usuarios is not None:
+                nuevo_max_activos = request.max_activos if request.max_activos is not None else plan.max_activos
+                nuevo_max_usuarios = request.max_usuarios if request.max_usuarios is not None else plan.max_usuarios
+                plan.update_limits(nuevo_max_activos, nuevo_max_usuarios)
+
             if request.is_active is not None:
                 plan.update_status(request.is_active)
 
@@ -47,8 +53,8 @@ class UpdateSubscriptionPlanUseCase:
             max_activos=plan.max_activos,
             max_usuarios=plan.max_usuarios,
             precio_mensual_usd=plan.precio_mensual_usd,
-            start_date=plan.start_date.isoformat(),
-            end_date=plan.end_date.isoformat(),
+            # start_date=plan.start_date.isoformat(),
+            # end_date=plan.end_date.isoformat(),
             is_active=plan.is_active,
             version=plan.version
         )

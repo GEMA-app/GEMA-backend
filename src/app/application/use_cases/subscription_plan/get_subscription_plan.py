@@ -26,8 +26,8 @@ class GetSubscriptionPlanUseCase:
             max_activos=plan.max_activos,
             max_usuarios=plan.max_usuarios,
             precio_mensual_usd=plan.precio_mensual_usd,
-            start_date=plan.start_date.isoformat(),
-            end_date=plan.end_date.isoformat(),
+            # start_date=plan.start_date.isoformat(),
+            # end_date=plan.end_date.isoformat(),
             is_active=plan.is_active,
             version=plan.version
         )
