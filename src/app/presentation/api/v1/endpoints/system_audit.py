@@ -1,76 +1,79 @@
-from datetime import datetime
-from typing import Any, List, Optional  # Añadido 'Any' aquí
-from fastapi import APIRouter, Depends, Query, status
-
-# 1. Schemas de respuesta
-from app.presentation.api.v1.schemas.system_audit import SystemAuditResponse
-
-# 2. Permisos y Dependencias del sistema
-from app.domain.enums import PermissionModule
-from app.presentation.api.v1.endpoints.dependencies import require_permission
-
-# 3. Casos de uso y Contenedor
-from app.application.use_cases.system_audit import (
-    ListSystemAuditsUseCase,
-    GetSystemAuditUseCase,
-)
-from app.composition.container import (
-    get_list_system_audits_use_case,
-    get_system_audit_use_case,
+from fastapi import APIRouter, Depends, Query, Path, status
+from app.application.dtos.system_audit_dtos import ListSystemAuditsRequest
+from app.application.use_cases.system_audit import GetSystemAuditUseCase, ListSystemAuditsUseCase
+from app.composition.container import get_get_system_audit_use_case, get_list_system_audits_use_case
+from app.presentation.api.v1.schemas.system_audit import (
+    SystemAuditDocument,
+    SystemAuditListDocument,
+    SystemAuditResource,
+    SystemAuditAttributes,
+    SystemAuditMeta,
 )
 
-router = APIRouter()
+router = APIRouter(prefix="/system-audits", tags=["Auditorías de Sistema"])
 
 
-@router.get(
-    "",
-    response_model=List[SystemAuditResponse],
-    status_code=status.HTTP_200_OK,
-    summary="Listar auditorías del sistema con filtros",
-)
+@router.get("", response_model=SystemAuditListDocument, status_code=status.HTTP_200_OK)
 async def list_system_audits(
-    empresa_id: str,
-    offset: int = 0,
-    limit: int = 10,
-    usuario_id: Optional[int] = Query(None, description="Filtrar por el ID del usuario"),
-    accion: Optional[str] = Query(None, description="Filtrar por la acción ejecutada"),
-    fecha_inicio: Optional[datetime] = Query(None, description="Fecha inicial del rango"),
-    fecha_fin: Optional[datetime] = Query(None, description="Fecha final del rango"),
-    current_user: Any = Depends(require_permission(PermissionModule.SYSTEM_AUDIT, "view")), 
+    empresa_id: str = Query(..., description="ID de la empresa/tenant", alias="empresa_id"),
+    usuario_id: Optional[int] = Query(None, description="Filtrar por ID de usuario"),
+    accion: Optional[str] = Query(None, description="Filtrar por acción ejecutada"),
+    offset: int = Query(0, ge=0, description="Número de registros a saltar"),
+    limit: int = Query(20, ge=1, le=100, description="Límite de registros por página"),
     use_case: ListSystemAuditsUseCase = Depends(get_list_system_audits_use_case),
-) -> List[SystemAuditResponse]:
+):
     """
-    Lista las auditorías de sistema de la empresa con soporte de filtros y rangos de fecha.
+    Endpoint para listar y filtrar el historial de auditorías bajo el formato JSON:API.
     """
-    filters = {}
-    if usuario_id is not None:
-        filters["usuario_id"] = usuario_id
-    if accion:
-        filters["accion"] = accion
-    if fecha_inicio:
-        filters["fecha_inicio"] = fecha_inicio
-    if fecha_fin:
-        filters["fecha_fin"] = fecha_fin
+    # 1. Agrupamos los filtros en el DTO de entrada esperado por la aplicación
+    request_dto = ListSystemAuditsRequest(usuario_id=usuario_id, accion=accion)
+    
+    # 2. Ejecutamos la lógica de negocio a través del caso de uso
+    dtos, total = await use_case.execute(
+        company_id_str=empresa_id, offset=offset, limit=limit, request=request_dto
+    )
+    
+    # 3. Traducimos los DTOs planos al estándar estricto JSON:API de presentación
+    resources = [
+        SystemAuditResource(
+            id=str(dto.id),
+            attributes=SystemAuditAttributes(
+                usuario_id=dto.usuario_id,
+                accion=dto.accion,
+                detalles=dto.detalles,
+                ip_address=dto.ip_address,
+                ocurrido_en=dto.ocurrido_en,
+            ),
+        )
+        for dto in dtos
+    ]
+    
+    return SystemAuditListDocument(
+        data=resources, 
+        meta=SystemAuditMeta(total=total, offset=offset, limit=limit)
+    )
 
-    # Ejecutamos el caso de uso delegado
-    auditorias = await use_case.execute(empresa_id, offset, limit, filters)
-    return auditorias
 
-
-@router.get(
-    "/{auditoria_id}",
-    response_model=SystemAuditResponse,
-    status_code=status.HTTP_200_OK,
-    summary="Obtener una auditoría por ID",
-)
-async def get_system_audit(
-    empresa_id: str,
-    auditoria_id: int,
-    current_user: Any = Depends(require_permission(PermissionModule.SYSTEM_AUDIT, "view")),
-    use_case: GetSystemAuditUseCase = Depends(get_system_audit_use_case),
-) -> SystemAuditResponse:
+@router.get("/{id}", response_model=SystemAuditDocument, status_code=status.HTTP_200_OK)
+async def get_system_audit_by_id(
+    empresa_id: str = Query(..., description="ID de la empresa/tenant"),
+    id: int = Path(..., description="ID de la auditoría"),
+    use_case: GetSystemAuditUseCase = Depends(get_get_system_audit_use_case),
+):
     """
-    Obtiene los detalles completos de un registro de auditoría específico.
+    Endpoint para obtener el detalle profundo de una auditoría por su ID único.
     """
-    auditoria = await use_case.execute(empresa_id, auditoria_id)
-    return auditoria
+    dto = await use_case.execute(company_id_str=empresa_id, auditoria_id=id)
+    
+    return SystemAuditDocument(
+        data=SystemAuditResource(
+            id=str(dto.id),
+            attributes=SystemAuditAttributes(
+                usuario_id=dto.usuario_id,
+                accion=dto.accion,
+                detalles=dto.detalles,
+                ip_address=dto.ip_address,
+                ocurrido_en=dto.ocurrido_en,
+            ),
+        )
+    )
