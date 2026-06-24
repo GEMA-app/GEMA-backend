@@ -1,4 +1,5 @@
 
+from decimal import Decimal
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -14,12 +15,12 @@ class SubscriptionPlan(EventProducer):
 
   id: SubscriptionPlanId
   nombre: str
-  descripcion: str
+  descripcion: str | None = None
   max_activos: int | None = None
   max_usuarios: int | None = None
-  precio_mensual_usd: float = 0.0
-  start_date: datetime
-  end_date: datetime
+  precio_mensual_usd: Decimal
+  # start_date: datetime
+  # end_date: datetime
   is_active: bool = True
   version: int = 1
   created_at: datetime | None = None
@@ -30,12 +31,12 @@ class SubscriptionPlan(EventProducer):
   def create(
     cls,
     nombre: str,
-    descripcion: str,
+    descripcion: str | None,
     max_activos: int | None,
     max_usuarios: int | None,
-    precio_mensual_usd: float,
-    start_date: datetime,
-    end_date: datetime,
+    precio_mensual_usd: Decimal,
+    # start_date: datetime,
+    # end_date: datetime,
   ) -> "SubscriptionPlan":
     """Crea un nuevo plan de suscripción validando sus invariantes."""
     plan_id = SubscriptionPlanId(value=uuid.uuid4())
@@ -46,8 +47,8 @@ class SubscriptionPlan(EventProducer):
         max_activos=max_activos,
         max_usuarios=max_usuarios,
         precio_mensual_usd=precio_mensual_usd,
-        start_date=start_date,
-        end_date=end_date,
+        # start_date=start_date,
+        # end_date=end_date,
     )
 
   def __post_init__(self) -> None:
@@ -75,10 +76,10 @@ class SubscriptionPlan(EventProducer):
         raise SubscriptionPlanInvalidDataError(
             "El número máximo de usuarios no puede ser negativo."
         )
-    if self.start_date > self.end_date:
-        raise SubscriptionPlanInvalidDataError(
-            "La fecha de fin no puede ser anterior a la de inicio."
-        )
+    # if self.start_date > self.end_date:
+    #     raise SubscriptionPlanInvalidDataError(
+    #         "La fecha de fin no puede ser anterior a la de inicio."
+    #     )
 
   @property
   def is_unlimited(self) -> bool:
@@ -93,13 +94,13 @@ class SubscriptionPlan(EventProducer):
     """Desactiva el plan si estaba activo."""
     self.is_active = False
 
-  def update_details(self, nombre: str, descripcion: str) -> None:
+  def update_details(self, nombre: str, descripcion: str | None) -> None:
     """Actualiza el nombre y la descripción del plan."""
     self.nombre = nombre.strip() if nombre is not None else ""
     self.descripcion = descripcion.strip() if descripcion is not None else ""
     self._validate()
 
-  def update_pricing(self, precio_mensual_usd: float) -> None:
+  def update_pricing(self, precio_mensual_usd: Decimal) -> None:
     """Actualiza el precio mensual del plan."""
     self.precio_mensual_usd = precio_mensual_usd
     self._validate()
@@ -110,13 +111,13 @@ class SubscriptionPlan(EventProducer):
     self.max_usuarios = max_usuarios
     self._validate()
 
-  def is_active_for_date(self, when: datetime) -> bool:
-    """Indica si el plan está vigente para una fecha dada."""
-    return self.is_active and self.start_date <= when <= self.end_date
+  # def is_active_for_date(self, when: datetime) -> bool:
+  #   """Indica si el plan está vigente para una fecha dada."""
+  #   return self.is_active and self.start_date <= when <= self.end_date
 
-  def is_expired(self, when: datetime) -> bool:
-    """Indica si el plan ya venció en una fecha dada."""
-    return when > self.end_date
+  # def is_expired(self, when: datetime) -> bool:
+  #   """Indica si el plan ya venció en una fecha dada."""
+  #   return when > self.end_date
 
   def can_support(self, num_users: int, num_assets: int) -> bool:
     """Determina si el plan soporta la cantidad de usuarios y activos solicitados."""
