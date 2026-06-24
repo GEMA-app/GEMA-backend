@@ -106,4 +106,6 @@ __all__ = [
     "LastAdminRevocationError",
     "StaleDataError",
     "EventPublishError",
+    "UserException", 
+    "UserNotFoundError"
 ]
