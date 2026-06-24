@@ -6,11 +6,13 @@ from app.infrastructure.repositories.preference_repository import SqlAlchemyPref
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
 from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
+from app.infrastructure.repositories.subscription_plan_repository import SqlAlchemySubscriptionPlanRepository
 
 __all__ = [
     "SqlAlchemyRepository",
     "SqlAlchemyTenantRepository",
     "SqlAlchemyUserRepository",
+    "SqlAlchemySubscriptionPlanRepository",
     "SqlAlchemyCompanyRepository",
     "SqlAlchemyRoleRepository",
     "SqlAlchemyAssetRepository",
