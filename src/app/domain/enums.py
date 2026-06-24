@@ -20,6 +20,7 @@ class PermissionModule(StrEnum):
     REPORTS = "reportes"
     ADMIN = "administracion"
     PREFERENCES = "preferencias"
+    SYSTEM_AUDIT = "system_audit"
 
 
 class AssetStatus(StrEnum):
