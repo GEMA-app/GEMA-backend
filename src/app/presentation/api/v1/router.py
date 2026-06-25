@@ -10,6 +10,7 @@ from app.presentation.api.v1.endpoints.companies import router as companies_rout
 from app.presentation.api.v1.endpoints.locations import router as locations_router
 from app.presentation.api.v1.endpoints.preferences import router as preferences_router
 from app.presentation.api.v1.endpoints.roles import router as roles_router
+from app.presentation.api.v1.endpoints.users import router as users_router
 
 v1_router = APIRouter(prefix="/v1")
 
@@ -49,3 +50,8 @@ v1_router.include_router(
     tags=["preferencias"],
 )
 
+v1_router.include_router(
+    users_router,
+    prefix="/empresas/{empresa_id}/usuarios",
+    tags=["usuarios"]
+)
