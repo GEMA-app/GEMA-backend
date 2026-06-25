@@ -7,7 +7,7 @@ from app.application.ports.location_repository import LocationRepositoryPort
 from app.application.ports.preference_repository import PreferenceRepositoryPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
-
+from app.application.ports.article_category_repository import ArticleCategoryRepositoryPort
 
 class UnitOfWorkPort(Protocol):
     """Puerto para el patrón Unit of Work, gestionando transacciones y repositorios."""
@@ -19,6 +19,7 @@ class UnitOfWorkPort(Protocol):
     locations: LocationRepositoryPort
     event_bus: EventBusPort
     preferences: PreferenceRepositoryPort
+    article_categories: ArticleCategoryRepositoryPort
 
     async def __aenter__(self) -> Self:
         """Inicia el contexto transaccional asíncrono."""

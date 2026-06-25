@@ -41,7 +41,7 @@ from app.domain.exceptions import (
     UserAlreadyExistsError,
     UserInactiveError,
     ValidationException,
-    WeakPasswordError,
+    WeakPasswordError,ArticleCategoryNameExistsError, ArticleCategoryNotFoundError
 )
 from app.infrastructure.notifications.email_sender import NotificationError, TemplateNotFoundError
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
@@ -195,6 +195,14 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     TemplateNotFoundError: (
         status.HTTP_502_BAD_GATEWAY,
         "ERR_TEMPLATE_NOT_FOUND",
+    ),
+    ArticleCategoryNameExistsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_ARTICLE_CATEGORY_NAME_EXISTS",
+    ),
+    ArticleCategoryNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_ARTICLE_CATEGORY_NOT_FOUND",
     ),
 }
 
