@@ -10,6 +10,6 @@ def get_list_system_audits_use_case(uow: UnitOfWorkPort = Depends(get_uow)) -> L
     return ListSystemAuditsUseCase(uow)
 
 
-def get_get_system_audit_use_case(uow: UnitOfWorkPort = Depends(get_uow)) -> GetSystemAuditUseCase:
+def get_system_audit_use_case(uow: UnitOfWorkPort = Depends(get_uow)) -> GetSystemAuditUseCase:
     """Proveedor de dependencias para el caso de uso de detalle."""
     return GetSystemAuditUseCase(uow)

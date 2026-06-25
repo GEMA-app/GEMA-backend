@@ -62,10 +62,12 @@ from app.domain.exceptions.validation import (
     InvalidUUIDError,
     ValidationException,
 )
+from app.domain.entities.system_audit import SystemAudit
 from app.domain.exceptions.system_audit import (
     SystemAuditException,
     SystemAuditNotFoundError,
 )
+
 
 __all__ = [
     "DomainException",
@@ -112,4 +114,5 @@ __all__ = [
     "EventPublishError",
     "SystemAuditException",
     "SystemAuditNotFoundError",
+    "SystemAudit",
 ]

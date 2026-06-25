@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query, Path, status
 from app.application.dtos.system_audit_dtos import ListSystemAuditsRequest
 from app.application.use_cases.system_audit import GetSystemAuditUseCase, ListSystemAuditsUseCase
-from app.composition.container import get_get_system_audit_use_case, get_list_system_audits_use_case
+from app.composition.container import get_system_audit_use_case, get_list_system_audits_use_case
 from app.presentation.api.v1.schemas.system_audit import (
     SystemAuditDocument,
     SystemAuditListDocument,
@@ -58,7 +58,7 @@ async def list_system_audits(
 async def get_system_audit_by_id(
     empresa_id: str = Query(..., description="ID de la empresa/tenant"),
     id: int = Path(..., description="ID de la auditoría"),
-    use_case: GetSystemAuditUseCase = Depends(get_get_system_audit_use_case),
+    use_case: GetSystemAuditUseCase = Depends(get_system_audit_use_case),
 ):
     """
     Endpoint para obtener el detalle profundo de una auditoría por su ID único.

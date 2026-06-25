@@ -52,6 +52,6 @@ v1_router.include_router(
 
 v1_router.include_router(
     system_audit_router,
-    prefix="/empresas/{empresa_id}/auditorias",  # ← Tu RUTA BASE requerida
+    prefix="/empresas/{empresa_id}/auditorias",
     tags=["auditorias"],
 )
