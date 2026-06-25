@@ -24,6 +24,7 @@ class UpdateSubscriptionPlanRequest:
     precio_mensual_usd: Decimal | None = None
     # start_date: str | None = None
     # end_date: str | None = None
+    version: int | None = None
 
     def __post_init__(self) -> None:
         """Calcula el conjunto de campos explícitamente establecidos en la inicialización."""

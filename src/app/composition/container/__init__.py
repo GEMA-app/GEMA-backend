@@ -59,6 +59,14 @@ from app.composition.container.role import (
     get_update_role_use_case,
 )
 
+from app.composition.container.subscription_plan import (
+    get_create_subscription_plan_use_case,
+    get_delete_subscription_plan_use_case,
+    get_subscription_plan_use_case,
+    get_update_subscription_plan_use_case,
+    get_list_subscription_plans_use_case
+)
+
 __all__ = [
     # Common
     "get_uow",
@@ -107,4 +115,10 @@ __all__ = [
     # Preferences
     "get_update_preference_use_case",
     "get_user_preference_use_case",
+    # Subscription Plans
+    "get_subscription_plan_use_case",
+    "get_create_subscription_plan_use_case",
+    "get_delete_subscription_plan_use_case",
+    "get_list_subscription_plans_use_case",
+    "get_update_subscription_plan_use_case",
 ]
