@@ -11,6 +11,9 @@ from app.composition.container.asset import (
     get_list_assets_use_case,
     get_update_asset_use_case,
 )
+from app.composition.container.asset_state_log import (
+    get_list_asset_state_log_use_case,
+)
 from app.composition.container.auth import (
     get_change_password_use_case,
     get_current_user_use_case,
@@ -97,6 +100,8 @@ __all__ = [
     "get_list_assets_use_case",
     "get_update_asset_use_case",
     "get_delete_asset_use_case",
+    # Asset State Log
+    "get_list_asset_state_log_use_case",
     # Location
     "get_create_location_use_case",
     "get_location_use_case",
