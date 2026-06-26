@@ -123,7 +123,7 @@ async def run_manual_test() -> None:
         assert res_loc.status_code == 201, f"Creación de ubicación fallida: {res_loc.text}"
         location_data = res_loc.json()["data"]
         location_id = location_data["id"]
-        print(f"Ubicación creada con ID: {location_id} (Tipo: headquarters)")
+        print(f"Ubicación creada con ID: {location_id} (Tipo: sede)")
 
         # =====================================================================
         # 6. Crear Ubicación Planta (PLANT) como hijo de la Sede
@@ -148,7 +148,7 @@ async def run_manual_test() -> None:
         assert res_sub_loc.status_code == 201, f"Creación de sub-ubicación fallida: {res_sub_loc.text}"
         sub_location_data = res_sub_loc.json()["data"]
         sub_location_id = sub_location_data["id"]
-        print(f"Sub-ubicación creada con ID: {sub_location_id} (Tipo: plant, Parent: {location_id})")
+        print(f"Sub-ubicación creada con ID: {sub_location_id} (Tipo: planta, Parent: {location_id})")
 
         # =====================================================================
         # 7. Obtener Árbol de Ubicaciones
