@@ -16,6 +16,7 @@ from app.infrastructure.repositories.location_repository import SqlAlchemyLocati
 from app.infrastructure.repositories.preference_repository import SqlAlchemyPreferenceRepository
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
+from app.infrastructure.repositories.work_order_repository import SqlAlchemyWorkOrderRepository
 
 logger = structlog.get_logger()
 
@@ -48,6 +49,7 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         self.assets = SqlAlchemyAssetRepository(self.session, self._pending_events)
         self.locations = SqlAlchemyLocationRepository(self.session, self._pending_events)
         self.preferences = SqlAlchemyPreferenceRepository(self.session, self._pending_events)
+        self.work_orders = SqlAlchemyWorkOrderRepository(self.session, self._pending_events)
         return self
 
     async def __aexit__(self, exc_type: Any, exc_val: Any, tb: Any) -> None:

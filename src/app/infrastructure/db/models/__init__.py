@@ -8,6 +8,11 @@ from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin, Ver
 from app.infrastructure.db.models.preference import UserPreferenceModel
 from app.infrastructure.db.models.role import PermissionModel, RoleModel, RoleUserModel
 from app.infrastructure.db.models.user import UserModel
+from app.infrastructure.db.models.work_order import (
+    WorkOrderModel,
+    WorkOrderStatusLogModel,
+    WorkOrderTechnicianModel,
+)
 
 __all__ = [
     "UserModel",
@@ -24,4 +29,7 @@ __all__ = [
     "TenantMixin",
     "TimestampMixin",
     "VersionMixin",
+    "WorkOrderModel",
+    "WorkOrderTechnicianModel",
+    "WorkOrderStatusLogModel",
 ]
