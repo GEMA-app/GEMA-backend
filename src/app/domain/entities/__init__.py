@@ -1,6 +1,7 @@
 """Re-exporta todas las entidades del dominio para imports planos."""
 
 from app.domain.entities.asset import Asset
+from app.domain.entities.asset_state_log import AssetStateLog
 from app.domain.entities.catalog import ArticleCategory, CatalogArticle
 from app.domain.entities.company import Company
 from app.domain.entities.location import Location
@@ -16,6 +17,7 @@ __all__ = [
     "Permission",
     "Location",
     "Asset",
+    "AssetStateLog",
     "ArticleCategory",
     "CatalogArticle",
     "UserPreference",

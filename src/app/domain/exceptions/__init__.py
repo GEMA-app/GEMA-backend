@@ -13,6 +13,10 @@ from app.domain.exceptions.asset import (
     EmptyAssetCodeError,
     EmptySerialError,
 )
+from app.domain.exceptions.asset_state_log import (
+    AssetStateLogException,
+    AssetStateLogNotFoundError,
+)
 from app.domain.exceptions.auth import (
     AuthException,
     EmptyHashedPasswordError,
@@ -92,6 +96,8 @@ __all__ = [
     "AssetInvalidTransitionError",
     "EmptySerialError",
     "EmptyAssetCodeError",
+    "AssetStateLogException",
+    "AssetStateLogNotFoundError",
     "EmptyLocationNameError",
     "CompanyAlreadyCancelledError",
     "CompanyNotSuspendedError",
