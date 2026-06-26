@@ -1,4 +1,7 @@
-"""Value Objects para identificadores UUID: UserId, CompanyId, RoleId, AssetId, LocationId, WorkOrderId."""
+"""Value Objects para identificadores UUID.
+
+UserId, CompanyId, RoleId, AssetId, LocationId y WorkOrderId.
+"""
 
 import uuid
 from dataclasses import dataclass

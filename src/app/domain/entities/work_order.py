@@ -6,7 +6,7 @@ from app.domain.exceptions.work_order import (
     WorkOrderInvalidDataError,
     WorkOrderInvalidStateError,
 )
-from app.domain.value_objects.identifiers import (
+from app.domain.value_objects.identifier import (
     AssetId,
     CompanyId,
     UserId,

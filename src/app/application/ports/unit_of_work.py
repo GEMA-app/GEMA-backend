@@ -9,6 +9,7 @@ from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
 from app.application.ports.work_order_repository import WorkOrderRepositoryPort
 
+
 class UnitOfWorkPort(Protocol):
     """Puerto para el patrón Unit of Work, gestionando transacciones y repositorios."""
 

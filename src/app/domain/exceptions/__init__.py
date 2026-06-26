@@ -69,6 +69,7 @@ from app.domain.exceptions.work_order import (
     WorkOrderInvalidStateError,
     WorkOrderNotFoundError,
 )
+
 __all__ = [
     "DomainException",
     "EmptyCompanyNameError",
