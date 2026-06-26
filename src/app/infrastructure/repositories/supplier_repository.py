@@ -1,9 +1,12 @@
 from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.domain.entities.supplier import Supplier
 from app.domain.ports.supplier_repository import SupplierRepository
 from app.infrastructure.db.models.supplier import SupplierModel
+
 
 class SqlAlchemySupplierRepository(SupplierRepository):
     def __init__(self, session: AsyncSession):
@@ -16,10 +19,10 @@ class SqlAlchemySupplierRepository(SupplierRepository):
         )
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if not model:
             return None
-            
+
         return Supplier(
             id=model.id,
             empresa_id=model.empresa_id,
@@ -41,7 +44,7 @@ class SqlAlchemySupplierRepository(SupplierRepository):
             contacto=supplier.contacto
         )
         self.session.add(model)
-        # El commit usualmente se maneja en el UoW (Unit of Work) en GEMA, 
-        # pero para simplificar, si GEMA maneja transacciones en el UoW, 
+        # El commit usualmente se maneja en el UoW (Unit of Work) en GEMA,
+        # pero para simplificar, si GEMA maneja transacciones en el UoW,
         # puedes quitar el commit aquí.
         await self.session.commit()
