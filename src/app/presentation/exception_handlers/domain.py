@@ -11,6 +11,7 @@ from app.domain.exceptions import (
     AssetInvalidTransitionError,
     AssetNotFoundError,
     AssetSerialExistsError,
+    AssetStateLogNotFoundError,
     CompanyAlreadyCancelledError,
     CompanyNotFoundError,
     CompanyNotSuspendedError,
@@ -159,6 +160,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     PreferenceThemeInvalidError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_PREFERENCE_THEME_INVALID"
+    ),
+    AssetStateLogNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_ASSET_STATE_LOG_NOT_FOUND",
     ),
     AssetInvalidTransitionError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
