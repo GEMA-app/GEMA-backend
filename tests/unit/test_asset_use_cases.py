@@ -19,6 +19,8 @@ def mock_uow() -> Any:
     uow.assets.list_by_company = AsyncMock()
     uow.locations = MagicMock()
     uow.locations.get_by_id = AsyncMock()
+    uow.asset_state_logs = MagicMock()
+    uow.asset_state_logs.save = AsyncMock()
     uow.commit = AsyncMock()
     return uow
 
