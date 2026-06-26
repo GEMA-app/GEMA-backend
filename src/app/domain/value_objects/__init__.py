@@ -8,7 +8,9 @@ from app.domain.value_objects.credential import Email, HashedPassword, PlainPass
 from app.domain.value_objects.identifier import (
     AssetId,
     CompanyId,
+    InterventionId,
     LocationId,
+    RepuestoId,
     RoleId,
     UserId,
 )
@@ -23,5 +25,7 @@ __all__ = [
     "RoleId",
     "AssetId",
     "LocationId",
+    "InterventionId",
+    "RepuestoId",
     "Slug",
 ]

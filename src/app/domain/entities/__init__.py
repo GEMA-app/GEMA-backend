@@ -7,9 +7,11 @@ from app.domain.entities.location import Location
 from app.domain.entities.permission import Permission
 from app.domain.entities.preference import UserPreference
 from app.domain.entities.role import Role
+from app.domain.entities.used_part import UsedPart
 from app.domain.entities.user import User
 
 __all__ = [
+    "UsedPart",
     "User",
     "Company",
     "Role",

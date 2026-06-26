@@ -49,6 +49,12 @@ from app.domain.exceptions.preference import (
     PreferenceNotFoundError,
     PreferenceThemeInvalidError,
 )
+from app.domain.exceptions.used_part import (
+    UsedPartException,
+    UsedPartInvalidPriceError,
+    UsedPartInvalidQuantityError,
+    UsedPartNotFoundError,
+)
 from app.domain.exceptions.role import (
     EmptyRoleNameError,
     LastAdminRevocationError,
@@ -106,4 +112,8 @@ __all__ = [
     "LastAdminRevocationError",
     "StaleDataError",
     "EventPublishError",
+    "UsedPartException",
+    "UsedPartNotFoundError",
+    "UsedPartInvalidQuantityError",
+    "UsedPartInvalidPriceError",
 ]
