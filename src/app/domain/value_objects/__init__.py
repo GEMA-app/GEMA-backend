@@ -11,6 +11,7 @@ from app.domain.value_objects.identifier import (
     LocationId,
     RoleId,
     UserId,
+    WorkOrderId,
 )
 from app.domain.value_objects.slug import Slug
 
@@ -23,5 +24,6 @@ __all__ = [
     "RoleId",
     "AssetId",
     "LocationId",
+    "WorkOrderId",
     "Slug",
 ]
