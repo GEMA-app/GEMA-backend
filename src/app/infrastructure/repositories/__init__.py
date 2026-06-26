@@ -1,6 +1,9 @@
 from app.infrastructure.repositories.asset_repository import SqlAlchemyAssetRepository
 from app.infrastructure.repositories.base import SqlAlchemyRepository
 from app.infrastructure.repositories.company_repository import SqlAlchemyCompanyRepository
+from app.infrastructure.repositories.failure_report_repository import (
+    SqlAlchemyFailureReportRepository,
+)
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
 from app.infrastructure.repositories.preference_repository import SqlAlchemyPreferenceRepository
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
@@ -14,6 +17,7 @@ __all__ = [
     "SqlAlchemyCompanyRepository",
     "SqlAlchemyRoleRepository",
     "SqlAlchemyAssetRepository",
+    "SqlAlchemyFailureReportRepository",
     "SqlAlchemyLocationRepository",
     "SqlAlchemyPreferenceRepository",
 ]
