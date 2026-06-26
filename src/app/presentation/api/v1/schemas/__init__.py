@@ -3,18 +3,18 @@
 Re-exporta todos los schemas de los módulos para facilitar las importaciones.
 """
 
-from app.presentation.api.v1.schemas.intervenciones import (
-    CreateIntervencionRequest,
-    IntervencionDocument,
-    IntervencionListDocument,
-    IntervencionResource,
-    UpdateIntervencionRequest,
+from app.presentation.api.v1.schemas.interventions import (
+    CreateInterventionRequest,
+    InterventionDocument,
+    InterventionListDocument,
+    InterventionResource,
+    UpdateInterventionRequest,
 )
 
 __all__ = [
-    "CreateIntervencionRequest",
-    "IntervencionDocument",
-    "IntervencionListDocument",
-    "IntervencionResource",
-    "UpdateIntervencionRequest",
+    "CreateInterventionRequest",
+    "InterventionDocument",
+    "InterventionListDocument",
+    "InterventionResource",
+    "UpdateInterventionRequest",
 ]
