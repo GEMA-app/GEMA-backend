@@ -16,10 +16,10 @@ from app.application.dtos.company_dtos import (
     CreateCompanyRequest,
     UpdateCompanyRequest,
 )
-from app.application.dtos.intervencion_dtos import (
-    ActualizarIntervencionRequest,
-    CrearIntervencionRequest,
-    IntervencionResponse,
+from app.application.dtos.intervention_dtos import (
+    CreateInterventionRequest,
+    InterventionResponse,
+    UpdateInterventionRequest,
 )
 from app.application.dtos.location_dtos import (
     CreateLocationRequest,
@@ -64,7 +64,7 @@ __all__ = [
     "LocationTreeResponse",
     "PreferenceResponse",
     "UpdatePreferenceRequest",
-    "ActualizarIntervencionRequest",
-    "CrearIntervencionRequest",
-    "IntervencionResponse",
+    "CreateInterventionRequest",
+    "InterventionResponse",
+    "UpdateInterventionRequest",
 ]

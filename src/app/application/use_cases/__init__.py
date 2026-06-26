@@ -1,15 +1,15 @@
 """Paquete de casos de uso — orquestación de la lógica de negocio por módulo."""
 
-from app.application.use_cases.intervencion import (
-    ActualizarIntervencionUseCase,
-    CrearIntervencionUseCase,
-    ListarIntervencionesUseCase,
-    ObtenerIntervencionUseCase,
+from app.application.use_cases.intervention import (
+    CreateInterventionUseCase,
+    GetInterventionUseCase,
+    ListInterventionsUseCase,
+    UpdateInterventionUseCase,
 )
 
 __all__ = [
-    "ActualizarIntervencionUseCase",
-    "CrearIntervencionUseCase",
-    "ListarIntervencionesUseCase",
-    "ObtenerIntervencionUseCase",
+    "CreateInterventionUseCase",
+    "GetInterventionUseCase",
+    "ListInterventionsUseCase",
+    "UpdateInterventionUseCase",
 ]
