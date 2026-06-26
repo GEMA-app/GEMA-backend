@@ -1,15 +1,18 @@
-from pydantic import BaseModel, ConfigDict
-from datetime import datetime
-from typing import Optional
-from uuid import UUID
+"""DTOs para el módulo AssetStateLog (historial de cambios de estado de activos)."""
 
-class AssetStateLogResponse(BaseModel):
-    id: int
-    activo_id: UUID
-    estado_anterior: Optional[str] = None
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class AssetStateLogResponse:
+    """DTO de salida con los datos de un registro de cambio de estado."""
+
+    id: str
+    empresa_id: str
+    activo_id: str
+    estado_anterior: str | None
     estado_nuevo: str
-    fecha_cambio: datetime
-    usuario_id: Optional[UUID] = None
-
-    # Configuración oficial de Pydantic v2 para leer los modelos de SQLAlchemy
-    model_config = ConfigDict(from_attributes=True)
+    motivo: str | None
+    fecha_cambio: str
+    usuario_id: str | None
+    version: int
