@@ -58,6 +58,13 @@ from app.composition.container.role import (
     get_role_use_case,
     get_update_role_use_case,
 )
+from app.composition.container.used_part import (
+    get_create_used_part_use_case,
+    get_delete_used_part_use_case,
+    get_get_used_part_use_case,
+    get_list_used_parts_use_case,
+    get_update_used_part_use_case,
+)
 
 __all__ = [
     # Common
@@ -107,4 +114,10 @@ __all__ = [
     # Preferences
     "get_update_preference_use_case",
     "get_user_preference_use_case",
+    # Used Parts
+    "get_create_used_part_use_case",
+    "get_delete_used_part_use_case",
+    "get_get_used_part_use_case",
+    "get_list_used_parts_use_case",
+    "get_update_used_part_use_case",
 ]
