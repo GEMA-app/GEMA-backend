@@ -14,6 +14,7 @@ class ListAssetsUseCase:
     async def execute(
         self, company_id_str: str, offset: int, limit: int, filters: dict[str, Any] | None = None
     ) -> tuple[list[AssetResponse], int]:
+        """Lista los activos de una empresa con paginación y filtros."""
         company_id = CompanyId.from_string(company_id_str)
         async with self.uow:
             assets, total = await self.uow.assets.list_by_company(
@@ -31,8 +32,13 @@ class ListAssetsUseCase:
                     fecha_adquisicion=a.fecha_adquisicion.isoformat()
                     if a.fecha_adquisicion
                     else None,
-                    valor_monetario=a.valor_monetario,
+                    valor_monetario=(
+                        float(a.valor_monetario)
+                        if a.valor_monetario is not None
+                        else None
+                    ),
                     moneda=a.moneda,
+                    version=a.version,
                 )
                 for a in assets
             ]

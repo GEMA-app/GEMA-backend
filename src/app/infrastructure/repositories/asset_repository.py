@@ -1,6 +1,7 @@
+"""Repositorio de activos físicos con SQLAlchemy asíncrono."""
+
 from typing import Any
 
-from sqlalchemy import delete as sql_delete
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,11 +10,11 @@ from app.domain.entities import Asset
 from app.domain.events import DomainEvent
 from app.domain.value_objects import AssetId, CompanyId, LocationId
 from app.infrastructure.db.models.asset import AssetModel
-from app.infrastructure.repositories.base import SqlAlchemyRepository
+from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 
 
 class SqlAlchemyAssetRepository(
-    SqlAlchemyRepository[AssetModel, Asset, AssetId], AssetRepositoryPort
+    SqlAlchemyTenantRepository[AssetModel, Asset, AssetId], AssetRepositoryPort
 ):
     """Implementación en SQLAlchemy para el puerto de repositorio de Activos."""
 
@@ -36,6 +37,7 @@ class SqlAlchemyAssetRepository(
             fecha_adquisicion=entity.fecha_adquisicion,
             valor_monetario=entity.valor_monetario,
             moneda=entity.moneda,
+            version=entity.version,
         )
 
     def _to_entity(self, model: AssetModel) -> Asset:
@@ -48,25 +50,25 @@ class SqlAlchemyAssetRepository(
             codigo_activo=model.codigo_activo,
             estado=model.estado,
             fecha_adquisicion=model.fecha_adquisicion,
-            valor_monetario=float(model.valor_monetario)
-            if model.valor_monetario is not None
-            else None,
+            valor_monetario=model.valor_monetario,
             moneda=model.moneda,
+            version=model.version,
         )
-
-    async def get_by_id(self, id: AssetId, empresa_id: CompanyId) -> Asset | None:  # type: ignore[override]
-        stmt = select(AssetModel).where(
-            AssetModel.id == id.value, AssetModel.empresa_id == empresa_id.value
-        )
-        result = await self.session.execute(stmt)
-        model = result.scalar_one_or_none()
-        if not model:
-            return None
-        return self._to_entity(model)
 
     async def list_by_company(
         self, empresa_id: CompanyId, offset: int, limit: int, filters: dict[str, Any] | None = None
     ) -> tuple[list[Asset], int]:
+        """Lista los activos de una empresa con soporte de filtros y paginación.
+
+        Args:
+            empresa_id: Identificador de la empresa.
+            offset: Número de registros a omitir.
+            limit: Número máximo de registros a retornar.
+            filters: Diccionario opcional con filtros de búsqueda (estado, ubicacion_id, search).
+
+        Returns:
+            Una tupla con la lista de entidades de tipo Asset encontradas y el conteo total.
+        """
         from sqlalchemy import func
 
         stmt = select(AssetModel).where(AssetModel.empresa_id == empresa_id.value)
@@ -95,13 +97,7 @@ class SqlAlchemyAssetRepository(
         count_res = await self.session.execute(count_stmt)
         total = count_res.scalar_one()
 
-        stmt = stmt.offset(offset).limit(limit)
+        stmt = stmt.offset(offset).limit(limit).order_by(AssetModel.id)
         result = await self.session.execute(stmt)
         models = result.scalars().all()
         return [self._to_entity(m) for m in models], total
-
-    async def delete(self, id: AssetId, empresa_id: CompanyId) -> None:  # type: ignore[override]
-        stmt = sql_delete(AssetModel).where(
-            AssetModel.id == id.value, AssetModel.empresa_id == empresa_id.value
-        )
-        await self.session.execute(stmt)

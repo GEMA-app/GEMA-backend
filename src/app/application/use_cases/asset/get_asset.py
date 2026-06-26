@@ -11,6 +11,7 @@ class GetAssetUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str, asset_id_str: str) -> AssetResponse:
+        """Obtiene un activo por su ID."""
         company_id = CompanyId.from_string(company_id_str)
         asset_id = AssetId.from_string(asset_id_str)
 
@@ -32,6 +33,11 @@ class GetAssetUseCase:
                 fecha_adquisicion=asset.fecha_adquisicion.isoformat()
                 if asset.fecha_adquisicion
                 else None,
-                valor_monetario=asset.valor_monetario,
+                valor_monetario=(
+                    float(asset.valor_monetario)
+                    if asset.valor_monetario is not None
+                    else None
+                ),
                 moneda=asset.moneda,
+                version=asset.version,
             )

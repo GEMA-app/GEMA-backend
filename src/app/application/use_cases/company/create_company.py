@@ -12,6 +12,7 @@ class CreateCompanyUseCase:
         self.uow = uow
 
     async def execute(self, request: CreateCompanyRequest) -> CompanyResponse:
+        """Registra una nueva empresa."""
         slug_val = request.slug or Slug.from_name(request.nombre).value
         slug = Slug(slug_val)
 
@@ -40,4 +41,5 @@ class CreateCompanyUseCase:
                 estado=company.estado.value,
                 plan_id=str(company.plan_id) if company.plan_id else None,
                 trial_hasta=company.trial_hasta.isoformat() if company.trial_hasta else None,
+                version=company.version,
             )

@@ -1,3 +1,5 @@
+"""Value Objects para credenciales de acceso: Email, PlainPassword, HashedPassword."""
+
 import re
 from dataclasses import dataclass
 
@@ -11,11 +13,23 @@ class Email:
     value: str
 
     def __post_init__(self) -> None:
-        if not self.value or not isinstance(self.value, str):
+        """Valida y normaliza la dirección de correo electrónico.
+
+        Raises:
+            InvalidEmailError: Si el email está vacío, no es un string o tiene formato inválido.
+        """
+        if self.value is None or not isinstance(self.value, str):
             raise InvalidEmailError("El correo electrónico no puede estar vacío.")
 
-        # Validación de formato de correo electrónico
-        pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+        object.__setattr__(self, 'value', self.value.strip().lower())
+        if not self.value:
+            raise InvalidEmailError("El correo electrónico no puede estar vacío.")
+
+        pattern = (
+            r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]"
+            r"(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?"
+            r"(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+        )
         if not re.match(pattern, self.value):
             raise InvalidEmailError(
                 f"El correo electrónico '{self.value}' tiene un formato inválido."
@@ -29,6 +43,11 @@ class PlainPassword:
     value: str
 
     def __post_init__(self) -> None:
+        """Valida la fortaleza de la contraseña.
+
+        Raises:
+            WeakPasswordError: Si la contraseña no cumple los requisitos mínimos.
+        """
         if not self.value or len(self.value) < 8:
             raise WeakPasswordError("La contraseña debe tener al menos 8 caracteres.")
         if not re.search(r"[A-Z]", self.value):
@@ -46,5 +65,10 @@ class HashedPassword:
     value: str
 
     def __post_init__(self) -> None:
+        """Valida que el hash de contraseña no esté vacío.
+
+        Raises:
+            EmptyHashedPasswordError: Si el hash está vacío.
+        """
         if not self.value or not isinstance(self.value, str):
             raise EmptyHashedPasswordError("El hash de la contraseña no puede estar vacío.")

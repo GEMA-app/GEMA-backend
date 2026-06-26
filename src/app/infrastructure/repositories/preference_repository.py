@@ -1,3 +1,5 @@
+"""Repositorio de preferencias de usuario con SQLAlchemy asíncrono."""
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,7 +8,7 @@ from app.domain.entities import UserPreference
 from app.domain.enums import Theme
 from app.domain.events import DomainEvent
 from app.domain.value_objects import CompanyId, UserId
-from app.infrastructure.db.models.preferences import UserPreferenceModel
+from app.infrastructure.db.models.preference import UserPreferenceModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
 
 
@@ -15,6 +17,8 @@ class SqlAlchemyPreferenceRepository(
     PreferenceRepositoryPort,
 ):
     """Implementación en SQLAlchemy para el puerto de Preferencias."""
+
+    pk_column = "usuario_id"
 
     def __init__(
         self, session: AsyncSession, pending_events: list[DomainEvent] | None = None
@@ -26,6 +30,7 @@ class SqlAlchemyPreferenceRepository(
             usuario_id=entity.usuario_id.value,
             empresa_id=entity.empresa_id.value,
             tema=entity.tema.value,
+            version=entity.version,
         )
 
     def _to_entity(self, model: UserPreferenceModel) -> UserPreference:
@@ -33,18 +38,10 @@ class SqlAlchemyPreferenceRepository(
             usuario_id=UserId(model.usuario_id),
             empresa_id=CompanyId(model.empresa_id),
             tema=Theme(model.tema),
+            version=model.version,
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
-
-    async def get_by_id(self, id: UserId) -> UserPreference | None:
-        """Sobrescribe get_by_id del base porque la PK no se llama 'id'."""
-        stmt = select(UserPreferenceModel).where(
-            UserPreferenceModel.usuario_id == id.value
-        )
-        result = await self.session.execute(stmt)
-        model = result.scalar_one_or_none()
-        return self._to_entity(model) if model else None
 
     async def get_by_user(
         self, usuario_id: UserId, empresa_id: CompanyId

@@ -52,7 +52,7 @@ La dependencia siempre fluye hacia adentro: las capas externas dependen de las i
 GEMA es una plataforma SaaS multi-tenant que implementa aislamiento a nivel de base de datos usando discriminación por columna.
 - **Tenant**: Cada empresa registrada representa un tenant único con su `empresa_id` (UUID).
 - **Aislamiento**: Los modelos ORM multi-tenant heredan de `TenantMixin` el cual añade automáticamente la clave foránea `empresa_id` con índice a nivel de base de datos.
-- **Flujo de Onboarding SaaS**: Al registrar un nuevo usuario mediante `/v1/auth/register`, el sistema:
+- **Flujo de Onboarding SaaS**: Al registrar un nuevo usuario mediante `/v1/auth/registrar`, el sistema:
   1. Crea automáticamente una nueva empresa (`Company`).
   2. Crea el usuario (`User`) vinculado a dicha empresa (`empresa_id`).
   3. Genera un rol con nombre "Administrador" que contiene todos los permisos del sistema.
@@ -64,9 +64,9 @@ GEMA es una plataforma SaaS multi-tenant que implementa aislamiento a nivel de b
 La autorización se basa en roles y permisos específicos asignados a nivel de tenant:
 - **Roles**: Entidad `Role` definida por empresa (`empresa_id`) con su lista de permisos granularizados.
 - **Permisos**: Value Object `Permission` que define permisos granulares por módulo y acciones CRUD:
-  - **Módulos (`PermissionModule`)**: `assets` (Activos), `maintenance` (Mantenimiento), `inventory` (Inventario), `reports` (Reportes), `admin` (Administración del sistema).
+  - **Módulos (`PermissionModule`)**: `assets` (Activos), `maintenance` (Mantenimiento), `inventory` (Inventario), `reports` (Reportes), `admin` (Administración del sistema), `preferences` (Preferencias).
   - **Acciones**: `view` (Visualizar), `create` (Crear), `edit` (Editar), `delete` (Eliminar).
-- **Decorador de Seguridad**: Los endpoints REST validan permisos en tiempo de ejecución usando la dependencia `Depends(require_permission(modulo, accion))`.
+- **Decorador de Seguridad**: Los endpoints REST validan permisos en tiempo de ejecución usando la dependencia `Depends(require_permission(modulo, accion, company_id))`. La función `require_permission()` ahora incluye validación de tenant: verifica que el `company_id` del path coincida con la empresa del token JWT, además del permiso RBAC.
 
 ### Flujo de una Request
 
@@ -75,7 +75,7 @@ Request HTTP
 
   → Middlewares (RequestId → ContentType → Accept → RateLimit)
   → Router FastAPI (v1)
-  → Endpoint (FastAPI valida Token y verifica Permiso RBAC por dependencia)
+  → Endpoint (FastAPI valida Token + Tenant + Permiso RBAC por dependencia require_permission())
   → Composition Root (resuelve dependencias en el paquete composition/container)
   → Use Case (orquesta la lógica de negocio y abre transacción vía UoW)
   → Domain Entity (ejecuta reglas de negocio, valida invariantes y genera eventos)
@@ -105,6 +105,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   ├── entities/                    # Paquete modular de entidades
 │   │   │   ├── __init__.py              # Exporta User, Company, Role, Permission, Asset, Location
 │   │   │   ├── user.py                  # Entidad User con empresa_id, nombre, teléfono y roles asignados
+│   │   │   ├── preference.py           # Entidad UserPreference (método change_theme(), themes, pk)
 │   │   │   ├── company.py               # Entidad Company
 │   │   │   ├── role.py                  # Entidad Role
 │   │   │   ├── permission.py            # Entidad Permission (Value Object)
@@ -113,11 +114,11 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   ├── exceptions/                  # Paquete modular de excepciones del dominio
 │   │   │   ├── __init__.py              # Re-exporta todas las excepciones para retrocompatibilidad
 │   │   │   ├── base.py                  # Clase base DomainException
-│   │   │   └── auth.py, company.py, role.py, permission.py, asset.py, location.py
+│   │   │   └── auth.py, company.py, role.py, permission.py, asset.py, location.py, preference.py
 │   │   └── value_objects/               # Paquete modular de objetos de valor
 │   │       ├── __init__.py              # Re-exporta todos los value objects
-│   │       ├── credentials.py           # Email, PlainPassword, HashedPassword
-│   │       ├── identifiers.py           # UserId, CompanyId, RoleId, AssetId, LocationId
+│   │       ├── credential.py           # Email, PlainPassword, HashedPassword
+│   │       ├── identifier.py           # UserId, CompanyId, RoleId, AssetId, LocationId
 │   │       └── slug.py                  # Slug URL-friendly para empresas
 │   ├── application/
 │   │   ├── dtos/                        # Paquete modular de DTOs
@@ -125,13 +126,15 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   │   ├── company_dtos.py
 │   │   │   ├── role_dtos.py
 │   │   │   ├── asset_dtos.py
-│   │   │   └── location_dtos.py
+│   │   │   ├── location_dtos.py
+│   │   │   └── preference_dtos.py
 │   │   ├── ports/
 │   │   │   ├── auth.py                  # PasswordHasherPort, TokenServicePort
 │   │   │   ├── company_repository.py
 │   │   │   ├── role_repository.py
 │   │   │   ├── asset_repository.py
 │   │   │   ├── location_repository.py
+│   │   │   ├── preference_repository.py # PreferenceRepositoryPort (interfaz con pk_column)
 │   │   │   ├── repository.py            # UserRepositoryPort
 │   │   │   └── unit_of_work.py          # UnitOfWorkPort
 │   │   ├── services/
@@ -147,6 +150,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │       ├── company/                 # CRUD de empresas
 │   │       ├── role/                    # CRUD de roles, assign/revoke a usuario
 │   │       ├── asset/                   # CRUD de activos
+│   │       ├── preference/              # CRUD de preferencias de usuario
 │   │       └── location/                # CRUD de ubicaciones y reconstrucción de árbol jerárquico
 │   ├── infrastructure/
 │   │   ├── config/
@@ -163,14 +167,16 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │   │       ├── role.py              # RoleModel, PermissionModel, RoleUserModel
 │   │   │       ├── asset.py             # AssetModel
 │   │   │       ├── location.py          # LocationModel (autocontrol de jerarquía)
+│   │   │       ├── preference.py       # UserPreferenceModel (modelo ORM de preferencias)
 │   │   │       └── catalog.py           # Modelos de catálogo (placeholder)
 │   │   ├── repositories/                # Adapters concretos de persistencia
-│   │   │   ├── base.py                  # SqlAlchemyRepository genérico
+│   │   │   ├── base.py                  # SqlAlchemyRepository genérico con pk_column como atributo de clase
 │   │   │   ├── user_repository.py
 │   │   │   ├── company_repository.py
 │   │   │   ├── role_repository.py
 │   │   │   ├── asset_repository.py
-│   │   │   └── location_repository.py
+│   │   │   ├── location_repository.py
+│   │   │   └── preference_repository.py # SqlAlchemyPreferenceRepository (pk_column = "usuario_id")
 │   │   ├── security/
 │   │   │   ├── hashing.py              # BcryptPasswordHasher
 │   │   │   ├── jwt.py                  # PyJwtTokenService
@@ -194,18 +200,20 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 │   │       └── v1/
 │   │           ├── router.py            # v1_router con endpoints registrados
 │   │           ├── endpoints/
-│   │           │   ├── auth.py          # /v1/auth/ (register, login, logout, refresh, me)
-│   │           │   ├── companies.py     # /v1/companies
-│   │           │   ├── roles.py         # /v1/companies/{company_id}/roles
-│   │           │   ├── assets.py        # /v1/companies/{company_id}/assets
-│   │           │   └── locations.py     # /v1/companies/{company_id}/locations
+│   │           │   ├── auth.py          # /v1/auth/ (registrar, ingresar, refrescar, cerrar-sesion, yo)
+│   │           │   ├── companies.py     # /v1/empresas
+│   │           │   ├── roles.py         # /v1/empresas/{empresa_id}/roles
+│   │           │   ├── assets.py        # /v1/empresas/{empresa_id}/activos
+│   │           │   ├── locations.py     # /v1/empresas/{empresa_id}/ubicaciones
+│   │           │   └── preferences.py   # /v1/empresas/{empresa_id}/yo/preferencias (protegido con require_permission)
 │   │           └── schemas/             # Schemas de validación y representación JSON:API
 │   │               ├── jsonapi_base.py
 │   │               ├── auth.py
 │   │               ├── company.py
 │   │               ├── role.py
 │   │               ├── asset.py
-│   │               └── location.py
+│   │               ├── location.py
+│   │               └── preferences.py
 │   └── composition/
 │       └── container/                   # Paquete modular de inyección de dependencias
 │           ├── __init__.py              # Re-exporta todas las fábricas
@@ -228,6 +236,7 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 ### Idioma
 
 - **Código fuente**: identificadores en inglés (`User`, `register`, `get_by_email`)
+- **Rutas de la API REST**: en español (ej: `/v1/auth/registrar`, `/v1/empresas/{empresa_id}/activos`)
 - **Docstrings y comentarios**: en español
 - **Mensajes de error de dominio**: en español
 - **Nombres de archivos**: snake_case en inglés
@@ -253,6 +262,14 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 | `LocationNotFoundError` | 404 | Ubicación no encontrada |
 | `LocationCircularReferenceError` | 422 | Error en la jerarquía (referencia circular) |
 | `LocationInvalidTypeHierarchyError`| 422 | Tipo de ubicación inconsistente con su padre |
+| `PreferenceNotFoundError` | 404 | Preferencias de usuario no encontradas |
+| `PreferenceThemeInvalidError` | 422 | El tema visual especificado no es válido |
+| `AssetInvalidTransitionError` | 422 | Transición de estado no permitida |
+| `EmptySerialError` | 422 | Número de serie vacío |
+| `EmptyAssetCodeError` | 422 | Código de activo vacío |
+| `CompanyAlreadyCancelledError` | 422 | Empresa ya cancelada |
+| `CompanyNotSuspendedError` | 422 | Empresa no está suspendida |
+| `EmptyLocationNameError` | 422 | Nombre de ubicación vacío |
 
 ---
 
@@ -260,36 +277,128 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 
 | Método | Ruta | Descripción | Auth | Permiso RBAC |
 |--------|------|-------------|------|--------------|
-| `POST` | `/v1/auth/register` | Registro de usuario (Onboarding SaaS) | No | - |
-| `POST` | `/v1/auth/login` | Inicio de sesión | No | - |
-| `POST` | `/v1/auth/refresh` | Rotación de tokens | No | - |
-| `POST` | `/v1/auth/logout` | Cierre de sesión | Bearer | - |
-| `GET` | `/v1/auth/me` | Perfil del usuario actual | Bearer | - |
-| `POST` | `/v1/companies` | Crear una nueva empresa | Bearer | `admin:create` |
-| `GET` | `/v1/companies` | Listar empresas | Bearer | - |
-| `GET` | `/v1/companies/{id}` | Obtener una empresa | Bearer | - |
-| `PATCH` | `/v1/companies/{id}` | Actualizar datos de empresa | Bearer | `admin:edit` |
-| `DELETE` | `/v1/companies/{id}` | Eliminar empresa | Bearer | `admin:delete` |
-| `POST` | `/v1/companies/{cid}/roles` | Crear nuevo rol | Bearer | `admin:create` |
-| `GET` | `/v1/companies/{cid}/roles` | Listar todos los roles | Bearer | - |
-| `GET` | `/v1/companies/{cid}/roles/{id}` | Obtener detalles de un rol | Bearer | - |
-| `PATCH` | `/v1/companies/{cid}/roles/{id}`| Actualizar rol y permisos | Bearer | `admin:edit` |
-| `DELETE` | `/v1/companies/{cid}/roles/{id}`| Eliminar un rol | Bearer | `admin:delete` |
-| `POST` | `/v1/companies/{cid}/roles/{id}/assign`| Asignar rol a usuario | Bearer | `admin:edit` |
-| `DELETE`| `/v1/companies/{cid}/roles/{id}/revoke`| Revocar rol a usuario (query: `usuario_id`)| Bearer | `admin:edit` |
-| `POST` | `/v1/companies/{cid}/assets` | Crear un activo físico | Bearer | `assets:create` |
-| `GET` | `/v1/companies/{cid}/assets` | Listar activos (filtros: `estado`, `ubicacion_id`)| Bearer | `assets:view` |
-| `GET` | `/v1/companies/{cid}/assets/{id}` | Obtener detalles de un activo | Bearer | `assets:view` |
-| `PATCH` | `/v1/companies/{cid}/assets/{id}` | Actualizar datos de activo | Bearer | `assets:edit` |
-| `DELETE` | `/v1/companies/{cid}/assets/{id}` | Eliminar activo | Bearer | `assets:delete` |
-| `POST` | `/v1/companies/{cid}/locations` | Crear ubicación jerárquica | Bearer | `admin:create` |
-| `GET` | `/v1/companies/{cid}/locations` | Obtener árbol de ubicaciones completo | Bearer | - |
-| `GET` | `/v1/companies/{cid}/locations/{id}`| Obtener detalles de ubicación | Bearer | - |
-| `PATCH` | `/v1/companies/{cid}/locations/{id}`| Actualizar ubicación | Bearer | `admin:edit` |
-| `DELETE` | `/v1/companies/{cid}/locations/{id}`| Eliminar ubicación | Bearer | `admin:delete` |
-| `GET` | `/v1/companies/{cid}/locations/{id}/children`| Listar ubicaciones hijas directas | Bearer | - |
-| `GET` | `/health/live` | Liveness probe | No | - |
-| `GET` | `/health/ready` | Readiness probe (DB + Redis) | No | - |
+| `POST` | `/v1/auth/registrar` | Registro de usuario (Onboarding SaaS) | No | - |
+| `POST` | `/v1/auth/ingresar` | Inicio de sesión | No | - |
+| `POST` | `/v1/auth/refrescar` | Rotación de tokens | No | - |
+| `POST` | `/v1/auth/cerrar-sesion` | Cierre de sesión | Bearer | - |
+| `GET` | `/v1/auth/yo` | Perfil del usuario actual | Bearer | - |
+| `POST` | `/v1/auth/cambiar-contrasena` | Cambiar contraseña del usuario actual | Bearer | - |
+| `POST` | `/v1/auth/olvide-contrasena` | Solicitar reset de contraseña | No | - |
+| `POST` | `/v1/auth/restablecer-contrasena` | Restablecer contraseña con token | No | - |
+| `POST` | `/v1/empresas` | Crear una nueva empresa | Bearer | `admin:create` |
+| `GET` | `/v1/empresas` | Listar empresas | Bearer | - |
+| `GET` | `/v1/empresas/{empresa_id}` | Obtener una empresa | Bearer | - |
+| `PATCH` | `/v1/empresas/{empresa_id}` | Actualizar datos de empresa | Bearer | `admin:edit` |
+| `DELETE` | `/v1/empresas/{empresa_id}` | Eliminar empresa | Bearer | `admin:delete` |
+| `POST` | `/v1/empresas/{empresa_id}/roles` | Crear nuevo rol | Bearer | `admin:create` |
+| `GET` | `/v1/empresas/{empresa_id}/roles` | Listar todos los roles | Bearer | - |
+| `GET` | `/v1/empresas/{empresa_id}/roles/{rol_id}` | Obtener detalles de un rol | Bearer | - |
+| `PATCH` | `/v1/empresas/{empresa_id}/roles/{rol_id}`| Actualizar rol y permisos | Bearer | `admin:edit` |
+| `DELETE` | `/v1/empresas/{empresa_id}/roles/{rol_id}`| Eliminar un rol | Bearer | `admin:delete` |
+| `POST` | `/v1/empresas/{empresa_id}/roles/{rol_id}/asignar`| Asignar rol a usuario | Bearer | `admin:edit` |
+| `DELETE`| `/v1/empresas/{empresa_id}/roles/{rol_id}/revocar`| Revocar rol a usuario (query: `usuario_id`)| Bearer | `admin:edit` |
+| `POST` | `/v1/empresas/{empresa_id}/activos` | Crear un activo físico | Bearer | `assets:create` |
+| `GET` | `/v1/empresas/{empresa_id}/activos` | Listar activos (filtros: `estado`, `ubicacion_id`)| Bearer | `assets:view` |
+| `GET` | `/v1/empresas/{empresa_id}/activos/{activo_id}` | Obtener detalles de un activo | Bearer | `assets:view` |
+| `PATCH` | `/v1/empresas/{empresa_id}/activos/{activo_id}` | Actualizar datos de activo | Bearer | `assets:edit` |
+| `DELETE` | `/v1/empresas/{empresa_id}/activos/{activo_id}` | Eliminar activo | Bearer | `assets:delete` |
+| `POST` | `/v1/empresas/{empresa_id}/ubicaciones` | Crear ubicación jerárquica | Bearer | `admin:create` |
+| `GET` | `/v1/empresas/{empresa_id}/ubicaciones` | Obtener árbol de ubicaciones completo | Bearer | - |
+| `GET` | `/v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}`| Obtener detalles de ubicación | Bearer | - |
+| `PATCH` | `/v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}`| Actualizar ubicación | Bearer | `admin:edit` |
+| `DELETE` | `/v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}`| Eliminar ubicación | Bearer | `admin:delete` |
+| `GET` | `/v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}/hijos`| Listar ubicaciones hijas directas | Bearer | - |
+| `GET` | `/v1/empresas/{empresa_id}/yo/preferencias` | Obtener preferencias del usuario actual | Bearer | `preferencias:view` |
+| `PATCH` | `/v1/empresas/{empresa_id}/yo/preferencias` | Actualizar preferencias del usuario actual | Bearer | `preferencias:edit` |
+| `GET` | `/salud/activo` | Liveness probe | No | - |
+| `GET` | `/salud/listo` | Readiness probe (DB + Redis) | No | - |
+
+### Convención de Seguridad
+
+#### 1. Validación de Tenant (UUID Normalization)
+
+Todos los endpoints que reciben `empresa_id` en el path DEBEN normalizar el UUID antes de compararlo con el tenant del usuario autenticado. Esto previene bypass por diferencias de formato (con/sin guiones, mayúsculas/minúsculas).
+
+```python
+# CORRECTO: Normalización vía UUID()
+if UUID(empresa_id) != UUID(user_empresa_id):
+    raise InsufficientPermissionsError("No tienes acceso a esta empresa")
+```
+
+La función `validate_tenant_access()` en `dependencies.py` implementa esta normalización y se usa en:
+
+- `require_tenant_read()` — endpoints GET que solo necesitan validación de tenant (sin RBAC)
+- `require_permission()` — endpoints que necesitan tenant + RBAC
+
+#### 2. Tres Patrones de Dependencia
+
+| Patrón | Función | Cuándo usarlo |
+|--------|---------|---------------|
+| **Platform** | `require_platform_permission(module, action)` | Endpoints SIN `empresa_id` en el path (ej: `POST /v1/empresas`) |
+| **Tenant + RBAC** | `require_permission(module, action)` | Endpoints CON `empresa_id` en el path que requieren permiso específico |
+| **Solo Tenant** | `require_tenant_read` | Endpoints GET que solo necesitan verificar acceso al tenant (sin RBAC) |
+
+#### 3. Nomenclatura de Parámetros de Path
+
+Todos los parámetros de ID en los paths DEBEN usar el nombre específico de la entidad:
+
+| Endpoint | Incorrecto | Correcto |
+|----------|-----------|----------|
+| `/empresas/{id}` | `{id}` | `{empresa_id}` |
+| `/roles/{id}` | `{id}` | `{rol_id}` |
+| `/activos/{id}` | `{id}` | `{activo_id}` |
+| `/ubicaciones/{id}` | `{id}` | `{ubicacion_id}` |
+| `/ubicaciones/{id}/hijos` | `{id}` | `{ubicacion_id}` |
+
+Esto elimina ambigüedad y previene errores de tipo IDOR.
+
+#### 4. Mapeo de IntegrityError a 409 Conflict
+
+Las violaciones de unicidad en PostgreSQL se capturan en `integrity_error_handler` (Presentation) y se mapean a excepciones de dominio con HTTP 409 Conflict. El handler usa doble mecanismo de parsing:
+
+1. `__cause__.constraint_name` — asyncpg expone el nombre directamente
+2. `str(exc.orig)` — fallback para todos los drivers
+
+#### 5. Type Hints Correctos
+
+- `require_permission()` retorna `UserResponse`, no `Any`
+- `get_current_active_user()` retorna `UserResponse`, no `Any`
+- `require_tenant_read()` retorna `UserResponse`, no `Any`
+
+#### 6. Endpoints GET sin RBAC pero con Tenant Check
+
+Los siguientes endpoints GET usan `require_tenant_read` en lugar de `require_permission` porque no requieren un permiso RBAC específico, pero SÍ necesitan validar que el usuario pertenece al tenant:
+
+- `GET /v1/empresas/{empresa_id}`
+- `GET /v1/empresas/{empresa_id}/ubicaciones`
+- `GET /v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}`
+- `GET /v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}/hijos`
+- `GET /v1/empresas/{empresa_id}/roles`
+- `GET /v1/empresas/{empresa_id}/roles/{rol_id}`
+
+
+---
+
+## Estructura de Migraciones y Semillas (Seeds)
+
+### 1. Separación de Migraciones (DDL) y Semillas (DML)
+- **Migraciones (Esquema/DDL):** Ubicadas en `migrations/versions/`. Son inmutables una vez aplicadas en producción. Deben formar una cadena estrictamente lineal.
+  - *Regla Crítica:* Para que `alembic revision --autogenerate` detecte todos los modelos, `migrations/env.py` debe importar todos los modelos ORM (o el paquete `models` que los registra en `Base.metadata`).
+- **Semillas (Datos/DML):** Ubicadas en `migrations/seeds/`. Son archivos de datos de prueba volátiles y deben diseñarse para ser idempotentes (poder ejecutarse varias veces sin duplicar registros).
+
+### 2. Estructura de Semillas de Personal y Roles
+Para la inicialización del sistema en desarrollo y staging, se define una estructura estándar con **6 roles** granularizados por módulo en la empresa de pruebas:
+- **Administrador:** Acceso completo (puede_ver/crear/editar/eliminar) en todos los módulos.
+- **Supervisor de Activos:** CRUD en Activos, solo lectura en el resto (excepto Admin).
+- **Técnico de Mantenimiento:** CRUD en Mantenimiento, lectura en Activos e Inventario, creación en Reportes.
+- **Almacenista:** CRUD en Inventario, lectura en Activos y Reportes.
+- **Supervisor de Operaciones:** CRUD en Reportes, Mantenimiento e Inventario, lectura en Administración.
+- **Consultor:** Solo lectura en todos los módulos.
+
+El runner CLI en `migrations/seeds/runner.py` se ejecuta dentro del contenedor de la aplicación:
+```bash
+docker compose exec app python -m migrations.seeds.runner [dev|staging|test]
+```
 
 ---
 
@@ -306,9 +415,36 @@ Para mantener el alcance de entrega acotado y enfocado en el núcleo de negocio 
    - *Pendiente*: Módulos CRUD de negocio, use cases, y endpoints REST para la gestión de categorías y artículos de catálogo.
 
 3. **Flujo de Invitación de Usuarios a Empresas**:
-   - *Estado actual*: El registro actual (`/register`) implementa onboarding directo, el cual asume que cada registro crea una empresa nueva.
+   - *Estado actual*: El registro actual (`/v1/auth/registrar`) implementa onboarding directo, el cual asume que cada registro crea una empresa nueva.
    - *Pendiente*: Flujo de invitación por correo electrónico, validación de tokens de invitación y unión de usuarios a tenants preexistentes.
 
 4. **Outbox Pattern e integración asíncrona**:
    - *Estado actual*: Se despachan eventos en memoria de manera síncrona después de confirmar la transacción de base de datos (dual-write simplificado).
    - *Pendiente*: Persistencia outbox transaccional para garantizar entrega a nivel de infraestructura ("at least once") y procesamiento mediante colas de mensajes asíncronas.
+
+---
+## Decisiones Técnicas Diferidas (Technical Debt)
+
+Registro de decisiones técnicas que quedaron pendientes en cada plan de implementación.
+Cada entrada indica en qué plan se resolvió (si aplica).
+
+| # | Decisión | Plan que la difirió | Plan que la resolvió | Estado |
+|----|----------|---------------------|----------------------|--------|
+| 1 | Control de concurrencia en PATCH (lost updates) | v6 / v7 | **v8 — Optimistic Locking** | ✅ Resuelto |
+| 2 | Composition Root acoplado a FastAPI (Depends directo) | v6 / v7 | **v8 — Fábricas puras** | ✅ Resuelto |
+| 3 | `id` → `entity_id` en `base.py` (LSP violation, 6 repos) | v6 | **v7 — pk_column** | ✅ Resuelto |
+| 4 | Observabilidad (logging en use cases) | v6 / v7 | — | 🚫 Descartado |
+| 5 | Testing de módulo preferences | v6 / v7 | — | 🚫 Descartado |
+| 6 | H14: JWT no valida usuario activo en cada request | v4 v6 | **v8 — Ya cubierto** | ✅ Resuelto |
+| 7 | H15: Race condition en assign_role sin unique constraint en tabla pivote | v4 v6 | **v8 — INSERT + savepoint** | ✅ Resuelto |
+| 8 | H16: IDOR potencial: get_by_id no filtra por empresa (tenant isolation) | v4 v6 | **v8 — Repos tenant-aware** | ✅ Resuelto |
+| 9 | H17: Lost updates en PATCH sin optimistic locking | v4 v6 | **v8 — Optimistic Locking** | ✅ Resuelto |
+| 10 | H18: Permisos regeneran UUID en cada _to_model (cubierto en P3k) | v4 v6 | **v8 — Documentado** | ✅ Resuelto |
+| 11 | H19: Email regex básico (no RFC 5321) en credential.py | v4 v6 | **v8 — Regex RFC 5321** | ✅ Resuelto |
+| 12 | H20: Sin rate limiting por email en rate_limit.py | v4 v6 | **v8 — Dependencia FastAPI** | ✅ Resuelto |
+| 13 | `# type: ignore[override]` en repositorios multi-tenant (violación LSP documentada; `*args`/`**kwargs` descartado porque empeora type safety) | Infra v8 | **v8 — TenantRepository** | ✅ Resuelto |
+| 14 | Código muerto: `get_by_email_and_company()` en `UserRepositoryPort` — definido e implementado pero ningún use case lo invoca | Infra v8 | **v8 — Documentado** | ✅ Resuelto |
+| 15 | `OUTBOX_ENABLED` flag muerta en settings.py (no consultada en uow.py ni en ningún otro lado) + latencia del bus síncrono dentro del request HTTP | Infra v8 | **v8 — Eliminado** | ✅ Resuelto |
+| 16 | `email` en UserModel sin `unique=True` global; `get_by_email()` en `user_repository.py` no filtra por `empresa_id` | Infra v8 | **v8 — Documentado global** | ✅ Resuelto |
+| 17 | Bug en save() de repositorios base (state.key era siempre None en modelos transientes, forzando session.add() en lugar de merge(), lo que rompía updates) | Infra v8 | **v8.1 — session.merge()** | ✅ Resuelto |
+

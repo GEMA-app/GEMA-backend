@@ -11,6 +11,7 @@ class GetLocationUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str, location_id_str: str) -> LocationResponse:
+        """Obtiene una ubicación por su ID."""
         company_id = CompanyId.from_string(company_id_str)
         location_id = LocationId.from_string(location_id_str)
 
@@ -28,4 +29,5 @@ class GetLocationUseCase:
                 nombre=location.nombre,
                 tipo=location.tipo.value,
                 descripcion=location.descripcion,
+                version=location.version,
             )

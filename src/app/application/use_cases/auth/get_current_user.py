@@ -1,6 +1,7 @@
-from app.application.dtos import UserResponse
+from app.application.dtos import GetCurrentUserRequest, UserResponse
 from app.application.ports.auth import TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.enums import CompanyStatus
 from app.domain.exceptions import InvalidTokenError, UserInactiveError
 from app.domain.value_objects import UserId
 
@@ -12,9 +13,12 @@ class GetCurrentUserUseCase:
         self.uow = uow
         self.token_service = token_service
 
-    async def execute(self, access_token: str) -> UserResponse:
-        """Decodifica el token de acceso, valida el estado del usuario y devuelve su perfil."""
-        claims = await self.token_service.decode_token(access_token)
+    async def execute(self, request: GetCurrentUserRequest) -> UserResponse:
+        """Decodifica el token de acceso, valida el estado del usuario y su empresa.
+
+        Devuelve su perfil.
+        """
+        claims = await self.token_service.decode_token(request.access_token)
 
         if claims.get("type") != "access":
             raise InvalidTokenError("Se requiere un token de acceso válido para esta operación.")
@@ -25,6 +29,13 @@ class GetCurrentUserUseCase:
             user = await self.uow.users.get_by_id(UserId.from_string(sub))
             if not user or not user.activo:
                 raise UserInactiveError("El usuario no existe o se encuentra inactivo.")
+
+            company = await self.uow.companies.get_by_id(user.empresa_id)
+            if company and company.estado != CompanyStatus.ACTIVE:
+                raise UserInactiveError("La empresa se encuentra suspendida o cancelada.")
+
+            assert user.created_at is not None
+            assert user.updated_at is not None
 
             return UserResponse(
                 id=str(user.id),

@@ -1,3 +1,5 @@
+"""Modelos ORM provisionales de SQLAlchemy para el catálogo de artículos."""
+
 import uuid
 
 from sqlalchemy import ForeignKey, Index, String, Text, UniqueConstraint
@@ -19,9 +21,8 @@ class ArticleCategoryModel(TenantMixin, TimestampMixin, Base):
     nombre: Mapped[str] = mapped_column(String(100), nullable=False)
     descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
 
-    # Relación con artículos del catálogo
     articulos: Mapped[list["CatalogArticleModel"]] = relationship(
-        "CatalogArticleModel", back_populates="categoria", cascade="all, delete-orphan"
+        "CatalogArticleModel", back_populates="categoria", cascade="save-update, merge"
     )
 
 
@@ -43,7 +44,6 @@ class CatalogArticleModel(TenantMixin, TimestampMixin, Base):
     modelo: Mapped[str | None] = mapped_column(String(100), nullable=True)
     unidad_medida: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
-    # Relación con la categoría
     categoria: Mapped[ArticleCategoryModel | None] = relationship(
         "ArticleCategoryModel", back_populates="articulos"
     )

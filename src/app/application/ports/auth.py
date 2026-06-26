@@ -42,10 +42,20 @@ class TokenServicePort(Protocol):
         """Devuelve el user_id asociado al token si es válido, None si no."""
         ...
 
+    async def consume_reset_token(self, token_hash: str) -> str | None:
+        """Obtiene y elimina el token de reset de forma atómica (GETDEL)."""
+        ...
+
     async def delete_reset_token(self, token_hash: str) -> None:
         """Elimina un token de reset de contraseña (single-use)."""
         ...
 
     async def delete_user_reset_tokens(self, user_id: str) -> None:
         """Invalida todos los tokens de reset activos para un usuario."""
+        ...
+
+    async def claim_token(self, jti: str, exp: int) -> bool:
+        """Intenta reclamar un token de forma atómica en Redis con un SET NX y TTL de 10s.
+        Devuelve True si el token fue reclamado con éxito, False si ya existía.
+        """
         ...

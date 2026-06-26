@@ -1,4 +1,4 @@
-import uuid
+
 
 from app.application.dtos.location_dtos import CreateLocationRequest, LocationResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
@@ -24,7 +24,7 @@ class CreateLocationUseCase:
 
         async with self.uow:
             parent_id = None
-            parent_tipo = None
+            parent_type = None
             if request.parent_id:
                 parent_id = LocationId.from_string(request.parent_id)
                 parent_loc = await self.uow.locations.get_by_id(parent_id, company_id)
@@ -32,17 +32,14 @@ class CreateLocationUseCase:
                     raise LocationNotFoundError(
                         f"La ubicación padre con ID '{request.parent_id}' no existe."
                     )
-                parent_tipo = parent_loc.tipo
+                parent_type = parent_loc.tipo
 
-            # Validar jerarquía de tipos
-            Location.validate_hierarchy(tipo, parent_tipo)
-
-            location = Location(
-                id=LocationId(uuid.uuid4()),
+            location = Location.create(
                 empresa_id=company_id,
                 parent_id=parent_id,
                 nombre=request.nombre.strip(),
                 tipo=tipo,
+                parent_type=parent_type,
                 descripcion=request.descripcion,
             )
 
@@ -56,4 +53,5 @@ class CreateLocationUseCase:
                 nombre=location.nombre,
                 tipo=location.tipo.value,
                 descripcion=location.descripcion,
+                version=location.version,
             )

@@ -11,6 +11,7 @@ class GetRoleUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str, role_id_str: str) -> RoleResponse:
+        """Obtiene un rol por su ID."""
         company_id = CompanyId.from_string(company_id_str)
         role_id = RoleId.from_string(role_id_str)
 
@@ -34,4 +35,5 @@ class GetRoleUseCase:
                     )
                     for p in role.permisos
                 ],
+                version=role.version,
             )

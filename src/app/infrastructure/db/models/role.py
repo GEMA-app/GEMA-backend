@@ -1,3 +1,5 @@
+"""Modelos ORM de SQLAlchemy para roles, permisos y asignaciones."""
+
 import uuid
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
@@ -7,7 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.domain.enums import PermissionModule
 from app.infrastructure.db.base import Base
-from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
+from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin, VersionMixin
 
 if TYPE_CHECKING:
     from app.infrastructure.db.models.user import UserModel
@@ -49,11 +51,10 @@ class PermissionModel(TenantMixin, TimestampMixin, Base):
     puede_editar: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     puede_eliminar: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
-    # Relación inversa con el rol
     rol: Mapped["RoleModel"] = relationship("RoleModel", back_populates="permisos")
 
 
-class RoleModel(TenantMixin, TimestampMixin, Base):
+class RoleModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla de roles."""
 
     __tablename__ = "roles"
@@ -63,12 +64,10 @@ class RoleModel(TenantMixin, TimestampMixin, Base):
     nombre: Mapped[str] = mapped_column(String(100), nullable=False)
     descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
 
-    # Relación uno-a-muchos con permisos
     permisos: Mapped[list[PermissionModel]] = relationship(
         "PermissionModel", back_populates="rol", cascade="all, delete-orphan", lazy="selectin"
     )
 
-    # Relación muchos-a-muchos con usuarios
     usuarios: Mapped[list["UserModel"]] = relationship(
-        "UserModel", secondary="roles_usuarios", back_populates="roles"
+        "UserModel", secondary="roles_usuarios", back_populates="roles", lazy="selectin"
     )

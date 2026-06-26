@@ -11,6 +11,7 @@ class GetLocationChildrenUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str, parent_id_str: str) -> list[LocationResponse]:
+        """Obtiene los hijos directos de una ubicación."""
         company_id = CompanyId.from_string(company_id_str)
         parent_id = LocationId.from_string(parent_id_str)
 
@@ -30,6 +31,7 @@ class GetLocationChildrenUseCase:
                     nombre=c.nombre,
                     tipo=c.tipo.value,
                     descripcion=c.descripcion,
+                    version=c.version,
                 )
                 for c in children
             ]

@@ -53,7 +53,11 @@ def _ensure_sender() -> SmtpNotificationSender:
 
 
 def _register_handlers(bus: InProcessEventBus) -> None:
-    """Registra los handlers de notificaciones en el bus de eventos."""
+    """Registra los handlers de notificaciones en el bus de eventos.
+
+    Args:
+        bus: El bus de eventos donde se registrarán los handlers.
+    """
     sender = _ensure_sender()
     # Las lambdas reciben DomainEvent (tipo del bus) y los handlers esperan subtipos
     # concretos. La coerción es segura porque el bus despacha por tipo concreto.
@@ -74,37 +78,96 @@ def _register_handlers(bus: InProcessEventBus) -> None:
 
 
 def get_uow() -> UnitOfWorkPort:
-    """Fábrica de dependencias para el Unit of Work de SQLAlchemy, inyectando el bus de eventos."""
+    """Fábrica de dependencias para el Unit of Work de SQLAlchemy.
+
+    Returns:
+        Una instancia de Unit of Work con el bus de eventos inyectado.
+    """
     return SqlAlchemyUnitOfWork(event_bus=_ensure_bus())
 
 
 def get_notification_sender() -> NotificationPort:
-    """Fábrica de dependencias para el adaptador de notificaciones."""
+    """Fábrica de dependencias para el adaptador de notificaciones.
+
+    Returns:
+        El adaptador singleton de notificaciones (SMTP).
+    """
     return _ensure_sender()
 
 
 def get_password_hasher() -> PasswordHasherPort:
-    """Fábrica de dependencias para el servicio de hashing con Bcrypt."""
+    """Fábrica de dependencias para el servicio de hashing con Bcrypt.
+
+    Returns:
+        Una instancia del servicio de hashing Bcrypt.
+    """
     return BcryptPasswordHasher()
 
 
+def create_token_service(redis_client: Redis) -> TokenServicePort:
+    """Crea una instancia pura del servicio de tokens JWT.
+
+    Args:
+        redis_client: Cliente Redis para la blocklist de tokens.
+
+    Returns:
+        Una instancia del servicio de tokens JWT vinculada al cliente Redis.
+    """
+    return PyJwtTokenService(redis_client)
+
+
+def create_authorization_service(uow: UnitOfWorkPort) -> AuthorizationService:
+    """Crea una instancia pura del servicio de autorización RBAC.
+
+    Args:
+        uow: Unidad de trabajo para consultar roles y permisos.
+
+    Returns:
+        Una instancia del servicio de autorización RBAC.
+    """
+    return RbacAuthorizationService(uow)
+
+
 async def get_token_service(redis: Redis = Depends(get_redis)) -> TokenServicePort:
-    """Fábrica de dependencias para el servicio de tokens JWT con Redis."""
-    return PyJwtTokenService(redis)
+    """Fábrica de dependencias para el servicio de tokens JWT con Redis.
+
+    Args:
+        redis: Cliente Redis inyectado por dependencia.
+
+    Returns:
+        El servicio de tokens JWT listo para ser inyectado.
+    """
+    return create_token_service(redis)
 
 
 async def get_authorization_service(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> AuthorizationService:
-    """Fábrica de dependencias para el servicio de autorización RBAC."""
-    return RbacAuthorizationService(uow)
+    """Fábrica de dependencias para el servicio de autorización RBAC.
+
+    Args:
+        uow: Unidad de trabajo inyectada por dependencia.
+
+    Returns:
+        El servicio de autorización RBAC listo para ser inyectado.
+    """
+    return create_authorization_service(uow)
 
 
 def get_db_engine() -> AsyncEngine:
-    """Devuelve la instancia global de AsyncEngine."""
+    """Devuelve la instancia global de AsyncEngine.
+
+    Returns:
+        La instancia global de AsyncEngine de SQLAlchemy para PostgreSQL.
+    """
     return engine
 
 
 def get_redis_client() -> Redis:
-    """Devuelve el cliente global de Redis."""
-    return redis_client  # type: ignore[no-any-return]
+    """Devuelve el cliente global de Redis.
+
+    Returns:
+        El cliente global de Redis.
+    """
+    from typing import cast
+    return cast(Redis, redis_client)

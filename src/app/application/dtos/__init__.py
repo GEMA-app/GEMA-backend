@@ -1,9 +1,14 @@
 from app.application.dtos.asset_dtos import AssetResponse, CreateAssetRequest, UpdateAssetRequest
 from app.application.dtos.auth_dtos import (
     AuthTokensDTO,
+    ChangePasswordRequest,
+    GetCurrentUserRequest,
     LoginUserRequest,
+    LogoutUserRequest,
     RefreshTokenRequest,
     RegisterUserRequest,
+    RequestPasswordResetRequest,
+    ResetPasswordRequest,
     UserResponse,
 )
 from app.application.dtos.company_dtos import (
@@ -17,6 +22,7 @@ from app.application.dtos.location_dtos import (
     LocationTreeResponse,
     UpdateLocationRequest,
 )
+from app.application.dtos.preference_dtos import PreferenceResponse, UpdatePreferenceRequest
 from app.application.dtos.role_dtos import (
     AssignRoleRequest,
     CreateRoleRequest,
@@ -27,9 +33,14 @@ from app.application.dtos.role_dtos import (
 
 __all__ = [
     "AuthTokensDTO",
+    "ChangePasswordRequest",
+    "GetCurrentUserRequest",
     "LoginUserRequest",
+    "LogoutUserRequest",
     "RefreshTokenRequest",
     "RegisterUserRequest",
+    "RequestPasswordResetRequest",
+    "ResetPasswordRequest",
     "UserResponse",
     "CreateCompanyRequest",
     "UpdateCompanyRequest",
@@ -46,4 +57,6 @@ __all__ = [
     "UpdateLocationRequest",
     "LocationResponse",
     "LocationTreeResponse",
+    "PreferenceResponse",
+    "UpdatePreferenceRequest",
 ]

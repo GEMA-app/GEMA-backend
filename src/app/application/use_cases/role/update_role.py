@@ -2,7 +2,12 @@ from app.application.dtos.role_dtos import PermissionDTO, RoleResponse, UpdateRo
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Permission
 from app.domain.enums import PermissionModule
-from app.domain.exceptions import RoleNameExistsError, RoleNotFoundError, ValidationException
+from app.domain.exceptions import (
+    RoleNameExistsError,
+    RoleNotFoundError,
+    StaleDataError,
+    ValidationException,
+)
 from app.domain.value_objects import CompanyId, RoleId
 
 
@@ -25,7 +30,15 @@ class UpdateRoleUseCase:
             if not role:
                 raise RoleNotFoundError(f"El rol con ID '{role_id_str}' no existe en esta empresa.")
 
-            if request.nombre is not None:
+            if request.version is not None and request.version != role.version:
+                raise StaleDataError(
+                    f"Conflicto de versión para rol: se esperaba {request.version}, "
+                    f"la actual es {role.version}."
+                )
+
+            if 'nombre' in request._fields_set:
+                if request.nombre is None:
+                    raise ValidationException("El nombre del rol no puede ser nulo.")
                 new_name = request.nombre.strip()
                 if not new_name:
                     raise ValidationException("El nombre del rol no puede estar vacío.")
@@ -39,20 +52,22 @@ class UpdateRoleUseCase:
                     )
                 role.nombre = new_name
 
-            if request.descripcion is not None:
-                role.descripcion = request.descripcion
+            if 'descripcion' in request._fields_set:
+                role.descripcion = request.descripcion or ""
 
-            if request.permisos is not None:
-                role.permisos = [
-                    Permission(
+            if 'permisos' in request._fields_set:
+                if request.permisos is None:
+                    raise ValidationException("Los permisos no pueden ser nulos.")
+                permisos_map = {}
+                for p in request.permisos:
+                    permisos_map[p.module] = Permission(
                         module=PermissionModule(p.module),
                         can_view=p.can_view,
                         can_create=p.can_create,
                         can_edit=p.can_edit,
                         can_delete=p.can_delete,
                     )
-                    for p in request.permisos
-                ]
+                role.permisos = list(permisos_map.values())
 
             await self.uow.roles.save(role)
             await self.uow.commit()
@@ -72,4 +87,5 @@ class UpdateRoleUseCase:
                     )
                     for p in role.permisos
                 ],
+                version=role.version,
             )

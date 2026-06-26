@@ -4,14 +4,17 @@ import sys
 from app.application.dtos import RegisterUserRequest
 from app.application.use_cases.auth import RegisterUserUseCase
 from app.domain.exceptions import CompanySlugExistsError, UserAlreadyExistsError
+from app.infrastructure.events.bus import InProcessEventBus
 from app.infrastructure.security.hashing import BcryptPasswordHasher
 from app.infrastructure.security.jwt import PyJwtTokenService
 from app.infrastructure.uow import SqlAlchemyUnitOfWork
 
 
 async def seed_admin() -> None:
+    """Siembra el usuario administrador base y la empresa por defecto en la base de datos."""
     print("Sembrando usuario base admin@gima.com...")
-    uow = SqlAlchemyUnitOfWork()
+    event_bus = InProcessEventBus()
+    uow = SqlAlchemyUnitOfWork(event_bus=event_bus)
     hasher = BcryptPasswordHasher()
     # PyJwtTokenService no necesita redis para generar tokens durante el registro
     token_service = PyJwtTokenService(None)  # type: ignore

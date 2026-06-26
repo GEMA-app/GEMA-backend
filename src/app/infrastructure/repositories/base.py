@@ -1,3 +1,5 @@
+"""Repositorio base genérico con CRUD para SQLAlchemy 2.0 asíncrono."""
+
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
 
@@ -14,12 +16,21 @@ IdT = TypeVar("IdT")
 class SqlAlchemyRepository(Generic[ModelT, EntityT, IdT], ABC):
     """Repositorio base con operaciones CRUD genéricas utilizando SQLAlchemy 2.0."""
 
+    pk_column: str = "id"
+
     def __init__(
         self,
         session: AsyncSession,
         model_class: type[ModelT],
         pending_events: list[DomainEvent] | None = None,
     ) -> None:
+        """Inicializa el repositorio con la sesión de base de datos y la clase de modelo.
+
+        Args:
+            session: Sesión asíncrona de SQLAlchemy.
+            model_class: La clase de modelo ORM asociada.
+            pending_events: Lista compartida para acumular eventos de dominio.
+        """
         self.session = session
         self.model_class = model_class
         self.pending_events = pending_events
@@ -42,17 +53,32 @@ class SqlAlchemyRepository(Generic[ModelT, EntityT, IdT], ABC):
                 self.pending_events.extend(events)
 
     async def save(self, entity: EntityT) -> None:
-        """Persiste o actualiza una entidad en el repositorio sin confirmar la transacción."""
+        """Persiste o actualiza una entidad en el repositorio sin confirmar la transacción.
+
+        Utiliza session.merge() para soportar correctamente operaciones de creación
+        y actualización sobre modelos con IDs generados en la aplicación.
+
+        Args:
+            entity: La entidad de dominio a guardar.
+        """
         model = self._to_model(entity)
         await self.session.merge(model)
         self._collect_events(entity)
 
 
     async def get_by_id(self, id: IdT) -> EntityT | None:
-        """Busca una entidad por su identificador único."""
+        """Busca una entidad por su identificador único.
+
+        Args:
+            id: El identificador único de la entidad.
+
+        Returns:
+            La entidad de dominio si fue encontrada; de lo contrario, None.
+        """
         # Se asume que 'id' es un objeto de valor que tiene una propiedad 'value'
         id_val = id.value if hasattr(id, "value") else id
-        stmt = select(self.model_class).where(self.model_class.id == id_val)  # type: ignore[attr-defined]
+        pk_attr = getattr(self.model_class, self.pk_column)
+        stmt = select(self.model_class).where(pk_attr == id_val)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
         if not model:
@@ -60,7 +86,12 @@ class SqlAlchemyRepository(Generic[ModelT, EntityT, IdT], ABC):
         return self._to_entity(model)
 
     async def delete(self, id: IdT) -> None:
-        """Elimina una entidad por su identificador único."""
+        """Elimina una entidad por su identificador único.
+
+        Args:
+            id: El identificador único de la entidad a eliminar.
+        """
         id_val = id.value if hasattr(id, "value") else id
-        stmt = delete(self.model_class).where(self.model_class.id == id_val)  # type: ignore[attr-defined]
+        pk_attr = getattr(self.model_class, self.pk_column)
+        stmt = delete(self.model_class).where(pk_attr == id_val)
         await self.session.execute(stmt)

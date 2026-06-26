@@ -1,15 +1,14 @@
 import uuid
+from decimal import Decimal
 
 from app.application.dtos.asset_dtos import AssetResponse, CreateAssetRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Asset
 from app.domain.enums import AssetStatus
 from app.domain.exceptions import (
-    AssetCodeExistsError,
-    AssetSerialExistsError,
     LocationNotFoundError,
 )
-from app.domain.value_objects import AssetId, CompanyId, LocationId
+from app.domain.value_objects import CompanyId, LocationId
 
 
 class CreateAssetUseCase:
@@ -19,6 +18,7 @@ class CreateAssetUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str, request: CreateAssetRequest) -> AssetResponse:
+        """Crea un activo y lo persiste."""
         company_id = CompanyId.from_string(company_id_str)
 
         async with self.uow:
@@ -33,31 +33,23 @@ class CreateAssetUseCase:
             else:
                 loc_id = None
 
-            # Verificar duplicados de código o serial en la misma empresa
-            assets, _ = await self.uow.assets.list_by_company(company_id, 0, 1000)
-            if any(
-                a.codigo_activo.lower() == request.codigo_activo.strip().lower() for a in assets
-            ):
-                raise AssetCodeExistsError(
-                    f"El activo con código '{request.codigo_activo}' ya existe en esta empresa."
-                )
-            if any(
-                a.serial_interno.lower() == request.serial_interno.strip().lower() for a in assets
-            ):
-                raise AssetSerialExistsError(
-                    f"El activo con serial '{request.serial_interno}' ya existe en esta empresa."
-                )
+            # Nota: La validación de unicidad case-insensitive se delega al
+            # índice funcional LOWER() en PostgreSQL. Si hay violación, el
+            # IntegrityError handler la captura y responde con 409 Conflict.
 
-            asset = Asset(
-                id=AssetId(uuid.uuid4()),
+            asset = Asset.create(
                 empresa_id=company_id,
                 articulo_id=uuid.UUID(request.articulo_id),
                 ubicacion_id=loc_id,
-                serial_interno=request.serial_interno.strip(),
-                codigo_activo=request.codigo_activo.strip(),
+                serial_interno=request.serial_interno.lower().strip(),
+                codigo_activo=request.codigo_activo.lower().strip(),
                 estado=AssetStatus(request.estado),
                 fecha_adquisicion=request.fecha_adquisicion,
-                valor_monetario=request.valor_monetario,
+                valor_monetario=(
+                    Decimal(request.valor_monetario)
+                    if request.valor_monetario is not None
+                    else None
+                ),
                 moneda=request.moneda,
             )
 
@@ -75,6 +67,11 @@ class CreateAssetUseCase:
                 fecha_adquisicion=asset.fecha_adquisicion.isoformat()
                 if asset.fecha_adquisicion
                 else None,
-                valor_monetario=asset.valor_monetario,
+                valor_monetario=(
+                    float(asset.valor_monetario)
+                    if asset.valor_monetario is not None
+                    else None
+                ),
                 moneda=asset.moneda,
+                version=asset.version,
             )

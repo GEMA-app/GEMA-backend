@@ -10,6 +10,7 @@ class DeleteLocationUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str, location_id_str: str) -> None:
+        """Elimina una ubicación por su ID."""
         company_id = CompanyId.from_string(company_id_str)
         location_id = LocationId.from_string(location_id_str)
 

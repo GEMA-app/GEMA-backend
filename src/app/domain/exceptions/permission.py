@@ -1,3 +1,5 @@
+"""Excepciones del módulo de permisos (permisos insuficientes)."""
+
 from app.domain.exceptions.base import DomainException
 
 

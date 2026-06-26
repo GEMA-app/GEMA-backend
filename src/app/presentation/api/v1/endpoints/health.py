@@ -1,19 +1,26 @@
+"""Endpoints de verificación de salud (liveness y readiness) de la aplicación.
+
+Define los probes de salud que permiten a los orquestadores
+(kubernetes, docker) verificar que la aplicación y sus dependencias
+externas (base de datos, Redis) están operativas.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.composition.container import get_db_engine, get_redis_client
 
-router = APIRouter(prefix="/health", tags=["health"])
+router = APIRouter(tags=["salud"])
 
 
-@router.get("/live", status_code=status.HTTP_200_OK, summary="Verificación de Liveness")
+@router.get("/salud/activo", status_code=status.HTTP_200_OK, summary="Verificación de Liveness")
 async def liveness() -> dict[str, str]:
     """Endpoint de liveness para verificar que el proceso de la aplicación está en ejecución."""
     return {"status": "ok"}
 
 
-@router.get("/ready", status_code=status.HTTP_200_OK, summary="Verificación de Readiness")
+@router.get("/salud/listo", status_code=status.HTTP_200_OK, summary="Verificación de Readiness")
 async def readiness(
     engine: AsyncEngine = Depends(get_db_engine),
     redis_client: Redis = Depends(get_redis_client),

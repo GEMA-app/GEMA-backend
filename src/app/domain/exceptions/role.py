@@ -1,5 +1,6 @@
+"""Excepciones del módulo de roles (no encontrado, nombre duplicado, nombre vacío)."""
+
 from app.domain.exceptions.base import DomainException
-from app.domain.exceptions.validation import ValidationException
 
 
 class RoleException(DomainException):
@@ -20,7 +21,17 @@ class RoleNameExistsError(RoleException):
     pass
 
 
-class EmptyRoleNameError(RoleException, ValidationException):
+class EmptyRoleNameError(RoleException):
     """Se lanza cuando el nombre de un rol está vacío."""
 
     pass
+
+
+class LastAdminRevocationError(RoleException):
+    """Se intentó revocar/eliminar el último rol de administrador de la empresa."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            "No se puede revocar el último rol de administrador de la empresa. "
+            "Asigne el rol a otro usuario primero."
+        )

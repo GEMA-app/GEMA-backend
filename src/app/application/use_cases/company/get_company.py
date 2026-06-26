@@ -11,6 +11,7 @@ class GetCompanyUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str) -> CompanyResponse:
+        """Obtiene una empresa por su ID."""
         company_id = CompanyId.from_string(company_id_str)
         async with self.uow:
             company = await self.uow.companies.get_by_id(company_id)
@@ -26,4 +27,5 @@ class GetCompanyUseCase:
                 estado=company.estado.value,
                 plan_id=str(company.plan_id) if company.plan_id else None,
                 trial_hasta=company.trial_hasta.isoformat() if company.trial_hasta else None,
+                version=company.version,
             )

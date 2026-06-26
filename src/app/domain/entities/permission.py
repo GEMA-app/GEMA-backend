@@ -1,3 +1,5 @@
+"""Value Object Permission — permisos CRUD para un módulo específico del sistema."""
+
 from dataclasses import dataclass
 
 from app.domain.enums import PermissionModule

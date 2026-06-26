@@ -1,3 +1,5 @@
+"""Modelos ORM de SQLAlchemy para empresas y planes de suscripción."""
+
 import uuid
 from datetime import date
 
@@ -6,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.domain.enums import CompanyStatus
 from app.infrastructure.db.base import Base
-from app.infrastructure.db.models.mixins import TimestampMixin
+from app.infrastructure.db.models.mixins import TimestampMixin, VersionMixin
 
 
 class SubscriptionPlanModel(TimestampMixin, Base):
@@ -21,11 +23,10 @@ class SubscriptionPlanModel(TimestampMixin, Base):
     max_usuarios: Mapped[int | None] = mapped_column(nullable=True)
     precio_mensual_usd: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
 
-    # Relación con empresas
     empresas: Mapped[list["CompanyModel"]] = relationship("CompanyModel", back_populates="plan")
 
 
-class CompanyModel(TimestampMixin, Base):
+class CompanyModel(VersionMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla de empresas (tenants)."""
 
     __tablename__ = "empresas"
@@ -45,7 +46,6 @@ class CompanyModel(TimestampMixin, Base):
     )
     trial_hasta: Mapped[date | None] = mapped_column(Date, nullable=True)
 
-    # Relación con el plan de suscripción
     plan: Mapped[SubscriptionPlanModel | None] = relationship(
         "SubscriptionPlanModel", back_populates="empresas"
     )

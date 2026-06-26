@@ -1,8 +1,11 @@
+"""Mixins reutilizables para modelos ORM: multi-tenant, timestamps y optimistic locking."""
+
 import uuid
 from datetime import UTC, datetime
+from typing import Any
 
 from sqlalchemy import DateTime, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, declared_attr, mapped_column
 
 
 class TenantMixin:
@@ -25,3 +28,14 @@ class TimestampMixin:
         onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
+
+
+class VersionMixin:
+    """Mixin para optimistic locking con columna de versión."""
+
+    version: Mapped[int] = mapped_column(default=1, nullable=False)
+
+    @declared_attr  # type: ignore[arg-type]
+    def __mapper_args__(cls) -> dict[str, Any]:
+        """Configura los argumentos del mapeador para el control de versiones."""
+        return {"version_id_col": cls.version}

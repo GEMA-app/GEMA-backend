@@ -10,6 +10,7 @@ class DeleteCompanyUseCase:
         self.uow = uow
 
     async def execute(self, company_id_str: str) -> None:
+        """Elimina una empresa por su ID."""
         company_id = CompanyId.from_string(company_id_str)
         async with self.uow:
             company = await self.uow.companies.get_by_id(company_id)

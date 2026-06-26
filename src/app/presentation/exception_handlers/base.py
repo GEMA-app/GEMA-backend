@@ -1,3 +1,7 @@
+"""Utilidad base para generar respuestas JSON:API estandarizadas.
+Define la función jsonapi_response usada por todos los manejadores.
+"""
+
 from collections.abc import Mapping
 
 from fastapi.responses import JSONResponse

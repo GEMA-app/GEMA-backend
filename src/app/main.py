@@ -23,6 +23,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("app_starting", env=settings.APP_ENV, version=settings.APP_VERSION)
     yield
     await engine.dispose()
+    await redis_client.close()
     logger.info("app_shutdown")
 
 

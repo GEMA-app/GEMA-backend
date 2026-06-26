@@ -1,11 +1,12 @@
+from decimal import Decimal
+
 from app.application.dtos.asset_dtos import AssetResponse, UpdateAssetRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import AssetStatus
 from app.domain.exceptions import (
-    AssetCodeExistsError,
     AssetNotFoundError,
-    AssetSerialExistsError,
     LocationNotFoundError,
+    StaleDataError,
     ValidationException,
 )
 from app.domain.value_objects import AssetId, CompanyId, LocationId
@@ -32,55 +33,69 @@ class UpdateAssetUseCase:
                     f"El activo con ID '{asset_id_str}' no existe en esta empresa."
                 )
 
-            if request.ubicacion_id is not None:
-                if request.ubicacion_id:
-                    loc_id = LocationId.from_string(request.ubicacion_id)
+            if request.version is not None and request.version != asset.version:
+                raise StaleDataError(
+                    f"Conflicto de versión para activo: se esperaba {request.version}, "
+                    f"la actual es {asset.version}."
+                )
+
+            if 'ubicacion_id' in request._fields_set:
+                if request.ubicacion_id is not None:
+                    u_id_str = request.ubicacion_id.strip()
+                    if not u_id_str:
+                        raise ValidationException("El ID de la ubicación no puede estar vacío.")
+                    loc_id = LocationId.from_string(u_id_str)
                     loc = await self.uow.locations.get_by_id(loc_id, company_id)
                     if not loc:
                         raise LocationNotFoundError(
-                            f"La ubicación con ID '{request.ubicacion_id}' no existe."
+                            f"La ubicación con ID '{u_id_str}' no existe."
                         )
-                    asset.ubicacion_id = loc_id
+                    asset.transfer_location(loc_id)
                 else:
-                    asset.ubicacion_id = None
+                    asset.transfer_location(None)
 
-            if request.codigo_activo is not None:
-                new_code = request.codigo_activo.strip()
+            if 'codigo_activo' in request._fields_set:
+                if request.codigo_activo is None:
+                    raise ValidationException("El código del activo no puede ser nulo.")
+                new_code = request.codigo_activo.lower().strip()
                 if not new_code:
                     raise ValidationException("El código del activo no puede estar vacío.")
-                assets, _ = await self.uow.assets.list_by_company(company_id, 0, 1000)
-                if any(
-                    a.codigo_activo.lower() == new_code.lower() and a.id != asset.id for a in assets
-                ):
-                    raise AssetCodeExistsError(
-                        f"El activo con código '{new_code}' ya existe en esta empresa."
-                    )
                 asset.codigo_activo = new_code
 
-            if request.serial_interno is not None:
-                new_serial = request.serial_interno.strip()
+            if 'serial_interno' in request._fields_set:
+                if request.serial_interno is None:
+                    raise ValidationException("El serial interno no puede ser nulo.")
+                new_serial = request.serial_interno.lower().strip()
                 if not new_serial:
                     raise ValidationException("El serial interno no puede estar vacío.")
-                assets, _ = await self.uow.assets.list_by_company(company_id, 0, 1000)
-                if any(
-                    a.serial_interno.lower() == new_serial.lower() and a.id != asset.id
-                    for a in assets
-                ):
-                    raise AssetSerialExistsError(
-                        f"El activo con serial '{new_serial}' ya existe en esta empresa."
-                    )
                 asset.serial_interno = new_serial
 
-            if request.estado is not None:
-                asset.estado = AssetStatus(request.estado)
+            if 'estado' in request._fields_set:
+                if request.estado is None:
+                    raise ValidationException("El estado no puede ser nulo.")
+                estado_destino = AssetStatus(request.estado)
+                if estado_destino == AssetStatus.UNDER_MAINTENANCE:
+                    asset.mark_as_under_maintenance()
+                elif estado_destino == AssetStatus.DECOMMISSIONED:
+                    asset.decommission()
+                elif estado_destino == AssetStatus.OPERATIONAL:
+                    asset.put_in_service()
+                elif estado_destino == AssetStatus.OUT_OF_SERVICE:
+                    asset.take_out_of_service()
 
-            if request.fecha_adquisicion is not None:
+            if 'fecha_adquisicion' in request._fields_set:
                 asset.fecha_adquisicion = request.fecha_adquisicion
 
-            if request.valor_monetario is not None:
-                asset.valor_monetario = request.valor_monetario
+            if 'valor_monetario' in request._fields_set:
+                asset.valor_monetario = (
+                    Decimal(request.valor_monetario)
+                    if request.valor_monetario is not None
+                    else None
+                )
 
-            if request.moneda is not None:
+            if 'moneda' in request._fields_set:
+                if request.moneda is None:
+                    raise ValidationException("La moneda no puede ser nula.")
                 asset.moneda = request.moneda
 
             await self.uow.assets.save(asset)
@@ -97,6 +112,11 @@ class UpdateAssetUseCase:
                 fecha_adquisicion=asset.fecha_adquisicion.isoformat()
                 if asset.fecha_adquisicion
                 else None,
-                valor_monetario=asset.valor_monetario,
+                valor_monetario=(
+                    float(asset.valor_monetario)
+                    if asset.valor_monetario is not None
+                    else None
+                ),
                 moneda=asset.moneda,
+                version=asset.version,
             )

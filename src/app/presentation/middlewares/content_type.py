@@ -1,3 +1,7 @@
+"""Middleware que valida el Content-Type de las solicitudes entrantes
+y fuerza el tipo application/vnd.api+json para endpoints JSON:API.
+"""
+
 from typing import Any
 
 from fastapi import status
@@ -19,7 +23,7 @@ class ContentTypeMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next: Any) -> Response:
         """Procesa y valida las peticiones entrantes."""
-        if request.method in ("POST", "PATCH", "DELETE"):
+        if request.method in ("POST", "PATCH"):
             content_type = request.headers.get("Content-Type", "")
             expected = "application/vnd.api+json"
             json_type = "application/json"

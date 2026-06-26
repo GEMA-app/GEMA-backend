@@ -1,13 +1,15 @@
+"""Modelo ORM de SQLAlchemy para la tabla de preferencias de usuario."""
+
 import uuid
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.infrastructure.db.base import Base
-from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
+from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin, VersionMixin
 
 
-class UserPreferenceModel(TenantMixin, TimestampMixin, Base):
+class UserPreferenceModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla preferencias_usuarios (1:1 con usuarios)."""
 
     __tablename__ = "preferencias_usuarios"

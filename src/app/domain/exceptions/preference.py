@@ -1,3 +1,5 @@
+"""Excepciones del módulo de preferencias de usuario."""
+
 from app.domain.exceptions.base import DomainException
 
 

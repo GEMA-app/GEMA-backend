@@ -1,3 +1,7 @@
+"""Middleware de rate limiting que limita el número de solicitudes
+por dirección IP usando Redis como almacén de contadores.
+"""
+
 import logging
 from typing import Any
 
@@ -42,7 +46,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next: Any) -> Response:
         """Aplica limitación de tasa a los endpoints configurados."""
-        path = request.url.path
+        path = request.url.path.rstrip("/")  # Normalizar trailing slash
 
         limit = None
         for suffix, route_limit in self.rate_limits.items():

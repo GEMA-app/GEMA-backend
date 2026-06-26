@@ -1,3 +1,7 @@
+"""Manejador de excepciones HTTP de Starlette. Convierte HTTPException
+de Starlette/FastAPI en respuestas JSON:API estándar.
+"""
+
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
