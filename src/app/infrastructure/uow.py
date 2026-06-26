@@ -12,11 +12,11 @@ from app.domain.exceptions import EventPublishError
 from app.infrastructure.db.session import async_session_factory
 from app.infrastructure.repositories.asset_repository import SqlAlchemyAssetRepository
 from app.infrastructure.repositories.company_repository import SqlAlchemyCompanyRepository
+from app.infrastructure.repositories.intervention_repository import SqlAlchemyInterventionRepository
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
 from app.infrastructure.repositories.preference_repository import SqlAlchemyPreferenceRepository
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
-from app.infrastructure.repositories.intervencion_repository import SqlAlchemyIntervencionRepository
 
 logger = structlog.get_logger()
 
@@ -49,7 +49,7 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         self.assets = SqlAlchemyAssetRepository(self.session, self._pending_events)
         self.locations = SqlAlchemyLocationRepository(self.session, self._pending_events)
         self.preferences = SqlAlchemyPreferenceRepository(self.session, self._pending_events)
-        self.intervenciones = SqlAlchemyIntervencionRepository(self.session, self._pending_events)
+        self.interventions = SqlAlchemyInterventionRepository(self.session, self._pending_events)
         return self
 
     async def __aexit__(self, exc_type: Any, exc_val: Any, tb: Any) -> None:
