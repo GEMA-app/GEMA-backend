@@ -1,4 +1,5 @@
 from app.application.ports.asset_repository import AssetRepositoryPort
+from app.application.ports.used_part_repository import UsedPartRepositoryPort
 from app.application.ports.auth import PasswordHasherPort, TokenServicePort
 from app.application.ports.company_repository import CompanyRepositoryPort
 from app.application.ports.event_bus import EventBusPort
@@ -21,4 +22,5 @@ __all__ = [
     "PasswordHasherPort",
     "TokenServicePort",
     "NotificationPort",
+    "UsedPartRepositoryPort",
 ]

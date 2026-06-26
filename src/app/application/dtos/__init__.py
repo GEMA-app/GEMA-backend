@@ -30,6 +30,12 @@ from app.application.dtos.role_dtos import (
     RoleResponse,
     UpdateRoleRequest,
 )
+from app.application.dtos.used_part_dtos import (
+    CreateUsedPartRequest,
+    UpdateUsedPartRequest,
+    UsedPartResponse,
+)
+
 
 __all__ = [
     "AuthTokensDTO",
@@ -59,4 +65,7 @@ __all__ = [
     "LocationTreeResponse",
     "PreferenceResponse",
     "UpdatePreferenceRequest",
+    "UsedPartResponse",
+    "CreateUsedPartRequest",
+    "UpdateUsedPartRequest",
 ]
