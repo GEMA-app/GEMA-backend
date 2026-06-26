@@ -177,7 +177,7 @@ class LocationId:
 
 
 @dataclass(frozen=True)
-class IntervencionId:
+class InterventionId:
     """Objeto de valor que representa el identificador único de una intervención técnica (UUID)."""
 
     value: uuid.UUID
@@ -187,14 +187,14 @@ class IntervencionId:
         return str(self.value)
 
     @classmethod
-    def from_string(cls, value: str) -> "IntervencionId":
-        """Crea un IntervencionId a partir de un string UUID.
+    def from_string(cls, value: str) -> "InterventionId":
+        """Crea un InterventionId a partir de un string UUID.
 
         Args:
             value: String con el UUID de la intervención.
 
         Returns:
-            Un nuevo IntervencionId.
+            Un nuevo InterventionId.
 
         Raises:
             InvalidUUIDError: Si el string no es un UUID válido.
@@ -210,6 +210,40 @@ class IntervencionId:
             raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
 
     @classmethod
-    def generar(cls) -> "IntervencionId":
+    def generar(cls) -> "InterventionId":
         """Genera un nuevo identificador aleatorio."""
         return cls(value=uuid.uuid4())
+
+
+@dataclass(frozen=True)
+class WorkOrderId:
+    """Objeto de valor que representa el identificador único de una orden de trabajo (UUID)."""
+
+    value: uuid.UUID
+
+    def __str__(self) -> str:
+        """Retorna la representación en cadena del UUID."""
+        return str(self.value)
+
+    @classmethod
+    def from_string(cls, value: str) -> "WorkOrderId":
+        """Crea un WorkOrderId a partir de un string UUID.
+
+        Args:
+            value: String con el UUID de la orden de trabajo.
+
+        Returns:
+            Un nuevo WorkOrderId.
+
+        Raises:
+            InvalidUUIDError: Si el string no es un UUID válido.
+        """
+        if not isinstance(value, str) or not value:
+            raise InvalidUUIDError(
+                f"El identificador debe ser un string no vacío, se recibió: "
+                f"{type(value).__name__}"
+            )
+        try:
+            return cls(value=uuid.UUID(value))
+        except (ValueError, AttributeError) as e:
+            raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e

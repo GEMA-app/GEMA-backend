@@ -33,18 +33,18 @@ from app.domain.exceptions.company import (
     EmptyCompanyNameError,
 )
 from app.domain.exceptions.event_bus import EventPublishError
+from app.domain.exceptions.intervention import (
+    InterventionException,
+    InterventionInvalidDataError,
+    InterventionInvalidTransitionError,
+    InterventionNotFoundError,
+)
 from app.domain.exceptions.location import (
     EmptyLocationNameError,
     LocationCircularReferenceError,
     LocationException,
     LocationInvalidTypeHierarchyError,
     LocationNotFoundError,
-)
-from app.domain.exceptions.intervencion import (
-    IntervencionException,
-    IntervencionInvalidDataError,
-    IntervencionInvalidTransitionError,
-    IntervencionNotFoundError,
 )
 from app.domain.exceptions.permission import (
     InsufficientPermissionsError,
@@ -113,8 +113,8 @@ __all__ = [
     "StaleDataError",
     "EventPublishError",
     # Excepciones de intervención
-    "IntervencionException",
-    "IntervencionInvalidDataError",
-    "IntervencionInvalidTransitionError",
-    "IntervencionNotFoundError",
+    "InterventionException",
+    "InterventionInvalidDataError",
+    "InterventionInvalidTransitionError",
+    "InterventionNotFoundError",
 ]

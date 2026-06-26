@@ -1,4 +1,4 @@
-"""Enumeraciones del dominio de GEMA. Define los estados, tipos y módulos del sistema."""
+﻿"""Enumeraciones del dominio de GEMA. Define los estados, tipos y módulos del sistema."""
 
 from enum import StrEnum
 
@@ -20,6 +20,7 @@ class PermissionModule(StrEnum):
     REPORTS = "reportes"
     ADMIN = "administracion"
     PREFERENCES = "preferencias"
+    WORK_ORDERS = "ordenes_trabajo"
 
 
 class AssetStatus(StrEnum):
@@ -82,11 +83,3 @@ class Theme(StrEnum):
     DARK = "oscuro"
     LIGHT = "claro"
     SYSTEM = "sistema"
-
-class EstadoIntervencion(StrEnum):
-    """Estados posibles de una intervención técnica."""
-
-    PENDIENTE = "pendiente"
-    EN_PROGRESO = "en_progreso"
-    COMPLETADA = "completada"
-    CANCELADA = "cancelada"

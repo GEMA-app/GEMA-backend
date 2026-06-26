@@ -1,4 +1,4 @@
-"""Paquete raíz del dominio de GEMA.
+﻿"""Paquete raíz del dominio de GEMA.
 
 Re-exporta todos los símbolos públicos de los submódulos del dominio
 para permitir imports planos (``from app.domain import User``).
@@ -20,7 +20,6 @@ from app.domain.entities import (
 from app.domain.enums import (
     AssetStatus,
     CompanyStatus,
-    EstadoIntervencion,
     LocationType,
     MaintenanceType,
     PermissionModule,
@@ -108,7 +107,7 @@ from app.domain.value_objects import (
     CompanyId,
     Email,
     HashedPassword,
-    IntervencionId,
+    InterventionId,
     LocationId,
     PlainPassword,
     RoleId,
@@ -120,7 +119,6 @@ __all__ = [
     # Enums
     "AssetStatus",
     "CompanyStatus",
-    "EstadoIntervencion",
     "LocationType",
     "MaintenanceType",
     "PermissionModule",
@@ -168,7 +166,7 @@ __all__ = [
     "CompanyId",
     "Email",
     "HashedPassword",
-    "IntervencionId",
+    "InterventionId",
     "LocationId",
     "PlainPassword",
     "RoleId",

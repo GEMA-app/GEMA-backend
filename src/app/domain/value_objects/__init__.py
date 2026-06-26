@@ -8,9 +8,11 @@ from app.domain.value_objects.credential import Email, HashedPassword, PlainPass
 from app.domain.value_objects.identifier import (
     AssetId,
     CompanyId,
+    InterventionId,
     LocationId,
     RoleId,
     UserId,
+    WorkOrderId,
 )
 from app.domain.value_objects.slug import Slug
 
@@ -22,6 +24,8 @@ __all__ = [
     "CompanyId",
     "RoleId",
     "AssetId",
+    "InterventionId",
     "LocationId",
+    "WorkOrderId",
     "Slug",
 ]
