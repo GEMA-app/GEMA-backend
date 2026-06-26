@@ -1,4 +1,4 @@
-"""Value Objects para identificadores UUID: UserId, CompanyId, RoleId, AssetId, LocationId."""
+"""Value Objects para identificadores UUID de entidades del sistema."""
 
 import uuid
 from dataclasses import dataclass
@@ -174,3 +174,40 @@ class LocationId:
             return cls(value=uuid.UUID(value))
         except (ValueError, AttributeError) as e:
             raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
+
+
+@dataclass(frozen=True)
+class FailureReportId:
+    """Objeto de valor que representa el identificador único de un reporte de falla (UUID)."""
+
+    value: uuid.UUID
+
+    def __str__(self) -> str:
+        """Retorna la representación en cadena del UUID."""
+        return str(self.value)
+
+    @classmethod
+    def from_string(cls, value: str) -> "FailureReportId":
+        """Crea un FailureReportId a partir de un string UUID.
+
+        Args:
+            value: String con el UUID del reporte de falla.
+
+        Returns:
+            Un nuevo FailureReportId.
+
+        Raises:
+            InvalidUUIDError: Si el string no es un UUID válido.
+        """
+        if not isinstance(value, str) or not value:
+            raise InvalidUUIDError(
+                f"El identificador debe ser un string no vacío, se recibió: "
+                f"{type(value).__name__}"
+            )
+        try:
+            return cls(value=uuid.UUID(value))
+        except (ValueError, AttributeError) as e:
+            raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
+
+
+
