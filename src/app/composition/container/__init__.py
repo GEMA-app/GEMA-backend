@@ -58,6 +58,14 @@ from app.composition.container.role import (
     get_role_use_case,
     get_update_role_use_case,
 )
+from app.composition.container.work_order import (
+    get_change_work_order_status_use_case,
+    get_create_work_order_use_case,
+    get_delete_work_order_use_case,
+    get_list_work_orders_use_case,
+    get_update_work_order_use_case,
+    get_work_order_use_case,
+)
 
 __all__ = [
     # Common
@@ -107,4 +115,11 @@ __all__ = [
     # Preferences
     "get_update_preference_use_case",
     "get_user_preference_use_case",
+    # Work Orders
+    "get_create_work_order_use_case",
+    "get_work_order_use_case",
+    "get_list_work_orders_use_case",
+    "get_update_work_order_use_case",
+    "get_delete_work_order_use_case",
+    "get_change_work_order_status_use_case",
 ]
