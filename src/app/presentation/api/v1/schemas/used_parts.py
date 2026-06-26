@@ -1,11 +1,12 @@
-# src/app/presentation/api/v1/schemas/repuestos_utilizados.py
+"""Schemas JSON:API para el módulo UsedPart (repuestos utilizados)."""
+
 from decimal import Decimal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 
-class RepuestoUtilizadoAttributes(BaseModel):
+class UsedPartAttributes(BaseModel):
     """Atributos de un repuesto utilizado."""
     empresa_id: UUID = Field(..., description="ID de la empresa")
     intervencion_id: UUID = Field(..., description="ID de la intervención")
@@ -17,24 +18,24 @@ class RepuestoUtilizadoAttributes(BaseModel):
     updated_at: str = Field(..., description="Fecha de actualización")
 
 
-class RepuestoUtilizadoResource(BaseModel):
+class UsedPartResource(BaseModel):
     """Recurso JSON:API para un repuesto utilizado."""
-    type: str = Field("repuesto-utilizado", const=True)
+    type: str = Field(default="repuesto-utilizado")
     id: UUID
-    attributes: RepuestoUtilizadoAttributes
+    attributes: UsedPartAttributes
 
 
-class RepuestoUtilizadoDocument(BaseModel):
+class UsedPartDocument(BaseModel):
     """Documento JSON:API para un recurso de repuesto utilizado."""
-    data: RepuestoUtilizadoResource
+    data: UsedPartResource
 
 
-class RepuestosUtilizadosDocument(BaseModel):
+class UsedPartsDocument(BaseModel):
     """Documento JSON:API para una lista de repuestos utilizados."""
-    data: list[RepuestoUtilizadoResource]
+    data: list[UsedPartResource]
 
 
-class CreateRepuestoUtilizadoAttributes(BaseModel):
+class CreateUsedPartAttributes(BaseModel):
     """Atributos para crear un repuesto utilizado."""
     intervencion_id: UUID
     repuesto_id: UUID
@@ -43,29 +44,29 @@ class CreateRepuestoUtilizadoAttributes(BaseModel):
     moneda: str = "USD"
 
 
-class CreateRepuestoUtilizadoResource(BaseModel):
+class CreateUsedPartResource(BaseModel):
     """Recurso JSON:API para crear un repuesto utilizado."""
-    type: str = Field("repuesto-utilizado", const=True)
-    attributes: CreateRepuestoUtilizadoAttributes
+    type: str = Field(default="repuesto-utilizado")
+    attributes: CreateUsedPartAttributes
 
 
-class CreateRepuestoUtilizadoRequest(BaseModel):
+class CreateUsedPartRequest(BaseModel):
     """Request JSON:API para crear un repuesto utilizado."""
-    data: CreateRepuestoUtilizadoResource
+    data: CreateUsedPartResource
 
 
-class UpdateRepuestoUtilizadoAttributes(BaseModel):
+class UpdateUsedPartAttributes(BaseModel):
     """Atributos para actualizar un repuesto utilizado."""
     cantidad_usada: int | None = Field(None, gt=0)
 
 
-class UpdateRepuestoUtilizadoResource(BaseModel):
+class UpdateUsedPartResource(BaseModel):
     """Recurso JSON:API para actualizar un repuesto utilizado."""
-    type: str = Field("repuesto-utilizado", const=True)
+    type: str = Field(default="repuesto-utilizado")
     id: UUID
-    attributes: UpdateRepuestoUtilizadoAttributes
+    attributes: UpdateUsedPartAttributes
 
 
-class UpdateRepuestoUtilizadoRequest(BaseModel):
+class UpdateUsedPartRequest(BaseModel):
     """Request JSON:API para actualizar un repuesto utilizado."""
-    data: UpdateRepuestoUtilizadoResource
+    data: UpdateUsedPartResource

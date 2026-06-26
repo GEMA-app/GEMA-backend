@@ -10,7 +10,7 @@ from app.presentation.api.v1.endpoints.companies import router as companies_rout
 from app.presentation.api.v1.endpoints.locations import router as locations_router
 from app.presentation.api.v1.endpoints.preferences import router as preferences_router
 from app.presentation.api.v1.endpoints.roles import router as roles_router
-from app.presentation.api.v1.endpoints.repuestos_utilizados import router as repuestos_utilizados_router
+from app.presentation.api.v1.endpoints.used_parts import router as used_parts_router
 
 v1_router = APIRouter(prefix="/v1")
 
@@ -51,7 +51,7 @@ v1_router.include_router(
 )
 
 v1_router.include_router(
-    repuestos_utilizados_router,
+    used_parts_router,
     prefix="/empresas/{empresa_id}/ordenes-trabajo/{ot_id}/intervenciones/{intervencion_id}/repuestos-utilizados",
     tags=["Repuestos Utilizados"],
 )
