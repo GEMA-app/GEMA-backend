@@ -18,11 +18,16 @@ from app.domain.exceptions import (
     DomainException,
     EmptyAssetCodeError,
     EmptyCompanyNameError,
+    EmptyDescriptionError,
     EmptyHashedPasswordError,
+    EmptyLocationError,
     EmptyLocationNameError,
+    EmptyReportedByError,
     EmptyRoleNameError,
     EmptySerialError,
+    EmptyTitleError,
     EventPublishError,
+    FailureReportNotFoundError,
     InsufficientPermissionsError,
     InvalidCredentialsError,
     InvalidEmailError,
@@ -175,6 +180,26 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     EmptyLocationNameError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_EMPTY_LOCATION_NAME",
+    ),
+    EmptyTitleError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_TITLE",
+    ),
+    EmptyDescriptionError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_DESCRIPTION",
+    ),
+    EmptyLocationError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_LOCATION",
+    ),
+    EmptyReportedByError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_REPORTED_BY",
+    ),
+    FailureReportNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_FAILURE_REPORT_NOT_FOUND",
     ),
     LastAdminRevocationError: (
         status.HTTP_403_FORBIDDEN,
