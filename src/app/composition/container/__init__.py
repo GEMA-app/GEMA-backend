@@ -4,6 +4,13 @@ Re-exporta todas las fábricas públicas para mantener compatibilidad con los
 imports existentes (``from app.composition.container import X``).
 """
 
+from app.composition.container.article_category import (
+    get_all_article_categories_use_case,
+    get_article_category_by_id_use_case,
+    get_create_article_category_use_case,
+    get_delete_article_category_use_case,
+    get_update_article_category_use_case,
+)
 from app.composition.container.asset import (
     get_asset_use_case,
     get_create_asset_use_case,
@@ -60,6 +67,12 @@ from app.composition.container.role import (
 )
 
 __all__ = [
+    # Article Category
+    "get_create_article_category_use_case",
+    "get_article_category_by_id_use_case",
+    "get_all_article_categories_use_case",
+    "get_update_article_category_use_case",
+    "get_delete_article_category_use_case",
     # Common
     "get_uow",
     "get_password_hasher",
