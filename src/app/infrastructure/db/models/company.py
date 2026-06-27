@@ -2,28 +2,17 @@
 
 import uuid
 from datetime import date
+from typing import TYPE_CHECKING
 
-from sqlalchemy import Date, Enum, ForeignKey, Numeric, String, Text
+from sqlalchemy import Date, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.domain.enums import CompanyStatus
 from app.infrastructure.db.base import Base
 from app.infrastructure.db.models.mixins import TimestampMixin, VersionMixin
 
-
-class SubscriptionPlanModel(TimestampMixin, Base):
-    """Modelo ORM para planes de suscripción de la plataforma."""
-
-    __tablename__ = "planes_suscripcion"
-
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    nombre: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
-    descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
-    max_activos: Mapped[int | None] = mapped_column(nullable=True)
-    max_usuarios: Mapped[int | None] = mapped_column(nullable=True)
-    precio_mensual_usd: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
-
-    empresas: Mapped[list["CompanyModel"]] = relationship("CompanyModel", back_populates="plan")
+if TYPE_CHECKING:
+    from app.infrastructure.db.models.subscription_plan import SubscriptionPlanModel
 
 
 class CompanyModel(VersionMixin, TimestampMixin, Base):
@@ -46,6 +35,6 @@ class CompanyModel(VersionMixin, TimestampMixin, Base):
     )
     trial_hasta: Mapped[date | None] = mapped_column(Date, nullable=True)
 
-    plan: Mapped[SubscriptionPlanModel | None] = relationship(
+    plan: Mapped["SubscriptionPlanModel | None"] = relationship(
         "SubscriptionPlanModel", back_populates="empresas"
     )

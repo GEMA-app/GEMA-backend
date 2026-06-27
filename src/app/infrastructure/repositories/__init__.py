@@ -4,9 +4,11 @@ from app.infrastructure.repositories.company_repository import SqlAlchemyCompany
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
 from app.infrastructure.repositories.preference_repository import SqlAlchemyPreferenceRepository
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
+from app.infrastructure.repositories.subscription_plan_repository import (
+    SqlAlchemySubscriptionPlanRepository,
+)
 from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
-from app.infrastructure.repositories.subscription_plan_repository import SqlAlchemySubscriptionPlanRepository
 
 __all__ = [
     "SqlAlchemyRepository",
