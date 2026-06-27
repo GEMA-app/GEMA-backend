@@ -174,3 +174,37 @@ class LocationId:
             return cls(value=uuid.UUID(value))
         except (ValueError, AttributeError) as e:
             raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
+
+
+@dataclass(frozen=True)
+class PlanExecutionId:
+    """Objeto de valor que representa el identificador único de una ejecución de plan (UUID)."""
+
+    value: uuid.UUID
+
+    def __str__(self) -> str:
+        """Retorna la representación en cadena del UUID."""
+        return str(self.value)
+
+    @classmethod
+    def from_string(cls, value: str) -> "PlanExecutionId":
+        """Crea un PlanExecutionId a partir de un string UUID.
+
+        Args:
+            value: String con el UUID de la ejecución.
+
+        Returns:
+            Un nuevo PlanExecutionId.
+
+        Raises:
+            InvalidUUIDError: Si el string no es un UUID válido.
+        """
+        if not isinstance(value, str) or not value:
+            raise InvalidUUIDError(
+                f"El identificador debe ser un string no vacío, se recibió: "
+                f"{type(value).__name__}"
+            )
+        try:
+            return cls(value=uuid.UUID(value))
+        except (ValueError, AttributeError) as e:
+            raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e

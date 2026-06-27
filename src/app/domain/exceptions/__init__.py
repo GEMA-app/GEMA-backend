@@ -44,6 +44,11 @@ from app.domain.exceptions.permission import (
     InsufficientPermissionsError,
     PermissionException,
 )
+from app.domain.exceptions.plan_execution import (
+    PlanExecutionException,
+    PlanExecutionNotFoundError,
+    PlanExecutionObservationsEmptyError,
+)
 from app.domain.exceptions.preference import (
     PreferenceException,
     PreferenceNotFoundError,
@@ -106,4 +111,7 @@ __all__ = [
     "LastAdminRevocationError",
     "StaleDataError",
     "EventPublishError",
+    "PlanExecutionException",
+    "PlanExecutionNotFoundError",
+    "PlanExecutionObservationsEmptyError",
 ]
