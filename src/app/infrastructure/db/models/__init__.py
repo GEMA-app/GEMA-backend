@@ -4,6 +4,7 @@ from app.infrastructure.db.models.asset import AssetModel
 from app.infrastructure.db.models.catalog import ArticleCategoryModel, CatalogArticleModel
 from app.infrastructure.db.models.company import CompanyModel, SubscriptionPlanModel
 from app.infrastructure.db.models.location import LocationModel
+from app.infrastructure.db.models.maintenance_plan import MaintenancePlanModel
 from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin, VersionMixin
 from app.infrastructure.db.models.preference import UserPreferenceModel
 from app.infrastructure.db.models.role import PermissionModel, RoleModel, RoleUserModel
@@ -20,6 +21,7 @@ __all__ = [
     "ArticleCategoryModel",
     "CatalogArticleModel",
     "AssetModel",
+    "MaintenancePlanModel",
     "UserPreferenceModel",
     "TenantMixin",
     "TimestampMixin",
