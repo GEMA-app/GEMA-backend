@@ -33,6 +33,10 @@ from app.domain.exceptions import (
     LocationCircularReferenceError,
     LocationInvalidTypeHierarchyError,
     LocationNotFoundError,
+    MaintenancePlanDueDateError,
+    MaintenancePlanIntervalError,
+    MaintenancePlanNameEmptyError,
+    MaintenancePlanNotFoundError,
     PreferenceNotFoundError,
     PreferenceThemeInvalidError,
     RoleNameExistsError,
@@ -99,6 +103,22 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     AssetNotFoundError: (
         status.HTTP_404_NOT_FOUND,
         "ERR_ASSET_NOT_FOUND"
+    ),
+    MaintenancePlanDueDateError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_MAINTENANCE_PLAN_DUE_DATE",
+    ),
+    MaintenancePlanIntervalError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_MAINTENANCE_PLAN_INTERVAL",
+    ),
+    MaintenancePlanNameEmptyError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_MAINTENANCE_PLAN_NAME_EMPTY",
+    ),
+    MaintenancePlanNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_MAINTENANCE_PLAN_NOT_FOUND"
     ),
     AssetCodeExistsError: (
         status.HTTP_409_CONFLICT,
