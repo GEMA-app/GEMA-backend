@@ -24,6 +24,13 @@ from app.domain.exceptions.auth import (
     WeakPasswordError,
 )
 from app.domain.exceptions.base import DomainException
+from app.domain.exceptions.catalog import (
+    CatalogArticleException,
+    CatalogArticleHasAssetsError,
+    CatalogArticleNotFoundError,
+    EmptyCatalogArticleCodeError,
+    EmptyCatalogArticleNameError,
+)
 from app.domain.exceptions.company import (
     CompanyAlreadyCancelledError,
     CompanyException,
@@ -65,6 +72,11 @@ from app.domain.exceptions.validation import (
 
 __all__ = [
     "DomainException",
+    "CatalogArticleException",
+    "CatalogArticleNotFoundError",
+    "CatalogArticleHasAssetsError",
+    "EmptyCatalogArticleNameError",
+    "EmptyCatalogArticleCodeError",
     "EmptyCompanyNameError",
     "EmptyHashedPasswordError",
     "EmptyRoleNameError",
