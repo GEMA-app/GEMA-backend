@@ -57,6 +57,7 @@ from app.domain.exceptions.role import (
     RoleNotFoundError,
 )
 from app.domain.exceptions.stale_data import StaleDataError
+from app.domain.exceptions.user import UserException, UserNotFoundError
 from app.domain.exceptions.validation import (
     InvalidSlugError,
     InvalidUUIDError,
@@ -106,6 +107,6 @@ __all__ = [
     "LastAdminRevocationError",
     "StaleDataError",
     "EventPublishError",
-    "UserException", 
+    "UserException",
     "UserNotFoundError"
 ]

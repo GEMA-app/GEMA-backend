@@ -1,5 +1,6 @@
 from app.domain.exceptions.base import DomainException
 
+
 class UserException(DomainException):
     """Clase base para excepciones exclusivas de la gestión y administración de usuarios."""
     pass
