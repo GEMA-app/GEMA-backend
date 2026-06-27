@@ -1,4 +1,3 @@
-from typing import List, Tuple
 from app.application.dtos.system_audit_dtos import ListSystemAuditsRequest, SystemAuditResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.value_objects import CompanyId
@@ -11,12 +10,26 @@ class ListSystemAuditsUseCase:
         self.uow = uow
 
     async def execute(
-        self, company_id_str: str, offset: int, limit: int, request: ListSystemAuditsRequest
-    ) -> Tuple[List[SystemAuditResponse], int]:
+        self,
+        company_id_str: str,
+        offset: int,
+        limit: int,
+        request: ListSystemAuditsRequest,
+    ) -> tuple[list[SystemAuditResponse], int]:
+        """Lista y filtra las auditorías del sistema con paginación.
+
+        Args:
+            company_id_str: UUID de la empresa en formato string.
+            offset: Número de registros a saltar.
+            limit: Máximo de registros por página.
+            request: DTO con filtros opcionales (usuario_id, accion, fechas).
+
+        Returns:
+            Tupla con la lista de SystemAuditResponse y el total de registros.
+        """
         company_id = CompanyId.from_string(company_id_str)
 
-        # Mapeamos el DTO de filtros a un diccionario limpio para el puerto
-        filters = {}
+        filters: dict[str, object] = {}
         if request.usuario_id is not None:
             filters["usuario_id"] = request.usuario_id
         if request.accion:
@@ -27,15 +40,15 @@ class ListSystemAuditsUseCase:
             filters["fecha_fin"] = request.fecha_fin
 
         async with self.uow:
-            entities, total = await self.uow.system_audits.get_all_by_empresa(
+            entities, total = await self.uow.system_audits.get_all_by_company(
                 company_id, offset, limit, filters
             )
 
             dtos = [
                 SystemAuditResponse(
-                    id=e.id,
+                    id=e.id if e.id is not None else 0,
                     empresa_id=str(e.empresa_id),
-                    usuario_id=int(e.usuario_id) if e.usuario_id else None,
+                    usuario_id=str(e.usuario_id) if e.usuario_id else None,
                     accion=e.accion,
                     detalles=e.detalles,
                     ip_address=e.ip_address,
