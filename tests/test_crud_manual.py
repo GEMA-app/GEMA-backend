@@ -3,7 +3,7 @@ import uuid
 
 from httpx import ASGITransport, AsyncClient
 
-from app.infrastructure.db.models.catalog import CatalogArticleModel
+from app.infrastructure.db.models.catalog_article import CatalogArticleModel
 from app.infrastructure.db.session import async_session_factory
 
 # Importar aplicación y configuraciones
@@ -92,10 +92,10 @@ async def run_manual_test() -> None:
             article = CatalogArticleModel(
                 id=article_id,
                 empresa_id=uuid.UUID(empresa_id),
-                nombre="Compresor de Aire Industrial ABC",
-                fabricante="Ingersoll Rand",
-                modelo="IR-2026",
-                unidad_medida="UNIDAD"
+                name="Compresor de Aire Industrial ABC",
+                manufacturer="Ingersoll Rand",
+                model="IR-2026",
+                unit_of_measure="UNIDAD"
             )
             session.add(article)
             await session.commit()
