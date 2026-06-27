@@ -10,8 +10,8 @@ from app.domain.value_objects.identifier import (
     CompanyId,
     LocationId,
     RoleId,
-    UserId,
     SubscriptionPlanId,
+    UserId,
 )
 from app.domain.value_objects.slug import Slug
 

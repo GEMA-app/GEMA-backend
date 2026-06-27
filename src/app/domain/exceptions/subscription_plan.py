@@ -1,5 +1,6 @@
 from app.domain.exceptions.base import DomainException
 
+
 class SubscriptionPlanException(DomainException):
   """Clase base para las excepciones relacionadas con la suscripción a planes."""
   pass
@@ -22,4 +23,8 @@ class SubscriptionPlanLimitExceededError(SubscriptionPlanException):
 
 class SubscriptionPlanPaymentFailedError(SubscriptionPlanException):
   """Excepción lanzada cuando falla el pago de la suscripción a un plan."""
+  pass
+
+class SubscriptionPlanHasActiveSubscriptionsError(SubscriptionPlanException):
+  """Excepción lanzada al intentar eliminar un plan que tiene empresas suscritas."""
   pass

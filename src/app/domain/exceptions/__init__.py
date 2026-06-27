@@ -57,19 +57,19 @@ from app.domain.exceptions.role import (
     RoleNotFoundError,
 )
 from app.domain.exceptions.stale_data import StaleDataError
+from app.domain.exceptions.subscription_plan import (
+    SubscriptionPlanAlreadyExistsError,
+    SubscriptionPlanException,
+    SubscriptionPlanHasActiveSubscriptionsError,
+    SubscriptionPlanInvalidDataError,
+    SubscriptionPlanLimitExceededError,
+    SubscriptionPlanNotFoundError,
+    SubscriptionPlanPaymentFailedError,
+)
 from app.domain.exceptions.validation import (
     InvalidSlugError,
     InvalidUUIDError,
     ValidationException,
-)
-
-from app.domain.exceptions.subscription_plan import (
-    SubscriptionPlanException,
-    SubscriptionPlanNotFoundError,
-    SubscriptionPlanAlreadyExistsError,
-    SubscriptionPlanInvalidDataError,
-    SubscriptionPlanLimitExceededError,
-    SubscriptionPlanPaymentFailedError
 )
 
 __all__ = [
@@ -120,5 +120,6 @@ __all__ = [
     "SubscriptionPlanAlreadyExistsError",
     "SubscriptionPlanInvalidDataError",
     "SubscriptionPlanLimitExceededError",
-    "SubscriptionPlanPaymentFailedError"
+    "SubscriptionPlanPaymentFailedError",
+    "SubscriptionPlanHasActiveSubscriptionsError",
 ]
