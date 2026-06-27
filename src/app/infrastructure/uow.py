@@ -10,6 +10,9 @@ from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.events import DomainEvent
 from app.domain.exceptions import EventPublishError
 from app.infrastructure.db.session import async_session_factory
+from app.infrastructure.repositories.article_category_repository import (
+    SqlAlchemyArticleCategoryRepository,
+)
 from app.infrastructure.repositories.asset_repository import SqlAlchemyAssetRepository
 from app.infrastructure.repositories.company_repository import SqlAlchemyCompanyRepository
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
@@ -48,6 +51,9 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         self.assets = SqlAlchemyAssetRepository(self.session, self._pending_events)
         self.locations = SqlAlchemyLocationRepository(self.session, self._pending_events)
         self.preferences = SqlAlchemyPreferenceRepository(self.session, self._pending_events)
+        self.article_categories = SqlAlchemyArticleCategoryRepository(
+            self.session, self._pending_events
+        )
         return self
 
     async def __aexit__(self, exc_type: Any, exc_val: Any, tb: Any) -> None:
