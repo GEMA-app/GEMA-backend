@@ -40,6 +40,7 @@ from app.domain.exceptions import (
     StaleDataError,
     UserAlreadyExistsError,
     UserInactiveError,
+    UserNotFoundError,
     ValidationException,
     WeakPasswordError,
 )
@@ -71,6 +72,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     UserInactiveError: (
         status.HTTP_403_FORBIDDEN,
         "ERR_USER_INACTIVE"
+    ),
+    UserNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_USER_NOT_FOUND"
     ),
     InvalidTokenError: (
         status.HTTP_401_UNAUTHORIZED,

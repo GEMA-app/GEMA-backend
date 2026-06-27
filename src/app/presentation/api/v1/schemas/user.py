@@ -3,8 +3,9 @@ siguiendo estrictamente las convenciones de JSON:API de la plataforma.
 """
 
 from datetime import datetime
-from typing import Any, Optional
-from pydantic import BaseModel, Field, EmailStr
+from typing import Any
+
+from pydantic import BaseModel, EmailStr, Field
 
 from app.presentation.api.v1.schemas.jsonapi_base import LinksObject
 
@@ -16,12 +17,14 @@ class UserAttributes(BaseModel):
     email: str = Field(..., description="Correo electrónico del usuario")
     nombre: str = Field(..., description="Nombre completo del usuario")
     empresa_id: str = Field(..., description="Identificador único de la empresa")
+    roles: list[str] = Field(default_factory=list, description="Nombres de los roles asignados")
     telefono: str | None = Field(None, description="Teléfono de contacto")
     activo: bool = Field(..., description="Estado de activación del usuario")
     created_at: datetime = Field(..., description="Fecha y hora de creación")
     updated_at: datetime = Field(..., description="Fecha y hora de última actualización")
 
     class Config:
+        """Configuración de Pydantic para habilitar asignación desde atributos ORM."""
         from_attributes = True
 
 
@@ -79,10 +82,10 @@ class CreateUserRequest(BaseModel):
 class UpdateUserAttributes(BaseModel):
     """Atributos opcionales permitidos para la modificación de un usuario."""
 
-    email: Optional[EmailStr] = Field(None, description="Nuevo correo electrónico")
-    nombre: Optional[str] = Field(None, description="Nuevo nombre completo")
-    telefono: Optional[str] = Field(None, description="Nuevo teléfono de contacto")
-    activo: Optional[bool] = Field(None, description="Nuevo estado de activación")
+    email: EmailStr | None = Field(None, description="Nuevo correo electrónico")
+    nombre: str | None = Field(None, description="Nuevo nombre completo")
+    telefono: str | None = Field(None, description="Nuevo teléfono de contacto")
+    activo: bool | None = Field(None, description="Nuevo estado de activación")
 
 
 class UpdateUserResource(BaseModel):
