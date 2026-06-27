@@ -30,11 +30,10 @@ from app.application.dtos.role_dtos import (
     RoleResponse,
     UpdateRoleRequest,
 )
-
 from app.application.dtos.subscription_plan_dtos import (
-    CreatePlanRequest,
-    PlanResponse,
-    UpdatePlanRequest,
+    CreateSubscriptionPlanRequest,
+    SubscriptionPlanResponse,
+    UpdateSubscriptionPlanRequest,
 )
 
 __all__ = [
@@ -65,7 +64,7 @@ __all__ = [
     "LocationTreeResponse",
     "PreferenceResponse",
     "UpdatePreferenceRequest",
-    "CreatePlanRequest",
-    "PlanResponse",
-    "UpdatePlanRequest",
+    "CreateSubscriptionPlanRequest",
+    "SubscriptionPlanResponse",
+    "UpdateSubscriptionPlanRequest",
 ]

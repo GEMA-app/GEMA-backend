@@ -1,19 +1,18 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
 
-@dataclass
+
+@dataclass(frozen=True)
 class CreateSubscriptionPlanRequest:
     """DTO de entrada para la creación de un plan de suscripción."""
 
     nombre: str
+    precio_mensual_usd: Decimal
     descripcion: str | None = None
     max_activos: int | None = None
     max_usuarios: int | None = None
-    precio_mensual_usd: Decimal
-    # start_date: str
-    # end_date: str
 
-@dataclass
+@dataclass(frozen=True)
 class UpdateSubscriptionPlanRequest:
     """DTO de entrada para la actualización de un plan de suscripción."""
 
@@ -22,9 +21,10 @@ class UpdateSubscriptionPlanRequest:
     max_activos: int | None = None
     max_usuarios: int | None = None
     precio_mensual_usd: Decimal | None = None
-    # start_date: str | None = None
-    # end_date: str | None = None
-    version: int | None = None
+    is_active: bool | None = None
+    _fields_set: frozenset[str] = field(
+        default_factory=frozenset, init=False, repr=False, compare=False
+    )
 
     def __post_init__(self) -> None:
         """Calcula el conjunto de campos explícitamente establecidos en la inicialización."""
@@ -35,17 +35,14 @@ class UpdateSubscriptionPlanRequest:
             }
             object.__setattr__(self, "_fields_set", frozenset(fields_with_values))
 
-@dataclass
+@dataclass(frozen=True)
 class SubscriptionPlanResponse:
     """DTO de salida con los datos completos de un plan de suscripción."""
 
     id: str
     nombre: str
-    descripcion: str
-    max_activos: int | None
-    max_usuarios: int | None
     precio_mensual_usd: Decimal
-    # start_date: str
-    # end_date: str
-    is_active: bool
-    version: int
+    descripcion: str | None = None
+    max_activos: int | None = None
+    max_usuarios: int | None = None
+    is_active: bool = True

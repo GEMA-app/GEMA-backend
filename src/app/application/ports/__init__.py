@@ -7,8 +7,8 @@ from app.application.ports.notifications import NotificationPort
 from app.application.ports.preference_repository import PreferenceRepositoryPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
+from app.application.ports.subscription_plan_repository import SubscriptionPlanRepositoryPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.application.ports.subscription_plan_repository import SubscriptionPlanPort
 
 __all__ = [
     "UserRepositoryPort",
@@ -22,5 +22,5 @@ __all__ = [
     "PasswordHasherPort",
     "TokenServicePort",
     "NotificationPort",
-    "SubscriptionPlanPort",
+    "SubscriptionPlanRepositoryPort",
 ]

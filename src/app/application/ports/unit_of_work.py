@@ -7,7 +7,7 @@ from app.application.ports.location_repository import LocationRepositoryPort
 from app.application.ports.preference_repository import PreferenceRepositoryPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
-from app.application.ports.subscription_plan_repository import SubscriptionPlanPort
+from app.application.ports.subscription_plan_repository import SubscriptionPlanRepositoryPort
 
 
 class UnitOfWorkPort(Protocol):
@@ -20,7 +20,7 @@ class UnitOfWorkPort(Protocol):
     locations: LocationRepositoryPort
     event_bus: EventBusPort
     preferences: PreferenceRepositoryPort
-    subscription_plans: SubscriptionPlanPort
+    subscription_plans: SubscriptionPlanRepositoryPort
     async def __aenter__(self) -> Self:
         """Inicia el contexto transaccional asíncrono."""
         ...
