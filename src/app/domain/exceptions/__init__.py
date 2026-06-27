@@ -57,17 +57,15 @@ from app.domain.exceptions.role import (
     RoleNotFoundError,
 )
 from app.domain.exceptions.stale_data import StaleDataError
+from app.domain.exceptions.system_audit import (
+    SystemAuditException,
+    SystemAuditNotFoundError,
+)
 from app.domain.exceptions.validation import (
     InvalidSlugError,
     InvalidUUIDError,
     ValidationException,
 )
-from app.domain.entities.system_audit import SystemAudit
-from app.domain.exceptions.system_audit import (
-    SystemAuditException,
-    SystemAuditNotFoundError,
-)
-
 
 __all__ = [
     "DomainException",
@@ -114,5 +112,4 @@ __all__ = [
     "EventPublishError",
     "SystemAuditException",
     "SystemAuditNotFoundError",
-    "SystemAudit",
 ]

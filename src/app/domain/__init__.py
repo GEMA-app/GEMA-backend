@@ -14,6 +14,7 @@ from app.domain.entities import (
     Location,
     Permission,
     Role,
+    SystemAudit,
     User,
     UserPreference,
 )
@@ -158,6 +159,7 @@ __all__ = [
     "Location",
     "Permission",
     "Role",
+    "SystemAudit",
     "User",
     "UserPreference",
     # Value Objects

@@ -7,6 +7,7 @@ from app.domain.entities.location import Location
 from app.domain.entities.permission import Permission
 from app.domain.entities.preference import UserPreference
 from app.domain.entities.role import Role
+from app.domain.entities.system_audit import SystemAudit
 from app.domain.entities.user import User
 
 __all__ = [
@@ -18,5 +19,6 @@ __all__ = [
     "Asset",
     "ArticleCategory",
     "CatalogArticle",
+    "SystemAudit",
     "UserPreference",
 ]
