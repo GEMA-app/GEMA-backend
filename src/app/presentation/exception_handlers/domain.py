@@ -7,6 +7,8 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 
 from app.domain.exceptions import (
+    ArticleCategoryNameExistsError,
+    ArticleCategoryNotFoundError,
     AssetCodeExistsError,
     AssetInvalidTransitionError,
     AssetNotFoundError,
@@ -41,7 +43,7 @@ from app.domain.exceptions import (
     UserAlreadyExistsError,
     UserInactiveError,
     ValidationException,
-    WeakPasswordError,ArticleCategoryNameExistsError, ArticleCategoryNotFoundError
+    WeakPasswordError,
 )
 from app.infrastructure.notifications.email_sender import NotificationError, TemplateNotFoundError
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
