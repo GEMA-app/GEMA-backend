@@ -58,6 +58,13 @@ from app.composition.container.role import (
     get_role_use_case,
     get_update_role_use_case,
 )
+from app.composition.container.user import (
+    get_create_user_use_case,
+    get_delete_user_use_case,
+    get_edit_user_use_case,
+    get_list_users_use_case,
+    get_user_use_case,
+)
 
 __all__ = [
     # Common
@@ -107,4 +114,10 @@ __all__ = [
     # Preferences
     "get_update_preference_use_case",
     "get_user_preference_use_case",
+    # User
+    "get_create_user_use_case",
+    "get_user_use_case",
+    "get_list_users_use_case",
+    "get_edit_user_use_case",
+    "get_delete_user_use_case",
 ]
