@@ -3,10 +3,6 @@
 Re-exporta todas las fábricas públicas para mantener compatibilidad con los
 imports existentes (``from app.composition.container import X``).
 """
-from app.composition.container.system_audit import (
-    get_system_audit_use_case,
-)
-
 from app.composition.container.asset import (
     get_asset_use_case,
     get_create_asset_use_case,
@@ -61,6 +57,10 @@ from app.composition.container.role import (
     get_role_use_case,
     get_update_role_use_case,
 )
+from app.composition.container.system_audit import (
+    get_list_system_audits_use_case,
+    get_system_audit_use_case,
+)
 
 __all__ = [
     # Common
@@ -111,5 +111,6 @@ __all__ = [
     "get_update_preference_use_case",
     "get_user_preference_use_case",
     # System Audit
+    "get_list_system_audits_use_case",
     "get_system_audit_use_case",
 ]
