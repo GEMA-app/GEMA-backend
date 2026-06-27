@@ -38,12 +38,12 @@ from app.domain.exceptions import (
     RoleNameExistsError,
     RoleNotFoundError,
     StaleDataError,
+    SystemAuditNotFoundError,
     UserAlreadyExistsError,
     UserInactiveError,
     ValidationException,
     WeakPasswordError,
 )
-from app.domain.exceptions.system_audit import SystemAuditNotFoundError
 from app.infrastructure.notifications.email_sender import NotificationError, TemplateNotFoundError
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers.base import jsonapi_response
