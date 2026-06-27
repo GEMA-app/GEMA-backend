@@ -8,6 +8,7 @@ from app.presentation.api.v1.endpoints.assets import router as assets_router
 from app.presentation.api.v1.endpoints.auth import router as auth_router
 from app.presentation.api.v1.endpoints.companies import router as companies_router
 from app.presentation.api.v1.endpoints.locations import router as locations_router
+from app.presentation.api.v1.endpoints.plan_executions import router as plan_executions_router
 from app.presentation.api.v1.endpoints.preferences import router as preferences_router
 from app.presentation.api.v1.endpoints.roles import router as roles_router
 
@@ -47,5 +48,11 @@ v1_router.include_router(
     preferences_router,
     prefix="/empresas/{empresa_id}/yo/preferencias",
     tags=["preferencias"],
+)
+
+v1_router.include_router(
+    plan_executions_router,
+    prefix="/empresas/{empresa_id}/planes-mantenimiento/{plan_id}/ejecuciones",
+    tags=["ejecuciones-plan"],
 )
 
