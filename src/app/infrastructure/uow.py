@@ -11,7 +11,7 @@ from app.domain.events import DomainEvent
 from app.domain.exceptions import EventPublishError
 from app.infrastructure.db.session import async_session_factory
 from app.infrastructure.repositories.asset_repository import SqlAlchemyAssetRepository
-from app.infrastructure.catalog_repository import (
+from app.infrastructure.repositories.catalog_article_repository import (
     SqlAlchemyCatalogArticleRepository,
 )
 from app.infrastructure.repositories.company_repository import SqlAlchemyCompanyRepository
@@ -19,7 +19,6 @@ from app.infrastructure.repositories.location_repository import SqlAlchemyLocati
 from app.infrastructure.repositories.preference_repository import SqlAlchemyPreferenceRepository
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
-
 
 logger = structlog.get_logger()
 
