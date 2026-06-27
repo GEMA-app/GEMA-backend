@@ -1,17 +1,28 @@
-import uuid
-from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.application.use_cases.article_categories.errors import ArticleCategoryNotFoundError
+"""Paquete de casos de uso del módulo ArticleCategory.
 
-class DeleteArticleCategoryUseCase:
-    def __init__(self, uow: UnitOfWorkPort) -> None:
-        self.uow = uow
+Re-exporta todos los casos de uso para imports planos.
+"""
 
-    async def execute(self, empresa_id_str: str, category_id: uuid.UUID) -> None:
-        empresa_id = uuid.UUID(empresa_id_str)
-        async with self.uow:
-            category = await self.uow.article_categories.get_by_id(category_id, empresa_id)
-            if not category:
-                raise ArticleCategoryNotFoundError("Categoría no encontrada.")
-            
-            await self.uow.article_categories.delete(category.id, empresa_id)
-            await self.uow.commit()
+from app.application.use_cases.article_category.create_article_category import (
+    CreateArticleCategoryUseCase,
+)
+from app.application.use_cases.article_category.delete_article_category import (
+    DeleteArticleCategoryUseCase,
+)
+from app.application.use_cases.article_category.get_all_article_categories import (
+    GetAllArticleCategoriesUseCase,
+)
+from app.application.use_cases.article_category.get_article_category_by_id import (
+    GetArticleCategoryByIdUseCase,
+)
+from app.application.use_cases.article_category.update_article_category import (
+    UpdateArticleCategoryUseCase,
+)
+
+__all__ = [
+    "CreateArticleCategoryUseCase",
+    "GetArticleCategoryByIdUseCase",
+    "GetAllArticleCategoriesUseCase",
+    "UpdateArticleCategoryUseCase",
+    "DeleteArticleCategoryUseCase",
+]

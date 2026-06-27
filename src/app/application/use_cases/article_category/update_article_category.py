@@ -1,31 +1,75 @@
+"""Caso de uso para actualizar una categoría de artículo existente."""
+
 import uuid
+
+from app.application.dtos.article_category_dtos import (
+    ArticleCategoryResponse,
+    UpdateCategoryRequest,
+)
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.application.use_cases.article_categories.schemas import UpdateCategoryRequest, ArticleCategoryResponse
-from app.application.use_cases.article_categories.errors import ArticleCategoryNotFoundError, ArticleCategoryNameExistsError
+from app.domain.exceptions import (
+    ArticleCategoryNameExistsError,
+    ArticleCategoryNotFoundError,
+)
+
 
 class UpdateArticleCategoryUseCase:
+    """Actualiza el nombre y/o descripción de una categoría validando unicidad."""
+
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(self, empresa_id_str: str, category_id: uuid.UUID, request: UpdateCategoryRequest) -> ArticleCategoryResponse:
+    async def execute(
+        self,
+        empresa_id_str: str,
+        category_id: uuid.UUID,
+        request: UpdateCategoryRequest,
+    ) -> ArticleCategoryResponse:
+        """Ejecuta la actualización de una categoría de artículo.
+
+        Args:
+            empresa_id_str: UUID de la empresa como string.
+            category_id: UUID de la categoría a actualizar.
+            request: DTO con los campos a actualizar (name y/o description).
+
+        Returns:
+            DTO con los datos de la categoría actualizada.
+
+        Raises:
+            ArticleCategoryNotFoundError: Si no se encuentra la categoría.
+            ArticleCategoryNameExistsError: Si el nuevo nombre ya está en uso.
+        """
         empresa_id = uuid.UUID(empresa_id_str)
         async with self.uow:
-            category = await self.uow.article_categories.get_by_id(category_id, empresa_id)
+            category = await self.uow.article_categories.get_by_id(
+                category_id, empresa_id
+            )
             if not category:
                 raise ArticleCategoryNotFoundError("Categoría no encontrada.")
-            
-            if request.nombre and request.nombre != category.nombre:
-                existing = await self.uow.article_categories.get_by_name(request.nombre, empresa_id)
-                if existing:
-                    raise ArticleCategoryNameExistsError(f"El nombre '{request.nombre}' ya está en uso.")
-                category.change_nombre(request.nombre) # Usamos método de negocio de la entidad
-                
-            if request.descripcion is not None:
-                category.change_descripcion(request.descripcion)
+
+            if (
+                "name" in request._fields_set
+                and request.name is not None
+                and request.name != category.name
+            ):
+                    existing = await self.uow.article_categories.get_by_name(
+                        request.name, empresa_id
+                    )
+                    if existing:
+                        raise ArticleCategoryNameExistsError(
+                            f"El nombre '{request.name}' ya está en uso."
+                        )
+                    category.change_name(request.name)
+
+            if "description" in request._fields_set:
+                category.change_description(request.description)
 
             await self.uow.article_categories.save(category)
             await self.uow.commit()
             return ArticleCategoryResponse(
-                id=category.id, empresa_id=category.empresa_id,
-                nombre=category.nombre, descripcion=category.descripcion, version=category.version
+                id=category.id,
+                empresa_id=category.empresa_id,
+                name=category.name,
+                description=category.description,
+                version=category.version,
             )
