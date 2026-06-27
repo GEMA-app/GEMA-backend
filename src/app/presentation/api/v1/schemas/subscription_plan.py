@@ -1,4 +1,4 @@
-"""Schemas JSON:API para planes de suscripción: atributos, recursos, 
+"""Schemas JSON:API para planes de suscripción: atributos, recursos,
 documentos individuales y listados con filtros.
 """
 
@@ -9,15 +9,16 @@ from pydantic import BaseModel, Field
 
 from app.presentation.api.v1.schemas.jsonapi_base import LinksObject
 
+
 class SubscriptionPlanAttributes(BaseModel):
     """Atributos de un plan de suscripción."""
 
     nombre: str
-    descripcion: str | None = None
     precio_mensual_usd: Decimal
-    max_usuarios: int | None = None
+    descripcion: str | None = None
     max_activos: int | None = None
-    version: int
+    max_usuarios: int | None = None
+    is_active: bool = True
 
 class SubscriptionPlanResource(BaseModel):
     """Recurso JSON:API de un plan de suscripción."""
@@ -67,9 +68,9 @@ class UpdateSubscriptionPlanAttributes(BaseModel):
     nombre: str | None = None
     descripcion: str | None = None
     precio_mensual_usd: Decimal | None = None
-    max_usuarios: int | None = None
     max_activos: int | None = None
-    version: int | None = None
+    max_usuarios: int | None = None
+    is_active: bool | None = None
 
 class UpdateSubscriptionPlanResource(BaseModel):
     """Recurso JSON:API para actualizar un plan de suscripción."""

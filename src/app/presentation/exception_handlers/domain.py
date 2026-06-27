@@ -38,16 +38,16 @@ from app.domain.exceptions import (
     RoleNameExistsError,
     RoleNotFoundError,
     StaleDataError,
+    SubscriptionPlanAlreadyExistsError,
+    SubscriptionPlanHasActiveSubscriptionsError,
+    SubscriptionPlanInvalidDataError,
+    SubscriptionPlanLimitExceededError,
+    SubscriptionPlanNotFoundError,
+    SubscriptionPlanPaymentFailedError,
     UserAlreadyExistsError,
     UserInactiveError,
     ValidationException,
     WeakPasswordError,
-    SubscriptionPlanException,
-    SubscriptionPlanNotFoundError,
-    SubscriptionPlanAlreadyExistsError,
-    SubscriptionPlanInvalidDataError,
-    SubscriptionPlanLimitExceededError,
-    SubscriptionPlanPaymentFailedError
 )
 from app.infrastructure.notifications.email_sender import NotificationError, TemplateNotFoundError
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
@@ -202,10 +202,6 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         status.HTTP_502_BAD_GATEWAY,
         "ERR_TEMPLATE_NOT_FOUND",
     ),
-    SubscriptionPlanException: (
-        status.HTTP_400_BAD_REQUEST,
-        "ERR_SUBSCRIPTION_PLAN",
-    ),
     SubscriptionPlanNotFoundError: (
         status.HTTP_404_NOT_FOUND,
         "ERR_SUBSCRIPTION_PLAN_NOT_FOUND",
@@ -225,6 +221,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     SubscriptionPlanPaymentFailedError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_SUBSCRIPTION_PLAN_PAYMENT_FAILED",
+    ),
+    SubscriptionPlanHasActiveSubscriptionsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_SUBSCRIPTION_PLAN_HAS_ACTIVE_SUBSCRIPTIONS",
     ),
 }
 

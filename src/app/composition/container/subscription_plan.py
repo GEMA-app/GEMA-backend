@@ -1,16 +1,17 @@
-""""Fábricas de dependencias para los casos de uso de planes de subscripcion."""
+"""Fábricas de dependencias para los casos de uso de planes de suscripción."""
 
 from fastapi import Depends
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.application.use_cases.subscription_plan import (
     CreateSubscriptionPlanUseCase,
-    UpdateSubscriptionPlanUseCase,
-    GetSubscriptionPlanUseCase,
     DeleteSubscriptionPlanUseCase,
-    ListSubscriptionPlansUseCase
+    GetSubscriptionPlanUseCase,
+    ListSubscriptionPlansUseCase,
+    UpdateSubscriptionPlanUseCase,
 )
 from app.composition.container.common import get_uow
+
 
 async def get_create_subscription_plan_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
