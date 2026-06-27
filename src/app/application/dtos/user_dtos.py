@@ -1,3 +1,5 @@
+"""DTOs para el módulo de usuarios."""
+
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -10,6 +12,16 @@ class CreateUserRequest:
     password: str
     nombre: str
     telefono: str | None = None
+
+
+@dataclass(frozen=True)
+class UpdateUserRequest:
+    """DTO de entrada para la actualización parcial de un usuario."""
+
+    nombre: str | None = None
+    email: str | None = None
+    telefono: str | None = None
+    activo: bool | None = None
 
 
 @dataclass(frozen=True)
