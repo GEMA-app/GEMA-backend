@@ -3,7 +3,6 @@
 Re-exporta todas las excepciones para mantener compatibilidad con los
 imports existentes (``from app.domain.exceptions import X``).
 """
-from app.domain.exceptions.base import DomainException, ValidationError
 from app.domain.exceptions.article_category import (
     ArticleCategoryException,
     ArticleCategoryNameExistsError,
@@ -28,7 +27,7 @@ from app.domain.exceptions.auth import (
     UserInactiveError,
     WeakPasswordError,
 )
-from app.domain.exceptions.base import DomainException
+from app.domain.exceptions.base import DomainException, ValidationError
 from app.domain.exceptions.company import (
     CompanyAlreadyCancelledError,
     CompanyException,

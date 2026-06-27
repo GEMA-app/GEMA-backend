@@ -1,5 +1,6 @@
 from app.domain.exceptions.base import DomainException
 
+
 class ArticleCategoryException(DomainException):
     """Clase base para excepciones del módulo de categorías de artículos."""
     pass
