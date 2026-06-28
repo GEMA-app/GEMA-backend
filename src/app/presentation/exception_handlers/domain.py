@@ -47,6 +47,10 @@ from app.domain.exceptions import (
     UserInactiveError,
     ValidationException,
     WeakPasswordError,
+    WorkOrderCodeExistsError,
+    WorkOrderInvalidDataError,
+    WorkOrderInvalidStateError,
+    WorkOrderNotFoundError,
 )
 from app.infrastructure.notifications.email_sender import NotificationError, TemplateNotFoundError
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
@@ -220,6 +224,22 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     TemplateNotFoundError: (
         status.HTTP_502_BAD_GATEWAY,
         "ERR_TEMPLATE_NOT_FOUND",
+    ),
+    WorkOrderNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_WORK_ORDER_NOT_FOUND",
+    ),
+    WorkOrderCodeExistsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_WORK_ORDER_CODE_EXISTS",
+    ),
+    WorkOrderInvalidStateError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_WORK_ORDER_INVALID_STATE",
+    ),
+    WorkOrderInvalidDataError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_WORK_ORDER_INVALID_DATA",
     ),
 }
 

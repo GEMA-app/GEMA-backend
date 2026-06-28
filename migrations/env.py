@@ -7,6 +7,8 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
 # Importar metadatos de los modelos ORM sin side-effects de la aplicación
+# NOTA: Importar cualquier modelo hace que __init__.py importe todos,
+# registrándolos en Base.metadata para autogenerate.
 from app.infrastructure.config.settings import settings
 from app.infrastructure.db import models  # noqa: F401
 from app.infrastructure.db.base import Base

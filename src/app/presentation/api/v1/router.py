@@ -11,6 +11,7 @@ from app.presentation.api.v1.endpoints.failure_reports import router as failure_
 from app.presentation.api.v1.endpoints.locations import router as locations_router
 from app.presentation.api.v1.endpoints.preferences import router as preferences_router
 from app.presentation.api.v1.endpoints.roles import router as roles_router
+from app.presentation.api.v1.endpoints.work_orders import router as work_orders_router
 
 v1_router = APIRouter(prefix="/v1")
 
@@ -35,13 +36,13 @@ v1_router.include_router(
 v1_router.include_router(
     assets_router,
     prefix="/empresas/{empresa_id}/activos",
-    tags=["activos"]
+    tags=["activos"],
 )
 
 v1_router.include_router(
     locations_router,
     prefix="/empresas/{empresa_id}/ubicaciones",
-    tags=["ubicaciones"]
+    tags=["ubicaciones"],
 )
 
 v1_router.include_router(
@@ -51,7 +52,13 @@ v1_router.include_router(
 )
 
 v1_router.include_router(
-      failure_reports_router,
-      prefix="/empresas/{empresa_id}/reportes-fallas",
-      tags=["Reporte de Fallas"]
-  )
+    failure_reports_router,
+    prefix="/empresas/{empresa_id}/reportes-fallas",
+    tags=["Reporte de Fallas"],
+)
+
+v1_router.include_router(
+    work_orders_router,
+    prefix="/empresas/{empresa_id}/ordenes-trabajo",
+    tags=["ordenes-trabajo"],
+)

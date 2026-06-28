@@ -9,6 +9,7 @@ from app.domain.entities.permission import Permission
 from app.domain.entities.preference import UserPreference
 from app.domain.entities.role import Role
 from app.domain.entities.user import User
+from app.domain.entities.work_order import WorkOrder
 
 __all__ = [
     "User",
@@ -21,4 +22,5 @@ __all__ = [
     "CatalogArticle",
     "UserPreference",
     "FailureReport",
+    "WorkOrder",
 ]

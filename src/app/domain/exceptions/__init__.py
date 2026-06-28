@@ -70,6 +70,13 @@ from app.domain.exceptions.validation import (
     InvalidUUIDError,
     ValidationException,
 )
+from app.domain.exceptions.work_order import (
+    WorkOrderCodeExistsError,
+    WorkOrderException,
+    WorkOrderInvalidDataError,
+    WorkOrderInvalidStateError,
+    WorkOrderNotFoundError,
+)
 
 __all__ = [
     "DomainException",
@@ -120,4 +127,9 @@ __all__ = [
     "EmptyDescriptionError",
     "EmptyLocationError",
     "EmptyReportedByError",
+    "WorkOrderException",
+    "WorkOrderNotFoundError",
+    "WorkOrderCodeExistsError",
+    "WorkOrderInvalidStateError",
+    "WorkOrderInvalidDataError",
 ]

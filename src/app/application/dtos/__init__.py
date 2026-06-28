@@ -34,6 +34,12 @@ from app.application.dtos.role_dtos import (
     RoleResponse,
     UpdateRoleRequest,
 )
+from app.application.dtos.work_order_dtos import (
+    ChangeWorkOrderStatusRequest,
+    CreateWorkOrderRequest,
+    UpdateWorkOrderRequest,
+    WorkOrderResponse,
+)
 
 __all__ = [
     "AuthTokensDTO",
@@ -65,4 +71,8 @@ __all__ = [
     "UpdatePreferenceRequest",
     "CreateFailureReportRequest",
     "FailureReportResponse",
+    "CreateWorkOrderRequest",
+    "UpdateWorkOrderRequest",
+    "WorkOrderResponse",
+    "ChangeWorkOrderStatusRequest",
 ]

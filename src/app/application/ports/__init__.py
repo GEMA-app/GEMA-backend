@@ -9,6 +9,7 @@ from app.application.ports.preference_repository import PreferenceRepositoryPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.application.ports.work_order_repository import WorkOrderRepositoryPort
 
 __all__ = [
     "UserRepositoryPort",
@@ -23,4 +24,5 @@ __all__ = [
     "PasswordHasherPort",
     "TokenServicePort",
     "NotificationPort",
+    "WorkOrderRepositoryPort",
 ]
