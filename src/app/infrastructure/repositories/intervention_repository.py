@@ -34,6 +34,7 @@ class SqlAlchemyInterventionRepository(
         """
         return TechnicalIntervention(
             id=InterventionId.from_string(str(model.id)),
+            empresa_id=CompanyId.from_string(str(model.empresa_id)),
             work_order_id=WorkOrderId.from_string(str(model.ordenes_trabajo_id)),
             technician_id=UserId.from_string(str(model.tecnico_id)),
             tareas_realizadas=model.tareas_realizadas,
@@ -53,6 +54,7 @@ class SqlAlchemyInterventionRepository(
         """
         return InterventionModel(
             id=entity.id.value,
+            empresa_id=entity.empresa_id.value,
             ordenes_trabajo_id=entity.work_order_id.value,
             tecnico_id=entity.technician_id.value,
             tareas_realizadas=entity.tareas_realizadas,
