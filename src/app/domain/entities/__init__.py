@@ -8,6 +8,7 @@ from app.domain.entities.company import Company
 from app.domain.entities.failure_report import FailureReport
 from app.domain.entities.location import Location
 from app.domain.entities.permission import Permission
+from app.domain.entities.plan_execution import PlanExecution
 from app.domain.entities.preference import UserPreference
 from app.domain.entities.role import Role
 from app.domain.entities.used_part import UsedPart
@@ -21,6 +22,7 @@ __all__ = [
     "Role",
     "Permission",
     "Location",
+    "PlanExecution",
     "Asset",
     "AssetStateLog",
     "ArticleCategory",

@@ -69,6 +69,11 @@ from app.composition.container.location import (
     get_location_use_case,
     get_update_location_use_case,
 )
+from app.composition.container.plan_execution import (
+    create_plan_execution_use_case,
+    get_plan_execution_use_case,
+    list_plan_execution_use_case,
+)
 from app.composition.container.preference import (
     get_update_preference_use_case,
     get_user_preference_use_case,
@@ -151,6 +156,10 @@ __all__ = [
     "get_location_children_use_case",
     "get_update_location_use_case",
     "get_delete_location_use_case",
+    # Plan Execution
+    "create_plan_execution_use_case",
+    "get_plan_execution_use_case",
+    "list_plan_execution_use_case",
     # Preferences
     "get_update_preference_use_case",
     "get_user_preference_use_case",

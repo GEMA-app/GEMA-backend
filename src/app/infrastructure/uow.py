@@ -25,6 +25,9 @@ from app.infrastructure.repositories.failure_report_repository import (
     SqlAlchemyFailureReportRepository,
 )
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
+from app.infrastructure.repositories.plan_execution_repository import (
+    SqlAlchemyPlanExecutionRepository,
+)
 from app.infrastructure.repositories.preference_repository import SqlAlchemyPreferenceRepository
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
 from app.infrastructure.repositories.used_part_repository import SqlAlchemyUsedPartRepository
@@ -74,6 +77,7 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         )
         self.used_parts = SqlAlchemyUsedPartRepository(self.session, self._pending_events)
         self.work_orders = SqlAlchemyWorkOrderRepository(self.session, self._pending_events)
+        self.plan_executions = SqlAlchemyPlanExecutionRepository(self.session, self._pending_events)
         return self
 
     async def __aexit__(self, exc_type: Any, exc_val: Any, tb: Any) -> None:

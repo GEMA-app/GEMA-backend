@@ -2,6 +2,7 @@
 
 import uuid
 from datetime import date
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Date, Enum, ForeignKey, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,6 +10,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.domain.enums import CompanyStatus
 from app.infrastructure.db.base import Base
 from app.infrastructure.db.models.mixins import TimestampMixin, VersionMixin
+
+if TYPE_CHECKING:
+    from app.infrastructure.db.models.plan_execution import PlanExecutionModel
 
 
 class SubscriptionPlanModel(TimestampMixin, Base):
@@ -48,4 +52,7 @@ class CompanyModel(VersionMixin, TimestampMixin, Base):
 
     plan: Mapped[SubscriptionPlanModel | None] = relationship(
         "SubscriptionPlanModel", back_populates="empresas"
+    )
+    plan_executions: Mapped[list["PlanExecutionModel"]] = relationship(
+        "PlanExecutionModel", back_populates="empresa"
     )

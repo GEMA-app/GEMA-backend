@@ -45,6 +45,8 @@ from app.domain.exceptions import (
     LocationCircularReferenceError,
     LocationInvalidTypeHierarchyError,
     LocationNotFoundError,
+    PlanExecutionNotFoundError,
+    PlanExecutionObservationsEmptyError,
     PreferenceNotFoundError,
     PreferenceThemeInvalidError,
     RoleNameExistsError,
@@ -258,6 +260,14 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     UsedPartInvalidPriceError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_USED_PART_INVALID_PRICE",
+    ),
+    PlanExecutionNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_PLAN_EXECUTION_NOT_FOUND",
+    ),
+    PlanExecutionObservationsEmptyError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_PLAN_EXECUTION_OBSERVATIONS_EMPTY",
     ),
     NotificationError: (
         status.HTTP_502_BAD_GATEWAY,
