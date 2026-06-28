@@ -55,7 +55,7 @@ router = APIRouter()
     summary="Crear una orden de trabajo",
 )
 async def create_work_order(
-    company_id: str,
+    empresa_id: str,
     request: CreateWorkOrderRequest,
     current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "create")),
     use_case: CreateWorkOrderUseCase = Depends(get_create_work_order_use_case),
@@ -70,7 +70,7 @@ async def create_work_order(
         costo_estimado=request.data.attributes.costo_estimado,
         moneda=request.data.attributes.moneda,
     )
-    res = await use_case.execute(company_id, dto)
+    res = await use_case.execute(empresa_id, dto)
     return WorkOrderDocument(
         data=WorkOrderResource(
             id=res.id,
@@ -102,7 +102,7 @@ async def create_work_order(
     summary="Listar órdenes de trabajo",
 )
 async def list_work_orders(
-    company_id: str,
+    empresa_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
     use_case: ListWorkOrdersUseCase = Depends(get_list_work_orders_use_case),
     estado: str | None = Query(None, description="Filtrar por estado"),
@@ -112,7 +112,7 @@ async def list_work_orders(
 ) -> WorkOrderListDocument:
     """Lista órdenes de trabajo de una empresa con paginación y filtros."""
     results, total = await use_case.execute(
-        company_id, estado=estado, activo_id=activo_id
+        empresa_id, estado=estado, activo_id=activo_id
     )
     return WorkOrderListDocument(
         data=[
@@ -149,13 +149,13 @@ async def list_work_orders(
     summary="Obtener una orden de trabajo",
 )
 async def get_work_order(
-    company_id: str,
+    empresa_id: str,
     work_order_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
     use_case: GetWorkOrderUseCase = Depends(get_work_order_use_case),
 ) -> WorkOrderDocument:
     """Obtiene los detalles de una orden de trabajo por su ID."""
-    res = await use_case.execute(company_id, work_order_id)
+    res = await use_case.execute(empresa_id, work_order_id)
     return WorkOrderDocument(
         data=WorkOrderResource(
             id=res.id,
@@ -187,7 +187,7 @@ async def get_work_order(
     summary="Actualizar una orden de trabajo",
 )
 async def update_work_order(
-    company_id: str,
+    empresa_id: str,
     work_order_id: str,
     request: UpdateWorkOrderRequest,
     current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
@@ -200,7 +200,7 @@ async def update_work_order(
         costo_real=request.data.attributes.costo_real,
         supervisor_id=request.data.attributes.supervisor_id,
     )
-    res = await use_case.execute(company_id, work_order_id, dto)
+    res = await use_case.execute(empresa_id, work_order_id, dto)
     return WorkOrderDocument(
         data=WorkOrderResource(
             id=res.id,
@@ -232,13 +232,13 @@ async def update_work_order(
     summary="Eliminar una orden de trabajo",
 )
 async def delete_work_order(
-    company_id: str,
+    empresa_id: str,
     work_order_id: str,
     current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "delete")),
     use_case: DeleteWorkOrderUseCase = Depends(get_delete_work_order_use_case),
 ) -> None:
     """Elimina una orden de trabajo por su ID."""
-    await use_case.execute(company_id, work_order_id)
+    await use_case.execute(empresa_id, work_order_id)
 
 
 @router.patch(
@@ -247,7 +247,7 @@ async def delete_work_order(
     summary="Cambiar estado de una orden de trabajo",
 )
 async def change_work_order_status(
-    company_id: str,
+    empresa_id: str,
     work_order_id: str,
     request: ChangeStatusRequest,
     current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
@@ -257,7 +257,7 @@ async def change_work_order_status(
 ) -> WorkOrderDocument:
     """Cambia el estado de una orden de trabajo (iniciar, pausar, reanudar, cerrar, cancelar)."""
     dto = ChangeStatusDTO(estado=request.data.attributes.estado)
-    res = await use_case.execute(company_id, work_order_id, dto)
+    res = await use_case.execute(empresa_id, work_order_id, dto)
     return WorkOrderDocument(
         data=WorkOrderResource(
             id=res.id,
