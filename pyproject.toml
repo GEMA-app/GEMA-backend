@@ -20,7 +20,7 @@ gunicorn = "^23.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0"
-pytest-asyncio = "^0.25"
+pytest-asyncio = "^1.4"
 httpx = "^0.28"
 ruff = "^0.11"
 mypy = "^1.15"
@@ -60,4 +60,6 @@ plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-asyncio_default_fixture_loop_scope = "function"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+
