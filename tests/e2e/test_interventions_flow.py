@@ -96,7 +96,7 @@ async def test_interventions_crud_and_isolation_flow():
                         "work_order_id": ot_id,
                         "technician_id": usuario_id,
                         "tareas_realizadas": "Revisión de motor eléctrico",
-                        "fecha_inicio": "2026-06-28T10:00:00Z",
+                        "fecha_inicio": "2026-06-28T10:00:00",  # timezone-naive para TIMESTAMP sin zona
                         "horas_hombre": 3.5,
                     },
                 }
