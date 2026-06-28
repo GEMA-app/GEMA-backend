@@ -3,7 +3,12 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from app.domain.value_objects.identifier import InterventionId, UserId, WorkOrderId
+from app.domain.value_objects.identifier import (
+    CompanyId,
+    InterventionId,
+    UserId,
+    WorkOrderId,
+)
 
 
 @dataclass(frozen=True)
@@ -11,6 +16,7 @@ class TechnicalIntervention:
     """Intervención técnica realizada dentro de una orden de trabajo."""
 
     id: InterventionId
+    empresa_id: CompanyId
     work_order_id: WorkOrderId
     technician_id: UserId
     tareas_realizadas: str
@@ -32,6 +38,7 @@ class TechnicalIntervention:
     @classmethod
     def create(
         cls,
+        empresa_id: CompanyId,
         work_order_id: WorkOrderId,
         technician_id: UserId,
         tareas_realizadas: str,
@@ -41,6 +48,7 @@ class TechnicalIntervention:
         """Crea una nueva intervención técnica.
 
         Args:
+            empresa_id: Identificador de la empresa (tenant).
             work_order_id: Identificador de la orden de trabajo asociada.
             technician_id: Identificador del técnico asignado.
             tareas_realizadas: Descripción detallada de las tareas realizadas.
@@ -52,6 +60,7 @@ class TechnicalIntervention:
         """
         return cls(
             id=InterventionId.generar(),
+            empresa_id=empresa_id,
             work_order_id=work_order_id,
             technician_id=technician_id,
             tareas_realizadas=tareas_realizadas,

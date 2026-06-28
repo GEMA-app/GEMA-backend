@@ -20,6 +20,7 @@ class InterventionResponse:
     """
 
     id: UUID
+    empresa_id: UUID
     work_order_id: UUID
     technician_id: UUID
     tareas_realizadas: str
