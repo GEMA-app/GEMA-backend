@@ -96,6 +96,24 @@ class RoleRevoked(DomainEvent):
 
 @auto_register
 @dataclass(frozen=True, kw_only=True)
+class UserDeactivated(DomainEvent):
+    """Evento emitido cuando un usuario es desactivado (baja lógica)."""
+
+    user_id: str
+    email: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class UserActivated(DomainEvent):
+    """Evento emitido cuando un usuario desactivado es reactivado."""
+
+    user_id: str
+    email: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
 class PasswordChanged(DomainEvent):
     """Evento emitido cuando un usuario cambia su contraseña."""
 

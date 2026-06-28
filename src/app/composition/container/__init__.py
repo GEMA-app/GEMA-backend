@@ -108,6 +108,13 @@ from app.composition.container.used_part import (
     get_list_used_parts_use_case,
     get_update_used_part_use_case,
 )
+from app.composition.container.user import (
+    get_create_user_use_case,
+    get_delete_user_use_case,
+    get_edit_user_use_case,
+    get_list_users_use_case,
+    get_user_use_case,
+)
 from app.composition.container.work_order import (
     get_change_work_order_status_use_case,
     get_create_work_order_use_case,
@@ -214,4 +221,10 @@ __all__ = [
     "get_list_maintenance_plans_use_case",
     "get_update_maintenance_plan_use_case",
     "get_delete_maintenance_plan_use_case",
+    # User
+    "get_create_user_use_case",
+    "get_user_use_case",
+    "get_list_users_use_case",
+    "get_edit_user_use_case",
+    "get_delete_user_use_case",
 ]

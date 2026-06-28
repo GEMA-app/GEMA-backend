@@ -25,3 +25,7 @@ class UserRepositoryPort(Protocol):
     async def get_by_id(self, id: UserId) -> User | None:
         """Busca un usuario por su identificador único."""
         ...
+
+    async def list_by_company(self, empresa_id: CompanyId) -> list[User]:
+        """Retorna todos los usuarios pertenecientes a una empresa."""
+        ...

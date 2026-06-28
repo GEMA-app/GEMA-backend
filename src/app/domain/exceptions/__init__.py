@@ -107,6 +107,7 @@ from app.domain.exceptions.used_part import (
     UsedPartInvalidQuantityError,
     UsedPartNotFoundError,
 )
+from app.domain.exceptions.user import UserException, UserNotFoundError
 from app.domain.exceptions.validation import (
     InvalidSlugError,
     InvalidUUIDError,
@@ -205,4 +206,6 @@ __all__ = [
     "SubscriptionPlanLimitExceededError",
     "SubscriptionPlanPaymentFailedError",
     "SubscriptionPlanHasActiveSubscriptionsError",
+    "UserException",
+    "UserNotFoundError",
 ]

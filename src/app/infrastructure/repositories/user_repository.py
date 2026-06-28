@@ -69,6 +69,20 @@ class SqlAlchemyUserRepository(
             return None
         return self._to_entity(model)
 
+    async def list_by_company(self, empresa_id: CompanyId) -> list[User]:
+        """Retorna todos los usuarios pertenecientes a una empresa.
+
+        Args:
+            empresa_id: Identificador de la empresa (tenant).
+
+        Returns:
+            Lista de entidades User asociadas a la empresa.
+        """
+        stmt = select(UserModel).where(UserModel.empresa_id == empresa_id.value)
+        result = await self.session.execute(stmt)
+        models = result.scalars().all()
+        return [self._to_entity(m) for m in models]
+
     async def get_by_id(self, id: UserId) -> User | None:
         """Busca un usuario por ID.
 

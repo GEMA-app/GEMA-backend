@@ -18,6 +18,7 @@ from app.presentation.api.v1.endpoints.preferences import router as preferences_
 from app.presentation.api.v1.endpoints.roles import router as roles_router
 from app.presentation.api.v1.endpoints.subscription_plans import router as subscription_plans_router
 from app.presentation.api.v1.endpoints.used_parts import router as used_parts_router
+from app.presentation.api.v1.endpoints.users import router as users_router
 from app.presentation.api.v1.endpoints.work_orders import router as work_orders_router
 
 v1_router = APIRouter(prefix="/v1")
@@ -110,4 +111,10 @@ v1_router.include_router(
     maintenance_plan_router,
     prefix="/empresas/{empresa_id}/planes-mantenimiento",
     tags=["planes-mantenimiento"],
+)
+
+v1_router.include_router(
+    users_router,
+    prefix="/empresas/{empresa_id}/usuarios",
+    tags=["usuarios"],
 )
