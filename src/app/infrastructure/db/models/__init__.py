@@ -16,6 +16,8 @@ from app.infrastructure.db.models.work_order import (
     WorkOrderTechnicianModel,
 )
 
+from .asset_state_log import AssetStateLogModel
+
 __all__ = [
     "UserModel",
     "SubscriptionPlanModel",
@@ -33,6 +35,7 @@ __all__ = [
     "TenantMixin",
     "TimestampMixin",
     "VersionMixin",
+    "AssetStateLogModel",
     "WorkOrderModel",
     "WorkOrderTechnicianModel",
     "WorkOrderStatusLogModel",

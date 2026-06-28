@@ -1,4 +1,5 @@
 from app.application.dtos.asset_dtos import AssetResponse, CreateAssetRequest, UpdateAssetRequest
+from app.application.dtos.asset_state_log_dtos import AssetStateLogResponse
 from app.application.dtos.auth_dtos import (
     AuthTokensDTO,
     ChangePasswordRequest,
@@ -68,6 +69,7 @@ __all__ = [
     "CreateAssetRequest",
     "UpdateAssetRequest",
     "AssetResponse",
+    "AssetStateLogResponse",
     "CreateLocationRequest",
     "UpdateLocationRequest",
     "LocationResponse",

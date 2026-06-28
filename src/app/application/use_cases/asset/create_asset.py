@@ -1,9 +1,10 @@
 import uuid
+from datetime import UTC, datetime
 from decimal import Decimal
 
 from app.application.dtos.asset_dtos import AssetResponse, CreateAssetRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.domain.entities import Asset
+from app.domain.entities import Asset, AssetStateLog
 from app.domain.enums import AssetStatus
 from app.domain.exceptions import (
     LocationNotFoundError,
@@ -17,7 +18,9 @@ class CreateAssetUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(self, company_id_str: str, request: CreateAssetRequest) -> AssetResponse:
+    async def execute(
+        self, company_id_str: str, request: CreateAssetRequest, usuario_id_str: str | None = None
+    ) -> AssetResponse:
         """Crea un activo y lo persiste."""
         company_id = CompanyId.from_string(company_id_str)
 
@@ -54,6 +57,19 @@ class CreateAssetUseCase:
             )
 
             await self.uow.assets.save(asset)
+
+            log_entry = AssetStateLog(
+                id=uuid.uuid4(),
+                empresa_id=company_id,
+                activo_id=asset.id,
+                estado_anterior=None,
+                estado_nuevo=asset.estado,
+                motivo="Registro inicial del activo",
+                fecha_cambio=datetime.now(UTC),
+                usuario_id=uuid.UUID(usuario_id_str) if usuario_id_str else None,
+            )
+            await self.uow.asset_state_logs.save(log_entry)
+
             await self.uow.commit()
 
             return AssetResponse(

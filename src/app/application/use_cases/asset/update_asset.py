@@ -1,7 +1,10 @@
+import uuid
+from datetime import UTC, datetime
 from decimal import Decimal
 
 from app.application.dtos.asset_dtos import AssetResponse, UpdateAssetRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.entities import AssetStateLog
 from app.domain.enums import AssetStatus
 from app.domain.exceptions import (
     AssetNotFoundError,
@@ -20,7 +23,11 @@ class UpdateAssetUseCase:
         self.uow = uow
 
     async def execute(
-        self, company_id_str: str, asset_id_str: str, request: UpdateAssetRequest
+        self,
+        company_id_str: str,
+        asset_id_str: str,
+        request: UpdateAssetRequest,
+        usuario_id_str: str | None = None,
     ) -> AssetResponse:
         """Actualiza los datos del activo."""
         company_id = CompanyId.from_string(company_id_str)
@@ -70,18 +77,22 @@ class UpdateAssetUseCase:
                     raise ValidationException("El serial interno no puede estar vacío.")
                 asset.serial_interno = new_serial
 
+            state_changed = False
+            old_status = asset.estado
             if 'estado' in request._fields_set:
                 if request.estado is None:
                     raise ValidationException("El estado no puede ser nulo.")
                 estado_destino = AssetStatus(request.estado)
-                if estado_destino == AssetStatus.UNDER_MAINTENANCE:
-                    asset.mark_as_under_maintenance()
-                elif estado_destino == AssetStatus.DECOMMISSIONED:
-                    asset.decommission()
-                elif estado_destino == AssetStatus.OPERATIONAL:
-                    asset.put_in_service()
-                elif estado_destino == AssetStatus.OUT_OF_SERVICE:
-                    asset.take_out_of_service()
+                if estado_destino != old_status:
+                    state_changed = True
+                    if estado_destino == AssetStatus.UNDER_MAINTENANCE:
+                        asset.mark_as_under_maintenance()
+                    elif estado_destino == AssetStatus.DECOMMISSIONED:
+                        asset.decommission()
+                    elif estado_destino == AssetStatus.OPERATIONAL:
+                        asset.put_in_service()
+                    elif estado_destino == AssetStatus.OUT_OF_SERVICE:
+                        asset.take_out_of_service()
 
             if 'fecha_adquisicion' in request._fields_set:
                 asset.fecha_adquisicion = request.fecha_adquisicion
@@ -99,6 +110,20 @@ class UpdateAssetUseCase:
                 asset.moneda = request.moneda
 
             await self.uow.assets.save(asset)
+
+            if state_changed:
+                log_entry = AssetStateLog(
+                    id=uuid.uuid4(),
+                    empresa_id=company_id,
+                    activo_id=asset.id,
+                    estado_anterior=old_status,
+                    estado_nuevo=asset.estado,
+                    motivo=None,
+                    fecha_cambio=datetime.now(UTC),
+                    usuario_id=uuid.UUID(usuario_id_str) if usuario_id_str else None,
+                )
+                await self.uow.asset_state_logs.save(log_entry)
+
             await self.uow.commit()
 
             return AssetResponse(

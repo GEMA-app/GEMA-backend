@@ -8,6 +8,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from app.infrastructure.db.models.asset_state_log import AssetStateLogModel
     from app.infrastructure.db.models.catalog import CatalogArticleModel
     from app.infrastructure.db.models.location import LocationModel
 
@@ -58,3 +59,6 @@ class AssetModel(VersionMixin, TenantMixin, TimestampMixin, Base):
 
     articulo: Mapped[CatalogArticleModel] = relationship("CatalogArticleModel")
     ubicacion: Mapped[LocationModel | None] = relationship("LocationModel")
+    state_logs: Mapped[list[AssetStateLogModel]] = relationship(
+        back_populates="asset", cascade="all, delete-orphan"
+    )
