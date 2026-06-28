@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, Path, Query, status
 
 from app.application.dtos.auth_dtos import UserResponse
 from app.application.dtos.intervention_dtos import (
-    CreateInterventionRequest,
-    UpdateInterventionRequest,
+    CreateInterventionRequest as CreateInterventionDTO,
+    UpdateInterventionRequest as UpdateInterventionDTO,
 )
 from app.application.use_cases.intervention import (
     CreateInterventionUseCase,
@@ -24,12 +24,12 @@ from app.composition.container.intervention import (
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import require_permission
 from app.presentation.api.v1.schemas.interventions import (
+    CreateInterventionRequest,
+    InterventionAttributes,
     InterventionDocument,
     InterventionListDocument,
     InterventionResource,
-)
-from app.presentation.api.v1.schemas.interventions import (
-    UpdateInterventionRequest as UpdateInterventionSchema,
+    UpdateInterventionRequest,
 )
 
 router = APIRouter(
@@ -73,7 +73,14 @@ async def list_interventions(
             InterventionResource(
                 id=str(i.id),
                 type="intervenciones",
-                attributes=i,
+                attributes=InterventionAttributes(
+                    work_order_id=i.work_order_id,
+                    technician_id=i.technician_id,
+                    tareas_realizadas=i.tareas_realizadas,
+                    fecha_inicio=i.fecha_inicio,
+                    fecha_fin=i.fecha_fin,
+                    horas_hombre=i.horas_hombre,
+                ),
             )
             for i in interventions
         ],
@@ -100,20 +107,34 @@ async def create_intervention(
     Args:
         empresa_id: Company UUID.
         ot_id: Work order UUID (passed separately from the body).
-        request: DTO with the intervention data.
+        request: Schema with the intervention data.
         use_case: Injected use case for creating interventions.
         _: Authorization dependency (MAINTENANCE:edit permission).
 
     Returns:
         InterventionDocument with the created intervention.
     """
-    intervention = await use_case.execute(ot_id, request)
+    attrs = request.data.attributes
+    dto = CreateInterventionDTO(
+        technician_id=attrs.technician_id,
+        tareas_realizadas=attrs.tareas_realizadas,
+        fecha_inicio=attrs.fecha_inicio,
+        horas_hombre=attrs.horas_hombre,
+    )
+    intervention = await use_case.execute(empresa_id, ot_id, dto)
 
     return InterventionDocument(
         data=InterventionResource(
             id=str(intervention.id),
             type="intervenciones",
-            attributes=intervention,
+            attributes=InterventionAttributes(
+                work_order_id=intervention.work_order_id,
+                technician_id=intervention.technician_id,
+                tareas_realizadas=intervention.tareas_realizadas,
+                fecha_inicio=intervention.fecha_inicio,
+                fecha_fin=intervention.fecha_fin,
+                horas_hombre=intervention.horas_hombre,
+            ),
         )
     )
 
@@ -150,7 +171,14 @@ async def get_intervention(
         data=InterventionResource(
             id=str(intervention.id),
             type="intervenciones",
-            attributes=intervention,
+            attributes=InterventionAttributes(
+                work_order_id=intervention.work_order_id,
+                technician_id=intervention.technician_id,
+                tareas_realizadas=intervention.tareas_realizadas,
+                fecha_inicio=intervention.fecha_inicio,
+                fecha_fin=intervention.fecha_fin,
+                horas_hombre=intervention.horas_hombre,
+            ),
         )
     )
 
@@ -166,7 +194,7 @@ async def update_intervention(
     empresa_id: Annotated[str, Path(description="ID de la empresa")],
     ot_id: Annotated[str, Path(description="ID de la orden de trabajo")],
     intervention_id: Annotated[str, Path(description="ID de la intervenciÃ³n")],
-    request: UpdateInterventionSchema,
+    request: UpdateInterventionRequest,
     use_case: UpdateInterventionUseCase = Depends(get_update_intervention_use_case),
     _: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
 ) -> InterventionDocument:
@@ -183,9 +211,10 @@ async def update_intervention(
     Returns:
         InterventionDocument with the updated intervention.
     """
-    dto_request = UpdateInterventionRequest(
-        tareas_realizadas=request.data.attributes.tareas_realizadas,
-        horas_hombre=request.data.attributes.horas_hombre,
+    attrs = request.data.attributes
+    dto_request = UpdateInterventionDTO(
+        tareas_realizadas=attrs.tareas_realizadas,
+        horas_hombre=attrs.horas_hombre,
     )
     intervention = await use_case.execute(ot_id, intervention_id, empresa_id, dto_request)
 
@@ -193,7 +222,14 @@ async def update_intervention(
         data=InterventionResource(
             id=str(intervention.id),
             type="intervenciones",
-            attributes=intervention,
+            attributes=InterventionAttributes(
+                work_order_id=intervention.work_order_id,
+                technician_id=intervention.technician_id,
+                tareas_realizadas=intervention.tareas_realizadas,
+                fecha_inicio=intervention.fecha_inicio,
+                fecha_fin=intervention.fecha_fin,
+                horas_hombre=intervention.horas_hombre,
+            ),
         )
     )
 

@@ -17,12 +17,10 @@ async def get_create_intervention_use_case(
 ) -> CreateInterventionUseCase:
     """Factory for CreateInterventionUseCase.
 
-    Initializes CreateInterventionUseCase with UnitOfWork and InterventionRepositoryPort.
+    Initializes CreateInterventionUseCase with UnitOfWork containing
+    the intervention repository.
     """
-    return CreateInterventionUseCase(
-        uow=uow,
-        intervention_repository=uow.interventions,
-    )
+    return CreateInterventionUseCase(uow=uow)
 
 
 async def get_list_interventions_use_case(
@@ -30,12 +28,10 @@ async def get_list_interventions_use_case(
 ) -> ListInterventionsUseCase:
     """Factory for ListInterventionsUseCase.
 
-    Initializes ListInterventionsUseCase with UnitOfWork and InterventionRepositoryPort.
+    Initializes ListInterventionsUseCase with UnitOfWork containing
+    the intervention repository.
     """
-    return ListInterventionsUseCase(
-        uow=uow,
-        intervention_repository=uow.interventions,
-    )
+    return ListInterventionsUseCase(uow=uow)
 
 
 async def get_intervention_use_case(
@@ -43,12 +39,10 @@ async def get_intervention_use_case(
 ) -> GetInterventionUseCase:
     """Factory for GetInterventionUseCase.
 
-    Initializes GetInterventionUseCase with UnitOfWork and InterventionRepositoryPort.
+    Initializes GetInterventionUseCase with UnitOfWork containing
+    the intervention repository.
     """
-    return GetInterventionUseCase(
-        uow=uow,
-        intervention_repository=uow.interventions,
-    )
+    return GetInterventionUseCase(uow=uow)
 
 
 async def get_update_intervention_use_case(
@@ -56,9 +50,7 @@ async def get_update_intervention_use_case(
 ) -> UpdateInterventionUseCase:
     """Factory for UpdateInterventionUseCase.
 
-    Initializes UpdateInterventionUseCase with UnitOfWork and InterventionRepositoryPort.
+    Initializes UpdateInterventionUseCase with UnitOfWork containing
+    the intervention repository.
     """
-    return UpdateInterventionUseCase(
-        uow=uow,
-        intervention_repository=uow.interventions,
-    )
+    return UpdateInterventionUseCase(uow=uow)
