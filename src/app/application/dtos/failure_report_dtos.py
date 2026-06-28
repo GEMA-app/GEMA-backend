@@ -51,3 +51,4 @@ class FailureReportResponse:
     reported_by: str
     status: str
     created_at: str
+    version: int = 1

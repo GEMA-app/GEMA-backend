@@ -6,7 +6,7 @@ from app.application.dtos.failure_report_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import PriorityLevel, ReportStatus
-from app.domain.exceptions.failure_report import FailureReportNotFoundError
+from app.domain.exceptions import FailureReportNotFoundError, StaleDataError
 from app.domain.value_objects import CompanyId, FailureReportId
 
 
@@ -45,6 +45,12 @@ class UpdateFailureReportUseCase:
                     f"El reporte de falla con ID '{report_id_str}' no existe en esta empresa."
                 )
 
+            if request.version is not None and request.version != report.version:
+                raise StaleDataError(
+                    f"Conflicto de versión para reporte de falla: se esperaba {request.version}, "
+                    f"la actual es {report.version}."
+                )
+
             if "title" in request._fields_set and request.title is not None:
                 report.title = request.title.strip()
             if "description" in request._fields_set and request.description is not None:
@@ -61,6 +67,11 @@ class UpdateFailureReportUseCase:
             await self.uow.failure_reports.save(report)
             await self.uow.commit()
 
+            # Sincronizar versión: SQLAlchemy incrementa version_id_col en el commit,
+            # pero la entidad en memoria no se actualiza automáticamente.
+            # El incremento es exactamente 1 por cada UPDATE (invariante de SQLAlchemy).
+            report.version += 1
+
             return FailureReportResponse(
                 id=str(report.id),
                 empresa_id=str(report.empresa_id),
@@ -71,4 +82,5 @@ class UpdateFailureReportUseCase:
                 reported_by=report.reported_by,
                 status=report.status.value,
                 created_at=report.created_at.isoformat() if report.created_at else "",
+                version=report.version,
             )

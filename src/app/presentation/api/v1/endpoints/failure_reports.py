@@ -81,6 +81,7 @@ async def create_failure_report(
                 reported_by=res.reported_by,
                 status=res.status,
                 created_at=res.created_at,
+                version=res.version,
             ),
         )
     )
@@ -141,6 +142,7 @@ async def list_failure_reports(
                     reported_by=r.reported_by,
                     status=r.status,
                     created_at=r.created_at,
+                    version=r.version,
                 ),
             )
             for r in reports
@@ -188,6 +190,7 @@ async def get_failure_report(
                 reported_by=res.reported_by,
                 status=res.status,
                 created_at=res.created_at,
+                version=res.version,
             ),
         )
     )
@@ -246,6 +249,7 @@ async def update_failure_report(
                 reported_by=res.reported_by,
                 status=res.status,
                 created_at=res.created_at,
+                version=res.version,
             ),
         )
     )

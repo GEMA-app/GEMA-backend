@@ -27,6 +27,7 @@ class FailureReport(EventProducer):
     priority: PriorityLevel
     reported_by: str
     status: ReportStatus
+    version: int = 1
     created_at: datetime | None = None
     _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
@@ -87,6 +88,7 @@ class FailureReport(EventProducer):
             priority=priority,
             reported_by=reported_by.strip(),
             status=ReportStatus.PENDING,
+            version=1,
             created_at=datetime.now(UTC),
         )
         report._events.append(

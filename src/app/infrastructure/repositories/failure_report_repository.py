@@ -35,6 +35,7 @@ class SqlAlchemyFailureReportRepository(
             priority=entity.priority.value,
             reported_by=entity.reported_by,
             status=entity.status.value,
+            version=entity.version,
         )
 
     def _to_entity(self, model: FailureReportModel) -> FailureReport:
@@ -47,6 +48,7 @@ class SqlAlchemyFailureReportRepository(
             priority=PriorityLevel(model.priority),
             reported_by=model.reported_by,
             status=ReportStatus(model.status),
+            version=model.version,
             created_at=model.created_at,
         )
 

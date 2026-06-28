@@ -310,6 +310,11 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 | `GET` | `/v1/empresas/{empresa_id}/ubicaciones/{ubicacion_id}/hijos`| Listar ubicaciones hijas directas | Bearer | - |
 | `GET` | `/v1/empresas/{empresa_id}/yo/preferencias` | Obtener preferencias del usuario actual | Bearer | `preferencias:view` |
 | `PATCH` | `/v1/empresas/{empresa_id}/yo/preferencias` | Actualizar preferencias del usuario actual | Bearer | `preferencias:edit` |
+| `POST` | `/v1/empresas/{empresa_id}/reportes-fallas` | Crear un reporte de falla | Bearer | `maintenance:create` |
+| `GET` | `/v1/empresas/{empresa_id}/reportes-fallas` | Listar reportes de falla | Bearer | `maintenance:view` |
+| `GET` | `/v1/empresas/{empresa_id}/reportes-fallas/{reporte_id}` | Obtener un reporte de falla por ID | Bearer | `maintenance:view` |
+| `PATCH` | `/v1/empresas/{empresa_id}/reportes-fallas/{reporte_id}` | Actualizar reporte de falla (Bloqueo Optimista) | Bearer | `maintenance:edit` |
+| `DELETE` | `/v1/empresas/{empresa_id}/reportes-fallas/{reporte_id}` | Eliminar reporte de falla | Bearer | `maintenance:delete` |
 | `GET` | `/salud/activo` | Liveness probe | No | - |
 | `GET` | `/salud/listo` | Readiness probe (DB + Redis) | No | - |
 
@@ -399,6 +404,24 @@ El runner CLI en `migrations/seeds/runner.py` se ejecuta dentro del contenedor d
 ```bash
 docker compose exec app python -m migrations.seeds.runner [dev|staging|test]
 ```
+
+---
+
+## Pruebas de Software (Testing)
+
+Las pruebas del sistema se organizan en unitarias y de integración/E2E bajo el directorio `tests/`:
+- **Ejecutar toda la suite de pruebas:**
+  ```bash
+  docker compose exec app pytest
+  ```
+- **Ejecutar prueba E2E de autenticación completa (registro, login, perfil, cambio de contraseña, restablecimiento y logout):**
+  ```bash
+  docker compose exec app pytest tests/e2e/test_auth_flow.py
+  ```
+- **Ejecutar prueba E2E de reportes de falla completo (registro, creación, lectura, listado, filtros, bloqueo optimista, multi-tenant y borrado):**
+  ```bash
+  docker compose exec app pytest tests/e2e/test_failure_reports_flow.py
+  ```
 
 ---
 

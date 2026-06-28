@@ -20,6 +20,7 @@ class FailureReportAttributes(BaseModel):
     reported_by: str
     status: str
     created_at: datetime
+    version: int
 
 
 class FailureReportResource(BaseModel):

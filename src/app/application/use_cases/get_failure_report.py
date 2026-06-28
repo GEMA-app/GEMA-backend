@@ -47,4 +47,5 @@ class GetFailureReportUseCase:
                 reported_by=report.reported_by,
                 status=report.status.value,
                 created_at=report.created_at.isoformat() if report.created_at else "",
+                version=report.version,
             )
