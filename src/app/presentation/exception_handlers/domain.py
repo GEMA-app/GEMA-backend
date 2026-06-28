@@ -14,12 +14,16 @@ from app.domain.exceptions import (
     AssetNotFoundError,
     AssetSerialExistsError,
     AssetStateLogNotFoundError,
+    CatalogArticleHasAssetsError,
+    CatalogArticleNotFoundError,
     CompanyAlreadyCancelledError,
     CompanyNotFoundError,
     CompanyNotSuspendedError,
     CompanySlugExistsError,
     DomainException,
     EmptyAssetCodeError,
+    EmptyCatalogArticleCodeError,
+    EmptyCatalogArticleNameError,
     EmptyCompanyNameError,
     EmptyDescriptionError,
     EmptyHashedPasswordError,
@@ -190,6 +194,22 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     EmptyAssetCodeError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_EMPTY_ASSET_CODE",
+    ),
+    CatalogArticleNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_CATALOG_ARTICLE_NOT_FOUND",
+    ),
+    EmptyCatalogArticleNameError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_CATALOG_ARTICLE_NAME",
+    ),
+    EmptyCatalogArticleCodeError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_CATALOG_ARTICLE_CODE",
+    ),
+    CatalogArticleHasAssetsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_CATALOG_ARTICLE_HAS_ASSETS",
     ),
     EmptyLocationNameError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,

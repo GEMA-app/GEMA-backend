@@ -2,7 +2,7 @@
 
 from app.infrastructure.db.models.article_category import ArticleCategoryModel
 from app.infrastructure.db.models.asset import AssetModel
-from app.infrastructure.db.models.catalog import CatalogArticleModel
+from app.infrastructure.db.models.catalog_article import CatalogArticleModel
 from app.infrastructure.db.models.company import CompanyModel, SubscriptionPlanModel
 from app.infrastructure.db.models.failure_report import FailureReportModel
 from app.infrastructure.db.models.location import LocationModel

@@ -31,6 +31,13 @@ from app.composition.container.auth import (
     get_request_password_reset_use_case,
     get_reset_password_use_case,
 )
+from app.composition.container.catalog_article import (
+    get_catalog_article_use_case,
+    get_create_catalog_article_use_case,
+    get_delete_catalog_article_use_case,
+    get_list_catalog_articles_use_case,
+    get_update_catalog_article_use_case,
+)
 from app.composition.container.common import (
     get_authorization_service,
     get_db_engine,
@@ -147,6 +154,12 @@ __all__ = [
     # Preferences
     "get_update_preference_use_case",
     "get_user_preference_use_case",
+    # Catalog Article
+    "get_create_catalog_article_use_case",
+    "get_catalog_article_use_case",
+    "get_list_catalog_articles_use_case",
+    "get_update_catalog_article_use_case",
+    "get_delete_catalog_article_use_case",
     # FailureReport
     "get_create_failure_report_use_case",
     "get_failure_report_use_case",

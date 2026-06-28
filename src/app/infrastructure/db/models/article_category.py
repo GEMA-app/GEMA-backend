@@ -9,7 +9,7 @@ from sqlalchemy import String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
-    from app.infrastructure.db.models.catalog import CatalogArticleModel
+    from app.infrastructure.db.models.catalog_article import CatalogArticleModel
 
 from app.infrastructure.db.base import Base
 from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin, VersionMixin

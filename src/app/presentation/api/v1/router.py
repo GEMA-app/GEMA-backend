@@ -8,6 +8,7 @@ from app.presentation.api.v1.endpoints.article_category import router as article
 from app.presentation.api.v1.endpoints.asset_state_log import router as asset_state_log_router
 from app.presentation.api.v1.endpoints.assets import router as assets_router
 from app.presentation.api.v1.endpoints.auth import router as auth_router
+from app.presentation.api.v1.endpoints.catalog_articles import router as catalog_articles_router
 from app.presentation.api.v1.endpoints.companies import router as companies_router
 from app.presentation.api.v1.endpoints.failure_reports import router as failure_reports_router
 from app.presentation.api.v1.endpoints.locations import router as locations_router
@@ -76,6 +77,12 @@ v1_router.include_router(
     article_category_router,
     prefix="/empresas/{empresa_id}/catalogo/categorias",
     tags=["Categorías de Catálogo"],
+)
+
+v1_router.include_router(
+    catalog_articles_router,
+    prefix="/empresas/{empresa_id}/catalogo/articulos",
+    tags=["catalogo"],
 )
 
 v1_router.include_router(

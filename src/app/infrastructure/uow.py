@@ -17,6 +17,9 @@ from app.infrastructure.repositories.asset_repository import SqlAlchemyAssetRepo
 from app.infrastructure.repositories.asset_state_log_repository import (
     SqlAlchemyAssetStateLogRepository,
 )
+from app.infrastructure.repositories.catalog_article_repository import (
+    SqlAlchemyCatalogArticleRepository,
+)
 from app.infrastructure.repositories.company_repository import SqlAlchemyCompanyRepository
 from app.infrastructure.repositories.failure_report_repository import (
     SqlAlchemyFailureReportRepository,
@@ -59,6 +62,9 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         self.assets = SqlAlchemyAssetRepository(self.session, self._pending_events)
         self.failure_reports = SqlAlchemyFailureReportRepository(self.session, self._pending_events)
         self.asset_state_logs = SqlAlchemyAssetStateLogRepository(
+            self.session, self._pending_events
+        )
+        self.catalog_articles = SqlAlchemyCatalogArticleRepository(
             self.session, self._pending_events
         )
         self.locations = SqlAlchemyLocationRepository(self.session, self._pending_events)

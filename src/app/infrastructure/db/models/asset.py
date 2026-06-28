@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.infrastructure.db.models.asset_state_log import AssetStateLogModel
-    from app.infrastructure.db.models.catalog import CatalogArticleModel
+    from app.infrastructure.db.models.catalog_article import CatalogArticleModel
     from app.infrastructure.db.models.location import LocationModel
 
 from sqlalchemy import Date, Enum, ForeignKey, Index, Numeric, String, text

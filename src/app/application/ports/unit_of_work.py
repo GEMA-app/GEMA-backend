@@ -3,6 +3,7 @@ from typing import Any, Protocol, Self
 from app.application.ports.article_category_repository import ArticleCategoryRepositoryPort
 from app.application.ports.asset_repository import AssetRepositoryPort
 from app.application.ports.asset_state_log_repository import AssetStateLogRepositoryPort
+from app.application.ports.catalog_article_repository import CatalogArticleRepositoryPort
 from app.application.ports.company_repository import CompanyRepositoryPort
 from app.application.ports.event_bus import EventBusPort
 from app.application.ports.failure_report_repository import FailureReportRepositoryPort
@@ -22,6 +23,7 @@ class UnitOfWorkPort(Protocol):
     roles: RoleRepositoryPort
     assets: AssetRepositoryPort
     asset_state_logs: AssetStateLogRepositoryPort
+    catalog_articles: CatalogArticleRepositoryPort
     locations: LocationRepositoryPort
     event_bus: EventBusPort
     preferences: PreferenceRepositoryPort

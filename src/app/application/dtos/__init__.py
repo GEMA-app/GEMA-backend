@@ -12,6 +12,11 @@ from app.application.dtos.auth_dtos import (
     ResetPasswordRequest,
     UserResponse,
 )
+from app.application.dtos.catalog_article_dtos import (
+    CatalogArticleResponse,
+    CreateCatalogArticleRequest,
+    UpdateCatalogArticleRequest,
+)
 from app.application.dtos.company_dtos import (
     CompanyResponse,
     CreateCompanyRequest,
@@ -76,6 +81,9 @@ __all__ = [
     "LocationTreeResponse",
     "PreferenceResponse",
     "UpdatePreferenceRequest",
+    "CatalogArticleResponse",
+    "CreateCatalogArticleRequest",
+    "UpdateCatalogArticleRequest",
     "CreateFailureReportRequest",
     "FailureReportResponse",
     "CreateUsedPartRequest",
