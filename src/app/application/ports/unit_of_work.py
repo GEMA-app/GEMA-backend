@@ -1,5 +1,6 @@
 from typing import Any, Protocol, Self
 
+from app.application.ports.article_category_repository import ArticleCategoryRepositoryPort
 from app.application.ports.asset_repository import AssetRepositoryPort
 from app.application.ports.asset_state_log_repository import AssetStateLogRepositoryPort
 from app.application.ports.company_repository import CompanyRepositoryPort
@@ -24,9 +25,10 @@ class UnitOfWorkPort(Protocol):
     locations: LocationRepositoryPort
     event_bus: EventBusPort
     preferences: PreferenceRepositoryPort
+    article_categories: ArticleCategoryRepositoryPort
     failure_reports: FailureReportRepositoryPort
-    work_orders: WorkOrderRepositoryPort
     used_parts: UsedPartRepositoryPort
+    work_orders: WorkOrderRepositoryPort
 
     async def __aenter__(self) -> Self:
         """Inicia el contexto transaccional asíncrono."""

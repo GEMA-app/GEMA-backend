@@ -4,6 +4,7 @@ de endpoints bajo el prefijo /v1.
 
 from fastapi import APIRouter
 
+from app.presentation.api.v1.endpoints.article_category import router as article_category_router
 from app.presentation.api.v1.endpoints.asset_state_log import router as asset_state_log_router
 from app.presentation.api.v1.endpoints.assets import router as assets_router
 from app.presentation.api.v1.endpoints.auth import router as auth_router
@@ -69,6 +70,12 @@ v1_router.include_router(
     asset_state_log_router,
     prefix="/empresas/{empresa_id}/activos",
     tags=["Historial Estados Activos"],
+)
+
+v1_router.include_router(
+    article_category_router,
+    prefix="/empresas/{empresa_id}/catalogo/categorias",
+    tags=["Categorías de Catálogo"],
 )
 
 v1_router.include_router(

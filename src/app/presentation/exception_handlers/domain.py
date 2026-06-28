@@ -7,6 +7,8 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 
 from app.domain.exceptions import (
+    ArticleCategoryNameExistsError,
+    ArticleCategoryNotFoundError,
     AssetCodeExistsError,
     AssetInvalidTransitionError,
     AssetNotFoundError,
@@ -244,6 +246,14 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     TemplateNotFoundError: (
         status.HTTP_502_BAD_GATEWAY,
         "ERR_TEMPLATE_NOT_FOUND",
+    ),
+    ArticleCategoryNameExistsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_ARTICLE_CATEGORY_NAME_EXISTS",
+    ),
+    ArticleCategoryNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_ARTICLE_CATEGORY_NOT_FOUND",
     ),
     WorkOrderNotFoundError: (
         status.HTTP_404_NOT_FOUND,
