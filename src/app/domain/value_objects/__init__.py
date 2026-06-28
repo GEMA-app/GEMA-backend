@@ -14,6 +14,7 @@ from app.domain.value_objects.identifier import (
     PlanExecutionId,
     RepuestoId,
     RoleId,
+    SubscriptionPlanId,
     UserId,
     WorkOrderId,
 )
@@ -34,4 +35,5 @@ __all__ = [
     "RepuestoId",
     "WorkOrderId",
     "Slug",
+    "SubscriptionPlanId",
 ]

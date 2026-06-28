@@ -30,6 +30,9 @@ from app.infrastructure.repositories.plan_execution_repository import (
 )
 from app.infrastructure.repositories.preference_repository import SqlAlchemyPreferenceRepository
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
+from app.infrastructure.repositories.subscription_plan_repository import (
+    SqlAlchemySubscriptionPlanRepository,
+)
 from app.infrastructure.repositories.used_part_repository import SqlAlchemyUsedPartRepository
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
 from app.infrastructure.repositories.work_order_repository import SqlAlchemyWorkOrderRepository
@@ -73,6 +76,9 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         self.locations = SqlAlchemyLocationRepository(self.session, self._pending_events)
         self.preferences = SqlAlchemyPreferenceRepository(self.session, self._pending_events)
         self.article_categories = SqlAlchemyArticleCategoryRepository(
+            self.session, self._pending_events
+        )
+        self.subscription_plans = SqlAlchemySubscriptionPlanRepository(
             self.session, self._pending_events
         )
         self.used_parts = SqlAlchemyUsedPartRepository(self.session, self._pending_events)

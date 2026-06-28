@@ -14,6 +14,7 @@ from app.application.ports.plan_execution_repository import (
 from app.application.ports.preference_repository import PreferenceRepositoryPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
+from app.application.ports.subscription_plan_repository import SubscriptionPlanRepositoryPort
 from app.application.ports.used_part_repository import UsedPartRepositoryPort
 from app.application.ports.work_order_repository import WorkOrderRepositoryPort
 
@@ -35,7 +36,7 @@ class UnitOfWorkPort(Protocol):
     used_parts: UsedPartRepositoryPort
     work_orders: WorkOrderRepositoryPort
     plan_executions: PlanExecutionRepositoryPort
-
+    subscription_plans: SubscriptionPlanRepositoryPort
     async def __aenter__(self) -> Self:
         """Inicia el contexto transaccional asíncrono."""
         ...

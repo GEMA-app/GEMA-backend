@@ -85,6 +85,15 @@ from app.domain.exceptions.role import (
     RoleNotFoundError,
 )
 from app.domain.exceptions.stale_data import StaleDataError
+from app.domain.exceptions.subscription_plan import (
+    SubscriptionPlanAlreadyExistsError,
+    SubscriptionPlanException,
+    SubscriptionPlanHasActiveSubscriptionsError,
+    SubscriptionPlanInvalidDataError,
+    SubscriptionPlanLimitExceededError,
+    SubscriptionPlanNotFoundError,
+    SubscriptionPlanPaymentFailedError,
+)
 from app.domain.exceptions.used_part import (
     UsedPartException,
     UsedPartInvalidPriceError,
@@ -177,4 +186,11 @@ __all__ = [
     "PlanExecutionException",
     "PlanExecutionNotFoundError",
     "PlanExecutionObservationsEmptyError",
+    "SubscriptionPlanException",
+    "SubscriptionPlanNotFoundError",
+    "SubscriptionPlanAlreadyExistsError",
+    "SubscriptionPlanInvalidDataError",
+    "SubscriptionPlanLimitExceededError",
+    "SubscriptionPlanPaymentFailedError",
+    "SubscriptionPlanHasActiveSubscriptionsError",
 ]

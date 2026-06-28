@@ -52,6 +52,12 @@ from app.domain.exceptions import (
     RoleNameExistsError,
     RoleNotFoundError,
     StaleDataError,
+    SubscriptionPlanAlreadyExistsError,
+    SubscriptionPlanHasActiveSubscriptionsError,
+    SubscriptionPlanInvalidDataError,
+    SubscriptionPlanLimitExceededError,
+    SubscriptionPlanNotFoundError,
+    SubscriptionPlanPaymentFailedError,
     UsedPartInvalidPriceError,
     UsedPartInvalidQuantityError,
     UsedPartNotFoundError,
@@ -300,6 +306,30 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     WorkOrderInvalidDataError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_WORK_ORDER_INVALID_DATA",
+    ),
+    SubscriptionPlanNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_SUBSCRIPTION_PLAN_NOT_FOUND",
+    ),
+    SubscriptionPlanAlreadyExistsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_SUBSCRIPTION_PLAN_ALREADY_EXISTS",
+    ),
+    SubscriptionPlanInvalidDataError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_SUBSCRIPTION_PLAN_INVALID_DATA",
+    ),
+    SubscriptionPlanLimitExceededError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_SUBSCRIPTION_PLAN_LIMIT_EXCEEDED",
+    ),
+    SubscriptionPlanPaymentFailedError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_SUBSCRIPTION_PLAN_PAYMENT_FAILED",
+    ),
+    SubscriptionPlanHasActiveSubscriptionsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_SUBSCRIPTION_PLAN_HAS_ACTIVE_SUBSCRIPTIONS",
     ),
 }
 

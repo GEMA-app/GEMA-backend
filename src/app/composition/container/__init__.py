@@ -87,6 +87,13 @@ from app.composition.container.role import (
     get_role_use_case,
     get_update_role_use_case,
 )
+from app.composition.container.subscription_plan import (
+    get_create_subscription_plan_use_case,
+    get_delete_subscription_plan_use_case,
+    get_list_subscription_plans_use_case,
+    get_subscription_plan_use_case,
+    get_update_subscription_plan_use_case,
+)
 from app.composition.container.used_part import (
     get_create_used_part_use_case,
     get_delete_used_part_use_case,
@@ -188,4 +195,10 @@ __all__ = [
     "get_update_work_order_use_case",
     "get_delete_work_order_use_case",
     "get_change_work_order_status_use_case",
+    # Subscription Plans
+    "get_subscription_plan_use_case",
+    "get_create_subscription_plan_use_case",
+    "get_delete_subscription_plan_use_case",
+    "get_list_subscription_plans_use_case",
+    "get_update_subscription_plan_use_case",
 ]

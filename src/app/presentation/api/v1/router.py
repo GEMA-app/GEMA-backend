@@ -15,6 +15,7 @@ from app.presentation.api.v1.endpoints.locations import router as locations_rout
 from app.presentation.api.v1.endpoints.plan_executions import router as plan_executions_router
 from app.presentation.api.v1.endpoints.preferences import router as preferences_router
 from app.presentation.api.v1.endpoints.roles import router as roles_router
+from app.presentation.api.v1.endpoints.subscription_plans import router as subscription_plans_router
 from app.presentation.api.v1.endpoints.used_parts import router as used_parts_router
 from app.presentation.api.v1.endpoints.work_orders import router as work_orders_router
 
@@ -96,4 +97,11 @@ v1_router.include_router(
     plan_executions_router,
     prefix="/empresas/{empresa_id}/planes-mantenimiento/{plan_id}/ejecuciones",
     tags=["ejecuciones-plan"],
+)
+
+v1_router.include_router(
+    subscription_plans_router,
+    prefix="/planes",
+    tags=["planes"]
+
 )
