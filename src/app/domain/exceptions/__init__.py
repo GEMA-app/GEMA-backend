@@ -56,6 +56,12 @@ from app.domain.exceptions.failure_report import (
     FailureReportException,
     FailureReportNotFoundError,
 )
+from app.domain.exceptions.intervention import (
+    InterventionException,
+    InterventionInvalidDataError,
+    InterventionInvalidTransitionError,
+    InterventionNotFoundError,
+)
 from app.domain.exceptions.location import (
     EmptyLocationNameError,
     LocationCircularReferenceError,
@@ -214,4 +220,9 @@ __all__ = [
     "SystemAuditNotFoundError",
     "UserException",
     "UserNotFoundError",
+    # Excepciones de intervención
+    "InterventionException",
+    "InterventionInvalidDataError",
+    "InterventionInvalidTransitionError",
+    "InterventionNotFoundError",
 ]

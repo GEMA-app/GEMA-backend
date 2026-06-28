@@ -1,4 +1,4 @@
-"""Paquete raíz del dominio de GEMA.
+﻿"""Paquete raíz del dominio de GEMA.
 
 Re-exporta todos los símbolos públicos de los submódulos del dominio
 para permitir imports planos (``from app.domain import User``).

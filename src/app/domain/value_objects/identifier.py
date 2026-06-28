@@ -318,7 +318,7 @@ class SubscriptionPlanId:
 
 @dataclass(frozen=True)
 class InterventionId:
-    """Objeto de valor que representa el identificador único de una intervención (UUID)."""
+    """Objeto de valor que representa el identificador único de una intervención técnica (UUID)."""
 
     value: uuid.UUID
 
@@ -349,6 +349,17 @@ class InterventionId:
         except (ValueError, AttributeError) as e:
             raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
 
+    @classmethod
+    def generar(cls) -> "InterventionId":
+        """Genera un nuevo identificador aleatorio."""
+        return cls(value=uuid.uuid4())
+
+    @classmethod
+    def from_string_or_generate(cls, value: str | None = None) -> "InterventionId":
+        """Crea un InterventionId a partir de un string, o genera uno nuevo si es None."""
+        if value is None:
+            return cls.generar()
+        return cls.from_string(value)
 
 @dataclass(frozen=True)
 class WorkOrderId:

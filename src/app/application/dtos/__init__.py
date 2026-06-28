@@ -26,6 +26,11 @@ from app.application.dtos.failure_report_dtos import (
     CreateFailureReportRequest,
     FailureReportResponse,
 )
+from app.application.dtos.intervention_dtos import (
+    CreateInterventionRequest,
+    InterventionResponse,
+    UpdateInterventionRequest,
+)
 from app.application.dtos.location_dtos import (
     CreateLocationRequest,
     LocationResponse,
@@ -101,4 +106,7 @@ __all__ = [
     "CreateSubscriptionPlanRequest",
     "SubscriptionPlanResponse",
     "UpdateSubscriptionPlanRequest",
+    "CreateInterventionRequest",
+    "InterventionResponse",
+    "UpdateInterventionRequest",
 ]

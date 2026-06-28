@@ -1,4 +1,4 @@
-"""Enrutador principal de la API v1. Agrega todos los submódulos
+﻿"""Enrutador principal de la API v1. Agrega todos los submÃ³dulos
 de endpoints bajo el prefijo /v1.
 """
 
@@ -11,6 +11,7 @@ from app.presentation.api.v1.endpoints.auth import router as auth_router
 from app.presentation.api.v1.endpoints.catalog_articles import router as catalog_articles_router
 from app.presentation.api.v1.endpoints.companies import router as companies_router
 from app.presentation.api.v1.endpoints.failure_reports import router as failure_reports_router
+from app.presentation.api.v1.endpoints.interventions import router as interventions_router
 from app.presentation.api.v1.endpoints.locations import router as locations_router
 from app.presentation.api.v1.endpoints.maintenance_plan import router as maintenance_plan_router
 from app.presentation.api.v1.endpoints.plan_executions import router as plan_executions_router
@@ -124,4 +125,8 @@ v1_router.include_router(
     system_audit_router,
     prefix="/empresas/{empresa_id}/auditorias",
     tags=["auditorias"],
+)
+
+v1_router.include_router(
+    interventions_router,
 )
