@@ -189,16 +189,6 @@ class AssetLocationChanged(DomainEvent):
 
 @auto_register
 @dataclass(frozen=True, kw_only=True)
-class FailureReportCreated(DomainEvent):
-    """Evento emitido cuando se crea un nuevo reporte de falla."""
-
-    failure_report_id: str
-    empresa_id: str
-    title: str
-
-
-@auto_register
-@dataclass(frozen=True, kw_only=True)
 class LocationCreated(DomainEvent):
     """Evento emitido cuando se crea una nueva ubicación."""
 

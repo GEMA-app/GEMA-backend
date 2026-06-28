@@ -16,10 +16,6 @@ from app.application.dtos.company_dtos import (
     CreateCompanyRequest,
     UpdateCompanyRequest,
 )
-from app.application.dtos.failure_report_dtos import (
-    CreateFailureReportRequest,
-    FailureReportResponse,
-)
 from app.application.dtos.location_dtos import (
     CreateLocationRequest,
     LocationResponse,
@@ -63,6 +59,4 @@ __all__ = [
     "LocationTreeResponse",
     "PreferenceResponse",
     "UpdatePreferenceRequest",
-    "CreateFailureReportRequest",
-    "FailureReportResponse",
 ]

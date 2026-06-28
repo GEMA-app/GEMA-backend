@@ -12,9 +12,6 @@ from app.domain.exceptions import EventPublishError
 from app.infrastructure.db.session import async_session_factory
 from app.infrastructure.repositories.asset_repository import SqlAlchemyAssetRepository
 from app.infrastructure.repositories.company_repository import SqlAlchemyCompanyRepository
-from app.infrastructure.repositories.failure_report_repository import (
-    SqlAlchemyFailureReportRepository,
-)
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
 from app.infrastructure.repositories.preference_repository import SqlAlchemyPreferenceRepository
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
@@ -49,7 +46,6 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         self.companies = SqlAlchemyCompanyRepository(self.session, self._pending_events)
         self.roles = SqlAlchemyRoleRepository(self.session, self._pending_events)
         self.assets = SqlAlchemyAssetRepository(self.session, self._pending_events)
-        self.failure_reports = SqlAlchemyFailureReportRepository(self.session, self._pending_events)
         self.locations = SqlAlchemyLocationRepository(self.session, self._pending_events)
         self.preferences = SqlAlchemyPreferenceRepository(self.session, self._pending_events)
         return self

@@ -33,14 +33,6 @@ from app.domain.exceptions.company import (
     EmptyCompanyNameError,
 )
 from app.domain.exceptions.event_bus import EventPublishError
-from app.domain.exceptions.failure_report import (
-    EmptyDescriptionError,
-    EmptyLocationError,
-    EmptyReportedByError,
-    EmptyTitleError,
-    FailureReportException,
-    FailureReportNotFoundError,
-)
 from app.domain.exceptions.location import (
     EmptyLocationNameError,
     LocationCircularReferenceError,
@@ -114,10 +106,4 @@ __all__ = [
     "LastAdminRevocationError",
     "StaleDataError",
     "EventPublishError",
-    "FailureReportException",
-    "FailureReportNotFoundError",
-    "EmptyTitleError",
-    "EmptyDescriptionError",
-    "EmptyLocationError",
-    "EmptyReportedByError",
 ]
