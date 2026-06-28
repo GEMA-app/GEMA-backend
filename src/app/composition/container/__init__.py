@@ -65,6 +65,13 @@ from app.composition.container.role import (
     get_role_use_case,
     get_update_role_use_case,
 )
+from app.composition.container.used_part import (
+    get_create_used_part_use_case,
+    get_delete_used_part_use_case,
+    get_get_used_part_use_case,
+    get_list_used_parts_use_case,
+    get_update_used_part_use_case,
+)
 from app.composition.container.work_order import (
     get_change_work_order_status_use_case,
     get_create_work_order_use_case,
@@ -128,6 +135,12 @@ __all__ = [
     "get_list_failure_reports_use_case",
     "get_update_failure_report_use_case",
     "get_delete_failure_report_use_case",
+    # Used Parts
+    "get_create_used_part_use_case",
+    "get_delete_used_part_use_case",
+    "get_get_used_part_use_case",
+    "get_list_used_parts_use_case",
+    "get_update_used_part_use_case",
     # Work Orders
     "get_create_work_order_use_case",
     "get_work_order_use_case",

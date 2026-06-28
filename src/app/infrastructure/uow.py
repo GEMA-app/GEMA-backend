@@ -18,6 +18,7 @@ from app.infrastructure.repositories.failure_report_repository import (
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
 from app.infrastructure.repositories.preference_repository import SqlAlchemyPreferenceRepository
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
+from app.infrastructure.repositories.used_part_repository import SqlAlchemyUsedPartRepository
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
 from app.infrastructure.repositories.work_order_repository import SqlAlchemyWorkOrderRepository
 
@@ -53,6 +54,7 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         self.failure_reports = SqlAlchemyFailureReportRepository(self.session, self._pending_events)
         self.locations = SqlAlchemyLocationRepository(self.session, self._pending_events)
         self.preferences = SqlAlchemyPreferenceRepository(self.session, self._pending_events)
+        self.used_parts = SqlAlchemyUsedPartRepository(self.session, self._pending_events)
         self.work_orders = SqlAlchemyWorkOrderRepository(self.session, self._pending_events)
         return self
 

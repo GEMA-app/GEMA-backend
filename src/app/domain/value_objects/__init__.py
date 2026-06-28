@@ -9,7 +9,9 @@ from app.domain.value_objects.identifier import (
     AssetId,
     CompanyId,
     FailureReportId,
+    InterventionId,
     LocationId,
+    RepuestoId,
     RoleId,
     UserId,
     WorkOrderId,
@@ -26,6 +28,8 @@ __all__ = [
     "AssetId",
     "FailureReportId",
     "LocationId",
+    "InterventionId",
+    "RepuestoId",
     "WorkOrderId",
     "Slug",
 ]

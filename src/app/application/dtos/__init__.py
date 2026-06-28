@@ -34,6 +34,11 @@ from app.application.dtos.role_dtos import (
     RoleResponse,
     UpdateRoleRequest,
 )
+from app.application.dtos.used_part_dtos import (
+    CreateUsedPartRequest,
+    UpdateUsedPartRequest,
+    UsedPartResponse,
+)
 from app.application.dtos.work_order_dtos import (
     ChangeWorkOrderStatusRequest,
     CreateWorkOrderRequest,
@@ -71,6 +76,9 @@ __all__ = [
     "UpdatePreferenceRequest",
     "CreateFailureReportRequest",
     "FailureReportResponse",
+    "CreateUsedPartRequest",
+    "UpdateUsedPartRequest",
+    "UsedPartResponse",
     "CreateWorkOrderRequest",
     "UpdateWorkOrderRequest",
     "WorkOrderResponse",

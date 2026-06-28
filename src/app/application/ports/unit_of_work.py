@@ -8,6 +8,7 @@ from app.application.ports.location_repository import LocationRepositoryPort
 from app.application.ports.preference_repository import PreferenceRepositoryPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
+from app.application.ports.used_part_repository import UsedPartRepositoryPort
 from app.application.ports.work_order_repository import WorkOrderRepositoryPort
 
 
@@ -23,6 +24,7 @@ class UnitOfWorkPort(Protocol):
     preferences: PreferenceRepositoryPort
     failure_reports: FailureReportRepositoryPort
     work_orders: WorkOrderRepositoryPort
+    used_parts: UsedPartRepositoryPort
 
     async def __aenter__(self) -> Self:
         """Inicia el contexto transaccional asíncrono."""

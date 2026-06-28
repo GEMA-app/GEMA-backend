@@ -65,6 +65,12 @@ from app.domain.exceptions.role import (
     RoleNotFoundError,
 )
 from app.domain.exceptions.stale_data import StaleDataError
+from app.domain.exceptions.used_part import (
+    UsedPartException,
+    UsedPartInvalidPriceError,
+    UsedPartInvalidQuantityError,
+    UsedPartNotFoundError,
+)
 from app.domain.exceptions.validation import (
     InvalidSlugError,
     InvalidUUIDError,
@@ -127,6 +133,10 @@ __all__ = [
     "EmptyDescriptionError",
     "EmptyLocationError",
     "EmptyReportedByError",
+    "UsedPartException",
+    "UsedPartNotFoundError",
+    "UsedPartInvalidQuantityError",
+    "UsedPartInvalidPriceError",
     "WorkOrderException",
     "WorkOrderNotFoundError",
     "WorkOrderCodeExistsError",

@@ -43,6 +43,9 @@ from app.domain.exceptions import (
     RoleNameExistsError,
     RoleNotFoundError,
     StaleDataError,
+    UsedPartInvalidPriceError,
+    UsedPartInvalidQuantityError,
+    UsedPartNotFoundError,
     UserAlreadyExistsError,
     UserInactiveError,
     ValidationException,
@@ -216,6 +219,18 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     EventPublishError: (
         status.HTTP_502_BAD_GATEWAY,
         "ERR_EVENT_PUBLISH",
+    ),
+    UsedPartNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_USED_PART_NOT_FOUND",
+    ),
+    UsedPartInvalidQuantityError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_USED_PART_INVALID_QUANTITY",
+    ),
+    UsedPartInvalidPriceError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_USED_PART_INVALID_PRICE",
     ),
     NotificationError: (
         status.HTTP_502_BAD_GATEWAY,
