@@ -23,15 +23,6 @@ from app.domain.value_objects.identifier import CompanyId, InterventionId, UserI
 
 
 @pytest.fixture
-def mock_uow() -> Any:
-    uow = MagicMock()
-    uow.__aenter__ = AsyncMock(return_value=uow)
-    uow.__aexit__ = AsyncMock(return_value=None)
-    uow.commit = AsyncMock()
-    return uow
-
-
-@pytest.fixture
 def mock_repo() -> Any:
     repo = MagicMock()
     repo.save = AsyncMock()
@@ -41,10 +32,21 @@ def mock_repo() -> Any:
     return repo
 
 
+@pytest.fixture
+def mock_uow(mock_repo: Any) -> Any:
+    uow = MagicMock()
+    uow.__aenter__ = AsyncMock(return_value=uow)
+    uow.__aexit__ = AsyncMock(return_value=None)
+    uow.commit = AsyncMock()
+    uow.interventions = mock_repo
+    return uow
+
+
 class TestCreateInterventionUseCase:
 
     async def test_create_intervention_successful(self, mock_uow: Any, mock_repo: Any) -> None:
-        use_case = CreateInterventionUseCase(uow=mock_uow, intervention_repository=mock_repo)
+        use_case = CreateInterventionUseCase(uow=mock_uow)
+        empresa_id = str(uuid4())
         ot_id = str(uuid4())
         tecnico_id = uuid4()
 
@@ -55,7 +57,7 @@ class TestCreateInterventionUseCase:
             horas_hombre=2.5,
         )
 
-        res = await use_case.execute(ot_id, request)
+        res = await use_case.execute(empresa_id, ot_id, request)
 
         assert res.technician_id == tecnico_id
         assert res.tareas_realizadas == "Reemplazo de filtro de aire"
@@ -65,8 +67,9 @@ class TestCreateInterventionUseCase:
         assert mock_repo.save.called
         assert mock_uow.commit.called
 
-    async def test_create_intervention_negative_hours_fails(self, mock_uow: Any, mock_repo: Any) -> None:
-        use_case = CreateInterventionUseCase(uow=mock_uow, intervention_repository=mock_repo)
+    async def test_create_intervention_negative_hours_fails(self, mock_uow: Any) -> None:
+        use_case = CreateInterventionUseCase(uow=mock_uow)
+        empresa_id = str(uuid4())
         ot_id = str(uuid4())
 
         with pytest.raises(ValueError, match="horas_hombre no puede ser negativo"):
@@ -76,7 +79,7 @@ class TestCreateInterventionUseCase:
                 fecha_inicio=datetime.now(UTC) - timedelta(hours=1),
                 horas_hombre=-1.0,
             )
-            await use_case.execute(ot_id, request)
+            await use_case.execute(empresa_id, ot_id, request)
 
 
 class TestGetInterventionUseCase:
@@ -89,6 +92,7 @@ class TestGetInterventionUseCase:
 
         intervention = TechnicalIntervention(
             id=intervention_id,
+            empresa_id=company_id,
             work_order_id=ot_id,
             technician_id=tecnico_id,
             tareas_realizadas="Reparacion",
@@ -98,7 +102,7 @@ class TestGetInterventionUseCase:
         )
         mock_repo.get_by_id.return_value = intervention
 
-        use_case = GetInterventionUseCase(uow=mock_uow, intervention_repository=mock_repo)
+        use_case = GetInterventionUseCase(uow=mock_uow)
         res = await use_case.execute(str(ot_id.value), str(intervention_id.value), str(company_id.value))
 
         assert res.id == intervention_id.value
@@ -108,7 +112,7 @@ class TestGetInterventionUseCase:
     async def test_get_intervention_not_found(self, mock_uow: Any, mock_repo: Any) -> None:
         mock_repo.get_by_id.return_value = None
 
-        use_case = GetInterventionUseCase(uow=mock_uow, intervention_repository=mock_repo)
+        use_case = GetInterventionUseCase(uow=mock_uow)
         with pytest.raises(InterventionNotFoundError):
             await use_case.execute(str(uuid4()), str(uuid4()), str(uuid4()))
 
@@ -122,6 +126,7 @@ class TestListInterventionsUseCase:
 
         intervention = TechnicalIntervention(
             id=InterventionId(uuid4()),
+            empresa_id=company_id,
             work_order_id=ot_id,
             technician_id=tecnico_id,
             tareas_realizadas="Intervencion 1",
@@ -131,7 +136,7 @@ class TestListInterventionsUseCase:
         )
         mock_repo.get_by_work_order.return_value = [intervention]
 
-        use_case = ListInterventionsUseCase(uow=mock_uow, intervention_repository=mock_repo)
+        use_case = ListInterventionsUseCase(uow=mock_uow)
         res, total = await use_case.execute(str(ot_id.value), str(company_id.value))
 
         assert total == 1
@@ -150,6 +155,7 @@ class TestUpdateInterventionUseCase:
 
         intervention = TechnicalIntervention(
             id=intervention_id,
+            empresa_id=company_id,
             work_order_id=ot_id,
             technician_id=tecnico_id,
             tareas_realizadas="Old Desc",
@@ -159,7 +165,7 @@ class TestUpdateInterventionUseCase:
         )
         mock_repo.get_by_id.return_value = intervention
 
-        use_case = UpdateInterventionUseCase(uow=mock_uow, intervention_repository=mock_repo)
+        use_case = UpdateInterventionUseCase(uow=mock_uow)
         request = UpdateInterventionRequest(
             tareas_realizadas="New Desc",
             horas_hombre=4.0,
@@ -176,7 +182,7 @@ class TestUpdateInterventionUseCase:
     async def test_update_intervention_not_found(self, mock_uow: Any, mock_repo: Any) -> None:
         mock_repo.get_by_id.return_value = None
 
-        use_case = UpdateInterventionUseCase(uow=mock_uow, intervention_repository=mock_repo)
+        use_case = UpdateInterventionUseCase(uow=mock_uow)
         request = UpdateInterventionRequest(tareas_realizadas="New Desc")
 
         with pytest.raises(InterventionNotFoundError):
@@ -190,6 +196,7 @@ class TestUpdateInterventionUseCase:
 
         intervention = TechnicalIntervention(
             id=intervention_id,
+            empresa_id=company_id,
             work_order_id=ot_id,
             technician_id=tecnico_id,
             tareas_realizadas="Desc",
@@ -199,7 +206,7 @@ class TestUpdateInterventionUseCase:
         )
         mock_repo.get_by_id.return_value = intervention
 
-        use_case = UpdateInterventionUseCase(uow=mock_uow, intervention_repository=mock_repo)
+        use_case = UpdateInterventionUseCase(uow=mock_uow)
 
         # horas_hombre=-1.0 es truthy, replace lo pasa a __post_init__ que levanta ValueError
         request = UpdateInterventionRequest(horas_hombre=-1.0)
