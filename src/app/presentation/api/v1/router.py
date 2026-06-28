@@ -17,6 +17,7 @@ from app.presentation.api.v1.endpoints.plan_executions import router as plan_exe
 from app.presentation.api.v1.endpoints.preferences import router as preferences_router
 from app.presentation.api.v1.endpoints.roles import router as roles_router
 from app.presentation.api.v1.endpoints.subscription_plans import router as subscription_plans_router
+from app.presentation.api.v1.endpoints.system_audit import router as system_audit_router
 from app.presentation.api.v1.endpoints.used_parts import router as used_parts_router
 from app.presentation.api.v1.endpoints.users import router as users_router
 from app.presentation.api.v1.endpoints.work_orders import router as work_orders_router
@@ -117,4 +118,10 @@ v1_router.include_router(
     users_router,
     prefix="/empresas/{empresa_id}/usuarios",
     tags=["usuarios"],
+)
+
+v1_router.include_router(
+    system_audit_router,
+    prefix="/empresas/{empresa_id}/auditorias",
+    tags=["auditorias"],
 )

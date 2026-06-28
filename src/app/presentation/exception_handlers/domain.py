@@ -62,6 +62,7 @@ from app.domain.exceptions import (
     SubscriptionPlanLimitExceededError,
     SubscriptionPlanNotFoundError,
     SubscriptionPlanPaymentFailedError,
+    SystemAuditNotFoundError,
     UsedPartInvalidPriceError,
     UsedPartInvalidQuantityError,
     UsedPartNotFoundError,
@@ -355,6 +356,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     SubscriptionPlanHasActiveSubscriptionsError: (
         status.HTTP_409_CONFLICT,
         "ERR_SUBSCRIPTION_PLAN_HAS_ACTIVE_SUBSCRIPTIONS",
+    ),
+    SystemAuditNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_SYSTEM_AUDIT_NOT_FOUND",
     ),
 }
 

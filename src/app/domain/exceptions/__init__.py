@@ -101,6 +101,10 @@ from app.domain.exceptions.subscription_plan import (
     SubscriptionPlanNotFoundError,
     SubscriptionPlanPaymentFailedError,
 )
+from app.domain.exceptions.system_audit import (
+    SystemAuditException,
+    SystemAuditNotFoundError,
+)
 from app.domain.exceptions.used_part import (
     UsedPartException,
     UsedPartInvalidPriceError,
@@ -206,6 +210,8 @@ __all__ = [
     "SubscriptionPlanLimitExceededError",
     "SubscriptionPlanPaymentFailedError",
     "SubscriptionPlanHasActiveSubscriptionsError",
+    "SystemAuditException",
+    "SystemAuditNotFoundError",
     "UserException",
     "UserNotFoundError",
 ]

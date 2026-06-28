@@ -3,7 +3,6 @@
 Re-exporta todas las fábricas públicas para mantener compatibilidad con los
 imports existentes (``from app.composition.container import X``).
 """
-
 from app.composition.container.article_category import (
     get_all_article_categories_use_case,
     get_article_category_by_id_use_case,
@@ -100,6 +99,10 @@ from app.composition.container.subscription_plan import (
     get_list_subscription_plans_use_case,
     get_subscription_plan_use_case,
     get_update_subscription_plan_use_case,
+)
+from app.composition.container.system_audit import (
+    get_list_system_audits_use_case,
+    get_system_audit_use_case,
 )
 from app.composition.container.used_part import (
     get_create_used_part_use_case,
@@ -215,6 +218,9 @@ __all__ = [
     "get_delete_subscription_plan_use_case",
     "get_list_subscription_plans_use_case",
     "get_update_subscription_plan_use_case",
+    # System Audit
+    "get_list_system_audits_use_case",
+    "get_system_audit_use_case",
     # Maintenance Plan
     "get_create_maintenance_plan_use_case",
     "get_get_maintenance_plan_use_case",

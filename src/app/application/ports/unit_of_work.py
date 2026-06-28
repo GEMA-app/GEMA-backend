@@ -16,6 +16,7 @@ from app.application.ports.preference_repository import PreferenceRepositoryPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
 from app.application.ports.subscription_plan_repository import SubscriptionPlanRepositoryPort
+from app.application.ports.system_audit_repository import SystemAuditRepositoryPort
 from app.application.ports.used_part_repository import UsedPartRepositoryPort
 from app.application.ports.work_order_repository import WorkOrderRepositoryPort
 
@@ -24,6 +25,7 @@ class UnitOfWorkPort(Protocol):
     """Puerto para el patrón Unit of Work, gestionando transacciones y repositorios."""
 
     users: UserRepositoryPort
+    system_audits: SystemAuditRepositoryPort
     companies: CompanyRepositoryPort
     roles: RoleRepositoryPort
     assets: AssetRepositoryPort
