@@ -3,6 +3,7 @@
 from app.domain.entities.asset import Asset
 from app.domain.entities.catalog import ArticleCategory, CatalogArticle
 from app.domain.entities.company import Company
+from app.domain.entities.failure_report import FailureReport
 from app.domain.entities.location import Location
 from app.domain.entities.permission import Permission
 from app.domain.entities.preference import UserPreference
@@ -19,4 +20,5 @@ __all__ = [
     "ArticleCategory",
     "CatalogArticle",
     "UserPreference",
+    "FailureReport",
 ]
