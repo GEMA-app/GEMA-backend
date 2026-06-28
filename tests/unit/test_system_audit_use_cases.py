@@ -34,7 +34,7 @@ def company_id_str() -> str:
 def mock_audit_entity(company_id_str: str) -> Any:
     """Mock de entidad de dominio SystemAudit."""
     entity = MagicMock()
-    entity.id = 1
+    entity.id = uuid4()
     entity.empresa_id = MagicMock()
     entity.empresa_id.__str__ = lambda _: company_id_str
     entity.usuario_id = MagicMock()
@@ -68,15 +68,15 @@ class TestGetSystemAuditUseCase:
     """Tests del caso de uso para obtener una auditoria por ID."""
 
     async def test_execute_returns_dto_when_audit_exists(
-        self, mock_uow: Any, company_id_str: str
+        self, mock_uow: Any, company_id_str: str, mock_audit_entity: Any
     ) -> None:
         """Debe retornar un SystemAuditResponse cuando la auditoria existe."""
         use_case = GetSystemAuditUseCase(uow=mock_uow)
 
-        result = await use_case.execute(company_id_str=company_id_str, audit_id=1)
+        result = await use_case.execute(company_id_str=company_id_str, audit_id=mock_audit_entity.id)
 
         assert isinstance(result, SystemAuditResponse)
-        assert result.id == 1
+        assert result.id == str(mock_audit_entity.id)
         assert result.accion == "user.login"
 
     async def test_execute_calls_repository_with_correct_params(
@@ -84,12 +84,12 @@ class TestGetSystemAuditUseCase:
     ) -> None:
         """Debe llamar al repositorio con company_id y audit_id correctos."""
         use_case = GetSystemAuditUseCase(uow=mock_uow)
-
-        await use_case.execute(company_id_str=company_id_str, audit_id=42)
+        audit_id = uuid4()
+        await use_case.execute(company_id_str=company_id_str, audit_id=audit_id)
 
         mock_uow.system_audits.get_by_id.assert_called_once()
         call_args = mock_uow.system_audits.get_by_id.call_args[0]
-        assert call_args[1] == 42
+        assert call_args[1] == audit_id
 
     async def test_execute_raises_not_found_when_audit_missing(
         self, mock_uow: Any, company_id_str: str
@@ -97,17 +97,17 @@ class TestGetSystemAuditUseCase:
         """Debe lanzar SystemAuditNotFoundError si la auditoria no existe."""
         mock_uow.system_audits.get_by_id.return_value = None
         use_case = GetSystemAuditUseCase(uow=mock_uow)
-
+        audit_id = uuid4()
         with pytest.raises(SystemAuditNotFoundError):
-            await use_case.execute(company_id_str=company_id_str, audit_id=999)
+            await use_case.execute(company_id_str=company_id_str, audit_id=audit_id)
 
     async def test_execute_uses_uow_context_manager(
-        self, mock_uow: Any, company_id_str: str
+        self, mock_uow: Any, company_id_str: str, mock_audit_entity: Any
     ) -> None:
         """Debe usar el UoW como context manager asincrono."""
         use_case = GetSystemAuditUseCase(uow=mock_uow)
 
-        await use_case.execute(company_id_str=company_id_str, audit_id=1)
+        await use_case.execute(company_id_str=company_id_str, audit_id=mock_audit_entity.id)
 
         mock_uow.__aenter__.assert_called_once()
         mock_uow.__aexit__.assert_called_once()
@@ -118,7 +118,7 @@ class TestGetSystemAuditUseCase:
         """Debe mapear todos los campos de la entidad al DTO de respuesta."""
         use_case = GetSystemAuditUseCase(uow=mock_uow)
 
-        result = await use_case.execute(company_id_str=company_id_str, audit_id=1)
+        result = await use_case.execute(company_id_str=company_id_str, audit_id=mock_audit_entity.id)
 
         assert result.ip_address == mock_audit_entity.ip_address
         assert result.detalles == mock_audit_entity.detalles
@@ -131,7 +131,7 @@ class TestGetSystemAuditUseCase:
         mock_audit_entity.usuario_id = None
         use_case = GetSystemAuditUseCase(uow=mock_uow)
 
-        result = await use_case.execute(company_id_str=company_id_str, audit_id=1)
+        result = await use_case.execute(company_id_str=company_id_str, audit_id=mock_audit_entity.id)
 
         assert result.usuario_id is None
 
@@ -142,19 +142,20 @@ class TestGetSystemAuditUseCase:
         mock_audit_entity.ip_address = None
         use_case = GetSystemAuditUseCase(uow=mock_uow)
 
-        result = await use_case.execute(company_id_str=company_id_str, audit_id=1)
+        result = await use_case.execute(company_id_str=company_id_str, audit_id=mock_audit_entity.id)
 
         assert result.ip_address is None
 
     async def test_execute_does_not_call_commit(
-        self, mock_uow: Any, company_id_str: str
+        self, mock_uow: Any, company_id_str: str, mock_audit_entity: Any
     ) -> None:
         """No debe llamar a commit (modulo read-only)."""
         use_case = GetSystemAuditUseCase(uow=mock_uow)
 
-        await use_case.execute(company_id_str=company_id_str, audit_id=1)
+        await use_case.execute(company_id_str=company_id_str, audit_id=mock_audit_entity.id)
 
         mock_uow.commit.assert_not_called()
+
 
 
 # ---------------------------------------------------------------------------

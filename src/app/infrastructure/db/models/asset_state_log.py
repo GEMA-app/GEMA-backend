@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app.infrastructure.db.models.asset import AssetModel
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Text
+from sqlalchemy import DateTime, Enum, ForeignKey, Index, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.domain.enums import AssetStatus
@@ -25,6 +25,10 @@ class AssetStateLogModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     """
 
     __tablename__ = "logs_estados_activos"
+    __table_args__ = (
+        Index("ix_logs_estados_activos_empresa_activo", "empresa_id", "activo_id"),
+    )
+
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     activo_id: Mapped[uuid.UUID] = mapped_column(
@@ -34,11 +38,11 @@ class AssetStateLogModel(VersionMixin, TenantMixin, TimestampMixin, Base):
         ForeignKey("usuarios.id", ondelete="SET NULL"), nullable=True
     )
     estado_anterior: Mapped[AssetStatus | None] = mapped_column(
-        Enum(AssetStatus, values_callable=lambda obj: [e.value for e in obj]),
+        Enum(AssetStatus, name="estado_activo", values_callable=lambda obj: [e.value for e in obj]),
         nullable=True,
     )
     estado_nuevo: Mapped[AssetStatus] = mapped_column(
-        Enum(AssetStatus, values_callable=lambda obj: [e.value for e in obj]),
+        Enum(AssetStatus, name="estado_activo", values_callable=lambda obj: [e.value for e in obj]),
         nullable=False,
     )
     motivo: Mapped[str | None] = mapped_column(Text, nullable=True)

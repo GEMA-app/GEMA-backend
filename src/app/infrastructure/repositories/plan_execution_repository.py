@@ -30,10 +30,11 @@ class SqlAlchemyPlanExecutionRepository(
             id=UUID(str(entity.id)),
             empresa_id=UUID(str(entity.empresa_id)),
             plan_id=entity.plan_id,
-            orden_trabajo_id=UUID(str(entity.work_order_id)) if entity.work_order_id else None,
+            work_order_id=UUID(str(entity.work_order_id)) if entity.work_order_id else None,
             fecha_ejecucion=entity.execution_date,
             observaciones=entity.observations,
         )
+
 
     def _to_entity(self, model: PlanExecutionModel) -> PlanExecution:
         """Convierte modelo ORM a entidad de dominio."""

@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Path, Query, status
 
@@ -85,7 +86,7 @@ async def list_system_audits(
 )
 async def get_system_audit_by_id(
     empresa_id: str,
-    auditoria_id: int = Path(..., description="ID de la auditoría"),
+    auditoria_id: UUID = Path(..., description="ID de la auditoría"),
     current_user: UserResponse = Depends(require_permission(PermissionModule.SYSTEM_AUDIT, "view")),
     use_case: GetSystemAuditUseCase = Depends(get_system_audit_use_case),
 ) -> SystemAuditDocument:

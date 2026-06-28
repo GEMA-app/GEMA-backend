@@ -1,3 +1,4 @@
+import uuid
 from typing import Any
 
 from sqlalchemy import desc, func, select
@@ -12,7 +13,7 @@ from app.infrastructure.repositories.base import SqlAlchemyRepository
 
 
 class SqlAlchemySystemAuditRepository(
-    SqlAlchemyRepository[SystemAuditModel, SystemAuditEntity, int],
+    SqlAlchemyRepository[SystemAuditModel, SystemAuditEntity, uuid.UUID],
     SystemAuditRepositoryPort,
 ):
     """Implementación asíncrona en SQLAlchemy para el puerto de Auditorías de Sistema."""
@@ -48,7 +49,9 @@ class SqlAlchemySystemAuditRepository(
             ocurrido_en=model.ocurrido_en,
         )
 
-    async def get_by_id(self, company_id: CompanyId, audit_id: int) -> SystemAuditEntity | None:  # type: ignore[override]
+    async def get_by_id(  # type: ignore[override]
+        self, company_id: CompanyId, audit_id: uuid.UUID
+    ) -> SystemAuditEntity | None:
         """Obtiene una auditoría por ID con ámbito de tenant.
 
         Args:

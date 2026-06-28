@@ -1,3 +1,4 @@
+import uuid
 from typing import Any, Protocol
 
 from app.domain.entities.system_audit import SystemAudit
@@ -18,7 +19,8 @@ class SystemAuditRepositoryPort(Protocol):
         ...
 
     async def get_by_id(
-        self, company_id: CompanyId, audit_id: int
+        self, company_id: CompanyId, audit_id: uuid.UUID
     ) -> SystemAudit | None:
         """Obtiene una entidad de auditoría específica por ID."""
         ...
+

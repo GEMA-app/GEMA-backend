@@ -1,3 +1,4 @@
+import uuid
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
@@ -13,13 +14,14 @@ class SystemAudit:
     Completamente aislada de frameworks, Pydantic o SQLAlchemy.
     """
 
-    id: int | None
+    id: uuid.UUID | None
     empresa_id: CompanyId
     usuario_id: UserId | None
     accion: str
     detalles: dict[str, Any]
     ip_address: str | None
     ocurrido_en: datetime
+
 
     @classmethod
     def create(

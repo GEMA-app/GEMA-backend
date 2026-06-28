@@ -1,3 +1,5 @@
+import uuid
+
 from app.application.dtos.system_audit_dtos import SystemAuditResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions.system_audit import SystemAuditNotFoundError
@@ -10,12 +12,12 @@ class GetSystemAuditUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(self, company_id_str: str, audit_id: int) -> SystemAuditResponse:
+    async def execute(self, company_id_str: str, audit_id: uuid.UUID) -> SystemAuditResponse:
         """Recupera el detalle de una auditoría por ID.
 
         Args:
             company_id_str: UUID de la empresa en formato string.
-            audit_id: ID numérico del registro de auditoría.
+            audit_id: UUID del registro de auditoría.
 
         Returns:
             SystemAuditResponse con los datos de la auditoría.
@@ -31,7 +33,7 @@ class GetSystemAuditUseCase:
                 raise SystemAuditNotFoundError(audit_id, company_id_str)
 
             return SystemAuditResponse(
-                id=audit.id if audit.id is not None else 0,
+                id=str(audit.id) if audit.id is not None else "",
                 empresa_id=str(audit.empresa_id),
                 usuario_id=str(audit.usuario_id) if audit.usuario_id else None,
                 accion=audit.accion,
@@ -39,3 +41,4 @@ class GetSystemAuditUseCase:
                 ip_address=audit.ip_address,
                 ocurrido_en=audit.ocurrido_en,
             )
+

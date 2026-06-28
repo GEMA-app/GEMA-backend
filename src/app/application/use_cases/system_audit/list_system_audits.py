@@ -46,7 +46,7 @@ class ListSystemAuditsUseCase:
 
             dtos = [
                 SystemAuditResponse(
-                    id=e.id if e.id is not None else 0,
+                    id=str(e.id) if e.id is not None else "",
                     empresa_id=str(e.empresa_id),
                     usuario_id=str(e.usuario_id) if e.usuario_id else None,
                     accion=e.accion,

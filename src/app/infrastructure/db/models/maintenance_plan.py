@@ -31,7 +31,8 @@ class MaintenancePlanModel(TenantMixin, VersionMixin, TimestampMixin, Base):
     )
     nombre: Mapped[str] = mapped_column(String(255), nullable=False)
     tipo: Mapped[MaintenanceType] = mapped_column(
-        Enum(MaintenanceType, values_callable=lambda obj: [e.value for e in obj]),
+        Enum(MaintenanceType, name="tipo_mantenimiento",
+             values_callable=lambda obj: [e.value for e in obj]),
         nullable=False,
     )
     intervalo_dias: Mapped[int] = mapped_column(Integer, nullable=False)
