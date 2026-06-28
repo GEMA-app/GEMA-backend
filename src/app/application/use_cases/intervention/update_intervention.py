@@ -4,7 +4,6 @@ from app.application.dtos.intervention_dtos import (
     InterventionResponse,
     UpdateInterventionRequest,
 )
-from app.application.ports.intervention_repository import InterventionRepositoryPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions.intervention import InterventionNotFoundError
 from app.domain.value_objects.identifier import CompanyId, InterventionId
@@ -13,13 +12,8 @@ from app.domain.value_objects.identifier import CompanyId, InterventionId
 class UpdateInterventionUseCase:
     """Caso de uso para actualizar una intervención técnica existente."""
 
-    def __init__(
-        self,
-        uow: UnitOfWorkPort,
-        intervention_repository: InterventionRepositoryPort,
-    ) -> None:
+    def __init__(self, uow: UnitOfWorkPort) -> None:
         self._uow = uow
-        self._intervention_repository = intervention_repository
 
     async def execute(
         self, ot_id: str, intervention_id: str, empresa_id: str, request: UpdateInterventionRequest
@@ -42,7 +36,7 @@ class UpdateInterventionUseCase:
         company_id = CompanyId.from_string(empresa_id)
 
         async with self._uow:
-            intervention = await self._intervention_repository.get_by_id(
+            intervention = await self._uow.interventions.get_by_id(
                 intervention_id_internal, company_id
             )
 
@@ -58,11 +52,12 @@ class UpdateInterventionUseCase:
                 horas_hombre=request.horas_hombre or intervention.horas_hombre,
             )
 
-            await self._intervention_repository.save(updated_intervention)
+            await self._uow.interventions.save(updated_intervention)
             await self._uow.commit()
 
             return InterventionResponse(
                 id=updated_intervention.id.value,
+                empresa_id=updated_intervention.empresa_id.value,
                 work_order_id=updated_intervention.work_order_id.value,
                 technician_id=updated_intervention.technician_id.value,
                 tareas_realizadas=updated_intervention.tareas_realizadas,

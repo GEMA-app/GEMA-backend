@@ -1,7 +1,6 @@
 ﻿"""Caso de uso para listar intervenciones técnicas."""
 
 from app.application.dtos.intervention_dtos import InterventionResponse
-from app.application.ports.intervention_repository import InterventionRepositoryPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.value_objects.identifier import CompanyId, WorkOrderId
 
@@ -9,13 +8,8 @@ from app.domain.value_objects.identifier import CompanyId, WorkOrderId
 class ListInterventionsUseCase:
     """Caso de uso para listar intervenciones técnicas de una orden de trabajo."""
 
-    def __init__(
-        self,
-        uow: UnitOfWorkPort,
-        intervention_repository: InterventionRepositoryPort,
-    ) -> None:
+    def __init__(self, uow: UnitOfWorkPort) -> None:
         self._uow = uow
-        self._intervention_repository = intervention_repository
 
     async def execute(
         self, ot_id: str, empresa_id: str, offset: int = 0, limit: int = 100
@@ -35,7 +29,7 @@ class ListInterventionsUseCase:
         work_order_id = WorkOrderId.from_string(ot_id)
 
         async with self._uow:
-            interventions = await self._intervention_repository.get_by_work_order(
+            interventions = await self._uow.interventions.get_by_work_order(
                 work_order_id=work_order_id,
                 empresa_id=company_id,
             )
@@ -43,6 +37,7 @@ class ListInterventionsUseCase:
         return [
             InterventionResponse(
                 id=i.id.value,
+                empresa_id=i.empresa_id.value,
                 work_order_id=i.work_order_id.value,
                 technician_id=i.technician_id.value,
                 tareas_realizadas=i.tareas_realizadas,
