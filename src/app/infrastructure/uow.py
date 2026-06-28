@@ -25,6 +25,9 @@ from app.infrastructure.repositories.failure_report_repository import (
     SqlAlchemyFailureReportRepository,
 )
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
+from app.infrastructure.repositories.maintenance_plan_repository import (
+    SqlAlchemyMaintenancePlanRepository,
+)
 from app.infrastructure.repositories.plan_execution_repository import (
     SqlAlchemyPlanExecutionRepository,
 )
@@ -79,6 +82,9 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
             self.session, self._pending_events
         )
         self.subscription_plans = SqlAlchemySubscriptionPlanRepository(
+            self.session, self._pending_events
+        )
+        self.maintenance_plans = SqlAlchemyMaintenancePlanRepository(
             self.session, self._pending_events
         )
         self.used_parts = SqlAlchemyUsedPartRepository(self.session, self._pending_events)

@@ -69,6 +69,13 @@ from app.composition.container.location import (
     get_location_use_case,
     get_update_location_use_case,
 )
+from app.composition.container.maintenance_plan import (
+    get_create_maintenance_plan_use_case,
+    get_delete_maintenance_plan_use_case,
+    get_get_maintenance_plan_use_case,
+    get_list_maintenance_plans_use_case,
+    get_update_maintenance_plan_use_case,
+)
 from app.composition.container.plan_execution import (
     create_plan_execution_use_case,
     get_plan_execution_use_case,
@@ -201,4 +208,10 @@ __all__ = [
     "get_delete_subscription_plan_use_case",
     "get_list_subscription_plans_use_case",
     "get_update_subscription_plan_use_case",
+    # Maintenance Plan
+    "get_create_maintenance_plan_use_case",
+    "get_get_maintenance_plan_use_case",
+    "get_list_maintenance_plans_use_case",
+    "get_update_maintenance_plan_use_case",
+    "get_delete_maintenance_plan_use_case",
 ]

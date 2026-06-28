@@ -14,6 +14,9 @@ from app.infrastructure.repositories.failure_report_repository import (
     SqlAlchemyFailureReportRepository,
 )
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
+from app.infrastructure.repositories.maintenance_plan_repository import (
+    SqlAlchemyMaintenancePlanRepository,
+)
 from app.infrastructure.repositories.plan_execution_repository import (
     SqlAlchemyPlanExecutionRepository,
 )
@@ -41,6 +44,7 @@ __all__ = [
     "SqlAlchemyFailureReportRepository",
     "SqlAlchemyLocationRepository",
     "SqlAlchemyPlanExecutionRepository",
+    "SqlAlchemyMaintenancePlanRepository",
     "SqlAlchemyPreferenceRepository",
     "SqlAlchemyUsedPartRepository",
     "SqlAlchemyWorkOrderRepository",

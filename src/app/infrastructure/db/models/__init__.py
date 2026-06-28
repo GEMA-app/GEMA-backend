@@ -6,6 +6,7 @@ from app.infrastructure.db.models.catalog_article import CatalogArticleModel
 from app.infrastructure.db.models.company import CompanyModel
 from app.infrastructure.db.models.failure_report import FailureReportModel
 from app.infrastructure.db.models.location import LocationModel
+from app.infrastructure.db.models.maintenance_plan import MaintenancePlanModel
 from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin, VersionMixin
 from app.infrastructure.db.models.plan_execution import PlanExecutionModel
 from app.infrastructure.db.models.preference import UserPreferenceModel
@@ -35,6 +36,7 @@ __all__ = [
     "FailureReportModel",
     "UsedPartModel",
     "PlanExecutionModel",
+    "MaintenancePlanModel",
     "UserPreferenceModel",
     "TenantMixin",
     "TimestampMixin",

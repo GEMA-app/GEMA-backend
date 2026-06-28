@@ -8,6 +8,7 @@ from app.application.ports.company_repository import CompanyRepositoryPort
 from app.application.ports.event_bus import EventBusPort
 from app.application.ports.failure_report_repository import FailureReportRepositoryPort
 from app.application.ports.location_repository import LocationRepositoryPort
+from app.application.ports.maintenance_plan_repository import MaintenancePlanRepositoryPort
 from app.application.ports.plan_execution_repository import (
     PlanExecutionRepositoryPort,
 )
@@ -37,6 +38,7 @@ class UnitOfWorkPort(Protocol):
     work_orders: WorkOrderRepositoryPort
     plan_executions: PlanExecutionRepositoryPort
     subscription_plans: SubscriptionPlanRepositoryPort
+    maintenance_plans: MaintenancePlanRepositoryPort
     async def __aenter__(self) -> Self:
         """Inicia el contexto transaccional asíncrono."""
         ...

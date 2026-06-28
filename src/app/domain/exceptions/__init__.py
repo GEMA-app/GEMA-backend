@@ -63,6 +63,13 @@ from app.domain.exceptions.location import (
     LocationInvalidTypeHierarchyError,
     LocationNotFoundError,
 )
+from app.domain.exceptions.maintenance_plan import (
+    MaintenancePlanDueDateError,
+    MaintenancePlanException,
+    MaintenancePlanIntervalError,
+    MaintenancePlanNameEmptyError,
+    MaintenancePlanNotFoundError,
+)
 from app.domain.exceptions.permission import (
     InsufficientPermissionsError,
     PermissionException,
@@ -149,6 +156,11 @@ __all__ = [
     "EmptyAssetCodeError",
     "AssetStateLogException",
     "AssetStateLogNotFoundError",
+    "MaintenancePlanDueDateError",
+    "MaintenancePlanException",
+    "MaintenancePlanNotFoundError",
+    "MaintenancePlanNameEmptyError",
+    "MaintenancePlanIntervalError",
     "EmptyLocationNameError",
     "CompanyAlreadyCancelledError",
     "CompanyNotSuspendedError",
