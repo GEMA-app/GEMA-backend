@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.application.ports.asset_state_log_repository import AssetStateLogRepositoryPort
 from app.domain.entities.asset_state_log import AssetStateLog
 from app.domain.events import DomainEvent
 from app.domain.value_objects.identifier import AssetId, CompanyId
@@ -17,7 +18,8 @@ if TYPE_CHECKING:
 
 
 class SqlAlchemyAssetStateLogRepository(
-    SqlAlchemyTenantRepository[AssetStateLogModel, AssetStateLog, uuid.UUID]
+    SqlAlchemyTenantRepository[AssetStateLogModel, AssetStateLog, uuid.UUID],
+    AssetStateLogRepositoryPort,
 ):
     """Implementación en SQLAlchemy para el puerto de repositorio de AssetStateLog."""
 

@@ -1,3 +1,5 @@
+"""Repositorio de Auditorías del Sistema implementado con SQLAlchemy asíncrono."""
+
 import uuid
 from typing import Any
 
@@ -8,7 +10,7 @@ from app.application.ports.system_audit_repository import SystemAuditRepositoryP
 from app.domain.entities.system_audit import SystemAudit as SystemAuditEntity
 from app.domain.events import DomainEvent
 from app.domain.value_objects import CompanyId, UserId
-from app.infrastructure.db.models.system_audits import SystemAuditModel
+from app.infrastructure.db.models.system_audit import SystemAuditModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
 
 

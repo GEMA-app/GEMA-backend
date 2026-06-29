@@ -76,6 +76,10 @@ from app.domain.exceptions.maintenance_plan import (
     MaintenancePlanNameEmptyError,
     MaintenancePlanNotFoundError,
 )
+from app.domain.exceptions.notifications import (
+    NotificationError,
+    TemplateNotFoundError,
+)
 from app.domain.exceptions.permission import (
     InsufficientPermissionsError,
     PermissionException,
@@ -230,4 +234,7 @@ __all__ = [
     "InterventionInvalidDataError",
     "InterventionInvalidTransitionError",
     "InterventionNotFoundError",
+    # Excepciones de notificaciones
+    "NotificationError",
+    "TemplateNotFoundError",
 ]

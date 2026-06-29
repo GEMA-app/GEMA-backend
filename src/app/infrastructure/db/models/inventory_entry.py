@@ -1,7 +1,7 @@
 """Modelo ORM de SQLAlchemy para la tabla de entradas y movimientos de inventario."""
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
@@ -40,7 +40,9 @@ class InventoryEntryModel(TenantMixin, TimestampMixin, Base):
     tipo_movimiento: Mapped[str] = mapped_column(String(50), nullable=False)  # entrada | salida
     precio_unitario: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True)
     moneda: Mapped[str] = mapped_column(String(3), default="USD", nullable=False)
-    fecha_movimiento: Mapped[datetime] = mapped_column(default=datetime.utcnow, nullable=False)
+    fecha_movimiento: Mapped[datetime] = mapped_column(
+        default=lambda: datetime.now(UTC), nullable=False
+    )
     observaciones: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relaciones

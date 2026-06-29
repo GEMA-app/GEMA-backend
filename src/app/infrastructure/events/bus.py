@@ -54,6 +54,9 @@ class InProcessEventBus(EventBusPort):
                 try:
                     await handler(event)
                 except Exception as e:
+                    from app.domain.exceptions.base import DomainException
+                    if isinstance(e, DomainException):
+                        raise
                     self.failed_count += 1
                     logger.error(
                         "Manejador falló",

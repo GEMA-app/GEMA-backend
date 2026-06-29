@@ -14,6 +14,9 @@ from app.infrastructure.repositories.failure_report_repository import (
     SqlAlchemyFailureReportRepository,
 )
 from app.infrastructure.repositories.intervention_repository import SqlAlchemyInterventionRepository
+from app.infrastructure.repositories.inventory_part_repository import (
+    SqlAlchemyInventoryPartRepository,
+)
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
 from app.infrastructure.repositories.maintenance_plan_repository import (
     SqlAlchemyMaintenancePlanRepository,
@@ -25,6 +28,9 @@ from app.infrastructure.repositories.preference_repository import SqlAlchemyPref
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
 from app.infrastructure.repositories.subscription_plan_repository import (
     SqlAlchemySubscriptionPlanRepository,
+)
+from app.infrastructure.repositories.system_audit_repository import (
+    SqlAlchemySystemAuditRepository,
 )
 from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 from app.infrastructure.repositories.used_part_repository import SqlAlchemyUsedPartRepository
@@ -50,4 +56,6 @@ __all__ = [
     "SqlAlchemyUsedPartRepository",
     "SqlAlchemyWorkOrderRepository",
     "SqlAlchemyInterventionRepository",
+    "SqlAlchemySystemAuditRepository",
+    "SqlAlchemyInventoryPartRepository",
 ]

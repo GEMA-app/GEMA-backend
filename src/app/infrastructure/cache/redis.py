@@ -63,7 +63,11 @@ class RedisClient:
     def __getattr__(self, name: str) -> Any:
         """Reenvía atributos no encontrados al cliente Redis subyacente.
 
-        Retorna una coroutine function que conecta Redis bajo demanda.
+        Args:
+            name: Nombre del atributo a reenviar.
+
+        Returns:
+            Una coroutine function que conecta Redis bajo demanda.
         """
 
         async def _proxy(*args: Any, **kwargs: Any) -> Any:

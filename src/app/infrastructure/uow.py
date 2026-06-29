@@ -67,7 +67,11 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         self._pending_events: list[DomainEvent] = []
 
     async def __aenter__(self) -> Self:
-        """Inicia la sesión asíncrona y construye los repositorios asociados a ella."""
+        """Inicia la sesión asíncrona y construye los repositorios asociados a ella.
+
+        Returns:
+            La instancia del Unit of Work con los repositorios inicializados.
+        """
         self.session = self.session_factory()
         self._pending_events.clear()
         self.users = SqlAlchemyUserRepository(self.session, self._pending_events)
@@ -125,6 +129,9 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         """Confirma la transacción actual en la base de datos.
 
         Despacha eventos de dominio despachados con éxito.
+
+        Raises:
+            EventPublishError: Si ocurre un error al despachar los eventos de dominio.
         """
         await self.session.commit()
 

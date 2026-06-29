@@ -54,6 +54,7 @@ from app.domain.exceptions import (
     MaintenancePlanIntervalError,
     MaintenancePlanNameEmptyError,
     MaintenancePlanNotFoundError,
+    NotificationError,
     NullCompanyError,
     PlanExecutionNotFoundError,
     PlanExecutionObservationsEmptyError,
@@ -70,6 +71,7 @@ from app.domain.exceptions import (
     SubscriptionPlanPaymentFailedError,
     SystemAuditException,
     SystemAuditNotFoundError,
+    TemplateNotFoundError,
     UsedPartInvalidPriceError,
     UsedPartInvalidQuantityError,
     UsedPartNotFoundError,
@@ -84,7 +86,6 @@ from app.domain.exceptions import (
     WorkOrderInvalidStateError,
     WorkOrderNotFoundError,
 )
-from app.infrastructure.notifications.email_sender import NotificationError, TemplateNotFoundError
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers.base import jsonapi_response
 

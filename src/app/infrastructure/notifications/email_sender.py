@@ -9,18 +9,13 @@ import anyio
 import structlog
 
 from app.application.ports.notifications import NotificationPort
-from app.domain.exceptions import DomainException
+from app.domain.exceptions import (
+    NotificationError,
+    TemplateNotFoundError,
+)
 from app.infrastructure.config.settings import settings
 
 logger = structlog.get_logger()
-
-
-class NotificationError(DomainException):
-    """Excepción base para errores del servicio de notificaciones."""
-
-
-class TemplateNotFoundError(DomainException):
-    """Se lanza cuando se solicita un template que no existe."""
 
 
 class SmtpNotificationSender(NotificationPort):
@@ -59,7 +54,7 @@ class SmtpNotificationSender(NotificationPort):
                     content = await path.read_text(encoding="utf-8")
                     template = Template(content)
                     self._cache[template_name] = template
-            except Exception as e:
+            except (FileNotFoundError, PermissionError, OSError, UnicodeDecodeError) as e:
                 logger.error(
                     "Error al cargar la plantilla de correo",
                     template=template_name,

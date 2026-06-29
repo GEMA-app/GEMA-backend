@@ -16,7 +16,7 @@ from app.infrastructure.db.models.preference import UserPreferenceModel
 from app.infrastructure.db.models.role import PermissionModel, RoleModel, RoleUserModel
 from app.infrastructure.db.models.subscription_plan import SubscriptionPlanModel
 from app.infrastructure.db.models.supplier import SupplierModel
-from app.infrastructure.db.models.system_audits import SystemAuditModel
+from app.infrastructure.db.models.system_audit import SystemAuditModel
 from app.infrastructure.db.models.technical_intervention import TechnicalInterventionModel
 from app.infrastructure.db.models.used_part import UsedPartModel
 from app.infrastructure.db.models.user import UserModel

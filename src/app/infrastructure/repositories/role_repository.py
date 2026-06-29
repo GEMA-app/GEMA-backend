@@ -28,7 +28,11 @@ class SqlAlchemyRoleRepository(
 
 
     async def save(self, entity: Role) -> None:
-        """Persiste un rol preservando los UUIDs de permisos existentes."""
+        """Persiste un rol preservando los UUIDs de permisos existentes.
+
+        Args:
+            entity: Entidad Role a persistir.
+        """
         existing_model = await self.session.get(RoleModel, entity.id.value)
 
         if existing_model is None:

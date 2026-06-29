@@ -1,3 +1,5 @@
+"""Modelo ORM para la representación de Planes de Suscripción en base de datos."""
+
 import uuid
 from decimal import Decimal
 from typing import TYPE_CHECKING

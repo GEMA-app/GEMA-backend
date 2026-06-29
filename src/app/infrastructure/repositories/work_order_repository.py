@@ -88,7 +88,11 @@ class SqlAlchemyWorkOrderRepository(
         )
 
     async def get_by_id(self, id: WorkOrderId, empresa_id: CompanyId) -> WorkOrder | None:  # type: ignore[override]
-        """Obtiene una orden de trabajo por su ID y empresa."""
+        """Obtiene una orden de trabajo por su ID y empresa.
+
+        Returns:
+            La entidad WorkOrder si existe, None en caso contrario.
+        """
         stmt = select(WorkOrderModel).where(
             WorkOrderModel.id == id.value,
             WorkOrderModel.empresa_id == empresa_id.value,
@@ -98,7 +102,11 @@ class SqlAlchemyWorkOrderRepository(
         return self._to_entity(model) if model else None
 
     async def get_by_code(self, codigo_ot: str, empresa_id: CompanyId) -> WorkOrder | None:
-        """Obtiene una orden de trabajo por su código único dentro de la empresa."""
+        """Obtiene una orden de trabajo por su código único dentro de la empresa.
+
+        Returns:
+            La entidad WorkOrder si existe, None en caso contrario.
+        """
         stmt = select(WorkOrderModel).where(
             WorkOrderModel.codigo_ot == codigo_ot,
             WorkOrderModel.empresa_id == empresa_id.value,
@@ -117,7 +125,11 @@ class SqlAlchemyWorkOrderRepository(
         offset: int = 0,
         limit: int = 20,
     ) -> tuple[list[WorkOrder], int]:
-        """Lista órdenes de trabajo de una empresa con filtros opcionales."""
+        """Lista órdenes de trabajo de una empresa con filtros opcionales.
+
+        Returns:
+            Tupla con la lista de órdenes de trabajo y el total de registros.
+        """
         stmt = select(WorkOrderModel).where(
             WorkOrderModel.empresa_id == empresa_id.value
         )
@@ -148,7 +160,11 @@ class SqlAlchemyWorkOrderRepository(
     async def get_by_report_id(
         self, reporte_id: str, empresa_id: CompanyId
     ) -> WorkOrder | None:
-        """Obtiene una orden de trabajo asociada a un reporte de falla."""
+        """Obtiene una orden de trabajo asociada a un reporte de falla.
+
+        Returns:
+            La entidad WorkOrder si existe, None en caso contrario.
+        """
         stmt = select(WorkOrderModel).where(
             WorkOrderModel.reporte_id == uuid.UUID(reporte_id),
             WorkOrderModel.empresa_id == empresa_id.value,

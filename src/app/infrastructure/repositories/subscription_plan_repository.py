@@ -1,3 +1,5 @@
+"""Repositorio de Planes de Suscripción implementado con SQLAlchemy asíncrono."""
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -47,21 +49,33 @@ class SqlAlchemySubscriptionPlanRepository(
     async def get_by_id(
         self, plan_id: SubscriptionPlanId
     ) -> SubscriptionPlan | None:
-        """Obtiene un plan por su ID."""
+        """Obtiene un plan por su ID.
+
+        Returns:
+            La entidad SubscriptionPlan si existe, None en caso contrario.
+        """
         stmt = select(self.model_class).where(self.model_class.id == plan_id.value)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None
 
     async def get_by_name(self, name: str) -> SubscriptionPlan | None:
-        """Obtiene un plan por su nombre."""
+        """Obtiene un plan por su nombre.
+
+        Returns:
+            La entidad SubscriptionPlan si existe, None en caso contrario.
+        """
         stmt = select(self.model_class).where(self.model_class.nombre == name)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None
 
     async def list_active_plans(self) -> list[SubscriptionPlan]:
-        """Lista todos los planes activos."""
+        """Lista todos los planes activos.
+
+        Returns:
+            Lista de entidades SubscriptionPlan activas.
+        """
         stmt = select(self.model_class).where(self.model_class.is_active)
         result = await self.session.execute(stmt)
         models = result.scalars().all()
@@ -70,7 +84,11 @@ class SqlAlchemySubscriptionPlanRepository(
     async def list_all_plans(
         self, offset: int, limit: int
     ) -> tuple[list[SubscriptionPlan], int]:
-        """Lista todos los planes paginados."""
+        """Lista todos los planes paginados.
+
+        Returns:
+            Tupla con la lista de planes y el total de registros.
+        """
         stmt = select(self.model_class).offset(offset).limit(limit)
         result = await self.session.execute(stmt)
         models = result.scalars().all()

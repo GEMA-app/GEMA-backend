@@ -5,6 +5,7 @@ from collections.abc import Sequence
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.application.ports.maintenance_plan_repository import MaintenancePlanRepositoryPort
 from app.domain.entities.maintenance_plan import MaintenancePlan
 from app.domain.enums import MaintenanceType
 from app.domain.events import DomainEvent
@@ -14,7 +15,8 @@ from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRe
 
 
 class SqlAlchemyMaintenancePlanRepository(
-    SqlAlchemyTenantRepository[MaintenancePlanModel, MaintenancePlan, MaintenancePlanId]
+    SqlAlchemyTenantRepository[MaintenancePlanModel, MaintenancePlan, MaintenancePlanId],
+    MaintenancePlanRepositoryPort,
 ):
     """Repositorio concreto para planes de mantenimiento."""
 
