@@ -38,5 +38,10 @@ class WorkOrderRepositoryPort(Protocol):
     ) -> tuple[list[WorkOrder], int]:
         """Lista órdenes de trabajo de una empresa, con filtros opcionales."""
 
+    async def get_by_report_id(
+        self, reporte_id: str, empresa_id: CompanyId
+    ) -> WorkOrder | None:
+        """Obtiene una orden de trabajo asociada a un reporte de falla."""
+
     async def delete(self, id: WorkOrderId, empresa_id: CompanyId) -> None:
         """Elimina una orden de trabajo por su ID dentro de una empresa."""

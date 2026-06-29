@@ -22,6 +22,7 @@ class FailureReportAttributes(BaseModel):
     created_at: datetime
     activo_id: str | None = None
     version: int
+    orden_trabajo_id: str | None = None
 
 
 class FailureReportResource(BaseModel):

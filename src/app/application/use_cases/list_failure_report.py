@@ -21,6 +21,8 @@ class ListFailureReportsUseCase:
     ) -> tuple[list[FailureReportResponse], int]:
         """Lista reportes de falla con paginación y filtros opcionales.
 
+        Incluye el ID de la orden de trabajo generada si existe para cada reporte.
+
         Args:
             company_id_str: Identificador UUID de la empresa.
             offset: Número de registros a omitir.
@@ -37,20 +39,25 @@ class ListFailureReportsUseCase:
                 company_id, offset, limit, filters
             )
 
-            responses = [
-                FailureReportResponse(
-                    id=str(r.id),
-                    empresa_id=str(r.empresa_id),
-                    title=r.title,
-                    description=r.description,
-                    location=r.location,
-                    priority=r.priority.value,
-                    reported_by=r.reported_by,
-                    status=r.status.value,
-                    created_at=r.created_at.isoformat() if r.created_at else "",
-                    activo_id=str(r.activo_id) if r.activo_id else None,
-                    version=r.version,
+            responses = []
+            for r in reports:
+                work_order = await self.uow.work_orders.get_by_report_id(
+                    str(r.id), company_id
                 )
-                for r in reports
-            ]
+                responses.append(
+                    FailureReportResponse(
+                        id=str(r.id),
+                        empresa_id=str(r.empresa_id),
+                        title=r.title,
+                        description=r.description,
+                        location=r.location,
+                        priority=r.priority.value,
+                        reported_by=r.reported_by,
+                        status=r.status.value,
+                        created_at=r.created_at.isoformat() if r.created_at else "",
+                        activo_id=str(r.activo_id) if r.activo_id else None,
+                        version=r.version,
+                        orden_trabajo_id=str(work_order.id) if work_order else None,
+                    )
+                )
             return responses, total

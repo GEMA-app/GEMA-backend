@@ -55,3 +55,4 @@ class FailureReportResponse:
     created_at: str
     activo_id: str | None = None
     version: int = 1
+    orden_trabajo_id: str | None = None

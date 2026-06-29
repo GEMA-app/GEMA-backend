@@ -17,6 +17,8 @@ class GetFailureReportUseCase:
     ) -> FailureReportResponse:
         """Obtiene un reporte de falla por su ID.
 
+        Incluye el ID de la orden de trabajo generada si existe.
+
         Args:
             company_id_str: Identificador UUID de la empresa.
             report_id_str: Identificador UUID del reporte de falla.
@@ -37,6 +39,10 @@ class GetFailureReportUseCase:
                     f"El reporte de falla con ID '{report_id_str}' no existe en esta empresa."
                 )
 
+            work_order = await self.uow.work_orders.get_by_report_id(
+                report_id_str, company_id
+            )
+
             return FailureReportResponse(
                 id=str(report.id),
                 empresa_id=str(report.empresa_id),
@@ -49,4 +55,5 @@ class GetFailureReportUseCase:
                 created_at=report.created_at.isoformat() if report.created_at else "",
                 activo_id=str(report.activo_id) if report.activo_id else None,
                 version=report.version,
+                orden_trabajo_id=str(work_order.id) if work_order else None,
             )

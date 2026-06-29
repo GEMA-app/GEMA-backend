@@ -27,7 +27,7 @@ class TestListSystemAuditsSecurity:
     """Seguridad del endpoint de listado de auditorias."""
 
     def test_list_uses_permission_dependency(self) -> None:
-        """Debe usar require_permission con modulo SYSTEM_AUDIT y accion view."""
+        """Debe usar require_permission con modulo ADMIN y accion view."""
         dep = _get_dependency(list_system_audits, "current_user")
         assert dep is not None
         assert callable(dep)
@@ -42,7 +42,7 @@ class TestGetSystemAuditSecurity:
     """Seguridad del endpoint de detalle de auditoria."""
 
     def test_get_uses_permission_dependency(self) -> None:
-        """Debe usar require_permission con modulo SYSTEM_AUDIT y accion view."""
+        """Debe usar require_permission con modulo ADMIN y accion view."""
         dep = _get_dependency(get_system_audit_by_id, "current_user")
         assert dep is not None
         assert callable(dep)

@@ -29,7 +29,7 @@ async def list_system_audits(
     fecha_fin: datetime | None = Query(None, description="Filtrar hasta fecha"),
     offset: int = Query(0, ge=0, description="Número de registros a saltar"),
     limit: int = Query(20, ge=1, le=100, description="Límite de registros por página"),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.SYSTEM_AUDIT, "view")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
     use_case: ListSystemAuditsUseCase = Depends(get_list_system_audits_use_case),
 ) -> SystemAuditListDocument:
     """Lista y filtra el historial de auditorías en formato JSON:API.
@@ -87,7 +87,7 @@ async def list_system_audits(
 async def get_system_audit_by_id(
     empresa_id: str,
     auditoria_id: UUID = Path(..., description="ID de la auditoría"),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.SYSTEM_AUDIT, "view")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
     use_case: GetSystemAuditUseCase = Depends(get_system_audit_use_case),
 ) -> SystemAuditDocument:
     """Obtiene el detalle de una auditoría por su ID único.

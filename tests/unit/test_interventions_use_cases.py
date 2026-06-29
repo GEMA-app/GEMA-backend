@@ -39,6 +39,9 @@ def mock_uow(mock_repo: Any) -> Any:
     uow.__aexit__ = AsyncMock(return_value=None)
     uow.commit = AsyncMock()
     uow.interventions = mock_repo
+    uow.used_parts = MagicMock()
+    uow.used_parts.get_by_intervention = AsyncMock(return_value=[])
+    uow.used_parts.get_by_work_order = AsyncMock(return_value=[])
     return uow
 
 
@@ -103,7 +106,7 @@ class TestGetInterventionUseCase:
         mock_repo.get_by_id.return_value = intervention
 
         use_case = GetInterventionUseCase(uow=mock_uow)
-        res = await use_case.execute(str(ot_id.value), str(intervention_id.value), str(company_id.value))
+        res = await use_case.execute(str(company_id.value), str(ot_id.value), str(intervention_id.value))
 
         assert res.id == intervention_id.value
         assert res.tareas_realizadas == "Reparacion"
@@ -137,7 +140,7 @@ class TestListInterventionsUseCase:
         mock_repo.get_by_work_order.return_value = [intervention]
 
         use_case = ListInterventionsUseCase(uow=mock_uow)
-        res, total = await use_case.execute(str(ot_id.value), str(company_id.value))
+        res, total = await use_case.execute(str(company_id.value), str(ot_id.value))
 
         assert total == 1
         assert len(res) == 1
@@ -171,7 +174,7 @@ class TestUpdateInterventionUseCase:
             horas_hombre=4.0,
         )
 
-        res = await use_case.execute(str(ot_id.value), str(intervention_id.value), str(company_id.value), request)
+        res = await use_case.execute(str(company_id.value), str(ot_id.value), str(intervention_id.value), request)
 
         assert res.tareas_realizadas == "New Desc"
         assert res.horas_hombre == 4.0
@@ -212,4 +215,4 @@ class TestUpdateInterventionUseCase:
         request = UpdateInterventionRequest(horas_hombre=-1.0)
 
         with pytest.raises(ValueError, match="horas_hombre no puede ser negativo"):
-            await use_case.execute(str(ot_id.value), str(intervention_id.value), str(company_id.value), request)
+            await use_case.execute(str(company_id.value), str(ot_id.value), str(intervention_id.value), request)

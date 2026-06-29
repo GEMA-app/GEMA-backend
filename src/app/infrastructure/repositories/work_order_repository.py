@@ -144,6 +144,18 @@ class SqlAlchemyWorkOrderRepository(
         total = total_res.scalar() or 0
         return entities, total
 
+    async def get_by_report_id(
+        self, reporte_id: str, empresa_id: CompanyId
+    ) -> WorkOrder | None:
+        """Obtiene una orden de trabajo asociada a un reporte de falla."""
+        stmt = select(WorkOrderModel).where(
+            WorkOrderModel.reporte_id == uuid.UUID(reporte_id),
+            WorkOrderModel.empresa_id == empresa_id.value,
+        )
+        result = await self.session.execute(stmt)
+        model = result.scalar_one_or_none()
+        return self._to_entity(model) if model else None
+
     async def delete(self, id: WorkOrderId, empresa_id: CompanyId) -> None:  # type: ignore[override]
         """Elimina una orden de trabajo por su ID y empresa."""
         stmt = delete(WorkOrderModel).where(

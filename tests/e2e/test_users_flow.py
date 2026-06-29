@@ -286,15 +286,13 @@ async def test_users_crud_and_isolation_flow() -> None:
             assert res_403.status_code == 403
 
             # Token B busca el user_id de A bajo su propia empresa.
-            # El use case no filtra por tenant (get_by_id es global),
-            # pero la validación de tenant vía require_permission impide
-            # que B acceda a rutas de A (403 arriba). Aquí el usuario
-            # se encuentra globalmente y responde 200.
-            res_200 = await client.get(
+            # El use case filtra por tenant (get_by_id_and_company), por
+            # lo tanto el usuario de A no existe en empresa B → 404.
+            res_404 = await client.get(
                 f"/v1/empresas/{empresa_b_id}/usuarios/{user_id}",
                 headers=auth_b,
             )
-            assert res_200.status_code == 200
+            assert res_404.status_code == 404
 
             # =================================================================
             # Paso 15: RBAC — usuario sin permiso admin

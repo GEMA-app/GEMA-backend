@@ -26,7 +26,6 @@ ROLES_CONFIG = {
             PermissionModule.REPORTS: (True, True, True, True),
             PermissionModule.ADMIN: (True, True, True, True),
             PermissionModule.PREFERENCES: (True, False, True, False),  # Solo view + edit
-            PermissionModule.SYSTEM_AUDIT: (True, True, True, True),
         },
     },
     "Supervisor de Activos": {

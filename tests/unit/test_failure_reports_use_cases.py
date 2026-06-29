@@ -38,6 +38,8 @@ def mock_uow() -> Any:
     uow.failure_reports.get_by_id = AsyncMock()
     uow.failure_reports.list_by_company = AsyncMock()
     uow.failure_reports.delete = AsyncMock()
+    uow.work_orders = MagicMock()
+    uow.work_orders.get_by_report_id = AsyncMock()
     uow.commit = AsyncMock()
     return uow
 

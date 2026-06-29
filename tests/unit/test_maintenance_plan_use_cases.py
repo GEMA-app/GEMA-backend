@@ -21,6 +21,8 @@ def mock_uow() -> Any:
     uow.maintenance_plans.get_all_by_company = AsyncMock()
     uow.maintenance_plans.update = AsyncMock()
     uow.maintenance_plans.delete = AsyncMock()
+    uow.plan_executions = MagicMock()
+    uow.plan_executions.list_by_plan_id = AsyncMock(return_value=[])
     uow.commit = AsyncMock()
     return uow
 
