@@ -1,4 +1,4 @@
-﻿"""Caso de uso para obtener una intervención técnica por ID."""
+"""Caso de uso para obtener una intervención técnica por ID."""
 
 from app.application.dtos.intervention_dtos import InterventionResponse
 from app.application.dtos.used_part_dtos import UsedPartResponse
@@ -45,32 +45,32 @@ class GetInterventionUseCase:
                 company_id, intervention_id_internal
             )
 
-        return InterventionResponse(
-            id=intervention.id.value,
-            empresa_id=intervention.empresa_id.value,
-            work_order_id=intervention.work_order_id.value,
-            technician_id=intervention.technician_id.value,
-            tareas_realizadas=intervention.tareas_realizadas,
-            fecha_inicio=intervention.fecha_inicio,
-            fecha_fin=intervention.fecha_fin,
-            horas_hombre=intervention.horas_hombre,
-            used_parts=[
-                UsedPartResponse(
-                    id=p.id,
-                    empresa_id=p.empresa_id.value,
-                    intervencion_id=p.intervencion_id,
-                    repuesto_id=p.repuesto_id,
-                    cantidad_usada=p.cantidad_usada,
-                    precio_unitario=p.precio_unitario,
-                    moneda=p.moneda,
-                    created_at=p.created_at,
-                    updated_at=p.updated_at,
-                    precio_total=(
-                        p.cantidad_usada * p.precio_unitario
-                        if p.precio_unitario is not None
-                        else None
-                    ),
-                )
-                for p in used_parts
-            ],
-        )
+            return InterventionResponse(
+                id=intervention.id.value,
+                empresa_id=intervention.empresa_id.value,
+                work_order_id=intervention.work_order_id.value,
+                technician_id=intervention.technician_id.value,
+                tareas_realizadas=intervention.tareas_realizadas,
+                fecha_inicio=intervention.fecha_inicio,
+                fecha_fin=intervention.fecha_fin,
+                horas_hombre=intervention.horas_hombre,
+                used_parts=[
+                    UsedPartResponse(
+                        id=p.id,
+                        empresa_id=p.empresa_id.value,
+                        intervencion_id=p.intervencion_id,
+                        repuesto_id=p.repuesto_id,
+                        cantidad_usada=p.cantidad_usada,
+                        precio_unitario=p.precio_unitario,
+                        moneda=p.moneda,
+                        created_at=p.created_at,
+                        updated_at=p.updated_at,
+                        precio_total=(
+                            p.cantidad_usada * p.precio_unitario
+                            if p.precio_unitario is not None
+                            else None
+                        ),
+                    )
+                    for p in used_parts
+                ],
+            )

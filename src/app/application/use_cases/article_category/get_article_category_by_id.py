@@ -1,10 +1,11 @@
 """Caso de uso para obtener una categoría de artículo por ID."""
 
-import uuid
+from uuid import UUID
 
 from app.application.dtos.article_category_dtos import ArticleCategoryResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import ArticleCategoryNotFoundError
+from app.domain.value_objects import CompanyId
 
 
 class GetArticleCategoryByIdUseCase:
@@ -14,7 +15,7 @@ class GetArticleCategoryByIdUseCase:
         self.uow = uow
 
     async def execute(
-        self, empresa_id_str: str, category_id: uuid.UUID
+        self, empresa_id_str: str, category_id: UUID
     ) -> ArticleCategoryResponse:
         """Ejecuta la obtención de una categoría por ID.
 
@@ -28,16 +29,15 @@ class GetArticleCategoryByIdUseCase:
         Raises:
             ArticleCategoryNotFoundError: Si no se encuentra la categoría.
         """
-        empresa_id = uuid.UUID(empresa_id_str)
+        company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
             category = await self.uow.article_categories.get_by_id(
-                category_id, empresa_id
+                category_id, company_id.value
             )
             if not category:
                 raise ArticleCategoryNotFoundError(
                     "Categoría de catálogo no encontrada."
                 )
-            await self.uow.commit()
             return ArticleCategoryResponse(
                 id=category.id,
                 empresa_id=category.empresa_id,

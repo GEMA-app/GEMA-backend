@@ -17,15 +17,15 @@ from app.application.dtos.user_dtos import (
 from app.application.use_cases.user import (
     CreateUserUseCase,
     DeleteUserUseCase,
-    EditUserUseCase,
     GetUserUseCase,
     ListUsersUseCase,
+    UpdateUserUseCase,
 )
 from app.composition.container.user import (
     get_create_user_use_case,
     get_delete_user_use_case,
-    get_edit_user_use_case,
     get_list_users_use_case,
+    get_update_user_use_case,
     get_user_use_case,
 )
 from app.domain.enums import PermissionModule
@@ -192,7 +192,7 @@ async def update_user(
     current_user: CurrentUserResponse = Depends(
         require_permission(PermissionModule.ADMIN, "edit")
     ),
-    use_case: EditUserUseCase = Depends(get_edit_user_use_case),
+    use_case: UpdateUserUseCase = Depends(get_update_user_use_case),
 ) -> UserDocument:
     """Actualiza parcialmente los datos de un usuario perteneciente a la empresa.
 

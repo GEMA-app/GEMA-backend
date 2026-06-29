@@ -1,13 +1,9 @@
-"""Puerto (interfaz) del repositorio de órdenes de trabajo.
-
-Define el contrato que deben implementar los adaptadores de infraestructura
-para la persistencia de órdenes de trabajo.
-"""
-
 from typing import Protocol
 
+from app.application.dtos.work_order_dtos import WorkOrderStatusLogResponse
 from app.domain.entities import WorkOrder
-from app.domain.value_objects import AssetId, CompanyId, WorkOrderId
+from app.domain.enums import WorkOrderStatus
+from app.domain.value_objects import AssetId, CompanyId, UserId, WorkOrderId
 
 
 class WorkOrderRepositoryPort(Protocol):
@@ -45,3 +41,29 @@ class WorkOrderRepositoryPort(Protocol):
 
     async def delete(self, id: WorkOrderId, empresa_id: CompanyId) -> None:
         """Elimina una orden de trabajo por su ID dentro de una empresa."""
+
+    async def assign_technician(
+        self, id: WorkOrderId, technician_id: UserId, empresa_id: CompanyId
+    ) -> None:
+        """Asigna un técnico a una orden de trabajo en la tabla de asociación."""
+
+    async def remove_technician(
+        self, id: WorkOrderId, technician_id: UserId, empresa_id: CompanyId
+    ) -> None:
+        """Remueve un técnico de una orden de trabajo."""
+
+    async def add_status_log(
+        self,
+        id: WorkOrderId,
+        previous_status: WorkOrderStatus | None,
+        new_status: WorkOrderStatus,
+        usuario_id: UserId | None,
+        motivo: str,
+        empresa_id: CompanyId,
+    ) -> None:
+        """Registra un cambio de estado en el historial."""
+
+    async def get_status_history(
+        self, id: WorkOrderId, empresa_id: CompanyId
+    ) -> list[WorkOrderStatusLogResponse]:
+        """Obtiene el historial de estados de una orden de trabajo."""

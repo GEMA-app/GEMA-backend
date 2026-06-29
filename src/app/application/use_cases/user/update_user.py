@@ -8,7 +8,7 @@ from app.domain.exceptions.user import UserNotFoundError
 from app.domain.value_objects import CompanyId, Email, UserId
 
 
-class EditUserUseCase:
+class UpdateUserUseCase:
     """Caso de uso para actualizar parcialmente los datos de un usuario."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:  # noqa: D107

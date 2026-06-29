@@ -13,7 +13,7 @@ from app.application.dtos.intervention_dtos import (
 )
 from app.application.use_cases.intervention.create_intervention import CreateInterventionUseCase
 from app.application.use_cases.intervention.get_intervention import GetInterventionUseCase
-from app.application.use_cases.intervention.list_interventions import ListInterventionsUseCase
+from app.application.use_cases.intervention.list_intervention import ListInterventionsUseCase
 from app.application.use_cases.intervention.update_intervention import UpdateInterventionUseCase
 from app.domain.entities.intervention import TechnicalIntervention
 from app.domain.exceptions.intervention import (

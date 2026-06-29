@@ -1,5 +1,3 @@
-"""Caso de uso para listar usuarios de una empresa."""
-from dataclasses import dataclass
 from datetime import UTC, datetime
 
 from app.application.dtos.user_dtos import UserResponse
@@ -7,11 +5,11 @@ from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.value_objects import CompanyId
 
 
-@dataclass
 class ListUsersUseCase:
     """Lista todos los usuarios pertenecientes a una empresa (tenant)."""
 
-    uow: UnitOfWorkPort
+    def __init__(self, uow: UnitOfWorkPort) -> None:
+        self.uow = uow
 
     async def execute(self, empresa_id_str: str) -> list[UserResponse]:
         """Ejecuta la consulta de todos los usuarios de la empresa.

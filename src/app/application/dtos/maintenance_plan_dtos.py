@@ -34,7 +34,7 @@ class MaintenancePlanResponse:
     ejecuciones: list[PlanExecutionSummary] = field(default_factory=list)
 
 
-@dataclass
+@dataclass(frozen=True)
 class CreateMaintenancePlanRequest:
     """DTO de entrada para crear un plan de mantenimiento."""
 
@@ -47,7 +47,7 @@ class CreateMaintenancePlanRequest:
     descripcion_tareas: str | None = None
 
 
-@dataclass
+@dataclass(frozen=True)
 class UpdateMaintenancePlanRequest:
     """DTO de entrada para actualizar un plan de mantenimiento.
 

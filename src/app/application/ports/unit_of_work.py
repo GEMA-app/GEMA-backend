@@ -8,6 +8,7 @@ from app.application.ports.company_repository import CompanyRepositoryPort
 from app.application.ports.event_bus import EventBusPort
 from app.application.ports.failure_report_repository import FailureReportRepositoryPort
 from app.application.ports.intervention_repository import InterventionRepositoryPort
+from app.application.ports.inventory_part_repository import InventoryPartRepositoryPort
 from app.application.ports.location_repository import LocationRepositoryPort
 from app.application.ports.maintenance_plan_repository import MaintenancePlanRepositoryPort
 from app.application.ports.plan_execution_repository import (
@@ -38,6 +39,7 @@ class UnitOfWorkPort(Protocol):
     article_categories: ArticleCategoryRepositoryPort
     failure_reports: FailureReportRepositoryPort
     used_parts: UsedPartRepositoryPort
+    inventory_parts: InventoryPartRepositoryPort
     work_orders: WorkOrderRepositoryPort
     plan_executions: PlanExecutionRepositoryPort
     subscription_plans: SubscriptionPlanRepositoryPort

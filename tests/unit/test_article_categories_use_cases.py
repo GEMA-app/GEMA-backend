@@ -16,8 +16,8 @@ from app.application.use_cases.article_category.create_article_category import (
 from app.application.use_cases.article_category.delete_article_category import (
     DeleteArticleCategoryUseCase,
 )
-from app.application.use_cases.article_category.get_all_article_categories import (
-    GetAllArticleCategoriesUseCase,
+from app.application.use_cases.article_category.list_article_category import (
+    ListArticleCategoriesUseCase,
 )
 from app.application.use_cases.article_category.get_article_category_by_id import (
     GetArticleCategoryByIdUseCase,
@@ -200,7 +200,7 @@ class TestGetArticleCategoryByIdUseCase:
             await use_case.execute(str(uuid4()), uuid4())
 
 
-class TestGetAllArticleCategoriesUseCase:
+class TestListArticleCategoriesUseCase:
 
     async def test_get_all_categories_by_company(self, mock_uow: Any) -> None:
         empresa_id = uuid4()
@@ -210,13 +210,14 @@ class TestGetAllArticleCategoriesUseCase:
         ]
         mock_uow.article_categories.get_all_by_company.return_value = categories
 
-        use_case = GetAllArticleCategoriesUseCase(uow=mock_uow)
+        use_case = ListArticleCategoriesUseCase(uow=mock_uow)
         res = await use_case.execute(str(empresa_id))
 
         assert len(res) == 2
         assert res[0].name == "Cat 1"
         assert res[1].name == "Cat 2"
-        assert mock_uow.commit.called
+        # No se realiza commit en consultas de solo lectura
+        assert not mock_uow.commit.called
 
 
 class TestDeleteArticleCategoryUseCase:

@@ -9,7 +9,7 @@ from app.application.use_cases.intervention.delete_intervention import (
 from app.application.use_cases.intervention.get_intervention import (
     GetInterventionUseCase,
 )
-from app.application.use_cases.intervention.list_interventions import (
+from app.application.use_cases.intervention.list_intervention import (
     ListInterventionsUseCase,
 )
 from app.application.use_cases.intervention.update_intervention import (

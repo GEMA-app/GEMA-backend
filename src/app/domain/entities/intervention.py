@@ -29,7 +29,8 @@ class TechnicalIntervention:
         """Valida las invariantes de la entidad.
 
         Raises:
-            InterventionInvalidDataError: Si horas_hombre es negativo o fecha_fin es anterior a fecha_inicio.
+            InterventionInvalidDataError: Si horas_hombre es negativo o
+                fecha_fin es anterior a fecha_inicio.
         """
         if self.horas_hombre < 0:
             raise InterventionInvalidDataError("horas_hombre no puede ser negativo")

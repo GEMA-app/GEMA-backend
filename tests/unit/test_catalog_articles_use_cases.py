@@ -19,7 +19,7 @@ from app.application.use_cases.catalog_article.delete_catalog_article import (
 from app.application.use_cases.catalog_article.get_catalog_article import (
     GetCatalogArticleUseCase,
 )
-from app.application.use_cases.catalog_article.list_catalog_articles import (
+from app.application.use_cases.catalog_article.list_catalog_article import (
     ListCatalogArticlesUseCase,
 )
 from app.application.use_cases.catalog_article.update_catalog_article import (
@@ -152,7 +152,7 @@ class TestGetCatalogArticleUseCase:
 
         assert res.id == str(article_id)
         assert res.name == "Compresor"
-        assert mock_uow.commit.called
+        assert not mock_uow.commit.called
 
     async def test_get_article_not_found_raises_error(self, mock_uow: Any) -> None:
         mock_uow.catalog_articles.get_by_company_and_id.return_value = None
@@ -179,7 +179,7 @@ class TestListCatalogArticlesUseCase:
         assert total == 2
         assert res[0].name == "Art 1"
         assert res[1].name == "Art 2"
-        assert mock_uow.commit.called
+        assert not mock_uow.commit.called
 
 
 class TestDeleteCatalogArticleUseCase:

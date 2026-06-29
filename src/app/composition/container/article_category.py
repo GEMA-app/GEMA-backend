@@ -9,11 +9,11 @@ from app.application.use_cases.article_category.create_article_category import (
 from app.application.use_cases.article_category.delete_article_category import (
     DeleteArticleCategoryUseCase,
 )
-from app.application.use_cases.article_category.get_all_article_categories import (
-    GetAllArticleCategoriesUseCase,
-)
 from app.application.use_cases.article_category.get_article_category_by_id import (
     GetArticleCategoryByIdUseCase,
+)
+from app.application.use_cases.article_category.list_article_category import (
+    ListArticleCategoriesUseCase,
 )
 from app.application.use_cases.article_category.update_article_category import (
     UpdateArticleCategoryUseCase,
@@ -35,11 +35,11 @@ async def get_article_category_by_id_use_case(
     return GetArticleCategoryByIdUseCase(uow=uow)
 
 
-async def get_all_article_categories_use_case(
+async def get_list_article_categories_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
-) -> GetAllArticleCategoriesUseCase:
-    """Fábrica para GetAllArticleCategoriesUseCase."""
-    return GetAllArticleCategoriesUseCase(uow=uow)
+) -> ListArticleCategoriesUseCase:
+    """Fábrica para ListArticleCategoriesUseCase."""
+    return ListArticleCategoriesUseCase(uow=uow)
 
 
 async def get_update_article_category_use_case(

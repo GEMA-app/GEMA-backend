@@ -39,23 +39,19 @@ class RefreshTokenUseCase:
                 raise InvalidTokenError("Token de refresco ya fue utilizado.")
         except InvalidTokenError:
             raise
-        except Exception as e:
+        except (ConnectionError, TimeoutError) as e:
             logger.error("redis_unavailable_claim_token", error=str(e))
-            # Fail-open: permitir refresh sin claim (menos seguro que lockout total)
+            # ponytail: fail-open — permitir refresh sin claim (menos seguro que lockout total)
 
         # 2. Transacción DB — SOLO lectura+escritura, sin side-effects Redis/JWT
-        try:
-            async with self.uow:
-                user = await self.uow.users.get_by_id(UserId.from_string(sub))
-                if not user or not user.activo:
-                    raise UserInactiveError("El usuario no existe o se encuentra inactivo.")
+        async with self.uow:
+            user = await self.uow.users.get_by_id(UserId.from_string(sub))
+            if not user or not user.activo:
+                raise UserInactiveError("El usuario no existe o se encuentra inactivo.")
 
-                company = await self.uow.companies.get_by_id(user.empresa_id)
-                if company and company.estado != CompanyStatus.ACTIVE:
-                    raise UserInactiveError("La empresa se encuentra suspendida o cancelada.")
-        except Exception:
-            # Si DB falla, claim_token se auto-expira en 10s → sin daño permanente
-            raise
+            company = await self.uow.companies.get_by_id(user.empresa_id)
+            if company and company.estado != CompanyStatus.ACTIVE:
+                raise UserInactiveError("La empresa se encuentra suspendida o cancelada.")
 
         # 3. Side-effects Redis/JWT SOLO después de commit exitoso
         access_token = await self.token_service.generate_access_token(str(user.id))

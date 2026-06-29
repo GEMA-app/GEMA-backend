@@ -12,9 +12,9 @@ import pytest
 from app.application.dtos.user_dtos import CreateUserRequest, UpdateUserRequest
 from app.application.use_cases.user.create_user import CreateUserUseCase
 from app.application.use_cases.user.delete_user import DeleteUserUseCase
-from app.application.use_cases.user.edit_user import EditUserUseCase
+from app.application.use_cases.user.update_user import UpdateUserUseCase
 from app.application.use_cases.user.get_user import GetUserUseCase
-from app.application.use_cases.user.list_users import ListUsersUseCase
+from app.application.use_cases.user.list_user import ListUsersUseCase
 from app.domain.entities.user import User
 from app.domain.exceptions import UserAlreadyExistsError
 from app.domain.exceptions.user import UserNotFoundError
@@ -288,11 +288,11 @@ class TestGetUserUseCase:
 
 
 # ==============================================================================
-# TESTS: EditUserUseCase
+# TESTS: UpdateUserUseCase
 # ==============================================================================
 
 
-class TestEditUserUseCase:
+class TestUpdateUserUseCase:
     """Casos de uso: actualización parcial de un usuario."""
 
     @pytest.mark.asyncio
@@ -301,7 +301,7 @@ class TestEditUserUseCase:
         # Arrange
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user())
-        use_case = EditUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)
 
         request = UpdateUserRequest(nombre="Nuevo Nombre")
 
@@ -319,7 +319,7 @@ class TestEditUserUseCase:
         """Verifica que el email se actualiza correctamente."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user())
-        use_case = EditUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)
 
         response = await use_case.execute(
             user_id_str=USER_ID,
@@ -334,7 +334,7 @@ class TestEditUserUseCase:
         """Verifica que el teléfono se actualiza correctamente."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user())
-        use_case = EditUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)
 
         response = await use_case.execute(
             user_id_str=USER_ID,
@@ -349,7 +349,7 @@ class TestEditUserUseCase:
         """Verifica que activo=False llama a user.deactivate() correctamente."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user(activo=True))
-        use_case = EditUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)
 
         response = await use_case.execute(
             user_id_str=USER_ID,
@@ -364,7 +364,7 @@ class TestEditUserUseCase:
         """Verifica que activo=True llama a user.activate() correctamente."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user(activo=False))
-        use_case = EditUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)
 
         response = await use_case.execute(
             user_id_str=USER_ID,
@@ -379,7 +379,7 @@ class TestEditUserUseCase:
         """Verifica que pasar None en campos opcionales no altera los valores existentes."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user(nombre=TEST_NOMBRE))
-        use_case = EditUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)
 
         # Request completamente vacío (todos None)
         response = await use_case.execute(
@@ -395,7 +395,7 @@ class TestEditUserUseCase:
     async def test_lanza_user_not_found_si_id_inexistente(self) -> None:
         """Verifica que UserNotFoundError se lanza si el usuario no existe."""
         uow = FakeUnitOfWork()
-        use_case = EditUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)
 
         with pytest.raises(UserNotFoundError):
             await use_case.execute(

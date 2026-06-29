@@ -5,7 +5,7 @@ from datetime import datetime
 from uuid import UUID
 
 
-@dataclass
+@dataclass(frozen=True)
 class PlanExecutionCreateRequest:
     """DTO para la creación de una ejecución de plan."""
 
@@ -15,7 +15,7 @@ class PlanExecutionCreateRequest:
     observations: str | None = None
 
 
-@dataclass
+@dataclass(frozen=True)
 class PlanExecutionResponse:
     """DTO de respuesta con datos de una ejecución de plan."""
 
@@ -29,7 +29,7 @@ class PlanExecutionResponse:
     updated_at: datetime | None = None
 
 
-@dataclass
+@dataclass(frozen=True)
 class PlanExecutionListResponse:
     """DTO de respuesta con lista de ejecuciones de plan."""
 

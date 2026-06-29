@@ -8,7 +8,7 @@ from app.application.use_cases.work_order.create_work_order import CreateWorkOrd
 from app.application.use_cases.work_order.delete_work_order import DeleteWorkOrderUseCase
 from app.application.use_cases.work_order.get_status_history import GetWorkOrderStatusHistoryUseCase
 from app.application.use_cases.work_order.get_work_order import GetWorkOrderUseCase
-from app.application.use_cases.work_order.list_work_orders import ListWorkOrdersUseCase
+from app.application.use_cases.work_order.list_work_order import ListWorkOrdersUseCase
 from app.application.use_cases.work_order.remove_technician import RemoveTechnicianUseCase
 from app.application.use_cases.work_order.update_work_order import UpdateWorkOrderUseCase
 from app.application.use_cases.work_order.validate_work_order import ValidateWorkOrderUseCase

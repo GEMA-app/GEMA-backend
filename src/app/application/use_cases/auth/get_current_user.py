@@ -34,8 +34,10 @@ class GetCurrentUserUseCase:
             if company and company.estado != CompanyStatus.ACTIVE:
                 raise UserInactiveError("La empresa se encuentra suspendida o cancelada.")
 
-            assert user.created_at is not None
-            assert user.updated_at is not None
+            from datetime import UTC, datetime
+
+            created_at = user.created_at or datetime.now(UTC)
+            updated_at = user.updated_at or datetime.now(UTC)
 
             return UserResponse(
                 id=str(user.id),
@@ -44,6 +46,6 @@ class GetCurrentUserUseCase:
                 empresa_id=str(user.empresa_id),
                 telefono=user.telefono,
                 activo=user.activo,
-                created_at=user.created_at,
-                updated_at=user.updated_at,
+                created_at=created_at,
+                updated_at=updated_at,
             )

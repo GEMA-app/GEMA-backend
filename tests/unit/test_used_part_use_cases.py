@@ -14,7 +14,7 @@ from app.application.dtos.used_part_dtos import (
 from app.application.use_cases.used_part.create_used_part import CreateUsedPartUseCase
 from app.application.use_cases.used_part.delete_used_part import DeleteUsedPartUseCase
 from app.application.use_cases.used_part.get_used_part import GetUsedPartUseCase
-from app.application.use_cases.used_part.list_used_parts import ListUsedPartsUseCase
+from app.application.use_cases.used_part.list_used_part import ListUsedPartsUseCase
 from app.application.use_cases.used_part.update_used_part import UpdateUsedPartUseCase
 from app.domain.entities.used_part import UsedPart
 from app.domain.exceptions.used_part import UsedPartNotFoundError
@@ -31,6 +31,8 @@ def mock_uow() -> Any:
     uow.used_parts.get_by_id = AsyncMock()
     uow.used_parts.get_by_intervention = AsyncMock()
     uow.used_parts.delete = AsyncMock()
+    uow.inventory_parts = MagicMock()
+    uow.inventory_parts.validate_and_decrement_stock = AsyncMock()
     uow.commit = AsyncMock()
     # Sin sesión real: el bloque de descuento de stock se omite correctamente
     uow.session = None

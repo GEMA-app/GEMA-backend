@@ -9,7 +9,7 @@ from app.application.use_cases.catalog_article.delete_catalog_article import (
 from app.application.use_cases.catalog_article.get_catalog_article import (
     GetCatalogArticleUseCase,
 )
-from app.application.use_cases.catalog_article.list_catalog_articles import (
+from app.application.use_cases.catalog_article.list_catalog_article import (
     ListCatalogArticlesUseCase,
 )
 from app.application.use_cases.catalog_article.update_catalog_article import (

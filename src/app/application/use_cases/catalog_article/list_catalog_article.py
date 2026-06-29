@@ -59,8 +59,6 @@ class ListCatalogArticlesUseCase:
                 filters=filters if filters else None,
             )
 
-            await self._uow.commit()
-
             return (
                 [
                     CatalogArticleResponse(

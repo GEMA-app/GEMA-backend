@@ -50,7 +50,7 @@ class GetCatalogArticleUseCase:
             if not article:
                 raise CatalogArticleNotFoundError(article_id_str)
 
-            await self._uow.commit()
+
 
             return CatalogArticleResponse(
                 id=str(article.id),

@@ -4,7 +4,7 @@ import uuid
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import WorkOrderNotFoundError
-from app.domain.value_objects import CompanyId, WorkOrderId
+from app.domain.value_objects import CompanyId, UserId, WorkOrderId
 
 
 class RemoveTechnicianUseCase:
@@ -32,17 +32,7 @@ class RemoveTechnicianUseCase:
                     f"Orden de trabajo con ID '{work_order_id}' no encontrada."
                 )
 
-            session = getattr(self.uow, "session", None)
-            if session is not None and "Mock" not in type(session).__name__:
-                from sqlalchemy import delete
-
-                from app.infrastructure.db.models.work_order import WorkOrderTechnicianModel
-
-                stmt = delete(WorkOrderTechnicianModel).where(
-                    WorkOrderTechnicianModel.ordenes_trabajo_id == wo_id.value,
-                    WorkOrderTechnicianModel.tecnico_id == tech_uuid,
-                    WorkOrderTechnicianModel.empresa_id == company.value,
-                )
-                await session.execute(stmt)
-
+            await self.uow.work_orders.remove_technician(
+                wo_id, UserId(tech_uuid), company
+            )
             await self.uow.commit()

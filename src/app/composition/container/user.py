@@ -7,9 +7,9 @@ from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.application.use_cases.user import (
     CreateUserUseCase,
     DeleteUserUseCase,
-    EditUserUseCase,
     GetUserUseCase,
     ListUsersUseCase,
+    UpdateUserUseCase,
 )
 from app.composition.container.common import get_password_hasher, get_uow
 
@@ -44,18 +44,18 @@ async def get_user_use_case(
     return GetUserUseCase(uow=uow)
 
 
-async def get_edit_user_use_case(
+async def get_update_user_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
-) -> EditUserUseCase:
-    """Fábrica de dependencias para el caso de uso de edición de usuarios.
+) -> UpdateUserUseCase:
+    """Fábrica de dependencias para el caso de uso de actualización de usuarios.
 
     Args:
         uow: Unidad de trabajo inyectada.
 
     Returns:
-        Instancia del caso de uso EditUserUseCase.
+        Instancia del caso de uso UpdateUserUseCase.
     """
-    return EditUserUseCase(uow=uow)
+    return UpdateUserUseCase(uow=uow)
 
 
 async def get_delete_user_use_case(

@@ -33,10 +33,12 @@ class CreateArticleCategoryUseCase:
             ArticleCategoryNameExistsError: Si ya existe una categoría con el
                 mismo nombre en la empresa.
         """
-        empresa_id = uuid.UUID(empresa_id_str)
+        from app.domain.value_objects import CompanyId
+
+        company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
             existing = await self.uow.article_categories.get_by_name(
-                request.name, empresa_id
+                request.name, company_id.value
             )
             if existing:
                 raise ArticleCategoryNameExistsError(
@@ -44,7 +46,7 @@ class CreateArticleCategoryUseCase:
                 )
             category = ArticleCategory.create(
                 id=uuid.uuid4(),
-                empresa_id=empresa_id,
+                empresa_id=company_id.value,
                 name=request.name,
                 description=request.description,
             )

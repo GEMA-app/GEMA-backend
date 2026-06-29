@@ -1,3 +1,5 @@
+import asyncio
+
 from app.application.dtos import AuthTokensDTO, RegisterUserRequest
 from app.application.ports.auth import PasswordHasherPort, TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
@@ -23,7 +25,6 @@ class RegisterUserUseCase:
         """Ejecuta el flujo de registro (onboarding SaaS) y genera los tokens iniciales."""
         email = Email(value=request.email)
         plain_password = PlainPassword(value=request.password)
-        import asyncio
         hashed_val = await asyncio.to_thread(self.hasher.hash, plain_password.value)
         hashed_password = HashedPassword(value=hashed_val)
 

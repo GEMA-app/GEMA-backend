@@ -1,12 +1,9 @@
-"""Caso de uso para listar todas las categorías de artículo de una empresa."""
-
-import uuid
 
 from app.application.dtos.article_category_dtos import ArticleCategoryResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 
 
-class GetAllArticleCategoriesUseCase:
+class ListArticleCategoriesUseCase:
     """Lista todas las categorías de artículo de un tenant."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
@@ -23,12 +20,13 @@ class GetAllArticleCategoriesUseCase:
         Returns:
             Lista de DTOs con los datos de las categorías encontradas.
         """
-        empresa_id = uuid.UUID(empresa_id_str)
+        from app.domain.value_objects import CompanyId
+
+        company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
             categories = await self.uow.article_categories.get_all_by_company(
-                empresa_id
+                company_id.value
             )
-            await self.uow.commit()
             return [
                 ArticleCategoryResponse(
                     id=c.id,

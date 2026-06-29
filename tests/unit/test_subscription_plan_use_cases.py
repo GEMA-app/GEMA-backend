@@ -19,7 +19,7 @@ from app.application.use_cases.subscription_plan.delete_subscription_plan import
 from app.application.use_cases.subscription_plan.get_subscription_plan import (
     GetSubscriptionPlanUseCase,
 )
-from app.application.use_cases.subscription_plan.list_subscription_plans import (
+from app.application.use_cases.subscription_plan.list_subscription_plan import (
     ListSubscriptionPlansUseCase,
 )
 from app.application.use_cases.subscription_plan.update_subscription_plan import (

@@ -37,12 +37,13 @@ class UpdateArticleCategoryUseCase:
 
         Raises:
             ArticleCategoryNotFoundError: Si no se encuentra la categoría.
-            ArticleCategoryNameExistsError: Si el nuevo nombre ya está en uso.
         """
-        empresa_id = uuid.UUID(empresa_id_str)
+        from app.domain.value_objects import CompanyId
+
+        company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
             category = await self.uow.article_categories.get_by_id(
-                category_id, empresa_id
+                category_id, company_id.value
             )
             if not category:
                 raise ArticleCategoryNotFoundError("Categoría no encontrada.")
@@ -53,7 +54,7 @@ class UpdateArticleCategoryUseCase:
                 and request.name != category.name
             ):
                     existing = await self.uow.article_categories.get_by_name(
-                        request.name, empresa_id
+                        request.name, company_id.value
                     )
                     if existing:
                         raise ArticleCategoryNameExistsError(

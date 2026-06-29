@@ -9,7 +9,7 @@ from app.application.use_cases.catalog_article import (
     GetCatalogArticleUseCase,
     UpdateCatalogArticleUseCase,
 )
-from app.application.use_cases.catalog_article.list_catalog_articles import (
+from app.application.use_cases.catalog_article.list_catalog_article import (
     ListCatalogArticlesUseCase,
 )
 from app.composition.container.common import get_uow

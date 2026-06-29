@@ -8,7 +8,6 @@ from typing import Any
 from app.domain.exceptions.system_audit import (
     EmptyActionError,
     NullCompanyError,
-    SystemAuditException,
 )
 from app.domain.value_objects import CompanyId, UserId
 

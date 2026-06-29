@@ -34,22 +34,22 @@ class ListUsedPartsUseCase:
                 company_id, intervention_id_vo
             )
 
-        return [
-            UsedPartResponse(
-                id=p.id,
-                empresa_id=p.empresa_id.value,
-                intervencion_id=p.intervencion_id,
-                repuesto_id=p.repuesto_id,
-                cantidad_usada=p.cantidad_usada,
-                precio_unitario=p.precio_unitario,
-                moneda=p.moneda,
-                created_at=p.created_at or datetime.now(),
-                updated_at=p.updated_at or datetime.now(),
-                precio_total=(
-                    p.cantidad_usada * p.precio_unitario
-                    if p.precio_unitario is not None
-                    else None
-                ),
-            )
-            for p in parts
-        ]
+            return [
+                UsedPartResponse(
+                    id=p.id,
+                    empresa_id=p.empresa_id.value,
+                    intervencion_id=p.intervencion_id,
+                    repuesto_id=p.repuesto_id,
+                    cantidad_usada=p.cantidad_usada,
+                    precio_unitario=p.precio_unitario,
+                    moneda=p.moneda,
+                    created_at=p.created_at or datetime.now(),
+                    updated_at=p.updated_at or datetime.now(),
+                    precio_total=(
+                        p.cantidad_usada * p.precio_unitario
+                        if p.precio_unitario is not None
+                        else None
+                    ),
+                )
+                for p in parts
+            ]

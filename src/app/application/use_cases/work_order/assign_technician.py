@@ -37,25 +37,7 @@ class AssignTechnicianUseCase:
             if not user or str(user.empresa_id) != company_id:
                 raise WorkOrderNotFoundError("El técnico no existe en esta empresa.")
 
-            session = getattr(self.uow, "session", None)
-            if session is not None and "Mock" not in type(session).__name__:
-                from sqlalchemy import select
-
-                from app.infrastructure.db.models.work_order import WorkOrderTechnicianModel
-
-                # Check if already assigned
-                stmt = select(WorkOrderTechnicianModel).where(
-                    WorkOrderTechnicianModel.ordenes_trabajo_id == wo_id.value,
-                    WorkOrderTechnicianModel.tecnico_id == tech_uuid,
-                )
-                res = await session.execute(stmt)
-                existing = res.scalar_one_or_none()
-                if not existing:
-                    assoc = WorkOrderTechnicianModel(
-                        empresa_id=company.value,
-                        ordenes_trabajo_id=wo_id.value,
-                        tecnico_id=tech_uuid,
-                    )
-                    session.add(assoc)
-
+            await self.uow.work_orders.assign_technician(
+                wo_id, UserId(tech_uuid), company
+            )
             await self.uow.commit()

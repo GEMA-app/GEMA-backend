@@ -20,20 +20,20 @@ from app.application.use_cases.article_category.create_article_category import (
 from app.application.use_cases.article_category.delete_article_category import (
     DeleteArticleCategoryUseCase,
 )
-from app.application.use_cases.article_category.get_all_article_categories import (
-    GetAllArticleCategoriesUseCase,
-)
 from app.application.use_cases.article_category.get_article_category_by_id import (
     GetArticleCategoryByIdUseCase,
+)
+from app.application.use_cases.article_category.list_article_category import (
+    ListArticleCategoriesUseCase,
 )
 from app.application.use_cases.article_category.update_article_category import (
     UpdateArticleCategoryUseCase,
 )
 from app.composition.container.article_category import (
-    get_all_article_categories_use_case,
     get_article_category_by_id_use_case,
     get_create_article_category_use_case,
     get_delete_article_category_use_case,
+    get_list_article_categories_use_case,
     get_update_article_category_use_case,
 )
 from app.domain.enums import PermissionModule
@@ -94,8 +94,8 @@ async def create_category(
 @router.get("", response_model=ArticleCategoryListDocument)
 async def list_categories(
     empresa_id: str,
-    use_case: GetAllArticleCategoriesUseCase = Depends(
-        get_all_article_categories_use_case
+    use_case: ListArticleCategoriesUseCase = Depends(
+        get_list_article_categories_use_case
     ),
     current_user: UserResponse = Depends(
         require_permission(PermissionModule.ADMIN, "view")

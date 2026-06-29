@@ -16,7 +16,7 @@ from app.application.dtos.system_audit_dtos import (
     SystemAuditResponse,
 )
 from app.application.use_cases.system_audit.get_system_audit import GetSystemAuditUseCase
-from app.application.use_cases.system_audit.list_system_audits import ListSystemAuditsUseCase
+from app.application.use_cases.system_audit.list_system_audit import ListSystemAuditsUseCase
 from app.domain.exceptions.system_audit import SystemAuditNotFoundError
 
 # ---------------------------------------------------------------------------

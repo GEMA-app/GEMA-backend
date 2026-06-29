@@ -8,7 +8,6 @@ from app.application.dtos.used_part_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.used_part import UsedPart
-from app.domain.exceptions.used_part import InsufficientStockError
 from app.domain.value_objects import CompanyId
 
 
@@ -50,25 +49,11 @@ class CreateUsedPartUseCase:
         )
 
         async with self.uow:
-            session = getattr(self.uow, "session", None)
-            if session is not None:
-                from sqlalchemy import select
-
-                from app.infrastructure.db.models.inventory_part import InventoryPartModel
-                stmt = select(InventoryPartModel).where(
-                    InventoryPartModel.id == request.repuesto_id,
-                    InventoryPartModel.empresa_id == company_id.value,
-                )
-                res = await session.execute(stmt)
-                inv_part = res.scalar_one_or_none()
-                if inv_part is not None:
-                    if inv_part.stock_actual < request.cantidad_usada:
-                        raise InsufficientStockError(
-                            repuesto_id=str(request.repuesto_id),
-                            disponible=inv_part.stock_actual,
-                            solicitado=request.cantidad_usada,
-                        )
-                    inv_part.stock_actual -= request.cantidad_usada
+            await self.uow.inventory_parts.validate_and_decrement_stock(
+                repuesto_id=request.repuesto_id,
+                cantidad=request.cantidad_usada,
+                empresa_id=company_id,
+            )
 
             await self.uow.used_parts.save(new_part)
             await self.uow.commit()

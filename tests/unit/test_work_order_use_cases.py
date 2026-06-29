@@ -25,7 +25,7 @@ from app.application.use_cases.work_order.get_status_history import (
     GetWorkOrderStatusHistoryUseCase,
 )
 from app.application.use_cases.work_order.get_work_order import GetWorkOrderUseCase
-from app.application.use_cases.work_order.list_work_orders import (
+from app.application.use_cases.work_order.list_work_order import (
     ListWorkOrdersUseCase,
 )
 from app.application.use_cases.work_order.remove_technician import (
@@ -78,6 +78,10 @@ def _mock_uow() -> MagicMock:
     uow.work_orders.get_by_code = AsyncMock()
     uow.work_orders.list_by_company = AsyncMock()
     uow.work_orders.delete = AsyncMock()
+    uow.work_orders.assign_technician = AsyncMock()
+    uow.work_orders.remove_technician = AsyncMock()
+    uow.work_orders.add_status_log = AsyncMock()
+    uow.work_orders.get_status_history = AsyncMock()
     uow.assets = MagicMock()
     uow.assets.get_by_id = AsyncMock()
     uow.users = MagicMock()
@@ -330,6 +334,7 @@ class TestGetWorkOrderStatusHistoryUseCase:
     async def test_get_history_ok(self) -> None:
         uow = _mock_uow()
         uow.work_orders.get_by_id.return_value = _make_wo()
+        uow.work_orders.get_status_history.return_value = []
         use_case = GetWorkOrderStatusHistoryUseCase(uow)
         result = await use_case.execute(UUID2, UUID1)
         assert isinstance(result, list)

@@ -24,12 +24,14 @@ class DeleteArticleCategoryUseCase:
         Raises:
             ArticleCategoryNotFoundError: Si no se encuentra la categoría.
         """
-        empresa_id = uuid.UUID(empresa_id_str)
+        from app.domain.value_objects import CompanyId
+
+        company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
             category = await self.uow.article_categories.get_by_id(
-                category_id, empresa_id
+                category_id, company_id.value
             )
             if not category:
                 raise ArticleCategoryNotFoundError("Categoría no encontrada.")
-            await self.uow.article_categories.delete(category.id, empresa_id)
+            await self.uow.article_categories.delete(category.id, company_id.value)
             await self.uow.commit()

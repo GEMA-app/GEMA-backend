@@ -7,7 +7,7 @@ from app.application.dtos.work_order_dtos import (
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import WorkOrderStatus
 from app.domain.exceptions import WorkOrderNotFoundError
-from app.domain.value_objects import CompanyId, WorkOrderId
+from app.domain.value_objects import CompanyId, UserId, WorkOrderId
 
 
 class ChangeWorkOrderStatusUseCase:
@@ -66,24 +66,14 @@ class ChangeWorkOrderStatusUseCase:
 
             await self.uow.work_orders.save(wo)
 
-            session = getattr(self.uow, "session", None)
-            if session is not None and "Mock" not in type(session).__name__:
-                import uuid
-                from datetime import UTC, datetime
-
-                from app.infrastructure.db.models.work_order import WorkOrderStatusLogModel
-                log_entry = WorkOrderStatusLogModel(
-                    id=uuid.uuid4(),
-                    empresa_id=company.value,
-                    ordenes_trabajo_id=wo_id.value,
-                    estado_anterior=previous_status,
-                    estado_nuevo=new_status,
-                    usuario_id=uuid.UUID(request.usuario_id) if request.usuario_id else None,
-                    motivo=request.motivo or "Cambio de estado de orden de trabajo",
-                    fecha_cambio=datetime.now(UTC),
-                )
-                session.add(log_entry)
-
+            await self.uow.work_orders.add_status_log(
+                id=wo_id,
+                previous_status=previous_status,
+                new_status=new_status,
+                usuario_id=UserId.from_string(request.usuario_id) if request.usuario_id else None,
+                motivo=request.motivo or "Cambio de estado de orden de trabajo",
+                empresa_id=company,
+            )
             await self.uow.commit()
 
         return WorkOrderResponse.from_entity(wo)

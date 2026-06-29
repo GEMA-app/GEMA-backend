@@ -76,4 +76,5 @@ class CreateWorkOrderUseCase:
             await self.uow.work_orders.save(work_order)
             await self.uow.commit()
 
-        return WorkOrderResponse.from_entity(work_order)
+            return WorkOrderResponse.from_entity(work_order)
+

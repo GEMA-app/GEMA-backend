@@ -25,6 +25,9 @@ from app.infrastructure.repositories.failure_report_repository import (
     SqlAlchemyFailureReportRepository,
 )
 from app.infrastructure.repositories.intervention_repository import SqlAlchemyInterventionRepository
+from app.infrastructure.repositories.inventory_part_repository import (
+    SqlAlchemyInventoryPartRepository,
+)
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
 from app.infrastructure.repositories.maintenance_plan_repository import (
     SqlAlchemyMaintenancePlanRepository,
@@ -91,6 +94,7 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
             self.session, self._pending_events
         )
         self.used_parts = SqlAlchemyUsedPartRepository(self.session, self._pending_events)
+        self.inventory_parts = SqlAlchemyInventoryPartRepository(self.session)
         self.work_orders = SqlAlchemyWorkOrderRepository(self.session, self._pending_events)
         self.plan_executions = SqlAlchemyPlanExecutionRepository(self.session, self._pending_events)
         self.interventions = SqlAlchemyInterventionRepository(self.session, self._pending_events)

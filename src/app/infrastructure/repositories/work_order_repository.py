@@ -9,6 +9,7 @@ import uuid
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.application.dtos.work_order_dtos import WorkOrderStatusLogResponse
 from app.application.ports.work_order_repository import WorkOrderRepositoryPort
 from app.domain.entities import WorkOrder
 from app.domain.enums import MaintenanceType, WorkOrderStatus
@@ -163,3 +164,89 @@ class SqlAlchemyWorkOrderRepository(
             WorkOrderModel.empresa_id == empresa_id.value,
         )
         await self.session.execute(stmt)
+
+    async def assign_technician(
+        self, id: WorkOrderId, technician_id: UserId, empresa_id: CompanyId
+    ) -> None:
+        """Asigna un técnico a una orden de trabajo si no está ya asignado."""
+        from app.infrastructure.db.models.work_order import WorkOrderTechnicianModel
+
+        stmt = select(WorkOrderTechnicianModel).where(
+            WorkOrderTechnicianModel.ordenes_trabajo_id == id.value,
+            WorkOrderTechnicianModel.tecnico_id == technician_id.value,
+        )
+        res = await self.session.execute(stmt)
+        existing = res.scalar_one_or_none()
+        if not existing:
+            assoc = WorkOrderTechnicianModel(
+                empresa_id=empresa_id.value,
+                ordenes_trabajo_id=id.value,
+                tecnico_id=technician_id.value,
+            )
+            self.session.add(assoc)
+
+    async def remove_technician(
+        self, id: WorkOrderId, technician_id: UserId, empresa_id: CompanyId
+    ) -> None:
+        """Remueve un técnico de una orden de trabajo."""
+        from app.infrastructure.db.models.work_order import WorkOrderTechnicianModel
+
+        stmt = delete(WorkOrderTechnicianModel).where(
+            WorkOrderTechnicianModel.ordenes_trabajo_id == id.value,
+            WorkOrderTechnicianModel.tecnico_id == technician_id.value,
+            WorkOrderTechnicianModel.empresa_id == empresa_id.value,
+        )
+        await self.session.execute(stmt)
+
+    async def add_status_log(
+        self,
+        id: WorkOrderId,
+        previous_status: WorkOrderStatus | None,
+        new_status: WorkOrderStatus,
+        usuario_id: UserId | None,
+        motivo: str,
+        empresa_id: CompanyId,
+    ) -> None:
+        """Registra un cambio de estado en el historial de base de datos."""
+        from datetime import UTC, datetime
+
+        from app.infrastructure.db.models.work_order import WorkOrderStatusLogModel
+
+        log_entry = WorkOrderStatusLogModel(
+            id=uuid.uuid4(),
+            empresa_id=empresa_id.value,
+            ordenes_trabajo_id=id.value,
+            estado_anterior=previous_status,
+            estado_nuevo=new_status,
+            usuario_id=usuario_id.value if usuario_id else None,
+            motivo=motivo,
+            fecha_cambio=datetime.now(UTC),
+        )
+        self.session.add(log_entry)
+
+    async def get_status_history(
+        self, id: WorkOrderId, empresa_id: CompanyId
+    ) -> list[WorkOrderStatusLogResponse]:
+        """Obtiene la lista de cambios de estado de una OT."""
+        from app.application.dtos.work_order_dtos import WorkOrderStatusLogResponse
+        from app.infrastructure.db.models.work_order import WorkOrderStatusLogModel
+
+        stmt = select(WorkOrderStatusLogModel).where(
+            WorkOrderStatusLogModel.ordenes_trabajo_id == id.value,
+            WorkOrderStatusLogModel.empresa_id == empresa_id.value,
+        ).order_by(WorkOrderStatusLogModel.fecha_cambio.asc())
+
+        res = await self.session.execute(stmt)
+        models = res.scalars().all()
+        return [
+            WorkOrderStatusLogResponse(
+                id=str(m.id),
+                ordenes_trabajo_id=str(m.ordenes_trabajo_id),
+                estado_anterior=m.estado_anterior.value if m.estado_anterior else None,
+                estado_nuevo=m.estado_nuevo.value,
+                usuario_id=str(m.usuario_id) if m.usuario_id else None,
+                motivo=m.motivo,
+                fecha_cambio=m.fecha_cambio,
+            )
+            for m in models
+        ]

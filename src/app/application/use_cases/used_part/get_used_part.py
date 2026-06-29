@@ -35,22 +35,22 @@ class GetUsedPartUseCase:
         async with self.uow:
             part = await self.uow.used_parts.get_by_id(used_part_id, company_id)
 
-        if part is None:
-            raise UsedPartNotFoundError(str(used_part_id))
+            if part is None:
+                raise UsedPartNotFoundError(str(used_part_id))
 
-        return UsedPartResponse(
-            id=part.id,
-            empresa_id=part.empresa_id.value,
-            intervencion_id=part.intervencion_id,
-            repuesto_id=part.repuesto_id,
-            cantidad_usada=part.cantidad_usada,
-            precio_unitario=part.precio_unitario,
-            moneda=part.moneda,
-            created_at=part.created_at or datetime.now(),
-            updated_at=part.updated_at or datetime.now(),
-            precio_total=(
-                part.cantidad_usada * part.precio_unitario
-                if part.precio_unitario is not None
-                else None
-            ),
-        )
+            return UsedPartResponse(
+                id=part.id,
+                empresa_id=part.empresa_id.value,
+                intervencion_id=part.intervencion_id,
+                repuesto_id=part.repuesto_id,
+                cantidad_usada=part.cantidad_usada,
+                precio_unitario=part.precio_unitario,
+                moneda=part.moneda,
+                created_at=part.created_at or datetime.now(),
+                updated_at=part.updated_at or datetime.now(),
+                precio_total=(
+                    part.cantidad_usada * part.precio_unitario
+                    if part.precio_unitario is not None
+                    else None
+                ),
+            )
