@@ -179,9 +179,7 @@ async def test_users_crud_and_isolation_flow() -> None:
                 f"/v1/empresas/{empresa_a_id}/usuarios/{user_id}",
                 headers=auth_a,
             )
-            assert res_delete.status_code == 200, f"DELETE falló: {res_delete.text}"
-            assert res_delete.json()["data"]["attributes"]["activo"] is False
-            assert res_delete.json()["data"]["id"] == user_id
+            assert res_delete.status_code == 204
 
             # =================================================================
             # Paso 9: OBTENER usuario desactivado (activo=False)

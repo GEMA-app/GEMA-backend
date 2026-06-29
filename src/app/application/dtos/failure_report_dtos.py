@@ -13,6 +13,7 @@ class CreateFailureReportRequest:
     location: str
     priority: str
     reported_by: str
+    activo_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -25,6 +26,7 @@ class UpdateFailureReportRequest:
     priority: str | None = None
     reported_by: str | None = None
     status: str | None = None
+    activo_id: str | None = None
     version: int | None = None
     _fields_set: frozenset[str] = field(default_factory=frozenset, repr=False, compare=False)
 
@@ -51,4 +53,5 @@ class FailureReportResponse:
     reported_by: str
     status: str
     created_at: str
+    activo_id: str | None = None
     version: int = 1

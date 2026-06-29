@@ -1,4 +1,4 @@
-﻿"""Paquete de composición de dependencias (Dependency Injection Container).
+"""Paquete de composición de dependencias (Dependency Injection Container).
 
 Re-exporta todas las fábricas públicas para mantener compatibilidad con los
 imports existentes (``from app.composition.container import X``).
@@ -62,6 +62,7 @@ from app.composition.container.failure_report import (
 )
 from app.composition.container.intervention import (
     get_create_intervention_use_case,
+    get_delete_intervention_use_case,
     get_intervention_use_case,
     get_list_interventions_use_case,
     get_update_intervention_use_case,
@@ -125,11 +126,15 @@ from app.composition.container.user import (
     get_user_use_case,
 )
 from app.composition.container.work_order import (
+    get_assign_technician_use_case,
     get_change_work_order_status_use_case,
     get_create_work_order_use_case,
     get_delete_work_order_use_case,
+    get_get_work_order_status_history_use_case,
     get_list_work_orders_use_case,
+    get_remove_technician_use_case,
     get_update_work_order_use_case,
+    get_validate_work_order_use_case,
     get_work_order_use_case,
 )
 
@@ -218,6 +223,10 @@ __all__ = [
     "get_update_work_order_use_case",
     "get_delete_work_order_use_case",
     "get_change_work_order_status_use_case",
+    "get_assign_technician_use_case",
+    "get_remove_technician_use_case",
+    "get_validate_work_order_use_case",
+    "get_get_work_order_status_history_use_case",
     # Subscription Plans
     "get_subscription_plan_use_case",
     "get_create_subscription_plan_use_case",
@@ -241,7 +250,9 @@ __all__ = [
     "get_delete_user_use_case",
     # Interventions
     "get_create_intervention_use_case",
+    "get_get_work_order_status_history_use_case",
     "get_intervention_use_case",
     "get_list_interventions_use_case",
     "get_update_intervention_use_case",
+    "get_delete_intervention_use_case",
 ]

@@ -276,8 +276,8 @@ class TestUserEndpointBehavior:
         assert result.data.attributes.email == "nuevo@gema.com"
 
     @pytest.mark.asyncio
-    async def test_delete_user_baja_logica_retorna_documento(self) -> None:
-        """DELETE /{usuario_id} debe retornar UserDocument con activo=False."""
+    async def test_delete_user_baja_logica_retorna_204(self) -> None:
+        """DELETE /{usuario_id} debe retornar None y llamar al use case."""
         from datetime import UTC, datetime
 
         from app.application.dtos.user_dtos import UserResponse
@@ -307,4 +307,4 @@ class TestUserEndpointBehavior:
         use_case_mock.execute.assert_called_once_with(
             "22222222-2222-2222-2222-222222222222"
         )
-        assert result.data.attributes.activo is False
+        assert result is None

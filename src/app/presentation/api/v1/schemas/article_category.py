@@ -19,6 +19,7 @@ class ArticleCategoryAttributes(BaseModel):
     name: str
     description: str | None
     version: int
+    articulos_count: int | None = None
 
 
 class ArticleCategoryResource(BaseModel):

@@ -25,7 +25,6 @@ from app.composition.container import (
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
-    get_current_active_user,
     require_platform_permission,
 )
 from app.presentation.api.v1.schemas.subscription_plan import (
@@ -46,7 +45,9 @@ router = APIRouter()
     summary="Listar planes de suscripción",
 )
 async def list_subscription_plans(
-    current_user: UserResponse = Depends(get_current_active_user),
+    current_user: UserResponse = Depends(
+        require_platform_permission(PermissionModule.ADMIN, "view")
+    ),
     offset: int = 0,
     limit: int = 10,
     use_case: ListSubscriptionPlansUseCase = Depends(get_list_subscription_plans_use_case),
@@ -79,7 +80,9 @@ async def list_subscription_plans(
 )
 async def get_subscription_plan(
     plan_id: str,
-    current_user: UserResponse = Depends(get_current_active_user),
+    current_user: UserResponse = Depends(
+        require_platform_permission(PermissionModule.ADMIN, "view")
+    ),
     use_case: GetSubscriptionPlanUseCase = Depends(get_subscription_plan_use_case),
 ) -> SubscriptionPlanDocument:
     """Obtiene un plan de suscripción por su ID."""

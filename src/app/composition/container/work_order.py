@@ -8,12 +8,16 @@ from fastapi import Depends
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.application.use_cases.work_order import (
+    AssignTechnicianUseCase,
     ChangeWorkOrderStatusUseCase,
     CreateWorkOrderUseCase,
     DeleteWorkOrderUseCase,
+    GetWorkOrderStatusHistoryUseCase,
     GetWorkOrderUseCase,
     ListWorkOrdersUseCase,
+    RemoveTechnicianUseCase,
     UpdateWorkOrderUseCase,
+    ValidateWorkOrderUseCase,
 )
 from app.composition.container.common import get_uow
 
@@ -58,3 +62,31 @@ async def get_change_work_order_status_use_case(
 ) -> ChangeWorkOrderStatusUseCase:
     """Provee el caso de uso para cambiar el estado de una orden."""
     return ChangeWorkOrderStatusUseCase(uow)
+
+
+async def get_assign_technician_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> AssignTechnicianUseCase:
+    """Provee el caso de uso para asignar un técnico."""
+    return AssignTechnicianUseCase(uow)
+
+
+async def get_remove_technician_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> RemoveTechnicianUseCase:
+    """Provee el caso de uso para remover un técnico."""
+    return RemoveTechnicianUseCase(uow)
+
+
+async def get_validate_work_order_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> ValidateWorkOrderUseCase:
+    """Provee el caso de uso para validar una orden de trabajo."""
+    return ValidateWorkOrderUseCase(uow)
+
+
+async def get_get_work_order_status_history_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> GetWorkOrderStatusHistoryUseCase:
+    """Provee el caso de uso para obtener el historial de estados."""
+    return GetWorkOrderStatusHistoryUseCase(uow)

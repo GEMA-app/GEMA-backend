@@ -16,6 +16,9 @@ class UsedPartAttributes(BaseModel):
     moneda: str = Field("USD", description="Moneda del precio")
     created_at: str = Field(..., description="Fecha de creación")
     updated_at: str = Field(..., description="Fecha de actualización")
+    precio_total: Decimal | None = Field(
+        None, description="Precio total calculado (cantidad * precio_unitario)"
+    )
 
 
 class UsedPartResource(BaseModel):

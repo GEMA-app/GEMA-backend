@@ -1,5 +1,7 @@
 """Caso de uso: Obtener un plan de mantenimiento por ID."""
 
+from datetime import date
+
 from app.application.dtos.maintenance_plan_dtos import MaintenancePlanResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions.maintenance_plan import MaintenancePlanNotFoundError
@@ -49,4 +51,5 @@ class GetMaintenancePlanUseCase:
                 activo=plan.activo,
                 created_at=plan.created_at,
                 updated_at=plan.updated_at,
+                es_urgente=(plan.proxima_ejecucion - date.today()).days <= 7,
             )

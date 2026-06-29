@@ -9,6 +9,9 @@ from app.application.dtos.work_order_dtos import (
     CreateWorkOrderRequest,
     UpdateWorkOrderRequest,
 )
+from app.application.use_cases.work_order.assign_technician import (
+    AssignTechnicianUseCase,
+)
 from app.application.use_cases.work_order.change_work_order_status import (
     ChangeWorkOrderStatusUseCase,
 )
@@ -18,12 +21,21 @@ from app.application.use_cases.work_order.create_work_order import (
 from app.application.use_cases.work_order.delete_work_order import (
     DeleteWorkOrderUseCase,
 )
+from app.application.use_cases.work_order.get_status_history import (
+    GetWorkOrderStatusHistoryUseCase,
+)
 from app.application.use_cases.work_order.get_work_order import GetWorkOrderUseCase
 from app.application.use_cases.work_order.list_work_orders import (
     ListWorkOrdersUseCase,
 )
+from app.application.use_cases.work_order.remove_technician import (
+    RemoveTechnicianUseCase,
+)
 from app.application.use_cases.work_order.update_work_order import (
     UpdateWorkOrderUseCase,
+)
+from app.application.use_cases.work_order.validate_work_order import (
+    ValidateWorkOrderUseCase,
 )
 from app.domain.entities import WorkOrder
 from app.domain.enums import MaintenanceType, WorkOrderStatus
@@ -68,6 +80,8 @@ def _mock_uow() -> MagicMock:
     uow.work_orders.delete = AsyncMock()
     uow.assets = MagicMock()
     uow.assets.get_by_id = AsyncMock()
+    uow.users = MagicMock()
+    uow.users.get_by_id = AsyncMock()
     uow.commit = AsyncMock()
     uow.__aenter__ = AsyncMock(return_value=uow)
     uow.__aexit__ = AsyncMock(return_value=None)
@@ -246,3 +260,83 @@ class TestChangeWorkOrderStatusUseCase:
         dto = ChangeWorkOrderStatusRequest(estado="en_proceso")
         with pytest.raises(WorkOrderNotFoundError):
             await use_case.execute(UUID2, UUID1, dto)
+
+
+class TestAssignTechnicianUseCase:
+    async def test_assign_technician_ok(self) -> None:
+        uow = _mock_uow()
+        uow.work_orders.get_by_id.return_value = _make_wo()
+        user_mock = MagicMock()
+        user_mock.empresa_id = UUID2
+        uow.users.get_by_id.return_value = user_mock
+
+        use_case = AssignTechnicianUseCase(uow)
+        await use_case.execute(UUID2, UUID1, UUID4)
+        uow.commit.assert_awaited_once()
+
+    async def test_assign_technician_work_order_not_found(self) -> None:
+        uow = _mock_uow()
+        uow.work_orders.get_by_id.return_value = None
+        use_case = AssignTechnicianUseCase(uow)
+        with pytest.raises(WorkOrderNotFoundError):
+            await use_case.execute(UUID2, UUID1, UUID4)
+
+    async def test_assign_technician_user_not_found_or_different_company(self) -> None:
+        uow = _mock_uow()
+        uow.work_orders.get_by_id.return_value = _make_wo()
+        uow.users.get_by_id.return_value = None
+        use_case = AssignTechnicianUseCase(uow)
+        with pytest.raises(WorkOrderNotFoundError):
+            await use_case.execute(UUID2, UUID1, UUID4)
+
+
+class TestRemoveTechnicianUseCase:
+    async def test_remove_technician_ok(self) -> None:
+        uow = _mock_uow()
+        uow.work_orders.get_by_id.return_value = _make_wo()
+        use_case = RemoveTechnicianUseCase(uow)
+        await use_case.execute(UUID2, UUID1, UUID4)
+        uow.commit.assert_awaited_once()
+
+    async def test_remove_technician_work_order_not_found(self) -> None:
+        uow = _mock_uow()
+        uow.work_orders.get_by_id.return_value = None
+        use_case = RemoveTechnicianUseCase(uow)
+        with pytest.raises(WorkOrderNotFoundError):
+            await use_case.execute(UUID2, UUID1, UUID4)
+
+
+class TestValidateWorkOrderUseCase:
+    async def test_validate_work_order_ok(self) -> None:
+        uow = _mock_uow()
+        wo = _make_wo(WorkOrderStatus.CLOSED)
+        uow.work_orders.get_by_id.return_value = wo
+        use_case = ValidateWorkOrderUseCase(uow)
+        result = await use_case.execute(UUID2, UUID1, UUID4)
+        assert result.validado_por_id == UUID4
+        assert result.fecha_validacion is not None
+        uow.work_orders.save.assert_awaited_once()
+        uow.commit.assert_awaited_once()
+
+    async def test_validate_work_order_not_found(self) -> None:
+        uow = _mock_uow()
+        uow.work_orders.get_by_id.return_value = None
+        use_case = ValidateWorkOrderUseCase(uow)
+        with pytest.raises(WorkOrderNotFoundError):
+            await use_case.execute(UUID2, UUID1, UUID4)
+
+
+class TestGetWorkOrderStatusHistoryUseCase:
+    async def test_get_history_ok(self) -> None:
+        uow = _mock_uow()
+        uow.work_orders.get_by_id.return_value = _make_wo()
+        use_case = GetWorkOrderStatusHistoryUseCase(uow)
+        result = await use_case.execute(UUID2, UUID1)
+        assert isinstance(result, list)
+
+    async def test_get_history_work_order_not_found(self) -> None:
+        uow = _mock_uow()
+        uow.work_orders.get_by_id.return_value = None
+        use_case = GetWorkOrderStatusHistoryUseCase(uow)
+        with pytest.raises(WorkOrderNotFoundError):
+            await use_case.execute(UUID2, UUID1)

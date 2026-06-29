@@ -85,6 +85,7 @@ async def create_category(
                 name=res.name,
                 description=res.description,
                 version=res.version,
+                articulos_count=res.articulos_count,
             ),
         )
     )
@@ -120,6 +121,7 @@ async def list_categories(
                     name=c.name,
                     description=c.description,
                     version=c.version,
+                    articulos_count=c.articulos_count,
                 ),
             )
             for c in categories
@@ -158,6 +160,7 @@ async def get_category_by_id(
                 name=res.name,
                 description=res.description,
                 version=res.version,
+                articulos_count=res.articulos_count,
             ),
         )
     )
@@ -204,6 +207,7 @@ async def update_category(
                 name=res.name,
                 description=res.description,
                 version=res.version,
+                articulos_count=res.articulos_count,
             ),
         )
     )

@@ -1,4 +1,4 @@
-﻿"""Enrutador principal de la API v1. Agrega todos los submÃ³dulos
+"""Enrutador principal de la API v1. Agrega todos los submÃ³dulos
 de endpoints bajo el prefijo /v1.
 """
 
@@ -129,4 +129,5 @@ v1_router.include_router(
 
 v1_router.include_router(
     interventions_router,
+    tags=["intervenciones"],
 )

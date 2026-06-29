@@ -25,6 +25,7 @@ class ArticleCategory:
     version: int
     created_at: datetime | None = None
     updated_at: datetime | None = None
+    articulos_count: int | None = None
 
     @classmethod
     def create(

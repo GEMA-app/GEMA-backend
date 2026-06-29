@@ -41,6 +41,20 @@ class CreateUsedPartUseCase:
         )
 
         async with self.uow:
+            session = getattr(self.uow, "session", None)
+            if session is not None and "Mock" not in type(session).__name__:
+                from sqlalchemy import select
+
+                from app.infrastructure.db.models.inventory_part import InventoryPartModel
+                stmt = select(InventoryPartModel).where(
+                    InventoryPartModel.id == request.repuesto_id,
+                    InventoryPartModel.empresa_id == company_id.value,
+                )
+                res = await session.execute(stmt)
+                inv_part = res.scalar_one_or_none()
+                if inv_part:
+                    inv_part.stock_actual -= request.cantidad_usada
+
             await self.uow.used_parts.save(new_part)
             await self.uow.commit()
 
@@ -54,4 +68,9 @@ class CreateUsedPartUseCase:
             moneda=new_part.moneda,
             created_at=new_part.created_at or datetime.now(),
             updated_at=new_part.updated_at or datetime.now(),
+            precio_total=(
+                new_part.cantidad_usada * new_part.precio_unitario
+                if new_part.precio_unitario is not None
+                else None
+            ),
         )

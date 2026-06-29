@@ -20,6 +20,7 @@ class MaintenancePlanResponse:
     activo: bool = True
     created_at: datetime | None = None
     updated_at: datetime | None = None
+    es_urgente: bool = False
 
 
 @dataclass

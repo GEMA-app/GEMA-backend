@@ -181,3 +181,13 @@ class WorkOrder:
             self.costo_real = costo_real
         if supervisor_id is not None:
             self.supervisor_id = supervisor_id
+
+    def validate(self, validator_id: UserId) -> None:
+        """Valida la orden de trabajo.
+
+        Solo se pueden validar órdenes de trabajo cerradas (CLOSED).
+        """
+        if self.estado != WorkOrderStatus.CLOSED:
+            raise WorkOrderInvalidStateError("Solo se pueden validar órdenes de trabajo cerradas.")
+        self.validado_por_id = validator_id
+        self.fecha_validacion = datetime.now()

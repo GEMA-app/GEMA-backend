@@ -74,6 +74,41 @@ def require_permission(module: PermissionModule, action: str) -> Any:
     return dependency
 
 
+def require_dual_permission(
+    module1: PermissionModule,
+    action1: str,
+    module2: PermissionModule,
+    action2: str,
+) -> Any:
+    """Valida tenant y requiere al menos uno de los dos permisos RBAC (lógica OR)."""
+
+    async def dependency(
+        empresa_id: str,
+        token: HTTPAuthorizationCredentials = Depends(security),
+        auth_use_case: GetCurrentUserUseCase = Depends(get_current_user_use_case),
+        auth_service: AuthorizationService = Depends(get_authorization_service),
+    ) -> UserResponse:
+        dto = GetCurrentUserRequest(access_token=token.credentials)
+        user_resp = await auth_use_case.execute(dto)
+        # 1. Tenant validation (UUID normalization)
+        validate_tenant_access(empresa_id, user_resp.empresa_id)
+        # 2. RBAC check
+        user_id = UserId.from_string(user_resp.id)
+        empresa_id_obj = CompanyId.from_string(user_resp.empresa_id)
+
+        try:
+            await auth_service.check_permission(user_id, empresa_id_obj, module1, action1)
+            return user_resp
+        except InsufficientPermissionsError:
+            pass
+
+        await auth_service.check_permission(user_id, empresa_id_obj, module2, action2)
+        return user_resp
+
+    return dependency
+
+
+
 async def get_current_active_user(
     token: HTTPAuthorizationCredentials = Depends(security),
     auth_use_case: GetCurrentUserUseCase = Depends(get_current_user_use_case),

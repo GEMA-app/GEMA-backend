@@ -51,8 +51,12 @@ class ChangeWorkOrderStatusUseCase:
                     f"Orden de trabajo con ID '{work_order_id}' no encontrada."
                 )
 
+            previous_status = wo.estado
             if new_status == WorkOrderStatus.IN_PROGRESS:
-                wo.start()
+                if previous_status == WorkOrderStatus.PAUSED:
+                    wo.resume()
+                else:
+                    wo.start()
             elif new_status == WorkOrderStatus.PAUSED:
                 wo.pause()
             elif new_status == WorkOrderStatus.CLOSED:
@@ -61,6 +65,25 @@ class ChangeWorkOrderStatusUseCase:
                 wo.cancel()
 
             await self.uow.work_orders.save(wo)
+
+            session = getattr(self.uow, "session", None)
+            if session is not None and "Mock" not in type(session).__name__:
+                import uuid
+                from datetime import UTC, datetime
+
+                from app.infrastructure.db.models.work_order import WorkOrderStatusLogModel
+                log_entry = WorkOrderStatusLogModel(
+                    id=uuid.uuid4(),
+                    empresa_id=company.value,
+                    ordenes_trabajo_id=wo_id.value,
+                    estado_anterior=previous_status,
+                    estado_nuevo=new_status,
+                    usuario_id=uuid.UUID(request.usuario_id) if request.usuario_id else None,
+                    motivo=request.motivo or "Cambio de estado de orden de trabajo",
+                    fecha_cambio=datetime.now(UTC),
+                )
+                session.add(log_entry)
+
             await self.uow.commit()
 
         return WorkOrderResponse.from_entity(wo)

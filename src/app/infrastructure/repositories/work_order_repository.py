@@ -6,12 +6,12 @@ con sesión asíncrona.
 
 import uuid
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.ports.work_order_repository import WorkOrderRepositoryPort
 from app.domain.entities import WorkOrder
-from app.domain.enums import WorkOrderStatus
+from app.domain.enums import MaintenanceType, WorkOrderStatus
 from app.domain.events import DomainEvent
 from app.domain.value_objects import AssetId, CompanyId, UserId, WorkOrderId
 from app.infrastructure.db.models.work_order import WorkOrderModel
@@ -107,19 +107,42 @@ class SqlAlchemyWorkOrderRepository(
         return self._to_entity(model) if model else None
 
     async def list_by_company(
-        self, empresa_id: CompanyId, estado: str | None = None, activo_id: AssetId | None = None
+        self,
+        empresa_id: CompanyId,
+        estado: str | None = None,
+        activo_id: AssetId | None = None,
+        tipo: str | None = None,
+        supervisor_id: str | None = None,
+        offset: int = 0,
+        limit: int = 20,
     ) -> tuple[list[WorkOrder], int]:
         """Lista órdenes de trabajo de una empresa con filtros opcionales."""
-        stmt = select(WorkOrderModel).where(WorkOrderModel.empresa_id == empresa_id.value)
+        stmt = select(WorkOrderModel).where(
+            WorkOrderModel.empresa_id == empresa_id.value
+        )
+        count_stmt = select(func.count(WorkOrderModel.id)).where(
+            WorkOrderModel.empresa_id == empresa_id.value
+        )
         if estado:
             stmt = stmt.where(WorkOrderModel.estado == WorkOrderStatus(estado))
+            count_stmt = count_stmt.where(WorkOrderModel.estado == WorkOrderStatus(estado))
         if activo_id:
             stmt = stmt.where(WorkOrderModel.activo_id == activo_id.value)
+            count_stmt = count_stmt.where(WorkOrderModel.activo_id == activo_id.value)
+        if tipo:
+            stmt = stmt.where(WorkOrderModel.tipo == MaintenanceType(tipo))
+            count_stmt = count_stmt.where(WorkOrderModel.tipo == MaintenanceType(tipo))
+        if supervisor_id:
+            stmt = stmt.where(WorkOrderModel.supervisor_id == uuid.UUID(supervisor_id))
+            count_stmt = count_stmt.where(WorkOrderModel.supervisor_id == uuid.UUID(supervisor_id))
         stmt = stmt.order_by(WorkOrderModel.created_at.desc())
+        stmt = stmt.offset(offset).limit(limit)
         result = await self.session.execute(stmt)
         models = result.scalars().all()
         entities = [self._to_entity(m) for m in models]
-        return entities, len(entities)
+        total_res = await self.session.execute(count_stmt)
+        total = total_res.scalar() or 0
+        return entities, total
 
     async def delete(self, id: WorkOrderId, empresa_id: CompanyId) -> None:  # type: ignore[override]
         """Elimina una orden de trabajo por su ID y empresa."""

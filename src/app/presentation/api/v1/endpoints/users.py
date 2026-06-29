@@ -231,7 +231,7 @@ async def update_user(
 
 @router.delete(
     "/{usuario_id}",
-    response_model=UserDocument,
+    status_code=status.HTTP_204_NO_CONTENT,
     summary="Dar de baja (desactivar) usuario",
 )
 async def delete_user(
@@ -241,7 +241,7 @@ async def delete_user(
         require_permission(PermissionModule.ADMIN, "delete")
     ),
     use_case: DeleteUserUseCase = Depends(get_delete_user_use_case),
-) -> UserDocument:
+) -> None:
     """Desactiva (baja lógica) un usuario cambiando su estado activo a False.
 
     Args:
@@ -249,22 +249,5 @@ async def delete_user(
         usuario_id: Identificador del usuario a desactivar.
         current_user: Usuario autenticado (validado por require_permission).
         use_case: Caso de uso de baja lógica inyectado.
-
-    Returns:
-        Documento JSON:API con los datos del usuario desactivado.
     """
-    res = await use_case.execute(usuario_id)
-    return UserDocument(
-        data=UserResource(
-            id=res.id,
-            attributes=UserAttributes(
-                email=res.email,
-                nombre=res.nombre,
-                telefono=res.telefono,
-                activo=res.activo,
-                empresa_id=res.empresa_id,
-                created_at=res.created_at,
-                updated_at=res.updated_at,
-            ),
-        )
-    )
+    await use_case.execute(usuario_id)

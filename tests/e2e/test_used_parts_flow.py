@@ -151,7 +151,7 @@ async def test_used_parts_crud_and_isolation_flow():
                 }
             }
             res_create = await client.post(
-                f"/v1/empresas/{empresa_id}/ordenes-trabajo/{ot_id}/intervenciones/{intervencion_id}/repuestos-utilizados/",
+                f"/v1/empresas/{empresa_id}/ordenes-trabajo/{ot_id}/intervenciones/{intervencion_id}/repuestos-utilizados",
                 json=create_payload,
                 headers=auth_headers,
             )
@@ -175,7 +175,7 @@ async def test_used_parts_crud_and_isolation_flow():
             # Paso 3: LISTAR repuestos utilizados
             # =================================================================
             res_list = await client.get(
-                f"/v1/empresas/{empresa_id}/ordenes-trabajo/{ot_id}/intervenciones/{intervencion_id}/repuestos-utilizados/",
+                f"/v1/empresas/{empresa_id}/ordenes-trabajo/{ot_id}/intervenciones/{intervencion_id}/repuestos-utilizados",
                 headers=auth_headers,
             )
             assert res_list.status_code == 200

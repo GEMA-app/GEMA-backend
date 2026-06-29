@@ -109,6 +109,8 @@ class ChangeStatusAttributes(BaseModel):
     """Atributos para cambiar el estado de una orden de trabajo."""
 
     estado: str
+    motivo: str | None = None
+    usuario_id: str | None = None
 
 
 class ChangeStatusResource(BaseModel):
@@ -122,3 +124,47 @@ class ChangeStatusRequest(BaseModel):
     """Cuerpo completo de la solicitud de cambio de estado (envelop JSON:API)."""
 
     data: ChangeStatusResource
+
+
+class AssignTechnicianAttributes(BaseModel):
+    """Atributos para asignar un técnico a una orden de trabajo."""
+
+    tecnico_id: str
+
+
+class AssignTechnicianResource(BaseModel):
+    """Recurso JSON:API para asignar un técnico."""
+
+    type: str = Field(default="work_order_technician")
+    attributes: AssignTechnicianAttributes
+
+
+class AssignTechnicianRequest(BaseModel):
+    """Cuerpo completo de la solicitud de asignación de técnico."""
+
+    data: AssignTechnicianResource
+
+
+class WorkOrderStatusLogAttributes(BaseModel):
+    """Atributos de una entrada del historial de estados."""
+
+    ordenes_trabajo_id: str
+    estado_anterior: str | None = None
+    estado_nuevo: str
+    usuario_id: str | None = None
+    motivo: str | None = None
+    fecha_cambio: datetime
+
+
+class WorkOrderStatusLogResource(BaseModel):
+    """Recurso JSON:API para una entrada de historial de estados."""
+
+    type: str = Field(default="logs_estados_ordenes_trabajo")
+    id: str
+    attributes: WorkOrderStatusLogAttributes
+
+
+class WorkOrderStatusLogListDocument(BaseModel):
+    """Documento JSON:API con la lista de entradas de historial."""
+
+    data: list[WorkOrderStatusLogResource]

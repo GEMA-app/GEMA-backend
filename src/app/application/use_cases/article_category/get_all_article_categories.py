@@ -36,6 +36,7 @@ class GetAllArticleCategoriesUseCase:
                     name=c.name,
                     description=c.description,
                     version=c.version,
+                    articulos_count=c.articulos_count,
                 )
                 for c in categories
             ]

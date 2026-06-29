@@ -42,7 +42,7 @@ def test_create_intervention_security() -> None:
     assert callable(dep)
     module, action = _get_permission_details(dep)
     assert module == PermissionModule.MAINTENANCE
-    assert action == "edit"
+    assert action == "create"
 
 
 def test_list_interventions_security() -> None:
@@ -78,7 +78,7 @@ def test_interventions_endpoint_ids_convention() -> None:
         sig = inspect.signature(func)
         assert "empresa_id" in sig.parameters
         assert "ot_id" in sig.parameters
-        assert "intervention_id" in sig.parameters
+        assert "intervencion_id" in sig.parameters
 
     for func in (create_intervention, list_interventions):
         sig = inspect.signature(func)

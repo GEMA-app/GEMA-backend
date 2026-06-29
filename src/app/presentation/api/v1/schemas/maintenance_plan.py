@@ -20,6 +20,7 @@ class MaintenancePlanAttributes(BaseModel):
     activo: bool = True
     created_at: datetime | None = None
     updated_at: datetime | None = None
+    es_urgente: bool = False
 
 
 class MaintenancePlanResource(BaseModel):

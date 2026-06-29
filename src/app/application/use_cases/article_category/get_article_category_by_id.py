@@ -44,4 +44,5 @@ class GetArticleCategoryByIdUseCase:
                 name=category.name,
                 description=category.description,
                 version=category.version,
+                articulos_count=category.articulos_count,
             )

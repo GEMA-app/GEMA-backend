@@ -87,6 +87,7 @@ async def create_maintenance_plan(
                 activo=res.activo,
                 created_at=res.created_at,
                 updated_at=res.updated_at,
+                es_urgente=res.es_urgente,
             ),
         )
     )
@@ -147,6 +148,7 @@ async def list_maintenance_plans(
                     activo=p.activo,
                     created_at=p.created_at,
                     updated_at=p.updated_at,
+                    es_urgente=p.es_urgente,
                 ),
             )
             for p in plans
@@ -193,6 +195,7 @@ async def get_maintenance_plan(
                 activo=res.activo,
                 created_at=res.created_at,
                 updated_at=res.updated_at,
+                es_urgente=res.es_urgente,
             ),
         )
     )
@@ -250,6 +253,7 @@ async def update_maintenance_plan(
                 activo=res.activo,
                 created_at=res.created_at,
                 updated_at=res.updated_at,
+                es_urgente=res.es_urgente,
             ),
         )
     )

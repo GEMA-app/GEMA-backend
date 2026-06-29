@@ -1,6 +1,7 @@
 """Caso de uso: Listar planes de mantenimiento."""
 
 from collections.abc import Sequence
+from datetime import date
 
 from app.application.dtos.maintenance_plan_dtos import MaintenancePlanResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
@@ -54,6 +55,7 @@ class ListMaintenancePlansUseCase:
                     activo=p.activo,
                     created_at=p.created_at,
                     updated_at=p.updated_at,
+                    es_urgente=(p.proxima_ejecucion - date.today()).days <= 7,
                 )
                 for p in plans
             ]

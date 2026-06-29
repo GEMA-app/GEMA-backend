@@ -4,6 +4,7 @@ import inspect
 from collections.abc import Callable
 from typing import Any
 
+from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.catalog_articles import (
     create_catalog_article,
     delete_catalog_article,
@@ -11,7 +12,6 @@ from app.presentation.api.v1.endpoints.catalog_articles import (
     list_catalog_articles,
     update_catalog_article,
 )
-from app.presentation.api.v1.endpoints.dependencies import require_tenant_read
 
 
 def _get_dependency(func: Callable[..., Any], param_name: str) -> Any:
@@ -23,20 +23,42 @@ def _get_dependency(func: Callable[..., Any], param_name: str) -> Any:
     return None
 
 
+def _get_permission_details(dep: Any) -> tuple[PermissionModule | None, str | None]:
+    if not dep or not hasattr(dep, "__closure__") or not dep.__closure__:
+        return None, None
+    module = None
+    action = None
+    for cell in dep.__closure__:
+        contents = cell.cell_contents
+        if isinstance(contents, PermissionModule):
+            module = contents
+        elif isinstance(contents, str) and contents in ("create", "view", "edit", "delete"):
+            action = contents
+    return module, action
+
+
 def test_create_article_uses_require_permission() -> None:
     dep = _get_dependency(create_catalog_article, "current_user")
     assert dep is not None
     assert callable(dep)
 
 
-def test_list_articles_uses_require_tenant_read() -> None:
+def test_list_articles_uses_require_permission() -> None:
     dep = _get_dependency(list_catalog_articles, "current_user")
-    assert dep is require_tenant_read
+    assert dep is not None
+    assert callable(dep)
+    module, action = _get_permission_details(dep)
+    assert module == PermissionModule.ADMIN
+    assert action == "view"
 
 
-def test_get_article_uses_require_tenant_read() -> None:
+def test_get_article_uses_require_permission() -> None:
     dep = _get_dependency(get_catalog_article, "current_user")
-    assert dep is require_tenant_read
+    assert dep is not None
+    assert callable(dep)
+    module, action = _get_permission_details(dep)
+    assert module == PermissionModule.ADMIN
+    assert action == "view"
 
 
 def test_update_article_uses_require_permission() -> None:

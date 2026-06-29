@@ -1,4 +1,4 @@
-﻿"""Endpoints for the technical interventions module."""
+"""Endpoints for the technical interventions module."""
 
 from typing import Annotated
 
@@ -13,12 +13,14 @@ from app.application.dtos.intervention_dtos import (
 )
 from app.application.use_cases.intervention import (
     CreateInterventionUseCase,
+    DeleteInterventionUseCase,
     GetInterventionUseCase,
     ListInterventionsUseCase,
     UpdateInterventionUseCase,
 )
 from app.composition.container.intervention import (
     get_create_intervention_use_case,
+    get_delete_intervention_use_case,
     get_intervention_use_case,
     get_list_interventions_use_case,
     get_update_intervention_use_case,
@@ -102,7 +104,7 @@ async def create_intervention(
     ot_id: Annotated[str, Path(description="ID de la orden de trabajo")],
     request: CreateInterventionRequest,
     use_case: CreateInterventionUseCase = Depends(get_create_intervention_use_case),
-    _: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
+    _: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "create")),
 ) -> InterventionDocument:
     """Create a new technical intervention.
 
@@ -111,7 +113,7 @@ async def create_intervention(
         ot_id: Work order UUID (passed separately from the body).
         request: Schema with the intervention data.
         use_case: Injected use case for creating interventions.
-        _: Authorization dependency (MAINTENANCE:edit permission).
+        _: Authorization dependency (MAINTENANCE:create permission).
 
     Returns:
         InterventionDocument with the created intervention.
@@ -142,7 +144,7 @@ async def create_intervention(
 
 
 @router.get(
-    "/{intervention_id}",
+    "/{intervencion_id}",
     response_model=InterventionDocument,
     status_code=status.HTTP_200_OK,
     summary="Get intervention",
@@ -151,7 +153,7 @@ async def create_intervention(
 async def get_intervention(
     empresa_id: Annotated[str, Path(description="ID de la empresa")],
     ot_id: Annotated[str, Path(description="ID de la orden de trabajo")],
-    intervention_id: Annotated[str, Path(description="ID de la intervenciÃ³n")],
+    intervencion_id: Annotated[str, Path(description="ID de la intervención")],
     use_case: GetInterventionUseCase = Depends(get_intervention_use_case),
     _: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
 ) -> InterventionDocument:
@@ -160,14 +162,14 @@ async def get_intervention(
     Args:
         empresa_id: Company UUID.
         ot_id: Work order UUID.
-        intervention_id: Intervention UUID.
+        intervencion_id: Intervention UUID.
         use_case: Injected use case for getting interventions.
         _: Authorization dependency (MAINTENANCE:view permission).
 
     Returns:
         InterventionDocument with the intervention details.
     """
-    intervention = await use_case.execute(ot_id, intervention_id, empresa_id)
+    intervention = await use_case.execute(ot_id, intervencion_id, empresa_id)
 
     return InterventionDocument(
         data=InterventionResource(
@@ -186,7 +188,7 @@ async def get_intervention(
 
 
 @router.patch(
-    "/{intervention_id}",
+    "/{intervencion_id}",
     response_model=InterventionDocument,
     status_code=status.HTTP_200_OK,
     summary="Update intervention",
@@ -195,7 +197,7 @@ async def get_intervention(
 async def update_intervention(
     empresa_id: Annotated[str, Path(description="ID de la empresa")],
     ot_id: Annotated[str, Path(description="ID de la orden de trabajo")],
-    intervention_id: Annotated[str, Path(description="ID de la intervenciÃ³n")],
+    intervencion_id: Annotated[str, Path(description="ID de la intervención")],
     request: UpdateInterventionRequest,
     use_case: UpdateInterventionUseCase = Depends(get_update_intervention_use_case),
     _: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
@@ -205,7 +207,7 @@ async def update_intervention(
     Args:
         empresa_id: Company UUID.
         ot_id: Work order UUID.
-        intervention_id: Intervention UUID.
+        intervencion_id: Intervention UUID.
         request: JSON:API schema with attributes to update.
         use_case: Injected use case for updating interventions.
         _: Authorization dependency (MAINTENANCE:edit permission).
@@ -218,7 +220,7 @@ async def update_intervention(
         tareas_realizadas=attrs.tareas_realizadas,
         horas_hombre=attrs.horas_hombre,
     )
-    intervention = await use_case.execute(ot_id, intervention_id, empresa_id, dto_request)
+    intervention = await use_case.execute(ot_id, intervencion_id, empresa_id, dto_request)
 
     return InterventionDocument(
         data=InterventionResource(
@@ -234,4 +236,29 @@ async def update_intervention(
             ),
         )
     )
+
+
+@router.delete(
+    "/{intervencion_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete intervention",
+    description="Deletes a technical intervention by its ID.",
+)
+async def delete_intervention(
+    empresa_id: Annotated[str, Path(description="ID de la empresa")],
+    ot_id: Annotated[str, Path(description="ID de la orden de trabajo")],
+    intervencion_id: Annotated[str, Path(description="ID de la intervención")],
+    use_case: DeleteInterventionUseCase = Depends(get_delete_intervention_use_case),
+    _: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "delete")),
+) -> None:
+    """Delete a technical intervention.
+
+    Args:
+        empresa_id: Company UUID.
+        ot_id: Work order UUID.
+        intervencion_id: Intervention UUID.
+        use_case: Injected use case for deleting interventions.
+        _: Authorization dependency (MAINTENANCE:delete permission).
+    """
+    await use_case.execute(ot_id, intervencion_id, empresa_id)
 

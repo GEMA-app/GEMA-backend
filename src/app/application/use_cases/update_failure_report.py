@@ -7,7 +7,7 @@ from app.application.dtos.failure_report_dtos import (
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import PriorityLevel, ReportStatus
 from app.domain.exceptions import FailureReportNotFoundError, StaleDataError
-from app.domain.value_objects import CompanyId, FailureReportId
+from app.domain.value_objects import AssetId, CompanyId, FailureReportId
 
 
 class UpdateFailureReportUseCase:
@@ -63,6 +63,10 @@ class UpdateFailureReportUseCase:
                 report.reported_by = request.reported_by.strip()
             if "status" in request._fields_set and request.status is not None:
                 report.status = ReportStatus(request.status.lower())
+            if "activo_id" in request._fields_set:
+                report.activo_id = (
+                    AssetId.from_string(request.activo_id) if request.activo_id else None
+                )
 
             await self.uow.failure_reports.save(report)
             await self.uow.commit()
@@ -82,5 +86,6 @@ class UpdateFailureReportUseCase:
                 reported_by=report.reported_by,
                 status=report.status.value,
                 created_at=report.created_at.isoformat() if report.created_at else "",
+                activo_id=str(report.activo_id) if report.activo_id else None,
                 version=report.version,
             )

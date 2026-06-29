@@ -7,7 +7,7 @@ from app.application.ports.failure_report_repository import FailureReportReposit
 from app.domain.entities import FailureReport
 from app.domain.enums import PriorityLevel, ReportStatus
 from app.domain.events import DomainEvent
-from app.domain.value_objects import CompanyId, FailureReportId
+from app.domain.value_objects import AssetId, CompanyId, FailureReportId
 from app.infrastructure.db.models.failure_report import FailureReportModel
 from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 
@@ -35,6 +35,7 @@ class SqlAlchemyFailureReportRepository(
             priority=entity.priority.value,
             reported_by=entity.reported_by,
             status=entity.status.value,
+            activo_id=entity.activo_id.value if entity.activo_id else None,
             version=entity.version,
         )
 
@@ -48,6 +49,7 @@ class SqlAlchemyFailureReportRepository(
             priority=PriorityLevel(model.priority),
             reported_by=model.reported_by,
             status=ReportStatus(model.status),
+            activo_id=AssetId(model.activo_id) if model.activo_id else None,
             version=model.version,
             created_at=model.created_at,
         )

@@ -18,6 +18,7 @@ class UsedPartResponse:
     moneda: str
     created_at: datetime
     updated_at: datetime
+    precio_total: Decimal | None = None
 
 
 @dataclass(frozen=True)

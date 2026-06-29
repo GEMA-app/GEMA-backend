@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.ports.article_category_repository import (
@@ -10,6 +10,7 @@ from app.application.ports.article_category_repository import (
 )
 from app.domain.entities.article_category import ArticleCategory
 from app.domain.events import DomainEvent
+from app.infrastructure.db.models import CatalogArticleModel
 from app.infrastructure.db.models.article_category import ArticleCategoryModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
 
@@ -75,13 +76,29 @@ class SqlAlchemyArticleCategoryRepository(
         Returns:
             La entidad ArticleCategory si existe, None en caso contrario.
         """
-        stmt = select(ArticleCategoryModel).where(
-            ArticleCategoryModel.id == category_id,
-            ArticleCategoryModel.empresa_id == empresa_id,
+        stmt = (
+            select(
+                ArticleCategoryModel,
+                func.count(CatalogArticleModel.id).label("articulos_count"),
+            )
+            .outerjoin(
+                CatalogArticleModel,
+                ArticleCategoryModel.id == CatalogArticleModel.category_id,
+            )
+            .where(
+                ArticleCategoryModel.id == category_id,
+                ArticleCategoryModel.empresa_id == empresa_id,
+            )
+            .group_by(ArticleCategoryModel.id)
         )
         res = await self.session.execute(stmt)
-        model = res.scalar_one_or_none()
-        return self._to_entity(model) if model else None
+        row = res.first()
+        if not row:
+            return None
+        model, count = row
+        entity = self._to_entity(model)
+        entity.articulos_count = count
+        return entity
 
     async def get_by_name(
         self, name: str, empresa_id: UUID
@@ -112,12 +129,26 @@ class SqlAlchemyArticleCategoryRepository(
         Returns:
             Lista de entidades ArticleCategory (vacía si no hay registros).
         """
-        stmt = select(ArticleCategoryModel).where(
-            ArticleCategoryModel.empresa_id == empresa_id
+        stmt = (
+            select(
+                ArticleCategoryModel,
+                func.count(CatalogArticleModel.id).label("articulos_count"),
+            )
+            .outerjoin(
+                CatalogArticleModel,
+                ArticleCategoryModel.id == CatalogArticleModel.category_id,
+            )
+            .where(ArticleCategoryModel.empresa_id == empresa_id)
+            .group_by(ArticleCategoryModel.id)
         )
         res = await self.session.execute(stmt)
-        models = res.scalars().all()
-        return [self._to_entity(m) for m in models]
+        results = res.all()
+        entities = []
+        for model, count in results:
+            entity = self._to_entity(model)
+            entity.articulos_count = count
+            entities.append(entity)
+        return entities
 
     async def delete(  # type: ignore[override]
         self, category_id: UUID, empresa_id: UUID

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 
-from sqlalchemy import Enum, String, Text
+from sqlalchemy import Enum, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.domain.enums import PriorityLevel, ReportStatus
@@ -28,6 +28,9 @@ class FailureReportModel(VersionMixin, TenantMixin, TimestampMixin, Base):
         nullable=False,
     )
     reported_by: Mapped[str] = mapped_column(String(255), nullable=False)
+    activo_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("activos.id", ondelete="RESTRICT"), nullable=True
+    )
     status: Mapped[ReportStatus] = mapped_column(
         Enum(ReportStatus, name="estado_reporte",
              values_callable=lambda obj: [e.value for e in obj]),

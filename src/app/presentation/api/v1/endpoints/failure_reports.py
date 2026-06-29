@@ -68,6 +68,7 @@ async def create_failure_report(
         location=attrs.location,
         priority=attrs.priority,
         reported_by=attrs.reported_by,
+        activo_id=attrs.activo_id,
     )
     res = await use_case.execute(empresa_id, dto)
     return FailureReportDocument(
@@ -81,6 +82,7 @@ async def create_failure_report(
                 reported_by=res.reported_by,
                 status=res.status,
                 created_at=res.created_at,
+                activo_id=res.activo_id,
                 version=res.version,
             ),
         )
@@ -142,6 +144,7 @@ async def list_failure_reports(
                     reported_by=r.reported_by,
                     status=r.status,
                     created_at=r.created_at,
+                    activo_id=r.activo_id,
                     version=r.version,
                 ),
             )
@@ -190,6 +193,7 @@ async def get_failure_report(
                 reported_by=res.reported_by,
                 status=res.status,
                 created_at=res.created_at,
+                activo_id=res.activo_id,
                 version=res.version,
             ),
         )
@@ -234,6 +238,7 @@ async def update_failure_report(
         priority=sent.get("priority"),
         reported_by=sent.get("reported_by"),
         status=sent.get("status"),
+        activo_id=sent.get("activo_id"),
         version=sent.get("version"),
         _fields_set=frozenset(sent.keys()),
     )
@@ -249,6 +254,7 @@ async def update_failure_report(
                 reported_by=res.reported_by,
                 status=res.status,
                 created_at=res.created_at,
+                activo_id=res.activo_id,
                 version=res.version,
             ),
         )

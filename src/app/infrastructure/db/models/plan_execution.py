@@ -8,10 +8,10 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.db.base import Base
-from app.infrastructure.db.models.mixins import TimestampMixin
+from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
 
 
-class PlanExecutionModel(Base, TimestampMixin):
+class PlanExecutionModel(TenantMixin, TimestampMixin, Base):
     """Modelo ORM de ejecuciones de planes de mantenimiento."""
 
     __tablename__ = "planes_ejecuciones"
@@ -22,12 +22,6 @@ class PlanExecutionModel(Base, TimestampMixin):
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
-    empresa_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("empresas.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
     )
     plan_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

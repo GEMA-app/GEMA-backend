@@ -1,5 +1,7 @@
 """Caso de uso: Actualizar un plan de mantenimiento."""
 
+from datetime import date
+
 from app.application.dtos.maintenance_plan_dtos import (
     MaintenancePlanResponse,
     UpdateMaintenancePlanRequest,
@@ -80,4 +82,5 @@ class UpdateMaintenancePlanUseCase:
             activo=updated.activo,
             created_at=updated.created_at,
             updated_at=updated.updated_at,
+            es_urgente=(updated.proxima_ejecucion - date.today()).days <= 7,
         )

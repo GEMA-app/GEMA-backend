@@ -16,6 +16,10 @@ class ListWorkOrdersUseCase:
         company_id: str,
         estado: str | None = None,
         activo_id: str | None = None,
+        tipo: str | None = None,
+        supervisor_id: str | None = None,
+        offset: int = 0,
+        limit: int = 20,
     ) -> tuple[list[WorkOrderResponse], int]:
         """Ejecuta el listado de órdenes de trabajo.
 
@@ -23,6 +27,10 @@ class ListWorkOrdersUseCase:
             company_id: Identificador de la empresa.
             estado: Filtrar por estado (opcional).
             activo_id: Filtrar por activo (opcional).
+            tipo: Filtrar por tipo (opcional).
+            supervisor_id: Filtrar por supervisor (opcional).
+            offset: Desplazamiento.
+            limit: Límite.
 
         Returns:
             tuple: Lista de DTOs y el total de resultados.
@@ -32,7 +40,13 @@ class ListWorkOrdersUseCase:
 
         async with self.uow:
             work_orders, total = await self.uow.work_orders.list_by_company(
-                company, estado=estado, activo_id=asset_id
+                company,
+                estado=estado,
+                activo_id=asset_id,
+                tipo=tipo,
+                supervisor_id=supervisor_id,
+                offset=offset,
+                limit=limit,
             )
 
         return [WorkOrderResponse.from_entity(wo) for wo in work_orders], total

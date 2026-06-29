@@ -28,7 +28,10 @@ from app.composition.container.used_part import (
     get_update_used_part_use_case,
 )
 from app.domain.enums import PermissionModule
-from app.presentation.api.v1.endpoints.dependencies import require_permission
+from app.presentation.api.v1.endpoints.dependencies import (
+    require_dual_permission,
+    require_permission,
+)
 from app.presentation.api.v1.schemas.used_parts import (
     CreateUsedPartRequest,
     UpdateUsedPartRequest,
@@ -42,7 +45,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/",
+    "",
     response_model=UsedPartsDocument,
     status_code=status.HTTP_200_OK,
     summary="Lista repuestos utilizados",
@@ -53,7 +56,11 @@ async def list_used_parts(
     ot_id: str,
     intervencion_id: str,
     use_case: ListUsedPartsUseCase = Depends(get_list_used_parts_use_case),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(
+            PermissionModule.MAINTENANCE, "view", PermissionModule.INVENTORY, "view"
+        )
+    ),
 ) -> UsedPartsDocument:
     """Lista los repuestos utilizados en una intervención.
 
@@ -81,6 +88,7 @@ async def list_used_parts(
                     moneda=p.moneda,
                     created_at=p.created_at.isoformat() if p.created_at else None,
                     updated_at=p.updated_at.isoformat() if p.updated_at else None,
+                    precio_total=p.precio_total,
                 ),
             )
             for p in parts
@@ -89,7 +97,7 @@ async def list_used_parts(
 
 
 @router.post(
-    "/",
+    "",
     response_model=UsedPartDocument,
     status_code=status.HTTP_201_CREATED,
     summary="Registra consumo de repuesto",
@@ -101,7 +109,11 @@ async def create_used_part(
     intervencion_id: str,
     request: CreateUsedPartRequest,
     use_case: CreateUsedPartUseCase = Depends(get_create_used_part_use_case),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(
+            PermissionModule.MAINTENANCE, "edit", PermissionModule.INVENTORY, "edit"
+        )
+    ),
 ) -> UsedPartDocument:
     """Crea un registro de repuesto utilizado.
 
@@ -136,6 +148,7 @@ async def create_used_part(
                 moneda=part.moneda,
                 created_at=part.created_at.isoformat() if part.created_at else None,
                 updated_at=part.updated_at.isoformat() if part.updated_at else None,
+                precio_total=part.precio_total,
             ),
         )
     )
@@ -185,6 +198,7 @@ async def get_used_part(
                 moneda=part.moneda,
                 created_at=part.created_at.isoformat() if part.created_at else None,
                 updated_at=part.updated_at.isoformat() if part.updated_at else None,
+                precio_total=part.precio_total,
             ),
         )
     )
@@ -239,6 +253,7 @@ async def update_used_part(
                 moneda=part.moneda,
                 created_at=part.created_at.isoformat() if part.created_at else None,
                 updated_at=part.updated_at.isoformat() if part.updated_at else None,
+                precio_total=part.precio_total,
             ),
         )
     )

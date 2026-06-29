@@ -30,7 +30,6 @@ from app.composition.container import (
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
     require_permission,
-    require_tenant_read,
 )
 from app.presentation.api.v1.schemas.catalog_articles import (
     CatalogArticleAttributes,
@@ -108,7 +107,9 @@ async def list_catalog_articles(
     limit: int = Query(20, ge=1, le=100, description="Máximo de registros"),
     category_id: str | None = Query(None, description="Filtrar por categoría"),
     search: str | None = Query(None, description="Búsqueda por nombre"),
-    current_user: UserResponse = Depends(require_tenant_read),
+    current_user: UserResponse = Depends(
+        require_permission(PermissionModule.ADMIN, "view")
+    ),
     use_case: ListCatalogArticlesUseCase = Depends(
         get_list_catalog_articles_use_case
     ),
@@ -163,7 +164,9 @@ async def list_catalog_articles(
 async def get_catalog_article(
     empresa_id: str,
     articulo_id: str,
-    current_user: UserResponse = Depends(require_tenant_read),
+    current_user: UserResponse = Depends(
+        require_permission(PermissionModule.ADMIN, "view")
+    ),
     use_case: GetCatalogArticleUseCase = Depends(get_catalog_article_use_case),
 ) -> CatalogArticleDocument:
     """Obtiene un artículo de catálogo por su ID.

@@ -5,6 +5,7 @@ from fastapi import Depends
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.application.use_cases.intervention import (
     CreateInterventionUseCase,
+    DeleteInterventionUseCase,
     GetInterventionUseCase,
     ListInterventionsUseCase,
     UpdateInterventionUseCase,
@@ -54,3 +55,10 @@ async def get_update_intervention_use_case(
     the intervention repository.
     """
     return UpdateInterventionUseCase(uow=uow)
+
+
+async def get_delete_intervention_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> DeleteInterventionUseCase:
+    """Factory for DeleteInterventionUseCase."""
+    return DeleteInterventionUseCase(uow=uow)

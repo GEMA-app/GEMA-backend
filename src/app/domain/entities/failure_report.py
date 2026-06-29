@@ -12,7 +12,7 @@ from app.domain.exceptions import (
     EmptyReportedByError,
     EmptyTitleError,
 )
-from app.domain.value_objects import CompanyId, FailureReportId
+from app.domain.value_objects import AssetId, CompanyId, FailureReportId
 
 
 @dataclass
@@ -27,6 +27,7 @@ class FailureReport(EventProducer):
     priority: PriorityLevel
     reported_by: str
     status: ReportStatus
+    activo_id: AssetId | None = None
     version: int = 1
     created_at: datetime | None = None
     _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
@@ -50,6 +51,7 @@ class FailureReport(EventProducer):
         location: str,
         priority: PriorityLevel,
         reported_by: str,
+        activo_id: AssetId | None = None,
     ) -> "FailureReport":
         """Crea un nuevo reporte de falla y emite FailureReportCreated.
 
@@ -60,6 +62,7 @@ class FailureReport(EventProducer):
             location: Ubicación donde se presenta la falla.
             priority: Nivel de prioridad del reporte.
             reported_by: Nombre o identificación de quien reporta.
+            activo_id: Identificador opcional del activo.
 
         Returns:
             El nuevo reporte creado con el evento FailureReportCreated emitido.
@@ -88,6 +91,7 @@ class FailureReport(EventProducer):
             priority=priority,
             reported_by=reported_by.strip(),
             status=ReportStatus.PENDING,
+            activo_id=activo_id,
             version=1,
             created_at=datetime.now(UTC),
         )

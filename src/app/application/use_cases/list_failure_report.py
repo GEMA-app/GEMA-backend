@@ -48,6 +48,7 @@ class ListFailureReportsUseCase:
                     reported_by=r.reported_by,
                     status=r.status.value,
                     created_at=r.created_at.isoformat() if r.created_at else "",
+                    activo_id=str(r.activo_id) if r.activo_id else None,
                     version=r.version,
                 )
                 for r in reports

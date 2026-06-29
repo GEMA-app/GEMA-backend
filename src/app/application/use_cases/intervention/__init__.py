@@ -3,6 +3,9 @@
 from app.application.use_cases.intervention.create_intervention import (
     CreateInterventionUseCase,
 )
+from app.application.use_cases.intervention.delete_intervention import (
+    DeleteInterventionUseCase,
+)
 from app.application.use_cases.intervention.get_intervention import (
     GetInterventionUseCase,
 )
@@ -18,4 +21,5 @@ __all__ = [
     "GetInterventionUseCase",
     "ListInterventionsUseCase",
     "UpdateInterventionUseCase",
+    "DeleteInterventionUseCase",
 ]

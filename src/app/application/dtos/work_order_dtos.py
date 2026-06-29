@@ -98,3 +98,17 @@ class UpdateWorkOrderRequest:
 class ChangeWorkOrderStatusRequest:
     """DTO de solicitud para cambiar el estado de una orden de trabajo."""
     estado: str
+    motivo: str | None = None
+    usuario_id: str | None = None
+
+
+@dataclass(frozen=True)
+class WorkOrderStatusLogResponse:
+    """DTO para representar una entrada del historial de estados de una OT."""
+    id: str
+    ordenes_trabajo_id: str
+    estado_anterior: str | None
+    estado_nuevo: str
+    usuario_id: str | None
+    motivo: str | None
+    fecha_cambio: datetime

@@ -8,7 +8,7 @@ from decimal import Decimal
 from app.domain.entities import Asset, Company, Location, Permission, Role, User, UserPreference
 from app.domain.enums import AssetStatus, CompanyStatus, LocationType, PermissionModule, Theme
 from app.domain.value_objects import CompanyId, Email, HashedPassword, Slug
-from app.infrastructure.db.models.catalog import ArticleCategoryModel, CatalogArticleModel
+from app.infrastructure.db.models import ArticleCategoryModel, CatalogArticleModel
 from app.infrastructure.db.models.company import SubscriptionPlanModel
 from app.infrastructure.events.bus import InProcessEventBus
 from app.infrastructure.security.hashing import BcryptPasswordHasher
@@ -26,6 +26,7 @@ ROLES_CONFIG = {
             PermissionModule.REPORTS: (True, True, True, True),
             PermissionModule.ADMIN: (True, True, True, True),
             PermissionModule.PREFERENCES: (True, False, True, False),  # Solo view + edit
+            PermissionModule.SYSTEM_AUDIT: (True, True, True, True),
         },
     },
     "Supervisor de Activos": {
@@ -151,10 +152,6 @@ async def seed() -> None:
         roles_map = {r.nombre: r for r in existing_roles}
 
         for nombre, config in ROLES_CONFIG.items():
-            if nombre in roles_map:
-                print(f"ℹ️ Rol '{nombre}' ya existe. Saltando creación.")
-                continue
-
             permisos_dict = config["permisos"]
             assert isinstance(permisos_dict, dict)
             permisos = [
@@ -166,6 +163,14 @@ async def seed() -> None:
             ]
             desc = config["desc"]
             assert isinstance(desc, str)
+
+            if nombre in roles_map:
+                print(f"ℹ️ Rol '{nombre}' ya existe. Sincronizando permisos.")
+                rol = roles_map[nombre]
+                rol.permisos = permisos
+                await uow.roles.save(rol)
+                continue
+
             rol = Role.create(
                 empresa_id=company.id,
                 nombre=nombre,

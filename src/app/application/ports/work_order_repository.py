@@ -27,7 +27,14 @@ class WorkOrderRepositoryPort(Protocol):
         """Obtiene una orden de trabajo por su código dentro de una empresa."""
 
     async def list_by_company(
-        self, empresa_id: CompanyId, estado: str | None = None, activo_id: AssetId | None = None
+        self,
+        empresa_id: CompanyId,
+        estado: str | None = None,
+        activo_id: AssetId | None = None,
+        tipo: str | None = None,
+        supervisor_id: str | None = None,
+        offset: int = 0,
+        limit: int = 20,
     ) -> tuple[list[WorkOrder], int]:
         """Lista órdenes de trabajo de una empresa, con filtros opcionales."""
 

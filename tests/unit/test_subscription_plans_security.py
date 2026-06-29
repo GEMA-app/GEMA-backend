@@ -3,9 +3,6 @@ import inspect
 from collections.abc import Callable
 from typing import Any
 
-from app.presentation.api.v1.endpoints.dependencies import (
-    get_current_active_user,
-)
 from app.presentation.api.v1.endpoints.subscription_plans import (
     create_subscription_plan,
     delete_subscription_plan,
@@ -24,14 +21,22 @@ def _get_dependency(func: Callable[..., Any], param_name: str) -> Any:
     return None
 
 
-def test_list_plans_uses_get_current_active_user() -> None:
+def test_list_plans_uses_require_platform_permission() -> None:
     dep = _get_dependency(list_subscription_plans, "current_user")
-    assert dep is get_current_active_user
+    assert dep is not None
+    assert callable(dep)
+    import inspect as _inspect
+    source = _inspect.getsource(list_subscription_plans)
+    assert "require_platform_permission(PermissionModule.ADMIN, \"view\")" in source
 
 
-def test_get_plan_uses_get_current_active_user() -> None:
+def test_get_plan_uses_require_platform_permission() -> None:
     dep = _get_dependency(get_subscription_plan, "current_user")
-    assert dep is get_current_active_user
+    assert dep is not None
+    assert callable(dep)
+    import inspect as _inspect
+    source = _inspect.getsource(get_subscription_plan)
+    assert "require_platform_permission(PermissionModule.ADMIN, \"view\")" in source
 
 
 def test_get_plan_uses_plan_id_param() -> None:

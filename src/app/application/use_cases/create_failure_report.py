@@ -7,7 +7,7 @@ from app.application.dtos.failure_report_dtos import (
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import FailureReport
 from app.domain.enums import PriorityLevel
-from app.domain.value_objects import CompanyId
+from app.domain.value_objects import AssetId, CompanyId
 
 
 class CreateFailureReportUseCase:
@@ -37,6 +37,7 @@ class CreateFailureReportUseCase:
         """
         company_id = CompanyId.from_string(company_id_str)
         priority = PriorityLevel(request.priority.lower())
+        activo_id = AssetId.from_string(request.activo_id) if request.activo_id else None
 
         async with self.uow:
             report = FailureReport.create(
@@ -46,6 +47,7 @@ class CreateFailureReportUseCase:
                 location=request.location.strip(),
                 priority=priority,
                 reported_by=request.reported_by.strip(),
+                activo_id=activo_id,
             )
 
             await self.uow.failure_reports.save(report)
@@ -61,5 +63,6 @@ class CreateFailureReportUseCase:
                 reported_by=report.reported_by,
                 status=report.status.value,
                 created_at=report.created_at.isoformat() if report.created_at else "",
+                activo_id=str(report.activo_id) if report.activo_id else None,
                 version=report.version,
             )
