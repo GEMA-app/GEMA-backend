@@ -220,3 +220,21 @@ class ResetPasswordRequest(BaseModel):
     """Solicitud JSON:API para restablecer contraseña con token."""
 
     data: ResetPasswordResource
+
+
+class RateLimitEmailAttributes(BaseModel):
+    """Atributos para rate limiting por email."""
+
+    email: str = ""
+
+
+class RateLimitEmailResource(BaseModel):
+    """Recurso JSON:API para rate limiting."""
+
+    attributes: RateLimitEmailAttributes
+
+
+class RateLimitEmailBody(BaseModel):
+    """Cuerpo mínimo para extraer el email en rate limiting."""
+
+    data: RateLimitEmailResource

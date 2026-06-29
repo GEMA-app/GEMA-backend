@@ -17,33 +17,32 @@ from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers.base import jsonapi_response
 from app.presentation.exception_handlers.domain import domain_exception_handler
 
+CONSTRAINT_MAP: dict[str, tuple[int, str]] = {
+    "uq_activos_empresa_codigo_activo": (409, "Ya existe un activo con ese código en la empresa."),
+    "uq_activos_empresa_serial_interno": (
+        409,
+        "Ya existe un activo con ese número de serie en la empresa.",
+    ),
+    "empresas_slug_key": (409, "El slug identificador de empresa ya existe."),
+}
+
+SQLSTATE_MAP: dict[str, tuple[int, str]] = {
+    "23505": (409, "El registro ya existe."),
+    "23503": (409, "Referencia inválida: el recurso relacionado no existe."),
+    "23502": (422, "Campo obligatorio sin valor."),
+}
+
 
 def _map_integrity_error(exc: IntegrityError) -> tuple[int, str] | None:
-    """Mapea IntegrityError a HTTP status + mensaje. Soporta asyncpg y otros drivers.
-
-    Estrategia 1: Extracción por nombre de constraint (driver-agnostic, específico).
-    Estrategia 2: Fallback por SQLSTATE (genérico, para casos no mapeados).
-    """
-    # Estrategia 1: Nombre de constraint (específico por dominio)
+    """Mapea IntegrityError a HTTP status + mensaje. Soporta asyncpg y otros drivers."""
     constraint_name = _extract_constraint_name(exc)
-    if constraint_name:
-        if "codigo_activo" in constraint_name:
-            return (409, "Ya existe un activo con ese código en la empresa.")
-        if "serial_interno" in constraint_name:
-            return (409, "Ya existe un activo con ese número de serie en la empresa.")
-        if "slug" in constraint_name or "empresas_slug_key" in constraint_name:
-            return (409, "El slug identificador de empresa ya existe.")
+    if constraint_name and constraint_name in CONSTRAINT_MAP:
+        return CONSTRAINT_MAP[constraint_name]
 
-    # Estrategia 2: SQLSTATE directo (fallback genérico)
-    if exc.orig is not None and hasattr(exc.orig, 'sqlstate'):
-        sqlstate = getattr(exc.orig, 'sqlstate', None)
-        mapping = {
-            "23505": (409, "El registro ya existe"),
-            "23503": (409, "Referencia inválida: el recurso relacionado no existe"),
-            "23502": (422, "Campo obligatorio sin valor"),
-        }
-        if sqlstate in mapping:
-            return mapping[sqlstate]
+    if exc.orig is not None and hasattr(exc.orig, "sqlstate"):
+        sqlstate = getattr(exc.orig, "sqlstate", None)
+        if sqlstate in SQLSTATE_MAP:
+            return SQLSTATE_MAP[sqlstate]
 
     return None
 
@@ -52,36 +51,25 @@ def _extract_constraint_name(exc: IntegrityError) -> str | None:
     """Extrae el nombre del constraint violado de forma driver-agnostic."""
     if exc.orig is None:
         return None
-    # intentar directamente en exc.orig (asyncpg)
-    constraint_name = getattr(exc.orig, "constraint_name", None)
-    if constraint_name and isinstance(constraint_name, str):
-        return str(constraint_name)
+    constraint_name: str | None = getattr(exc.orig, "constraint_name", None)
+    if isinstance(constraint_name, str):
+        return constraint_name
 
-    # via __cause__ (para compatibilidad con mocks de test)
-    cause = getattr(exc.orig, "__cause__", None)
+    cause: object | None = getattr(exc.orig, "__cause__", None)
     if cause:
-        name = getattr(cause, "constraint_name", None)
-        if name and isinstance(name, str):
-            return str(name)
+        name: str | None = getattr(cause, "constraint_name", None)
+        if isinstance(name, str):
+            return name
 
-    # Fallback: string parsing
     error_msg = str(exc.orig)
-    for name in (
-        "uq_activos_empresa_codigo_activo",
-        "uq_activos_empresa_serial_interno",
-        "uq_activos_empresa_codigo_activo_lower",
-        "uq_activos_empresa_serial_interno_lower",
-        "empresas_slug_key",
-    ):
+    for name in CONSTRAINT_MAP:
         if name in error_msg:
             return name
 
     return None
 
 
-async def integrity_error_handler(
-    request: Request, exc: IntegrityError
-) -> JSONResponse:
+async def integrity_error_handler(request: Request, exc: IntegrityError) -> JSONResponse:
     """Manejador de excepciones de tipo IntegrityError para retornar JSON:API."""
     result = _map_integrity_error(exc)
 

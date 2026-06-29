@@ -5,7 +5,6 @@ Implementado como ASGI puro para evitar tareas anyio internas que
 BaseHTTPMiddleware crea y que contaminan el event loop entre tests.
 """
 
-
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
@@ -37,13 +36,10 @@ class ContentTypeMiddleware:
                 detail_msg: str
                 if self.strict_jsonapi:
                     detail_msg = (
-                        f"Se requiere Content-Type: {expected} o {json_type} "
-                        "en modo estricto."
+                        f"Se requiere Content-Type: {expected} o {json_type} en modo estricto."
                     )
                 else:
-                    detail_msg = (
-                        f"Se requiere Content-Type: {expected} o {json_type}."
-                    )
+                    detail_msg = f"Se requiere Content-Type: {expected} o {json_type}."
                 error = ErrorObject(
                     status="415",
                     code="ERR_UNSUPPORTED_MEDIA_TYPE",

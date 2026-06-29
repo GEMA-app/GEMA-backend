@@ -8,7 +8,7 @@ from httpx import ASGITransport, AsyncClient
 from app.main import app
 from app.presentation.api.v1.endpoints.dependencies import rate_limit_by_email
 from app.infrastructure.db.session import async_session_factory
-from app.infrastructure.db.models.system_audits import SystemAuditModel
+from app.infrastructure.db.models.system_audit import SystemAuditModel
 
 
 @pytest.mark.asyncio

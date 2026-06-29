@@ -54,12 +54,8 @@ router = APIRouter()
 async def create_category(
     empresa_id: str,
     payload: CreateCategoryRequest,
-    use_case: CreateArticleCategoryUseCase = Depends(
-        get_create_article_category_use_case
-    ),
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "create")
-    ),
+    use_case: CreateArticleCategoryUseCase = Depends(get_create_article_category_use_case),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "create")),
 ) -> ArticleCategoryDocument:
     """Crea una nueva categoría de artículo en el catálogo de la empresa.
 
@@ -94,12 +90,8 @@ async def create_category(
 @router.get("", response_model=ArticleCategoryListDocument)
 async def list_categories(
     empresa_id: str,
-    use_case: ListArticleCategoriesUseCase = Depends(
-        get_list_article_categories_use_case
-    ),
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "view")
-    ),
+    use_case: ListArticleCategoriesUseCase = Depends(get_list_article_categories_use_case),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
 ) -> ArticleCategoryListDocument:
     """Lista todas las categorías de artículo de la empresa.
 
@@ -133,12 +125,8 @@ async def list_categories(
 async def get_category_by_id(
     empresa_id: str,
     categoria_id: UUID,
-    use_case: GetArticleCategoryByIdUseCase = Depends(
-        get_article_category_by_id_use_case
-    ),
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "view")
-    ),
+    use_case: GetArticleCategoryByIdUseCase = Depends(get_article_category_by_id_use_case),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
 ) -> ArticleCategoryDocument:
     """Obtiene una categoría de artículo por su ID.
 
@@ -171,12 +159,8 @@ async def update_category(
     empresa_id: str,
     categoria_id: UUID,
     payload: UpdateCategoryRequest,
-    use_case: UpdateArticleCategoryUseCase = Depends(
-        get_update_article_category_use_case
-    ),
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "edit")
-    ),
+    use_case: UpdateArticleCategoryUseCase = Depends(get_update_article_category_use_case),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "edit")),
 ) -> ArticleCategoryDocument:
     """Actualiza parcialmente una categoría de artículo.
 
@@ -217,12 +201,8 @@ async def update_category(
 async def delete_category(
     empresa_id: str,
     categoria_id: UUID,
-    use_case: DeleteArticleCategoryUseCase = Depends(
-        get_delete_article_category_use_case
-    ),
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "delete")
-    ),
+    use_case: DeleteArticleCategoryUseCase = Depends(get_delete_article_category_use_case),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "delete")),
 ) -> None:
     """Elimina una categoría de artículo por su ID.
 

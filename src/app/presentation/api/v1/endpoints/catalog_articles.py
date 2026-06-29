@@ -31,7 +31,7 @@ from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
     require_permission,
 )
-from app.presentation.api.v1.schemas.catalog_articles import (
+from app.presentation.api.v1.schemas.catalog_article import (
     CatalogArticleAttributes,
     CatalogArticleDocument,
     CatalogArticleListDocument,
@@ -52,12 +52,8 @@ router = APIRouter()
 async def create_catalog_article(
     empresa_id: str,
     request: CreateCatalogArticleRequest,
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "create")
-    ),
-    use_case: CreateCatalogArticleUseCase = Depends(
-        get_create_catalog_article_use_case
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "create")),
+    use_case: CreateCatalogArticleUseCase = Depends(get_create_catalog_article_use_case),
 ) -> CatalogArticleDocument:
     """Crea un nuevo artículo de catálogo en la empresa.
 
@@ -107,12 +103,8 @@ async def list_catalog_articles(
     limit: int = Query(20, ge=1, le=100, description="Máximo de registros"),
     category_id: str | None = Query(None, description="Filtrar por categoría"),
     search: str | None = Query(None, description="Búsqueda por nombre"),
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "view")
-    ),
-    use_case: ListCatalogArticlesUseCase = Depends(
-        get_list_catalog_articles_use_case
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
+    use_case: ListCatalogArticlesUseCase = Depends(get_list_catalog_articles_use_case),
 ) -> CatalogArticleListDocument:
     """Lista los artículos de catálogo de una empresa.
 
@@ -164,9 +156,7 @@ async def list_catalog_articles(
 async def get_catalog_article(
     empresa_id: str,
     articulo_id: str,
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "view")
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
     use_case: GetCatalogArticleUseCase = Depends(get_catalog_article_use_case),
 ) -> CatalogArticleDocument:
     """Obtiene un artículo de catálogo por su ID.
@@ -207,12 +197,8 @@ async def update_catalog_article(
     empresa_id: str,
     articulo_id: str,
     request: UpdateCatalogArticleRequest,
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "edit")
-    ),
-    use_case: UpdateCatalogArticleUseCase = Depends(
-        get_update_catalog_article_use_case
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "edit")),
+    use_case: UpdateCatalogArticleUseCase = Depends(get_update_catalog_article_use_case),
 ) -> CatalogArticleDocument:
     """Actualiza parcialmente un artículo de catálogo.
 
@@ -263,12 +249,8 @@ async def update_catalog_article(
 async def delete_catalog_article(
     empresa_id: str,
     articulo_id: str,
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "delete")
-    ),
-    use_case: DeleteCatalogArticleUseCase = Depends(
-        get_delete_catalog_article_use_case
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "delete")),
+    use_case: DeleteCatalogArticleUseCase = Depends(get_delete_catalog_article_use_case),
 ) -> None:
     """Elimina un artículo de catálogo.
 

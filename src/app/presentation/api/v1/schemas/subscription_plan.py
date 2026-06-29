@@ -20,12 +20,14 @@ class SubscriptionPlanAttributes(BaseModel):
     max_usuarios: int | None = None
     is_active: bool = True
 
+
 class SubscriptionPlanResource(BaseModel):
     """Recurso JSON:API de un plan de suscripción."""
 
     type: str = Field(default="subscription_plans", description="Tipo de recurso")
     id: str = Field(..., description="ID único del plan de suscripción")
     attributes: SubscriptionPlanAttributes
+
 
 class SubscriptionPlanDocument(BaseModel):
     """Documento JSON:API con un plan de suscripción."""
@@ -34,6 +36,7 @@ class SubscriptionPlanDocument(BaseModel):
     links: LinksObject | None = None
     meta: dict[str, Any] | None = None
 
+
 class SubscriptionPlanListDocument(BaseModel):
     """Documento JSON:API con lista de planes de suscripción."""
 
@@ -41,7 +44,8 @@ class SubscriptionPlanListDocument(BaseModel):
     links: LinksObject | None = None
     meta: dict[str, Any] | None = None
 
-#Solicitudes (Requests)
+
+# Solicitudes (Requests)
 class CreateSubscriptionPlanAttributes(BaseModel):
     """Atributos para crear un plan de suscripción."""
 
@@ -51,16 +55,19 @@ class CreateSubscriptionPlanAttributes(BaseModel):
     max_usuarios: int | None = None
     max_activos: int | None = None
 
+
 class CreateSubscriptionPlanResource(BaseModel):
     """Recurso JSON:API para crear un plan de suscripción."""
 
     type: str = Field(default="subscription_plans", description="Tipo de recurso")
     attributes: CreateSubscriptionPlanAttributes
 
+
 class CreateSubscriptionPlanRequest(BaseModel):
     """Solicitud JSON:API para crear un plan de suscripción."""
 
     data: CreateSubscriptionPlanResource
+
 
 class UpdateSubscriptionPlanAttributes(BaseModel):
     """Atributos para actualizar un plan de suscripción."""
@@ -72,11 +79,13 @@ class UpdateSubscriptionPlanAttributes(BaseModel):
     max_usuarios: int | None = None
     is_active: bool | None = None
 
+
 class UpdateSubscriptionPlanResource(BaseModel):
     """Recurso JSON:API para actualizar un plan de suscripción."""
 
     type: str = Field(default="subscription_plans", description="Tipo de recurso")
     attributes: UpdateSubscriptionPlanAttributes
+
 
 class UpdateSubscriptionPlanRequest(BaseModel):
     """Solicitud JSON:API para actualizar un plan de suscripción."""

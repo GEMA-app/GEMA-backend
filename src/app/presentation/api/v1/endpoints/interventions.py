@@ -27,7 +27,7 @@ from app.composition.container.intervention import (
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import require_permission
-from app.presentation.api.v1.schemas.interventions import (
+from app.presentation.api.v1.schemas.intervention import (
     CreateInterventionRequest,
     InterventionAttributes,
     InterventionDocument,
@@ -318,4 +318,3 @@ async def delete_intervention(
         _: Authorization dependency (MAINTENANCE:delete permission).
     """
     await use_case.execute(empresa_id, ot_id, intervencion_id)
-

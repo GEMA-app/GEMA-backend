@@ -144,7 +144,7 @@ async def list_roles(
                 attributes=RoleAttributes(
                     nombre=r.nombre,
                     descripcion=r.descripcion,
-                permisos=[_to_permission_attributes(p) for p in r.permisos],
+                    permisos=[_to_permission_attributes(p) for p in r.permisos],
                     version=r.version,
                 ),
             )

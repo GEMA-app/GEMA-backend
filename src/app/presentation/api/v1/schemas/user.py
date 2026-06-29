@@ -11,6 +11,7 @@ from app.presentation.api.v1.schemas.jsonapi_base import LinksObject
 
 # --- Atributos y Recursos de Respuesta (Output) ---
 
+
 class UserAttributes(BaseModel):
     """Atributos públicos de un usuario devueltos en las respuestas HTTP."""
 
@@ -25,6 +26,7 @@ class UserAttributes(BaseModel):
 
     class Config:
         """Configuración de Pydantic para habilitar asignación desde atributos ORM."""
+
         from_attributes = True
 
 
@@ -55,6 +57,7 @@ class UserListDocument(BaseModel):
 
 # --- Solicitudes de Creación (POST) ---
 
+
 class CreateUserAttributes(BaseModel):
     """Atributos requeridos en el cuerpo de la petición para registrar un usuario."""
 
@@ -78,6 +81,7 @@ class CreateUserRequest(BaseModel):
 
 
 # --- Solicitudes de Actualización (PATCH) ---
+
 
 class UpdateUserAttributes(BaseModel):
     """Atributos opcionales permitidos para la modificación de un usuario."""

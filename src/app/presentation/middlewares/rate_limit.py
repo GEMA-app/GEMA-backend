@@ -6,8 +6,8 @@ BaseHTTPMiddleware crea y que contaminan el event loop entre tests.
 """
 
 import logging
-from typing import Any
 
+from redis.asyncio import Redis
 from redis.exceptions import RedisError
 from starlette.types import ASGIApp, Receive, Scope, Send
 
@@ -31,7 +31,7 @@ class RateLimitMiddleware:
     def __init__(
         self,
         app: ASGIApp,
-        redis_client: Any,
+        redis_client: Redis,
         rate_limits: dict[str, int] | None = None,
     ) -> None:
         """Inicializa el middleware con el cliente Redis y registra el script Lua."""

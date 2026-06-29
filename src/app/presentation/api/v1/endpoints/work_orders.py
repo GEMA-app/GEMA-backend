@@ -4,8 +4,6 @@ Proporciona las rutas CRUD y de cambio de estado para órdenes de
 trabajo, con paginación, filtros y permisos RBAC.
 """
 
-from typing import Any
-
 from fastapi import APIRouter, Depends, Query, status
 
 from app.application.dtos.auth_dtos import UserResponse
@@ -44,7 +42,7 @@ from app.composition.container import (
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import require_permission
-from app.presentation.api.v1.schemas.work_orders import (
+from app.presentation.api.v1.schemas.work_order import (
     AssignTechnicianRequest,
     ChangeStatusRequest,
     CreateWorkOrderRequest,
@@ -70,7 +68,9 @@ router = APIRouter()
 async def create_work_order(
     empresa_id: str,
     request: CreateWorkOrderRequest,
-    current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "create")),
+    current_user: UserResponse = Depends(
+        require_permission(PermissionModule.MAINTENANCE, "create")
+    ),
     use_case: CreateWorkOrderUseCase = Depends(get_create_work_order_use_case),
 ) -> WorkOrderDocument:
     """Crea una nueva orden de trabajo."""
@@ -117,7 +117,7 @@ async def create_work_order(
 )
 async def list_work_orders(
     empresa_id: str,
-    current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
     use_case: ListWorkOrdersUseCase = Depends(get_list_work_orders_use_case),
     estado: str | None = Query(None, description="Filtrar por estado"),
     activo_id: str | None = Query(None, description="Filtrar por activo"),
@@ -174,7 +174,7 @@ async def list_work_orders(
 async def get_work_order(
     empresa_id: str,
     ot_id: str,
-    current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
     use_case: GetWorkOrderUseCase = Depends(get_work_order_use_case),
 ) -> WorkOrderDocument:
     """Obtiene los detalles de una orden de trabajo por su ID."""
@@ -214,7 +214,7 @@ async def update_work_order(
     empresa_id: str,
     ot_id: str,
     request: UpdateWorkOrderRequest,
-    current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
     use_case: UpdateWorkOrderUseCase = Depends(get_update_work_order_use_case),
 ) -> WorkOrderDocument:
     """Actualiza los detalles de una orden de trabajo existente."""
@@ -259,7 +259,9 @@ async def update_work_order(
 async def delete_work_order(
     empresa_id: str,
     ot_id: str,
-    current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "delete")),
+    current_user: UserResponse = Depends(
+        require_permission(PermissionModule.MAINTENANCE, "delete")
+    ),
     use_case: DeleteWorkOrderUseCase = Depends(get_delete_work_order_use_case),
 ) -> None:
     """Elimina una orden de trabajo por su ID."""
@@ -275,10 +277,8 @@ async def change_work_order_status(
     empresa_id: str,
     ot_id: str,
     request: ChangeStatusRequest,
-    current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
-    use_case: ChangeWorkOrderStatusUseCase = Depends(
-        get_change_work_order_status_use_case
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
+    use_case: ChangeWorkOrderStatusUseCase = Depends(get_change_work_order_status_use_case),
 ) -> WorkOrderDocument:
     """Cambia el estado de una orden de trabajo (iniciar, pausar, reanudar, cerrar, cancelar)."""
     dto = ChangeStatusDTO(estado=request.data.attributes.estado)
@@ -318,7 +318,7 @@ async def assign_technician(
     empresa_id: str,
     ot_id: str,
     request: AssignTechnicianRequest,
-    current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
     use_case: AssignTechnicianUseCase = Depends(get_assign_technician_use_case),
 ) -> None:
     """Asigna un técnico a una orden de trabajo."""
@@ -334,7 +334,7 @@ async def remove_technician(
     empresa_id: str,
     ot_id: str,
     tecnico_id: str,
-    current_user: Any = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
     use_case: RemoveTechnicianUseCase = Depends(get_remove_technician_use_case),
 ) -> None:
     """Remueve un técnico de una orden de trabajo."""
@@ -388,9 +388,7 @@ async def validate_work_order(
 async def get_work_order_status_history(
     empresa_id: str,
     ot_id: str,
-    current_user: Any = Depends(
-        require_permission(PermissionModule.MAINTENANCE, "view")
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
     use_case: GetWorkOrderStatusHistoryUseCase = Depends(
         get_get_work_order_status_history_use_case
     ),

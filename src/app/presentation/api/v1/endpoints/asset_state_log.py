@@ -1,6 +1,5 @@
 """Endpoints de consulta del historial de cambios de estado de activos (AssetStateLog)."""
 
-
 from fastapi import APIRouter, Depends, status
 
 from app.application.dtos.auth_dtos import UserResponse
@@ -26,9 +25,7 @@ router = APIRouter()
 async def list_asset_state_logs(
     empresa_id: str,
     activo_id: str,
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.ASSETS, "view")
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.ASSETS, "view")),
     use_case: ListAssetStateLogUseCase = Depends(get_list_asset_state_log_use_case),
 ) -> AssetStateLogListDocument:
     """Obtiene el historial de cambios de estado de un activo ordenado cronológicamente.

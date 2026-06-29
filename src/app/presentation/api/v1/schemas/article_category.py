@@ -100,4 +100,3 @@ class UpdateCategoryRequest(BaseModel):
     """Solicitud JSON:API para actualizar una categoría de artículo."""
 
     data: UpdateCategoryResource
-

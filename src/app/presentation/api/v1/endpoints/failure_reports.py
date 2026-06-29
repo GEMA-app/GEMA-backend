@@ -106,9 +106,7 @@ async def list_failure_reports(
     search: str | None = Query(
         None, min_length=2, max_length=100, description="Buscar por título o descripción"
     ),
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.MAINTENANCE, "view")
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
     use_case: ListFailureReportsUseCase = Depends(get_list_failure_reports_use_case),
 ) -> FailureReportListDocument:
     """Lista los reportes de falla de una empresa con paginación y filtros opcionales.
@@ -166,9 +164,7 @@ async def list_failure_reports(
 async def get_failure_report(
     empresa_id: str,
     reporte_id: str,
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.MAINTENANCE, "view")
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
     use_case: GetFailureReportUseCase = Depends(get_failure_report_use_case),
 ) -> FailureReportDocument:
     """Obtiene un reporte de falla por su ID dentro de una empresa.
@@ -214,9 +210,7 @@ async def update_failure_report(
     empresa_id: str,
     reporte_id: str,
     request: UpdateFailureReportRequest,
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.MAINTENANCE, "edit")
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
     use_case: UpdateFailureReportUseCase = Depends(get_update_failure_report_use_case),
 ) -> FailureReportDocument:
     """Actualiza parcialmente un reporte de falla existente.

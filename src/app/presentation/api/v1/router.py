@@ -25,23 +25,11 @@ from app.presentation.api.v1.endpoints.work_orders import router as work_orders_
 
 v1_router = APIRouter(prefix="/v1")
 
-v1_router.include_router(
-    auth_router,
-    prefix="/auth",
-    tags=["auth"]
-)
+v1_router.include_router(auth_router, prefix="/auth", tags=["auth"])
 
-v1_router.include_router(
-    companies_router,
-    prefix="/empresas",
-    tags=["empresas"]
-)
+v1_router.include_router(companies_router, prefix="/empresas", tags=["empresas"])
 
-v1_router.include_router(
-    roles_router,
-    prefix="/empresas/{empresa_id}/roles",
-    tags=["roles"]
-)
+v1_router.include_router(roles_router, prefix="/empresas/{empresa_id}/roles", tags=["roles"])
 
 v1_router.include_router(
     assets_router,
@@ -69,7 +57,8 @@ v1_router.include_router(
 
 v1_router.include_router(
     used_parts_router,
-    prefix="/empresas/{empresa_id}/ordenes-trabajo/{ot_id}/intervenciones/{intervencion_id}/repuestos-utilizados",
+    prefix="/empresas/{empresa_id}/ordenes-trabajo/{ot_id}"
+    "/intervenciones/{intervencion_id}/repuestos-utilizados",
     tags=["Repuestos Utilizados"],
 )
 
@@ -103,11 +92,7 @@ v1_router.include_router(
     tags=["ejecuciones-plan"],
 )
 
-v1_router.include_router(
-    subscription_plans_router,
-    prefix="/planes",
-    tags=["planes"]
-)
+v1_router.include_router(subscription_plans_router, prefix="/planes", tags=["planes"])
 
 v1_router.include_router(
     maintenance_plan_router,

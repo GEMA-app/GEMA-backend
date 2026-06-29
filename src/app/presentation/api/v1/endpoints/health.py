@@ -7,6 +7,8 @@ externas (base de datos, Redis) están operativas.
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from redis.asyncio import Redis
+from redis.exceptions import RedisError
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from app.composition.container import get_db_engine, get_redis_client
@@ -31,7 +33,7 @@ async def readiness(
             pass
         await redis_client.ping()
         return {"status": "ready"}
-    except Exception as e:
+    except (SQLAlchemyError, RedisError, ConnectionError, TimeoutError) as e:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=f"Service unavailable: {e}",

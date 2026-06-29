@@ -51,9 +51,7 @@ router = APIRouter()
 )
 async def list_users(
     empresa_id: str,
-    current_user: CurrentUserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "view")
-    ),
+    current_user: CurrentUserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
     use_case: ListUsersUseCase = Depends(get_list_users_use_case),
 ) -> UserListDocument:
     """Retorna todos los usuarios pertenecientes a la empresa especificada.
@@ -146,9 +144,7 @@ async def create_user(
 async def get_user(
     empresa_id: str,
     usuario_id: str,
-    current_user: CurrentUserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "view")
-    ),
+    current_user: CurrentUserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
     use_case: GetUserUseCase = Depends(get_user_use_case),
 ) -> UserDocument:
     """Obtiene los detalles de un usuario específico validando su contexto de empresa.
@@ -189,9 +185,7 @@ async def update_user(
     empresa_id: str,
     usuario_id: str,
     request: UpdateUserRequest,
-    current_user: CurrentUserResponse = Depends(
-        require_permission(PermissionModule.ADMIN, "edit")
-    ),
+    current_user: CurrentUserResponse = Depends(require_permission(PermissionModule.ADMIN, "edit")),
     use_case: UpdateUserUseCase = Depends(get_update_user_use_case),
 ) -> UserDocument:
     """Actualiza parcialmente los datos de un usuario perteneciente a la empresa.
