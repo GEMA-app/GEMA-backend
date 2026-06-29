@@ -47,6 +47,9 @@ from app.domain.exceptions import (
     UserInactiveError,
     ValidationException,
     WeakPasswordError,
+    InventoryPartNotFoundError,
+    StaleDataError,
+    ValidationException,
 )
 from app.infrastructure.notifications.email_sender import NotificationError, TemplateNotFoundError
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
@@ -220,6 +223,18 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     TemplateNotFoundError: (
         status.HTTP_502_BAD_GATEWAY,
         "ERR_TEMPLATE_NOT_FOUND",
+    ),
+    InventoryPartNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "El repuesto solicitado no existe en el inventario de la empresa.",
+    ),
+    StaleDataError: (
+        status.HTTP_409_CONFLICT,
+        "Conflicto de concurrencia: El repuesto fue modificado por otro usuario. Por favor, recarga los datos.",
+    ),
+    ValidationException: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "Los datos ingresados para el repuesto no cumplen con las reglas de validación del sistema.",
     ),
 }
 
