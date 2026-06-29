@@ -1,3 +1,5 @@
+"""Excepción de dominio para datos desactualizados (Optimistic Locking)."""
+
 from app.domain.exceptions.base import DomainException
 
 

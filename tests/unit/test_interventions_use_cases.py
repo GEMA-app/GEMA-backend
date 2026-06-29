@@ -17,6 +17,7 @@ from app.application.use_cases.intervention.list_interventions import ListInterv
 from app.application.use_cases.intervention.update_intervention import UpdateInterventionUseCase
 from app.domain.entities.intervention import TechnicalIntervention
 from app.domain.exceptions.intervention import (
+    InterventionInvalidDataError,
     InterventionNotFoundError,
 )
 from app.domain.value_objects.identifier import CompanyId, InterventionId, UserId, WorkOrderId
@@ -75,7 +76,7 @@ class TestCreateInterventionUseCase:
         empresa_id = str(uuid4())
         ot_id = str(uuid4())
 
-        with pytest.raises(ValueError, match="horas_hombre no puede ser negativo"):
+        with pytest.raises(InterventionInvalidDataError, match="horas_hombre no puede ser negativo"):
             request = CreateInterventionRequest(
                 technician_id=uuid4(),
                 tareas_realizadas="Reemplazo",
@@ -214,5 +215,5 @@ class TestUpdateInterventionUseCase:
         # horas_hombre=-1.0 es truthy, replace lo pasa a __post_init__ que levanta ValueError
         request = UpdateInterventionRequest(horas_hombre=-1.0)
 
-        with pytest.raises(ValueError, match="horas_hombre no puede ser negativo"):
+        with pytest.raises(InterventionInvalidDataError, match="horas_hombre no puede ser negativo"):
             await use_case.execute(str(company_id.value), str(ot_id.value), str(intervention_id.value), request)

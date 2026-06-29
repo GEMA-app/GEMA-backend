@@ -235,7 +235,8 @@ El sistema implementa un despacho síncrono de eventos de dominio recolectados p
 
 ### Idioma
 
-- **Código fuente**: identificadores en inglés (`User`, `register`, `get_by_email`)
+- **Código fuente (Estructura)**: nombres de clases, métodos, funciones, interfaces/puertos y archivos en inglés (ej. `User`, `register`, `get_by_email`).
+- **Atributos de Negocio**: los campos de entidades de dominio, modelos ORM de base de datos y DTOs/Schemas se mantienen en **español** (ej. `nombre`, `telefono`, `activo`, `empresa_id`, `tareas_realizadas`) para garantizar consistencia directa con el esquema físico de PostgreSQL y la API JSON:API.
 - **Rutas de la API REST**: en español (ej: `/v1/auth/registrar`, `/v1/empresas/{empresa_id}/activos`)
 - **Docstrings y comentarios**: en español
 - **Mensajes de error de dominio**: en español

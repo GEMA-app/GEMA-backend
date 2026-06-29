@@ -81,8 +81,8 @@ class MaintenancePlan:
             MaintenancePlanIntervalError: Si el intervalo es menor o igual a cero.
             MaintenancePlanDueDateError: Si la fecha de próxima ejecución es None.
         """
-        # ponytail: uuid.uuid4() asume colisión despreciable en single-node.
-        # Swap a snowflake si el sistema escala horizontalmente.
+        # uuid4 asume colisión despreciable en single-node.
+        # Cambiar a snowflake si el sistema escala horizontalmente.
         plan = cls(
             id=MaintenancePlanId(uuid.uuid4()),
             empresa_id=empresa_id,
@@ -110,6 +110,6 @@ class MaintenancePlan:
         Args:
             new_date (date): Nueva fecha de próxima ejecución.
         """
-        # ponytail: no valida que new_date >= today.
-        # add cuando el negocio lo exija.
+        # no valida que new_date >= hoy.
+        # agregar cuando el negocio lo exija.
         self.proxima_ejecucion = new_date

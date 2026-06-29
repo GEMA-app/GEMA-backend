@@ -1,3 +1,4 @@
+"""Entidad de dominio para Planes de Suscripción."""
 
 import uuid
 from dataclasses import dataclass, field

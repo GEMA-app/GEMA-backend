@@ -1,3 +1,5 @@
+"""Excepciones de dominio para el módulo de Categorías de Artículos."""
+
 from app.domain.exceptions.base import DomainException
 
 

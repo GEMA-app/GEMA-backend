@@ -1,3 +1,5 @@
+"""Excepciones de dominio para el módulo de Planes de Suscripción."""
+
 from app.domain.exceptions.base import DomainException
 
 

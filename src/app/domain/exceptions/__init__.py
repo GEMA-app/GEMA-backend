@@ -110,6 +110,8 @@ from app.domain.exceptions.subscription_plan import (
 from app.domain.exceptions.system_audit import (
     SystemAuditException,
     SystemAuditNotFoundError,
+    EmptyActionError,
+    NullCompanyError,
 )
 from app.domain.exceptions.used_part import (
     InsufficientStockError,
@@ -187,7 +189,6 @@ __all__ = [
     "LastAdminRevocationError",
     "StaleDataError",
     "EventPublishError",
-    "DomainException",
     "ValidationError",
     "ArticleCategoryException",
     "ArticleCategoryNameExistsError",
@@ -220,6 +221,8 @@ __all__ = [
     "SubscriptionPlanHasActiveSubscriptionsError",
     "SystemAuditException",
     "SystemAuditNotFoundError",
+    "EmptyActionError",
+    "NullCompanyError",
     "UserException",
     "UserNotFoundError",
     # Excepciones de intervención

@@ -1,3 +1,5 @@
+"""Excepciones de dominio para el módulo de Usuarios."""
+
 from app.domain.exceptions.base import DomainException
 
 

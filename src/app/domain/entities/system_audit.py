@@ -1,9 +1,15 @@
+"""Entidad de dominio para Registros de Auditoría del Sistema."""
+
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
-from app.domain.exceptions.system_audit import SystemAuditException
+from app.domain.exceptions.system_audit import (
+    EmptyActionError,
+    NullCompanyError,
+    SystemAuditException,
+)
 from app.domain.value_objects import CompanyId, UserId
 
 
@@ -58,10 +64,11 @@ class SystemAudit:
         """Valida invariantes de negocio tras la inicialización.
 
         Raises:
-            SystemAuditException: Si la acción está vacía o el empresa_id es nulo.
+            EmptyActionError: Si la acción está vacía.
+            NullCompanyError: Si el empresa_id es nulo.
         """
         if not self.accion or self.accion.strip() == "":
-            raise SystemAuditException("La acción de la auditoría no puede estar vacía.")
+            raise EmptyActionError()
 
         if self.empresa_id is None:
-            raise SystemAuditException("La auditoría debe estar vinculada a una empresa válida.")
+            raise NullCompanyError()

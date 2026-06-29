@@ -1,8 +1,9 @@
-﻿"""Entidad de dominio para Intervención Técnica."""
+"""Entidad de dominio para Intervención Técnica."""
 
 from dataclasses import dataclass
 from datetime import datetime
 
+from app.domain.exceptions.intervention import InterventionInvalidDataError
 from app.domain.value_objects.identifier import (
     CompanyId,
     InterventionId,
@@ -28,12 +29,12 @@ class TechnicalIntervention:
         """Valida las invariantes de la entidad.
 
         Raises:
-            ValueError: Si horas_hombre es negativo o fecha_fin es anterior a fecha_inicio.
+            InterventionInvalidDataError: Si horas_hombre es negativo o fecha_fin es anterior a fecha_inicio.
         """
         if self.horas_hombre < 0:
-            raise ValueError("horas_hombre no puede ser negativo")
+            raise InterventionInvalidDataError("horas_hombre no puede ser negativo")
         if self.fecha_fin is not None and self.fecha_fin < self.fecha_inicio:
-            raise ValueError("fecha_fin debe ser posterior a fecha_inicio")
+            raise InterventionInvalidDataError("fecha_fin debe ser posterior a fecha_inicio")
 
     @classmethod
     def create(
@@ -59,7 +60,7 @@ class TechnicalIntervention:
             Una nueva instancia de TechnicalIntervention.
         """
         return cls(
-            id=InterventionId.generar(),
+            id=InterventionId.generate(),
             empresa_id=empresa_id,
             work_order_id=work_order_id,
             technician_id=technician_id,

@@ -1,3 +1,5 @@
+"""Entidad de dominio para Órdenes de Trabajo."""
+
 from dataclasses import dataclass
 from datetime import datetime
 

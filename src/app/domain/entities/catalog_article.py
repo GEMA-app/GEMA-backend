@@ -1,39 +1,20 @@
-"""Entidades de dominio para el catálogo: ArticleCategory y CatalogArticle."""
+"""Entidades de dominio para el catálogo: CatalogArticle."""
 
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
 
+from app.domain.exceptions import EmptyCatalogArticleNameError
+
 # ---------------------------------------------------------------------------
 # Constantes de validación
 # ---------------------------------------------------------------------------
-MAX_CATEGORY_NAME_LENGTH: int = 100
-MAX_ARTICLE_NAME_LENGTH: int = 255
-MAX_DESCRIPTION_LENGTH: int = 2000
-MAX_MANUFACTURER_LENGTH: int = 100
-MAX_MODEL_LENGTH: int = 100
-MAX_UNIT_OF_MEASURE_LENGTH: int = 50
-
-
-@dataclass
-class ArticleCategory:
-    """Entidad de dominio para una categoría de artículos del catálogo.
-
-    Attributes:
-        id: Identificador único de la categoría.
-        empresa_id: Identificador de la empresa (tenant) a la que pertenece.
-        nombre: Nombre de la categoría.
-        description: Descripción opcional de la categoría.
-        created_at: Fecha y hora de creación.
-        updated_at: Fecha y hora de la última actualización.
-    """
-
-    id: uuid.UUID
-    empresa_id: uuid.UUID
-    nombre: str
-    description: str | None = None
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
+_MAX_CATEGORY_NAME_LENGTH: int = 100
+_MAX_ARTICLE_NAME_LENGTH: int = 255
+_MAX_DESCRIPTION_LENGTH: int = 2000
+_MAX_MANUFACTURER_LENGTH: int = 100
+_MAX_MODEL_LENGTH: int = 100
+_MAX_UNIT_OF_MEASURE_LENGTH: int = 50
 
 
 @dataclass
@@ -96,8 +77,6 @@ class CatalogArticle:
         Raises:
             EmptyCatalogArticleNameError: Si el nombre está vacío o solo contiene espacios.
         """
-        from app.domain.exceptions import EmptyCatalogArticleNameError
-
         stripped = name.strip()
         if not stripped:
             raise EmptyCatalogArticleNameError()
@@ -122,8 +101,6 @@ class CatalogArticle:
         Raises:
             EmptyCatalogArticleNameError: Si el nuevo nombre está vacío.
         """
-        from app.domain.exceptions import EmptyCatalogArticleNameError
-
         stripped = new_name.strip()
         if not stripped:
             raise EmptyCatalogArticleNameError()

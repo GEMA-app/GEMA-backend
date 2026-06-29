@@ -66,13 +66,17 @@ from app.domain.exceptions import (
     SubscriptionPlanLimitExceededError,
     SubscriptionPlanNotFoundError,
     SubscriptionPlanPaymentFailedError,
+    SystemAuditException,
     SystemAuditNotFoundError,
+    EmptyActionError,
+    NullCompanyError,
     UsedPartInvalidPriceError,
     UsedPartInvalidQuantityError,
     UsedPartNotFoundError,
     UserAlreadyExistsError,
     UserInactiveError,
     UserNotFoundError,
+    ValidationError,
     ValidationException,
     WeakPasswordError,
     WorkOrderCodeExistsError,
@@ -380,6 +384,22 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     SystemAuditNotFoundError: (
         status.HTTP_404_NOT_FOUND,
         "ERR_SYSTEM_AUDIT_NOT_FOUND",
+    ),
+    SystemAuditException: (
+        status.HTTP_400_BAD_REQUEST,
+        "ERR_SYSTEM_AUDIT_ERROR",
+    ),
+    EmptyActionError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_ACTION",
+    ),
+    NullCompanyError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_NULL_COMPANY",
+    ),
+    ValidationError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_VALIDATION_ERROR",
     ),
 }
 

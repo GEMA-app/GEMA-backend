@@ -350,7 +350,7 @@ class InterventionId:
             raise InvalidUUIDError(f"El identificador '{value}' no es un UUID válido.") from e
 
     @classmethod
-    def generar(cls) -> "InterventionId":
+    def generate(cls) -> "InterventionId":
         """Genera un nuevo identificador aleatorio."""
         return cls(value=uuid.uuid4())
 
@@ -358,7 +358,7 @@ class InterventionId:
     def from_string_or_generate(cls, value: str | None = None) -> "InterventionId":
         """Crea un InterventionId a partir de un string, o genera uno nuevo si es None."""
         if value is None:
-            return cls.generar()
+            return cls.generate()
         return cls.from_string(value)
 
 @dataclass(frozen=True)
