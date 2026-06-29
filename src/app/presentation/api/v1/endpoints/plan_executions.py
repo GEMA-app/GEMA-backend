@@ -49,7 +49,9 @@ router = APIRouter()
 async def list_plan_executions(
     empresa_id: str,
     plan_id: str,
-    current_user: UserResponse = Depends(require_tenant_read),
+    current_user: UserResponse = Depends(
+        require_permission(PermissionModule.MAINTENANCE, "view")
+    ),
     use_case: ListPlanExecutionUseCase = Depends(list_plan_execution_use_case),
 ) -> PlanExecutionListDocument:
     """Lista todas las ejecuciones de un plan de mantenimiento.
@@ -105,7 +107,9 @@ async def create_plan_execution(
 async def get_plan_execution(
     empresa_id: str,
     ejecucion_id: str,
-    current_user: UserResponse = Depends(require_tenant_read),
+    current_user: UserResponse = Depends(
+        require_permission(PermissionModule.MAINTENANCE, "view")
+    ),
     use_case: GetPlanExecutionUseCase = Depends(get_plan_execution_use_case),
 ) -> PlanExecutionDocument:
     """Obtiene una ejecución de plan por su ID.

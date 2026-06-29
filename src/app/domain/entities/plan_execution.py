@@ -21,8 +21,8 @@ class PlanExecution:
     id: PlanExecutionId
     empresa_id: CompanyId
     plan_id: uuid.UUID
+    work_order_id: uuid.UUID
     execution_date: datetime
-    work_order_id: uuid.UUID | None = None
     observations: str | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
@@ -32,7 +32,7 @@ class PlanExecution:
         cls,
         empresa_id: CompanyId,
         plan_id: uuid.UUID,
-        work_order_id: uuid.UUID | None = None,
+        work_order_id: uuid.UUID,
         execution_date: datetime | None = None,
         observations: str | None = None,
     ) -> "PlanExecution":

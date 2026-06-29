@@ -31,8 +31,8 @@ class SqlAlchemyPlanExecutionRepository(
             empresa_id=UUID(str(entity.empresa_id)),
             plan_id=entity.plan_id,
             work_order_id=UUID(str(entity.work_order_id)) if entity.work_order_id else None,
-            fecha_ejecucion=entity.execution_date,
-            observaciones=entity.observations,
+            execution_date=entity.execution_date,
+            observations=entity.observations,
         )
 
 

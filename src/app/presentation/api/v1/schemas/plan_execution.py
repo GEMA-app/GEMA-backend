@@ -13,7 +13,7 @@ class PlanExecutionAttributes(BaseModel):
 
     empresa_id: str
     plan_id: str
-    work_order_id: str | None = None
+    work_order_id: str
     execution_date: datetime
     observations: str | None = None
     created_at: datetime | None = None
@@ -50,7 +50,7 @@ class CreatePlanExecutionAttributes(BaseModel):
     """Atributos para crear una ejecución de plan."""
 
     plan_id: str
-    work_order_id: str | None = None
+    work_order_id: str
     execution_date: datetime | None = None
     observations: str | None = None
 
