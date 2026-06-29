@@ -1,4 +1,4 @@
-"""Excepción base DomainException para toda la jerarquía de errores del dominio."""
+"""Excepción base y ValidationError para la jerarquía de errores del dominio."""
 
 
 class DomainException(Exception):
@@ -9,4 +9,5 @@ class DomainException(Exception):
 
 class ValidationError(DomainException):
     """Lanzada cuando una validación de invariante de negocio falla."""
+
     pass

@@ -64,17 +64,17 @@ class MaintenancePlan:
         """Crea un nuevo plan de mantenimiento.
 
         Args:
-            empresa_id (CompanyId): Empresa propietaria del plan.
-            activo_id (AssetId): Activo asociado al plan.
-            nombre (str): Nombre descriptivo del plan.
-            tipo (MaintenanceType): Tipo de mantenimiento (preventivo, predictivo, etc.).
-            intervalo_dias (int): Días entre ejecuciones.
-            proxima_ejecucion (date): Fecha de la próxima ejecución programada.
-            tecnico_responsable_id (UserId | None): Técnico responsable (opcional).
-            descripcion_tareas (str | None): Descripción de las tareas a realizar (opcional).
+            empresa_id: Empresa propietaria del plan.
+            activo_id: Activo asociado al plan.
+            nombre: Nombre descriptivo del plan.
+            tipo: Tipo de mantenimiento (preventivo, predictivo, etc.).
+            intervalo_dias: Días entre ejecuciones.
+            proxima_ejecucion: Fecha de la próxima ejecución programada.
+            tecnico_responsable_id: Técnico responsable (opcional).
+            descripcion_tareas: Descripción de las tareas a realizar (opcional).
 
         Returns:
-            MaintenancePlan: Un nuevo MaintenancePlan con id autogenerado.
+            Un nuevo MaintenancePlan con id autogenerado.
 
         Raises:
             MaintenancePlanNameEmptyError: Si el nombre está vacío.
@@ -108,7 +108,7 @@ class MaintenancePlan:
         """Reprograma la próxima ejecución del plan.
 
         Args:
-            new_date (date): Nueva fecha de próxima ejecución.
+            new_date: Nueva fecha de próxima ejecución.
         """
         # no valida que new_date >= hoy.
         # agregar cuando el negocio lo exija.

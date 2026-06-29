@@ -356,7 +356,14 @@ class InterventionId:
 
     @classmethod
     def from_string_or_generate(cls, value: str | None = None) -> "InterventionId":
-        """Crea un InterventionId a partir de un string, o genera uno nuevo si es None."""
+        """Crea un InterventionId a partir de un string, o genera uno nuevo si es None.
+
+        Args:
+            value: String UUID opcional.
+
+        Returns:
+            InterventionId: Nueva instancia.
+        """
         if value is None:
             return cls.generate()
         return cls.from_string(value)

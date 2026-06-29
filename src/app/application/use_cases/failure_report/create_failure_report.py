@@ -30,10 +30,10 @@ class CreateFailureReportUseCase:
             DTO de respuesta con los datos completos del reporte creado.
 
         Raises:
-            EmptyTitleError: Si el título está vacío.
-            EmptyDescriptionError: Si la descripción está vacía.
-            EmptyLocationError: Si la ubicación está vacía.
-            EmptyReportedByError: Si el reportante está vacío.
+            EmptyTitleError: Si el titulo esta vacio.
+            EmptyDescriptionError: Si la descripcion esta vacia.
+            EmptyLocationError: Si la ubicacion esta vacia.
+            EmptyReportedByError: Si el reportante esta vacio.
         """
         company_id = CompanyId.from_string(company_id_str)
         priority = PriorityLevel(request.priority.lower())

@@ -190,7 +190,7 @@ class TestGetArticleCategoryByIdUseCase:
 
         assert res.id == category_id
         assert res.name == "Electrónica"
-        assert mock_uow.commit.called
+        assert not mock_uow.commit.called
 
     async def test_get_category_by_id_not_found_raises_error(self, mock_uow: Any) -> None:
         mock_uow.article_categories.get_by_id.return_value = None

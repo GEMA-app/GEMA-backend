@@ -1,4 +1,4 @@
-"""Caso de uso para listar reportes de falla con paginación y filtros."""
+"""Caso de uso para listar reportes de falla con paginacion y filtros."""
 
 
 from app.application.dtos.failure_report_dtos import FailureReportResponse
@@ -7,7 +7,7 @@ from app.domain.value_objects import CompanyId
 
 
 class ListFailureReportsUseCase:
-    """Caso de uso para listar reportes de falla con paginación y filtros."""
+    """Caso de uso para listar reportes de falla con paginacion y filtros."""
 
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
@@ -19,14 +19,14 @@ class ListFailureReportsUseCase:
         limit: int,
         filters: dict[str, str] | None = None,
     ) -> tuple[list[FailureReportResponse], int]:
-        """Lista reportes de falla con paginación y filtros opcionales.
+        """Lista reportes de falla con paginacion y filtros opcionales.
 
         Incluye el ID de la orden de trabajo generada si existe para cada reporte.
 
         Args:
             company_id_str: Identificador UUID de la empresa.
-            offset: Número de registros a omitir.
-            limit: Máximo de registros a retornar.
+            offset: Numero de registros a omitir.
+            limit: Maximo de registros a retornar.
             filters: Diccionario opcional con filtros (status, priority, search).
 
         Returns:

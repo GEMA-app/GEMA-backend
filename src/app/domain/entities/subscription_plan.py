@@ -34,7 +34,21 @@ class SubscriptionPlan(EventProducer):
     max_usuarios: int | None,
     precio_mensual_usd: Decimal,
   ) -> "SubscriptionPlan":
-    """Crea un nuevo plan de suscripción validando sus invariantes."""
+    """Crea un nuevo plan de suscripción validando sus invariantes.
+
+    Args:
+        nombre: Nombre del plan.
+        descripcion: Descripción opcional del plan.
+        max_activos: Límite máximo de activos o None si es ilimitado.
+        max_usuarios: Límite máximo de usuarios o None si es ilimitado.
+        precio_mensual_usd: Precio mensual en USD.
+
+    Returns:
+        SubscriptionPlan: Nueva instancia del plan creado.
+
+    Raises:
+        SubscriptionPlanInvalidDataError: Si los datos del plan son inválidos.
+    """
     plan_id = SubscriptionPlanId(value=uuid.uuid4())
     return cls(
         id=plan_id,
@@ -50,7 +64,12 @@ class SubscriptionPlan(EventProducer):
     self._validate()
 
   def _validate(self) -> None:
-    """Aplica las reglas de negocio del plan."""
+    """Aplica las reglas de negocio del plan.
+
+    Raises:
+        SubscriptionPlanInvalidDataError: Si el nombre está vacío, el precio es negativo
+            o los límites son negativos.
+    """
     if not self.nombre or not self.nombre.strip():
         raise SubscriptionPlanInvalidDataError("El nombre del plan no puede estar vacío.")
     if self.precio_mensual_usd < 0:
@@ -78,20 +97,43 @@ class SubscriptionPlan(EventProducer):
     self.is_active = False
 
   def update_details(self, nombre: str, descripcion: str | None) -> None:
-    """Actualiza el nombre y la descripción del plan."""
+    """Actualiza el nombre y la descripción del plan.
+
+    Args:
+        nombre: Nuevo nombre del plan.
+        descripcion: Nueva descripción del plan.
+
+    Raises:
+        SubscriptionPlanInvalidDataError: Si el nombre está vacío.
+    """
     if not nombre or not nombre.strip():
         raise SubscriptionPlanInvalidDataError("El nombre del plan no puede estar vacío.")
     self.nombre = nombre.strip()
     self.descripcion = descripcion.strip() if descripcion else None
 
   def update_pricing(self, precio_mensual_usd: Decimal) -> None:
-    """Actualiza el precio mensual del plan."""
+    """Actualiza el precio mensual del plan.
+
+    Args:
+        precio_mensual_usd: Nuevo precio mensual en USD.
+
+    Raises:
+        SubscriptionPlanInvalidDataError: Si el precio es negativo.
+    """
     if precio_mensual_usd < 0:
         raise SubscriptionPlanInvalidDataError("El precio mensual no puede ser negativo.")
     self.precio_mensual_usd = precio_mensual_usd
 
   def update_limits(self, max_activos: int | None, max_usuarios: int | None) -> None:
-    """Actualiza los límites de usuarios y activos del plan."""
+    """Actualiza los límites de usuarios y activos del plan.
+
+    Args:
+        max_activos: Nuevo límite máximo de activos o None si es ilimitado.
+        max_usuarios: Nuevo límite máximo de usuarios o None si es ilimitado.
+
+    Raises:
+        SubscriptionPlanInvalidDataError: Si algún límite es negativo.
+    """
     if max_activos is not None and max_activos < 0:
         raise SubscriptionPlanInvalidDataError(
             "El número máximo de activos no puede ser negativo."
@@ -104,7 +146,18 @@ class SubscriptionPlan(EventProducer):
     self.max_usuarios = max_usuarios
 
   def can_support(self, num_users: int, num_assets: int) -> bool:
-    """Determina si el plan soporta la cantidad de usuarios y activos solicitados."""
+    """Determina si el plan soporta la cantidad de usuarios y activos solicitados.
+
+    Args:
+        num_users: Número de usuarios a verificar.
+        num_assets: Número de activos a verificar.
+
+    Returns:
+        bool: True si el plan soporta la capacidad solicitada, False en caso contrario.
+
+    Raises:
+        SubscriptionPlanInvalidDataError: Si los valores de capacidad son negativos.
+    """
     if num_users < 0 or num_assets < 0:
         raise SubscriptionPlanInvalidDataError("Los valores de capacidad no pueden ser negativos.")
 
@@ -120,19 +173,37 @@ class SubscriptionPlan(EventProducer):
     return True
 
   def can_add_user(self, current_users: int) -> bool:
-    """Indica si el plan permite agregar un usuario adicional dado el uso actual."""
+    """Indica si el plan permite agregar un usuario adicional dado el uso actual.
+
+    Args:
+        current_users: Cantidad actual de usuarios registrados.
+
+    Returns:
+        bool: True si el plan permite agregar un usuario más, False en caso contrario.
+
+    Raises:
+        SubscriptionPlanInvalidDataError: Si current_users es negativo.
+    """
     if current_users < 0:
       raise SubscriptionPlanInvalidDataError("El uso actual no puede ser negativo.")
 
-    # Preguntamos si el plan soporta el total que tendríamos al sumar 1
     return self.can_support(num_users=current_users + 1, num_assets=0)
 
   def can_add_asset(self, current_assets: int) -> bool:
-    """Indica si el plan permite agregar un activo adicional dado el uso actual."""
+    """Indica si el plan permite agregar un activo adicional dado el uso actual.
+
+    Args:
+        current_assets: Cantidad actual de activos registrados.
+
+    Returns:
+        bool: True si el plan permite agregar un activo más, False en caso contrario.
+
+    Raises:
+        SubscriptionPlanInvalidDataError: Si current_assets es negativo.
+    """
     if current_assets < 0:
       raise SubscriptionPlanInvalidDataError("El uso actual no puede ser negativo.")
 
-    # Preguntamos si el plan soporta el total que tendríamos al sumar 1
     return self.can_support(num_users=0, num_assets=current_assets + 1)
 
   def pull_events(self) -> list[DomainEvent]:

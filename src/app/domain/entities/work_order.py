@@ -110,6 +110,15 @@ class WorkOrder:
         )
 
     def _transition(self, new_status: WorkOrderStatus) -> None:
+        """Transiciona la orden de trabajo a un nuevo estado.
+
+        Args:
+            new_status: Nuevo estado al que transicionar.
+
+        Raises:
+            WorkOrderInvalidStateError: Si la transición no está permitida
+                según la máquina de estados definida en _VALID_TRANSITIONS.
+        """
         allowed = _VALID_TRANSITIONS.get(self.estado, set())
         if new_status not in allowed:
             raise WorkOrderInvalidStateError(
@@ -147,7 +156,15 @@ class WorkOrder:
 
     @staticmethod
     def generate_code(company_id: CompanyId) -> str:
-        """Genera un código de orden de trabajo con formato OT-año-XXXX."""
+        """Genera un código de orden de trabajo con formato OT-año-XXXX.
+
+        Args:
+            company_id: Identificador de la empresa, usado para derivar
+                un código único por tenant.
+
+        Returns:
+            str: Código de orden de trabajo en formato OT-año-XXXX.
+        """
         year = datetime.now().year
         return f"OT-{year}-{hash(company_id.value) % 10000:04d}"
 
@@ -189,6 +206,9 @@ class WorkOrder:
         """Valida la orden de trabajo.
 
         Solo se pueden validar órdenes de trabajo cerradas (CLOSED).
+
+        Raises:
+            WorkOrderInvalidStateError: Si la orden no está en estado CLOSED.
         """
         if self.estado != WorkOrderStatus.CLOSED:
             raise WorkOrderInvalidStateError("Solo se pueden validar órdenes de trabajo cerradas.")

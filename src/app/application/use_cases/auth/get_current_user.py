@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 from app.application.dtos import GetCurrentUserRequest, UserResponse
 from app.application.ports.auth import TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
@@ -33,8 +35,6 @@ class GetCurrentUserUseCase:
             company = await self.uow.companies.get_by_id(user.empresa_id)
             if company and company.estado != CompanyStatus.ACTIVE:
                 raise UserInactiveError("La empresa se encuentra suspendida o cancelada.")
-
-            from datetime import UTC, datetime
 
             created_at = user.created_at or datetime.now(UTC)
             updated_at = user.updated_at or datetime.now(UTC)

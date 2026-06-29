@@ -47,7 +47,7 @@ class UpdateFailureReportUseCase:
 
             if request.version is not None and request.version != report.version:
                 raise StaleDataError(
-                    f"Conflicto de versión para reporte de falla: se esperaba {request.version}, "
+                    f"Conflicto de version para reporte de falla: se esperaba {request.version}, "
                     f"la actual es {report.version}."
                 )
 
@@ -71,9 +71,8 @@ class UpdateFailureReportUseCase:
             await self.uow.failure_reports.save(report)
             await self.uow.commit()
 
-            # Sincronizar versión: SQLAlchemy incrementa version_id_col en el commit,
-            # pero la entidad en memoria no se actualiza automáticamente.
-            # El incremento es exactamente 1 por cada UPDATE (invariante de SQLAlchemy).
+            # Sincronizar version: SQLAlchemy incrementa version_id_col en el commit,
+            # pero la entidad en memoria no se actualiza automaticamente.
             report.version += 1
 
             return FailureReportResponse(

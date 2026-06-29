@@ -39,9 +39,13 @@ from app.application.use_cases.company import (
     ListCompaniesUseCase,
     UpdateCompanyUseCase,
 )
-from app.application.use_cases.create_failure_report import CreateFailureReportUseCase
-from app.application.use_cases.delete_failure_report import DeleteFailureReportUseCase
-from app.application.use_cases.get_failure_report import GetFailureReportUseCase
+from app.application.use_cases.failure_report import (
+    CreateFailureReportUseCase,
+    DeleteFailureReportUseCase,
+    GetFailureReportUseCase,
+    ListFailureReportsUseCase,
+    UpdateFailureReportUseCase,
+)
 from app.application.use_cases.intervention import (
     CreateInterventionUseCase,
     DeleteInterventionUseCase,
@@ -49,7 +53,6 @@ from app.application.use_cases.intervention import (
     ListInterventionsUseCase,
     UpdateInterventionUseCase,
 )
-from app.application.use_cases.list_failure_report import ListFailureReportsUseCase
 from app.application.use_cases.location import (
     CreateLocationUseCase,
     DeleteLocationUseCase,
@@ -94,7 +97,6 @@ from app.application.use_cases.system_audit import (
     GetSystemAuditUseCase,
     ListSystemAuditsUseCase,
 )
-from app.application.use_cases.update_failure_report import UpdateFailureReportUseCase
 from app.application.use_cases.used_part import (
     CreateUsedPartUseCase,
     DeleteUsedPartUseCase,

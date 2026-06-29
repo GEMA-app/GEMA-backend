@@ -51,7 +51,7 @@ class PlanExecution:
         Raises:
             PlanExecutionObservationsEmptyError: Si observations son solo espacios.
         """
-        # ponytail: uuid4 asume colisión despreciable en single-node.
+        # uuid4 asume colisión despreciable en single-node.
         if observations is not None and not observations.strip():
             raise PlanExecutionObservationsEmptyError()
 
