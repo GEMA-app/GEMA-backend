@@ -16,14 +16,14 @@ class UpdateInterventionUseCase:
         self._uow = uow
 
     async def execute(
-        self, ot_id: str, intervention_id: str, empresa_id: str, request: UpdateInterventionRequest
+        self, empresa_id: str, ot_id: str, intervention_id: str, request: UpdateInterventionRequest
     ) -> InterventionResponse:
         """Ejecuta el caso de uso para actualizar una intervención técnica.
 
         Args:
+            empresa_id: Identificador UUID de la empresa.
             ot_id: Identificador UUID de la orden de trabajo (desde el path).
             intervention_id: Identificador UUID de la intervención.
-            empresa_id: Identificador UUID de la empresa.
             request: DTO con los campos a actualizar.
 
         Returns:
@@ -64,4 +64,5 @@ class UpdateInterventionUseCase:
                 fecha_inicio=updated_intervention.fecha_inicio,
                 fecha_fin=updated_intervention.fecha_fin,
                 horas_hombre=updated_intervention.horas_hombre,
+                used_parts=[],
             )

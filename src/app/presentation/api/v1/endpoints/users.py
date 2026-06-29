@@ -77,6 +77,7 @@ async def list_users(
                     telefono=u.telefono,
                     activo=u.activo,
                     empresa_id=u.empresa_id,
+                    roles=u.roles,
                     created_at=u.created_at,
                     updated_at=u.updated_at,
                 ),
@@ -129,6 +130,7 @@ async def create_user(
                 telefono=res.telefono,
                 activo=res.activo,
                 empresa_id=res.empresa_id,
+                roles=res.roles,
                 created_at=res.created_at,
                 updated_at=res.updated_at,
             ),
@@ -160,7 +162,7 @@ async def get_user(
     Returns:
         Documento JSON:API con los datos del usuario encontrado.
     """
-    res = await use_case.execute(usuario_id)
+    res = await use_case.execute(usuario_id, empresa_id)
     return UserDocument(
         data=UserResource(
             id=res.id,
@@ -170,6 +172,7 @@ async def get_user(
                 telefono=res.telefono,
                 activo=res.activo,
                 empresa_id=res.empresa_id,
+                roles=res.roles,
                 created_at=res.created_at,
                 updated_at=res.updated_at,
             ),
@@ -212,7 +215,7 @@ async def update_user(
         telefono=sent.get("telefono"),
         activo=sent.get("activo"),
     )
-    res = await use_case.execute(usuario_id, dto)
+    res = await use_case.execute(usuario_id, empresa_id, dto)
     return UserDocument(
         data=UserResource(
             id=res.id,
@@ -222,6 +225,7 @@ async def update_user(
                 telefono=res.telefono,
                 activo=res.activo,
                 empresa_id=res.empresa_id,
+                roles=res.roles,
                 created_at=res.created_at,
                 updated_at=res.updated_at,
             ),
@@ -250,4 +254,4 @@ async def delete_user(
         current_user: Usuario autenticado (validado por require_permission).
         use_case: Caso de uso de baja lógica inyectado.
     """
-    await use_case.execute(usuario_id)
+    await use_case.execute(usuario_id, empresa_id)

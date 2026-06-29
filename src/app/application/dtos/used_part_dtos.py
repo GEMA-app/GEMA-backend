@@ -16,8 +16,8 @@ class UsedPartResponse:
     cantidad_usada: int
     precio_unitario: Decimal | None
     moneda: str
-    created_at: datetime
-    updated_at: datetime
+    created_at: datetime | None
+    updated_at: datetime | None
     precio_total: Decimal | None = None
 
 

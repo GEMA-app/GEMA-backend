@@ -36,6 +36,7 @@ class WorkOrderResponse:
     moneda: str = "USD"
     validado_por_id: str | None = None
     fecha_validacion: datetime | None = None
+    version: int = 1
 
     @classmethod
     def from_entity(cls, wo: WorkOrder) -> "WorkOrderResponse":
@@ -65,6 +66,7 @@ class WorkOrderResponse:
             moneda=wo.moneda,
             validado_por_id=str(wo.validado_por_id) if wo.validado_por_id else None,
             fecha_validacion=wo.fecha_validacion,
+            version=wo.version,
         )
 
 

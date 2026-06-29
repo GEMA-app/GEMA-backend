@@ -1,8 +1,10 @@
 ﻿"""DTOs para el módulo de intervenciones técnicas."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID
+
+from app.application.dtos.used_part_dtos import UsedPartResponse
 
 
 @dataclass(frozen=True)
@@ -17,6 +19,7 @@ class InterventionResponse:
         fecha_inicio: Fecha y hora de inicio de la intervención.
         fecha_fin: Fecha y hora de finalización, o None si aún no ha terminado.
         horas_hombre: Total de horas hombre dedicadas a la intervención.
+        used_parts: Repuestos consumidos en la intervención.
     """
 
     id: UUID
@@ -27,6 +30,7 @@ class InterventionResponse:
     fecha_inicio: datetime
     fecha_fin: datetime | None
     horas_hombre: float
+    used_parts: list[UsedPartResponse] = field(default_factory=list)
 
 
 @dataclass(frozen=True)

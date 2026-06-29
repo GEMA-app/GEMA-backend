@@ -55,6 +55,7 @@ class WorkOrder:
     fecha_validacion: datetime | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
+    version: int = 1
 
     @classmethod
     def create(

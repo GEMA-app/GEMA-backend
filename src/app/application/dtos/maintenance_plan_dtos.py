@@ -5,6 +5,16 @@ from datetime import date, datetime
 
 
 @dataclass(frozen=True)
+class PlanExecutionSummary:
+    """DTO resumido de una ejecución de plan para incluir en el detalle del plan."""
+
+    id: str
+    work_order_id: str
+    execution_date: datetime
+    observations: str | None = None
+
+
+@dataclass(frozen=True)
 class MaintenancePlanResponse:
     """DTO de salida con los datos de un plan de mantenimiento."""
 
@@ -21,6 +31,7 @@ class MaintenancePlanResponse:
     created_at: datetime | None = None
     updated_at: datetime | None = None
     es_urgente: bool = False
+    ejecuciones: list[PlanExecutionSummary] = field(default_factory=list)
 
 
 @dataclass

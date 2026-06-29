@@ -1,4 +1,4 @@
-﻿"""Repositorio concreto para intervenciones tÃ©cnicas."""
+"""Repositorio concreto para intervenciones técnicas."""
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,7 +17,7 @@ class SqlAlchemyInterventionRepository(
     SqlAlchemyTenantRepository[InterventionModel, TechnicalIntervention, InterventionId],
     InterventionRepositoryPort,
 ):
-    """ImplementaciÃ³n SQLAlchemy del repositorio de intervenciones."""
+    """Implementación SQLAlchemy del repositorio de intervenciones."""
 
     def __init__(
         self, session: AsyncSession, pending_events: list[DomainEvent] | None = None
@@ -94,14 +94,14 @@ class SqlAlchemyInterventionRepository(
         technician_id: UserId,
         empresa_id: CompanyId,
     ) -> list[TechnicalIntervention]:
-        """Obtiene todas las intervenciones realizadas por un tÃ©cnico.
+        """Obtiene todas las intervenciones realizadas por un técnico.
 
         Args:
-            technician_id: Identificador del tÃ©cnico.
+            technician_id: Identificador del técnico.
             empresa_id: Identificador de la empresa (tenant).
 
         Returns:
-            Lista de intervenciones realizadas por el tÃ©cnico.
+            Lista de intervenciones realizadas por el técnico.
         """
         stmt = (
             select(InterventionModel)
@@ -119,12 +119,12 @@ class SqlAlchemyInterventionRepository(
         offset: int = 0,
         limit: int = 100,
     ) -> tuple[list[TechnicalIntervention], int]:
-        """Lista todas las intervenciones de una empresa con paginaciÃ³n.
+        """Lista todas las intervenciones de una empresa con paginación.
 
         Args:
             empresa_id: Identificador de la empresa.
-            offset: NÃºmero de registros a omitir.
-            limit: Cantidad mÃ¡xima de registros a retornar.
+            offset: Número de registros a omitir.
+            limit: Cantidad máxima de registros a retornar.
 
         Returns:
             Una tupla con la lista de intervenciones y el total de registros.

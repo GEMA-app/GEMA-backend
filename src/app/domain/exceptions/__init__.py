@@ -112,6 +112,7 @@ from app.domain.exceptions.system_audit import (
     SystemAuditNotFoundError,
 )
 from app.domain.exceptions.used_part import (
+    InsufficientStockError,
     UsedPartException,
     UsedPartInvalidPriceError,
     UsedPartInvalidQuantityError,
@@ -201,6 +202,7 @@ __all__ = [
     "UsedPartNotFoundError",
     "UsedPartInvalidQuantityError",
     "UsedPartInvalidPriceError",
+    "InsufficientStockError",
     "WorkOrderException",
     "WorkOrderNotFoundError",
     "WorkOrderCodeExistsError",

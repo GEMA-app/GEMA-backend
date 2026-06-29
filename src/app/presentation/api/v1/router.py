@@ -1,4 +1,4 @@
-"""Enrutador principal de la API v1. Agrega todos los submÃ³dulos
+"""Enrutador principal de la API v1. Agrega todos los submódulos
 de endpoints bajo el prefijo /v1.
 """
 

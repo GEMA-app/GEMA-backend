@@ -29,3 +29,16 @@ class UsedPartInvalidPriceError(UsedPartException):
     def __init__(self, price: Decimal) -> None:
         self.price = price
         super().__init__(f"El precio unitario '{price}' debe ser mayor a 0.")
+
+
+class InsufficientStockError(UsedPartException):
+    """Se lanza cuando la cantidad solicitada supera el stock disponible en inventario."""
+
+    def __init__(self, repuesto_id: str, disponible: int, solicitado: int) -> None:
+        self.repuesto_id = repuesto_id
+        self.disponible = disponible
+        self.solicitado = solicitado
+        super().__init__(
+            f"Stock insuficiente para el repuesto '{repuesto_id}': "
+            f"disponible={disponible}, solicitado={solicitado}."
+        )

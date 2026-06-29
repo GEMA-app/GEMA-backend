@@ -1,5 +1,5 @@
-﻿"""Manejador de excepciones de dominio. Mapea cada excepciÃ³n de
-dominio (DomainException) a su cÃ³digo HTTP correspondiente segÃºn
+"""Manejador de excepciones de dominio. Mapea cada excepción de
+dominio (DomainException) a su código HTTP correspondiente según
 la tabla definida en AGENTS.md.
 """
 
@@ -36,6 +36,7 @@ from app.domain.exceptions import (
     EventPublishError,
     FailureReportNotFoundError,
     InsufficientPermissionsError,
+    InsufficientStockError,
     InterventionInvalidDataError,
     InterventionInvalidTransitionError,
     InterventionNotFoundError,
@@ -84,8 +85,8 @@ from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers.base import jsonapi_response
 
 # ---------------------------------------------------------------------------
-# Registro declarativo: tipo de excepciÃ³n â†’ (cÃ³digo HTTP, cÃ³digo de error).
-# Para agregar una excepciÃ³n nueva, basta con aÃ±adir una lÃ­nea al dict.
+# Registro declarativo: tipo de excepción → (código HTTP, código de error).
+# Para agregar una excepción nueva, basta con añadir una línea al dict.
 # ---------------------------------------------------------------------------
 _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     WeakPasswordError: (
@@ -308,6 +309,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_USED_PART_INVALID_PRICE",
     ),
+    InsufficientStockError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_INSUFFICIENT_STOCK",
+    ),
     PlanExecutionNotFoundError: (
         status.HTTP_404_NOT_FOUND,
         "ERR_PLAN_EXECUTION_NOT_FOUND",
@@ -380,7 +385,7 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
 
 
 async def domain_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    """Mapea excepciones del dominio a cÃ³digos HTTP y formato JSON:API."""
+    """Mapea excepciones del dominio a códigos HTTP y formato JSON:API."""
     assert isinstance(exc, DomainException)
     status_code, code = _EXCEPTION_MAP.get(type(exc), (status.HTTP_400_BAD_REQUEST, "ERR_DOMAIN"))
     error = ErrorObject(

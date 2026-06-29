@@ -19,10 +19,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.domain.enums import MaintenanceType, WorkOrderStatus
 from app.infrastructure.db.base import Base
-from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
+from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin, VersionMixin
 
 
-class WorkOrderModel(TenantMixin, TimestampMixin, Base):
+class WorkOrderModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla ordenes_trabajo.
 
     Almacena los datos persistentes de cada orden de trabajo,

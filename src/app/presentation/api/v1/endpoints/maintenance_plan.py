@@ -31,6 +31,7 @@ from app.presentation.api.v1.schemas.maintenance_plan import (
     MaintenancePlanDocument,
     MaintenancePlanListDocument,
     MaintenancePlanResource,
+    PlanExecutionAttributes,
     UpdateMaintenancePlanRequest,
 )
 
@@ -196,6 +197,14 @@ async def get_maintenance_plan(
                 created_at=res.created_at,
                 updated_at=res.updated_at,
                 es_urgente=res.es_urgente,
+                ejecuciones=[
+                    PlanExecutionAttributes(
+                        work_order_id=e.work_order_id,
+                        execution_date=e.execution_date,
+                        observations=e.observations,
+                    )
+                    for e in res.ejecuciones
+                ],
             ),
         )
     )

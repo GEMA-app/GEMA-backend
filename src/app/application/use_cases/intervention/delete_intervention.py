@@ -11,13 +11,13 @@ class DeleteInterventionUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self._uow = uow
 
-    async def execute(self, ot_id: str, intervention_id: str, empresa_id: str) -> None:
+    async def execute(self, empresa_id: str, ot_id: str, intervention_id: str) -> None:
         """Elimina una intervención técnica por su ID.
 
         Args:
+            empresa_id: Identificador UUID de la empresa.
             ot_id: Identificador UUID de la orden de trabajo (desde el path).
             intervention_id: Identificador UUID de la intervención.
-            empresa_id: Identificador UUID de la empresa.
 
         Raises:
             InterventionNotFoundError: Si no existe la intervención con el ID.

@@ -34,4 +34,5 @@ class ListUsersUseCase:
                 empresa_id=str(u.empresa_id.value),
                 created_at=u.created_at or datetime.now(UTC),
                 updated_at=u.updated_at or datetime.now(UTC),
+                roles=[r.nombre for r in u.roles],
             ) for u in users]

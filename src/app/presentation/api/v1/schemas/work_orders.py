@@ -31,6 +31,7 @@ class WorkOrderAttributes(BaseModel):
     moneda: str = "USD"
     validado_por_id: str | None = None
     fecha_validacion: datetime | None = None
+    version: int = 1
 
 
 class WorkOrderResource(BaseModel):

@@ -104,6 +104,7 @@ async def create_work_order(
                 moneda=res.moneda,
                 validado_por_id=res.validado_por_id,
                 fecha_validacion=res.fecha_validacion,
+                version=res.version,
             ),
         )
     )
@@ -156,6 +157,7 @@ async def list_work_orders(
                     moneda=r.moneda,
                     validado_por_id=r.validado_por_id,
                     fecha_validacion=r.fecha_validacion,
+                    version=r.version,
                 ),
             )
             for r in results
@@ -197,6 +199,7 @@ async def get_work_order(
                 moneda=res.moneda,
                 validado_por_id=res.validado_por_id,
                 fecha_validacion=res.fecha_validacion,
+                version=res.version,
             ),
         )
     )
@@ -242,6 +245,7 @@ async def update_work_order(
                 moneda=res.moneda,
                 validado_por_id=res.validado_por_id,
                 fecha_validacion=res.fecha_validacion,
+                version=res.version,
             ),
         )
     )
@@ -299,6 +303,7 @@ async def change_work_order_status(
                 moneda=res.moneda,
                 validado_por_id=res.validado_por_id,
                 fecha_validacion=res.fecha_validacion,
+                version=res.version,
             ),
         )
     )
@@ -369,6 +374,7 @@ async def validate_work_order(
                 moneda=res.moneda,
                 validado_por_id=res.validado_por_id,
                 fecha_validacion=res.fecha_validacion,
+                version=res.version,
             ),
         )
     )

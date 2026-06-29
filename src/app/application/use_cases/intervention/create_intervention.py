@@ -50,4 +50,5 @@ class CreateInterventionUseCase:
             fecha_inicio=intervention.fecha_inicio,
             fecha_fin=intervention.fecha_fin,
             horas_hombre=intervention.horas_hombre,
+            used_parts=[],
         )

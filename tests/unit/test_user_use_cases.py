@@ -50,6 +50,17 @@ class FakeUserRepository:
         """Busca un usuario por su ID único."""
         return self.users_db.get(str(user_id.value))
 
+    async def get_by_id_and_company(
+        self, user_id: UserId, empresa_id: CompanyId
+    ) -> User | None:
+        """Busca un usuario por ID filtrando por empresa (previene IDOR)."""
+        user = self.users_db.get(str(user_id.value))
+        if user is None:
+            return None
+        if user.empresa_id.value != empresa_id.value:
+            return None
+        return user
+
     async def get_by_email(self, email: Email) -> User | None:
         """Busca un usuario por su dirección de correo electrónico."""
         for user in self.users_db.values():
@@ -243,7 +254,7 @@ class TestGetUserUseCase:
         use_case = GetUserUseCase(uow=uow)
 
         # Act
-        response = await use_case.execute(user_id_str=USER_ID)
+        response = await use_case.execute(user_id_str=USER_ID, empresa_id_str=COMPANY_ID)
 
         # Assert
         assert response.id == USER_ID
@@ -259,7 +270,10 @@ class TestGetUserUseCase:
         use_case = GetUserUseCase(uow=uow)
 
         with pytest.raises(UserNotFoundError):
-            await use_case.execute(user_id_str="99999999-9999-9999-9999-999999999999")
+            await use_case.execute(
+                user_id_str="99999999-9999-9999-9999-999999999999",
+                empresa_id_str=COMPANY_ID,
+            )
 
     @pytest.mark.asyncio
     async def test_retorna_usuario_inactivo_sin_error(self) -> None:
@@ -268,7 +282,7 @@ class TestGetUserUseCase:
         await uow.users.save(_make_user(activo=False))
         use_case = GetUserUseCase(uow=uow)
 
-        response = await use_case.execute(user_id_str=USER_ID)
+        response = await use_case.execute(user_id_str=USER_ID, empresa_id_str=COMPANY_ID)
 
         assert response.activo is False
 
@@ -292,7 +306,9 @@ class TestEditUserUseCase:
         request = UpdateUserRequest(nombre="Nuevo Nombre")
 
         # Act
-        response = await use_case.execute(user_id_str=USER_ID, request=request)
+        response = await use_case.execute(
+            user_id_str=USER_ID, empresa_id_str=COMPANY_ID, request=request
+        )
 
         # Assert
         assert response.nombre == "Nuevo Nombre"
@@ -307,6 +323,7 @@ class TestEditUserUseCase:
 
         response = await use_case.execute(
             user_id_str=USER_ID,
+            empresa_id_str=COMPANY_ID,
             request=UpdateUserRequest(email="nuevo@gema.com"),
         )
 
@@ -321,6 +338,7 @@ class TestEditUserUseCase:
 
         response = await use_case.execute(
             user_id_str=USER_ID,
+            empresa_id_str=COMPANY_ID,
             request=UpdateUserRequest(telefono="+584140001111"),
         )
 
@@ -335,6 +353,7 @@ class TestEditUserUseCase:
 
         response = await use_case.execute(
             user_id_str=USER_ID,
+            empresa_id_str=COMPANY_ID,
             request=UpdateUserRequest(activo=False),
         )
 
@@ -349,6 +368,7 @@ class TestEditUserUseCase:
 
         response = await use_case.execute(
             user_id_str=USER_ID,
+            empresa_id_str=COMPANY_ID,
             request=UpdateUserRequest(activo=True),
         )
 
@@ -364,6 +384,7 @@ class TestEditUserUseCase:
         # Request completamente vacío (todos None)
         response = await use_case.execute(
             user_id_str=USER_ID,
+            empresa_id_str=COMPANY_ID,
             request=UpdateUserRequest(),
         )
 
@@ -379,6 +400,7 @@ class TestEditUserUseCase:
         with pytest.raises(UserNotFoundError):
             await use_case.execute(
                 user_id_str="99999999-9999-9999-9999-999999999999",
+                empresa_id_str=COMPANY_ID,
                 request=UpdateUserRequest(nombre="Nadie"),
             )
 
@@ -400,7 +422,7 @@ class TestDeleteUserUseCase:
         use_case = DeleteUserUseCase(uow=uow)
 
         # Act
-        response = await use_case.execute(user_id_str=USER_ID)
+        response = await use_case.execute(user_id_str=USER_ID, empresa_id_str=COMPANY_ID)
 
         # Assert
         assert response.activo is False
@@ -413,7 +435,7 @@ class TestDeleteUserUseCase:
         await uow.users.save(_make_user())
         use_case = DeleteUserUseCase(uow=uow)
 
-        await use_case.execute(user_id_str=USER_ID)
+        await use_case.execute(user_id_str=USER_ID, empresa_id_str=COMPANY_ID)
 
         # El usuario sigue en la base de datos (solo marcado como inactivo)
         persisted = await uow.users.get_by_id(UserId.from_string(USER_ID))
@@ -427,7 +449,10 @@ class TestDeleteUserUseCase:
         use_case = DeleteUserUseCase(uow=uow)
 
         with pytest.raises(UserNotFoundError):
-            await use_case.execute(user_id_str="99999999-9999-9999-9999-999999999999")
+            await use_case.execute(
+                user_id_str="99999999-9999-9999-9999-999999999999",
+                empresa_id_str=COMPANY_ID,
+            )
 
     @pytest.mark.asyncio
     async def test_retorna_datos_completos_del_usuario_desactivado(self) -> None:
@@ -436,7 +461,7 @@ class TestDeleteUserUseCase:
         await uow.users.save(_make_user(nombre=TEST_NOMBRE))
         use_case = DeleteUserUseCase(uow=uow)
 
-        response = await use_case.execute(user_id_str=USER_ID)
+        response = await use_case.execute(user_id_str=USER_ID, empresa_id_str=COMPANY_ID)
 
         assert response.id == USER_ID
         assert response.email == TEST_EMAIL

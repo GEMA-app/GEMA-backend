@@ -8,6 +8,7 @@ from app.application.dtos.used_part_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.used_part import UsedPart
+from app.domain.exceptions.used_part import InsufficientStockError
 from app.domain.value_objects import CompanyId
 
 
@@ -22,12 +23,20 @@ class CreateUsedPartUseCase:
     ) -> UsedPartResponse:
         """Ejecuta la creación de un repuesto utilizado.
 
+        Valida que haya stock suficiente antes de decrementar. Si el repuesto
+        de inventario no existe, se registra el consumo sin afectar stock
+        (el módulo Inventory es dependencia futura planificada).
+
         Args:
             company_id_str: UUID de la empresa (tenant).
             request: DTO con los datos del repuesto a crear.
 
         Returns:
             UsedPartResponse con los datos del repuesto creado.
+
+        Raises:
+            InsufficientStockError: Si el stock disponible es menor a la
+                cantidad solicitada.
         """
         company_id = CompanyId.from_string(company_id_str)
 
@@ -42,7 +51,7 @@ class CreateUsedPartUseCase:
 
         async with self.uow:
             session = getattr(self.uow, "session", None)
-            if session is not None and "Mock" not in type(session).__name__:
+            if session is not None:
                 from sqlalchemy import select
 
                 from app.infrastructure.db.models.inventory_part import InventoryPartModel
@@ -52,7 +61,13 @@ class CreateUsedPartUseCase:
                 )
                 res = await session.execute(stmt)
                 inv_part = res.scalar_one_or_none()
-                if inv_part:
+                if inv_part is not None:
+                    if inv_part.stock_actual < request.cantidad_usada:
+                        raise InsufficientStockError(
+                            repuesto_id=str(request.repuesto_id),
+                            disponible=inv_part.stock_actual,
+                            solicitado=request.cantidad_usada,
+                        )
                     inv_part.stock_actual -= request.cantidad_usada
 
             await self.uow.used_parts.save(new_part)

@@ -155,7 +155,7 @@ async def create_used_part(
 
 
 @router.get(
-    "/{repuesto_id}",
+    "/{used_part_id}",
     response_model=UsedPartDocument,
     status_code=status.HTTP_200_OK,
     summary="Obtiene detalle de consumo",
@@ -165,7 +165,7 @@ async def get_used_part(
     empresa_id: str,
     ot_id: str,
     intervencion_id: str,
-    repuesto_id: UUID,
+    used_part_id: UUID,
     use_case: GetUsedPartUseCase = Depends(get_get_used_part_use_case),
     current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
 ) -> UsedPartDocument:
@@ -175,7 +175,7 @@ async def get_used_part(
         empresa_id: Identificador de la empresa (tenant).
         ot_id: Identificador de la orden de trabajo.
         intervencion_id: Identificador de la intervención técnica.
-        repuesto_id: UUID del repuesto utilizado.
+        used_part_id: UUID del registro de repuesto utilizado (PK de repuestos_utilizados).
         use_case: Caso de uso inyectado.
         current_user: Usuario autenticado (validado por RBAC).
 
@@ -185,7 +185,7 @@ async def get_used_part(
     Raises:
         UsedPartNotFoundError: Si el repuesto no existe (404).
     """
-    part = await use_case.execute(empresa_id, repuesto_id)
+    part = await use_case.execute(empresa_id, used_part_id)
     return UsedPartDocument(
         data=UsedPartResource(
             id=str(part.id),
@@ -205,7 +205,7 @@ async def get_used_part(
 
 
 @router.patch(
-    "/{repuesto_id}",
+    "/{used_part_id}",
     response_model=UsedPartDocument,
     status_code=status.HTTP_200_OK,
     summary="Actualiza consumo de repuesto",
@@ -215,7 +215,7 @@ async def update_used_part(
     empresa_id: str,
     ot_id: str,
     intervencion_id: str,
-    repuesto_id: UUID,
+    used_part_id: UUID,
     request: UpdateUsedPartRequest,
     use_case: UpdateUsedPartUseCase = Depends(get_update_used_part_use_case),
     current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
@@ -226,7 +226,7 @@ async def update_used_part(
         empresa_id: Identificador de la empresa (tenant).
         ot_id: Identificador de la orden de trabajo.
         intervencion_id: Identificador de la intervención técnica.
-        repuesto_id: UUID del repuesto a actualizar.
+        used_part_id: UUID del registro de repuesto a actualizar (PK de repuestos_utilizados).
         request: Body JSON:API con los campos a actualizar.
         use_case: Caso de uso inyectado.
         current_user: Usuario autenticado (validado por RBAC).
@@ -240,7 +240,7 @@ async def update_used_part(
     dto = UpdateUsedPartDTO(
         cantidad_usada=request.data.attributes.cantidad_usada,
     )
-    part = await use_case.execute(empresa_id, repuesto_id, dto)
+    part = await use_case.execute(empresa_id, used_part_id, dto)
     return UsedPartDocument(
         data=UsedPartResource(
             id=str(part.id),
@@ -260,7 +260,7 @@ async def update_used_part(
 
 
 @router.delete(
-    "/{repuesto_id}",
+    "/{used_part_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Elimina consumo de repuesto",
     description="Revierte el consumo y restaura el stock del inventario.",
@@ -269,7 +269,7 @@ async def delete_used_part(
     empresa_id: str,
     ot_id: str,
     intervencion_id: str,
-    repuesto_id: UUID,
+    used_part_id: UUID,
     use_case: DeleteUsedPartUseCase = Depends(get_delete_used_part_use_case),
     current_user: UserResponse = Depends(
         require_permission(PermissionModule.MAINTENANCE, "delete")
@@ -281,7 +281,7 @@ async def delete_used_part(
         empresa_id: Identificador de la empresa (tenant).
         ot_id: Identificador de la orden de trabajo.
         intervencion_id: Identificador de la intervención técnica.
-        repuesto_id: UUID del repuesto a eliminar.
+        used_part_id: UUID del registro de repuesto a eliminar (PK de repuestos_utilizados).
         use_case: Caso de uso inyectado.
         current_user: Usuario autenticado (validado por RBAC).
 
@@ -291,5 +291,5 @@ async def delete_used_part(
     Raises:
         UsedPartNotFoundError: Si el repuesto no existe (404).
     """
-    await use_case.execute(empresa_id, repuesto_id)
+    await use_case.execute(empresa_id, used_part_id)
     return None

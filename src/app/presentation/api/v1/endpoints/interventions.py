@@ -34,6 +34,7 @@ from app.presentation.api.v1.schemas.interventions import (
     InterventionListDocument,
     InterventionResource,
     UpdateInterventionRequest,
+    UsedPartAttributes,
 )
 
 router = APIRouter(
@@ -52,7 +53,7 @@ router = APIRouter(
 async def list_interventions(
     empresa_id: Annotated[str, Path(description="ID de la empresa")],
     ot_id: Annotated[str, Path(description="ID de la orden de trabajo")],
-    offset: Annotated[int, Query(ge=0, description="NÃºmero de registros a saltar")] = 0,
+    offset: Annotated[int, Query(ge=0, description="Número de registros a saltar")] = 0,
     limit: Annotated[int, Query(ge=1, le=100, description="Cantidad de registros a obtener")] = 20,
     use_case: ListInterventionsUseCase = Depends(get_list_interventions_use_case),
     _: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
@@ -70,7 +71,7 @@ async def list_interventions(
     Returns:
         InterventionListDocument with paginated interventions.
     """
-    interventions, total = await use_case.execute(ot_id, empresa_id, offset, limit)
+    interventions, total = await use_case.execute(empresa_id, ot_id, offset, limit)
 
     return InterventionListDocument(
         data=[
@@ -84,6 +85,20 @@ async def list_interventions(
                     fecha_inicio=i.fecha_inicio,
                     fecha_fin=i.fecha_fin,
                     horas_hombre=i.horas_hombre,
+                    used_parts=[
+                        UsedPartAttributes(
+                            empresa_id=p.empresa_id,
+                            intervencion_id=p.intervencion_id,
+                            repuesto_id=p.repuesto_id,
+                            cantidad_usada=p.cantidad_usada,
+                            precio_unitario=p.precio_unitario,
+                            moneda=p.moneda,
+                            created_at=p.created_at.isoformat() if p.created_at else None,
+                            updated_at=p.updated_at.isoformat() if p.updated_at else None,
+                            precio_total=p.precio_total,
+                        )
+                        for p in i.used_parts
+                    ],
                 ),
             )
             for i in interventions
@@ -138,6 +153,20 @@ async def create_intervention(
                 fecha_inicio=intervention.fecha_inicio,
                 fecha_fin=intervention.fecha_fin,
                 horas_hombre=intervention.horas_hombre,
+                used_parts=[
+                    UsedPartAttributes(
+                        empresa_id=p.empresa_id,
+                        intervencion_id=p.intervencion_id,
+                        repuesto_id=p.repuesto_id,
+                        cantidad_usada=p.cantidad_usada,
+                        precio_unitario=p.precio_unitario,
+                        moneda=p.moneda,
+                        created_at=p.created_at.isoformat() if p.created_at else None,
+                        updated_at=p.updated_at.isoformat() if p.updated_at else None,
+                        precio_total=p.precio_total,
+                    )
+                    for p in intervention.used_parts
+                ],
             ),
         )
     )
@@ -169,7 +198,7 @@ async def get_intervention(
     Returns:
         InterventionDocument with the intervention details.
     """
-    intervention = await use_case.execute(ot_id, intervencion_id, empresa_id)
+    intervention = await use_case.execute(empresa_id, ot_id, intervencion_id)
 
     return InterventionDocument(
         data=InterventionResource(
@@ -182,6 +211,20 @@ async def get_intervention(
                 fecha_inicio=intervention.fecha_inicio,
                 fecha_fin=intervention.fecha_fin,
                 horas_hombre=intervention.horas_hombre,
+                used_parts=[
+                    UsedPartAttributes(
+                        empresa_id=p.empresa_id,
+                        intervencion_id=p.intervencion_id,
+                        repuesto_id=p.repuesto_id,
+                        cantidad_usada=p.cantidad_usada,
+                        precio_unitario=p.precio_unitario,
+                        moneda=p.moneda,
+                        created_at=p.created_at.isoformat() if p.created_at else None,
+                        updated_at=p.updated_at.isoformat() if p.updated_at else None,
+                        precio_total=p.precio_total,
+                    )
+                    for p in intervention.used_parts
+                ],
             ),
         )
     )
@@ -220,7 +263,7 @@ async def update_intervention(
         tareas_realizadas=attrs.tareas_realizadas,
         horas_hombre=attrs.horas_hombre,
     )
-    intervention = await use_case.execute(ot_id, intervencion_id, empresa_id, dto_request)
+    intervention = await use_case.execute(empresa_id, ot_id, intervencion_id, dto_request)
 
     return InterventionDocument(
         data=InterventionResource(
@@ -233,6 +276,20 @@ async def update_intervention(
                 fecha_inicio=intervention.fecha_inicio,
                 fecha_fin=intervention.fecha_fin,
                 horas_hombre=intervention.horas_hombre,
+                used_parts=[
+                    UsedPartAttributes(
+                        empresa_id=p.empresa_id,
+                        intervencion_id=p.intervencion_id,
+                        repuesto_id=p.repuesto_id,
+                        cantidad_usada=p.cantidad_usada,
+                        precio_unitario=p.precio_unitario,
+                        moneda=p.moneda,
+                        created_at=p.created_at.isoformat() if p.created_at else None,
+                        updated_at=p.updated_at.isoformat() if p.updated_at else None,
+                        precio_total=p.precio_total,
+                    )
+                    for p in intervention.used_parts
+                ],
             ),
         )
     )
@@ -260,5 +317,5 @@ async def delete_intervention(
         use_case: Injected use case for deleting interventions.
         _: Authorization dependency (MAINTENANCE:delete permission).
     """
-    await use_case.execute(ot_id, intervencion_id, empresa_id)
+    await use_case.execute(empresa_id, ot_id, intervencion_id)
 

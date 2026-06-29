@@ -19,6 +19,7 @@ from app.domain.enums import PermissionModule
 from app.domain.exceptions import InsufficientPermissionsError, InvalidUUIDError
 from app.domain.value_objects import CompanyId, UserId
 from app.infrastructure.cache.redis import redis_client
+from app.infrastructure.config.settings import settings
 
 security = HTTPBearer()
 
@@ -36,8 +37,17 @@ def validate_tenant_access(empresa_id: str, user_empresa_id: str) -> None:
         ) from e
 
 
+def _is_super_admin(user_id: str) -> bool:
+    """Verifica si el usuario está en la lista de super-administradores de plataforma."""
+    return user_id in settings.SUPER_ADMIN_IDS
+
+
 def require_platform_permission(module: PermissionModule, action: str) -> Any:
-    """Auth + RBAC para endpoints SIN empresa_id en el path (ej: POST /v1/empresas)."""
+    """Auth + RBAC para endpoints SIN empresa_id en el path (ej: POST /v1/empresas).
+
+    Los super-administradores de plataforma (definidos en SUPER_ADMIN_IDS)
+    bypassan la verificación RBAC de tenant.
+    """
     async def dependency(
         token: HTTPAuthorizationCredentials = Depends(security),
         auth_use_case: GetCurrentUserUseCase = Depends(get_current_user_use_case),
@@ -45,6 +55,8 @@ def require_platform_permission(module: PermissionModule, action: str) -> Any:
     ) -> UserResponse:
         dto = GetCurrentUserRequest(access_token=token.credentials)
         user_resp = await auth_use_case.execute(dto)
+        if _is_super_admin(user_resp.id):
+            return user_resp
         user_id = UserId.from_string(user_resp.id)
         empresa_id = CompanyId.from_string(user_resp.empresa_id)
         await auth_service.check_permission(user_id, empresa_id, module, action)

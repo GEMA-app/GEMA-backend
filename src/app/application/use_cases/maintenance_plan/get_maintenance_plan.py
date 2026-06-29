@@ -2,7 +2,10 @@
 
 from datetime import date
 
-from app.application.dtos.maintenance_plan_dtos import MaintenancePlanResponse
+from app.application.dtos.maintenance_plan_dtos import (
+    MaintenancePlanResponse,
+    PlanExecutionSummary,
+)
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions.maintenance_plan import MaintenancePlanNotFoundError
 from app.domain.value_objects import CompanyId, MaintenancePlanId
@@ -22,7 +25,7 @@ class GetMaintenancePlanUseCase:
             plan_id_str (str): UUID del plan.
 
         Returns:
-            MaintenancePlanResponse: Con los datos del plan.
+            MaintenancePlanResponse: Con los datos del plan y su historial de ejecuciones.
 
         Raises:
             MaintenancePlanNotFoundError: Si el plan no existe en la empresa.
@@ -35,6 +38,10 @@ class GetMaintenancePlanUseCase:
 
             if not plan:
                 raise MaintenancePlanNotFoundError(plan_id_str, company_id_str)
+
+            ejecuciones = await self.uow.plan_executions.list_by_plan_id(
+                plan_id.value, company_id
+            )
 
             return MaintenancePlanResponse(
                 id=str(plan.id),
@@ -52,4 +59,13 @@ class GetMaintenancePlanUseCase:
                 created_at=plan.created_at,
                 updated_at=plan.updated_at,
                 es_urgente=(plan.proxima_ejecucion - date.today()).days <= 7,
+                ejecuciones=[
+                    PlanExecutionSummary(
+                        id=str(e.id),
+                        work_order_id=str(e.work_order_id),
+                        execution_date=e.execution_date,
+                        observations=e.observations,
+                    )
+                    for e in ejecuciones
+                ],
             )

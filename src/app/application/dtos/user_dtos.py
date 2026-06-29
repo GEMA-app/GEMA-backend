@@ -1,6 +1,6 @@
 """DTOs para el módulo de usuarios."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 
@@ -36,3 +36,4 @@ class UserResponse:
     activo: bool
     created_at: datetime
     updated_at: datetime
+    roles: list[str] = field(default_factory=list)

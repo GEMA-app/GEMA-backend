@@ -69,4 +69,5 @@ class CreateUserUseCase:
                 activo=user.activo,
                 created_at=user.created_at or datetime.now(UTC),
                 updated_at=user.updated_at or datetime.now(UTC),
+                roles=[r.nombre for r in user.roles],
             )
