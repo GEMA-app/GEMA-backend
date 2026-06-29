@@ -20,9 +20,9 @@ from app.application.use_cases.plan_execution import (
     ListPlanExecutionUseCase,
 )
 from app.composition.container.plan_execution import (
-    create_plan_execution_use_case,
+    get_create_plan_execution_use_case,
+    get_list_plan_executions_use_case,
     get_plan_execution_use_case,
-    list_plan_execution_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.domain.exceptions.plan_execution import (
@@ -49,7 +49,7 @@ async def list_plan_executions(
     empresa_id: str,
     plan_id: str,
     current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
-    use_case: ListPlanExecutionUseCase = Depends(list_plan_execution_use_case),
+    use_case: ListPlanExecutionUseCase = Depends(get_list_plan_executions_use_case),
 ) -> PlanExecutionListDocument:
     """Lista todas las ejecuciones de un plan de mantenimiento.
 
@@ -75,7 +75,7 @@ async def create_plan_execution(
     current_user: UserResponse = Depends(
         require_permission(PermissionModule.MAINTENANCE, "create")
     ),
-    use_case: CreatePlanExecutionUseCase = Depends(create_plan_execution_use_case),
+    use_case: CreatePlanExecutionUseCase = Depends(get_create_plan_execution_use_case),
 ) -> PlanExecutionDocument:
     """Crea una nueva ejecución de plan de mantenimiento.
 

@@ -7,7 +7,7 @@ from app.application.use_cases.system_audit import GetSystemAuditUseCase, ListSy
 from app.composition.container.common import get_uow
 
 
-def get_system_audit_use_case(
+async def get_system_audit_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> GetSystemAuditUseCase:
     """Fábrica para el caso de uso de obtener detalle de auditoría.
@@ -21,7 +21,7 @@ def get_system_audit_use_case(
     return GetSystemAuditUseCase(uow=uow)
 
 
-def get_list_system_audits_use_case(
+async def get_list_system_audits_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> ListSystemAuditsUseCase:
     """Fábrica para el caso de uso de listar auditorías.

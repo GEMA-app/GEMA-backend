@@ -3,6 +3,7 @@
 Re-exporta todas las fábricas públicas para mantener compatibilidad con los
 imports existentes (``from app.composition.container import X``).
 """
+
 from app.composition.container.article_category import (
     get_article_category_by_id_use_case,
     get_create_article_category_use_case,
@@ -83,9 +84,9 @@ from app.composition.container.maintenance_plan import (
     get_update_maintenance_plan_use_case,
 )
 from app.composition.container.plan_execution import (
-    create_plan_execution_use_case,
+    get_create_plan_execution_use_case,
+    get_list_plan_executions_use_case,
     get_plan_execution_use_case,
-    list_plan_execution_use_case,
 )
 from app.composition.container.preference import (
     get_update_preference_use_case,
@@ -192,9 +193,9 @@ __all__ = [
     "get_update_location_use_case",
     "get_delete_location_use_case",
     # Plan Execution
-    "create_plan_execution_use_case",
+    "get_create_plan_execution_use_case",
     "get_plan_execution_use_case",
-    "list_plan_execution_use_case",
+    "get_list_plan_executions_use_case",
     # Preferences
     "get_update_preference_use_case",
     "get_user_preference_use_case",
@@ -250,7 +251,6 @@ __all__ = [
     "get_delete_user_use_case",
     # Interventions
     "get_create_intervention_use_case",
-    "get_get_work_order_status_history_use_case",
     "get_intervention_use_case",
     "get_list_interventions_use_case",
     "get_update_intervention_use_case",

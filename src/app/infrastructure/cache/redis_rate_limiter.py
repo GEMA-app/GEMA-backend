@@ -33,7 +33,8 @@ class RedisRateLimiter(RateLimiterPort):
             window_seconds: TTL de la ventana en segundos.
 
         Returns:
-            True si excede el límite, False en caso de error o si está dentro del límite (fail-open).
+            True si excede el límite, False en caso de error o si está dentro
+            del límite (fail-open).
         """
         try:
             current = await self._script(keys=[key], args=[str(window_seconds)])

@@ -1,4 +1,4 @@
-"""Factories for the technical interventions module."""
+"""Fábricas de dependencias para los casos de uso de intervenciones."""
 
 from fastapi import Depends
 
@@ -16,49 +16,68 @@ from app.composition.container.common import get_uow
 async def get_create_intervention_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> CreateInterventionUseCase:
-    """Factory for CreateInterventionUseCase.
+    """Fábrica de dependencias para el caso de uso de creación de intervención.
 
-    Initializes CreateInterventionUseCase with UnitOfWork containing
-    the intervention repository.
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso CreateInterventionUseCase.
     """
-    return CreateInterventionUseCase(uow=uow)
-
-
-async def get_list_interventions_use_case(
-    uow: UnitOfWorkPort = Depends(get_uow),
-) -> ListInterventionsUseCase:
-    """Factory for ListInterventionsUseCase.
-
-    Initializes ListInterventionsUseCase with UnitOfWork containing
-    the intervention repository.
-    """
-    return ListInterventionsUseCase(uow=uow)
+    return CreateInterventionUseCase(uow)
 
 
 async def get_intervention_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> GetInterventionUseCase:
-    """Factory for GetInterventionUseCase.
+    """Fábrica de dependencias para el caso de uso de consulta de intervención.
 
-    Initializes GetInterventionUseCase with UnitOfWork containing
-    the intervention repository.
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso GetInterventionUseCase.
     """
-    return GetInterventionUseCase(uow=uow)
+    return GetInterventionUseCase(uow)
+
+
+async def get_list_interventions_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> ListInterventionsUseCase:
+    """Fábrica de dependencias para el caso de uso de listado de intervenciones.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso ListInterventionsUseCase.
+    """
+    return ListInterventionsUseCase(uow)
 
 
 async def get_update_intervention_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> UpdateInterventionUseCase:
-    """Factory for UpdateInterventionUseCase.
+    """Fábrica de dependencias para el caso de uso de actualización de intervención.
 
-    Initializes UpdateInterventionUseCase with UnitOfWork containing
-    the intervention repository.
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso UpdateInterventionUseCase.
     """
-    return UpdateInterventionUseCase(uow=uow)
+    return UpdateInterventionUseCase(uow)
 
 
 async def get_delete_intervention_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> DeleteInterventionUseCase:
-    """Factory for DeleteInterventionUseCase."""
-    return DeleteInterventionUseCase(uow=uow)
+    """Fábrica de dependencias para el caso de uso de eliminación de intervención.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso DeleteInterventionUseCase.
+    """
+    return DeleteInterventionUseCase(uow)

@@ -16,33 +16,68 @@ from app.composition.container.common import get_uow
 async def get_create_company_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> CreateCompanyUseCase:
-    """Fábrica de dependencias para el caso de uso de creación de empresa."""
+    """Fábrica de dependencias para el caso de uso de creación de empresa.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso CreateCompanyUseCase.
+    """
     return CreateCompanyUseCase(uow)
 
 
 async def get_company_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> GetCompanyUseCase:
-    """Fábrica de dependencias para el caso de uso de consulta de empresa."""
+    """Fábrica de dependencias para el caso de uso de consulta de empresa.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso GetCompanyUseCase.
+    """
     return GetCompanyUseCase(uow)
 
 
 async def get_list_companies_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> ListCompaniesUseCase:
-    """Fábrica de dependencias para el caso de uso de listado de empresas."""
+    """Fábrica de dependencias para el caso de uso de listado de empresas.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso ListCompaniesUseCase.
+    """
     return ListCompaniesUseCase(uow)
 
 
 async def get_update_company_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> UpdateCompanyUseCase:
-    """Fábrica de dependencias para el caso de uso de actualización de empresa."""
+    """Fábrica de dependencias para el caso de uso de actualización de empresa.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso UpdateCompanyUseCase.
+    """
     return UpdateCompanyUseCase(uow)
 
 
 async def get_delete_company_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> DeleteCompanyUseCase:
-    """Fábrica de dependencias para el caso de uso de eliminación de empresa."""
+    """Fábrica de dependencias para el caso de uso de eliminación de empresa.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso DeleteCompanyUseCase.
+    """
     return DeleteCompanyUseCase(uow)

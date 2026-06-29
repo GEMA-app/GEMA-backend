@@ -16,34 +16,68 @@ from app.composition.container.common import get_uow
 async def get_create_failure_report_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> CreateFailureReportUseCase:
-    """Fábrica que inyecta la unidad de trabajo en CreateFailureReportUseCase."""
+    """Fábrica de dependencias para el caso de uso de creación de reporte de falla.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso CreateFailureReportUseCase.
+    """
     return CreateFailureReportUseCase(uow)
 
 
 async def get_failure_report_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> GetFailureReportUseCase:
-    """Fábrica que inyecta la unidad de trabajo en GetFailureReportUseCase."""
+    """Fábrica de dependencias para el caso de uso de consulta de reporte de falla.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso GetFailureReportUseCase.
+    """
     return GetFailureReportUseCase(uow)
 
 
 async def get_list_failure_reports_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> ListFailureReportsUseCase:
-    """Fábrica que inyecta la unidad de trabajo en ListFailureReportsUseCase."""
+    """Fábrica de dependencias para el caso de uso de listado de reportes de falla.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso ListFailureReportsUseCase.
+    """
     return ListFailureReportsUseCase(uow)
 
 
 async def get_update_failure_report_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> UpdateFailureReportUseCase:
-    """Fábrica que inyecta la unidad de trabajo en UpdateFailureReportUseCase."""
+    """Fábrica de dependencias para el caso de uso de actualización de reporte de falla.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso UpdateFailureReportUseCase.
+    """
     return UpdateFailureReportUseCase(uow)
 
 
 async def get_delete_failure_report_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> DeleteFailureReportUseCase:
-    """Fábrica que inyecta la unidad de trabajo en DeleteFailureReportUseCase."""
-    return DeleteFailureReportUseCase(uow)
+    """Fábrica de dependencias para el caso de uso de eliminación de reporte de falla.
 
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso DeleteFailureReportUseCase.
+    """
+    return DeleteFailureReportUseCase(uow)

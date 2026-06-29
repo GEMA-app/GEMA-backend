@@ -24,33 +24,68 @@ from app.composition.container.common import get_uow
 async def get_create_article_category_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> CreateArticleCategoryUseCase:
-    """Fábrica para CreateArticleCategoryUseCase."""
+    """Fábrica de dependencias para el caso de uso de creación de categoría.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso CreateArticleCategoryUseCase.
+    """
     return CreateArticleCategoryUseCase(uow=uow)
 
 
 async def get_article_category_by_id_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> GetArticleCategoryByIdUseCase:
-    """Fábrica para GetArticleCategoryByIdUseCase."""
+    """Fábrica de dependencias para el caso de uso de consulta de categoría.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso GetArticleCategoryByIdUseCase.
+    """
     return GetArticleCategoryByIdUseCase(uow=uow)
 
 
 async def get_list_article_categories_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> ListArticleCategoriesUseCase:
-    """Fábrica para ListArticleCategoriesUseCase."""
+    """Fábrica de dependencias para el caso de uso de listado de categorías.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso ListArticleCategoriesUseCase.
+    """
     return ListArticleCategoriesUseCase(uow=uow)
 
 
 async def get_update_article_category_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> UpdateArticleCategoryUseCase:
-    """Fábrica para UpdateArticleCategoryUseCase."""
+    """Fábrica de dependencias para el caso de uso de actualización de categoría.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso UpdateArticleCategoryUseCase.
+    """
     return UpdateArticleCategoryUseCase(uow=uow)
 
 
 async def get_delete_article_category_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> DeleteArticleCategoryUseCase:
-    """Fábrica para DeleteArticleCategoryUseCase."""
+    """Fábrica de dependencias para el caso de uso de eliminación de categoría.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso DeleteArticleCategoryUseCase.
+    """
     return DeleteArticleCategoryUseCase(uow=uow)

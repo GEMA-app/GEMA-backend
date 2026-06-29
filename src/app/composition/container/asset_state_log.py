@@ -10,5 +10,12 @@ from app.composition.container.common import get_uow
 async def get_list_asset_state_log_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> ListAssetStateLogUseCase:
-    """Fábrica de dependencias para el caso de uso de listado de historial de estados."""
+    """Fábrica de dependencias para el caso de uso de listado de historial de estados.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso ListAssetStateLogUseCase.
+    """
     return ListAssetStateLogUseCase(uow)

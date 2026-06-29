@@ -29,6 +29,18 @@ from app.infrastructure.security.hashing import BcryptPasswordHasher
 from app.infrastructure.security.jwt import PyJwtTokenService
 from app.infrastructure.uow import SqlAlchemyUnitOfWork
 
+__all__ = [
+    "create_authorization_service",
+    "create_token_service",
+    "get_authorization_service",
+    "get_db_engine",
+    "get_notification_sender",
+    "get_password_hasher",
+    "get_redis_client",
+    "get_token_service",
+    "get_uow",
+]
+
 # Singletons con inicialización perezosa para evitar fallos en import time
 # (si un template tiene error de sintaxis, no impide arrancar la app).
 _notification_sender: SmtpNotificationSender | None = None
@@ -62,10 +74,12 @@ def _register_handlers(bus: InProcessEventBus) -> None:
     # Las lambdas reciben DomainEvent (tipo del bus) y los handlers esperan subtipos
     # concretos. La coerción es segura porque el bus despacha por tipo concreto.
     bus.subscribe(
-        UserRegistered, lambda e: handle_user_registered(e, sender)  # type: ignore[arg-type]
+        UserRegistered,
+        lambda e: handle_user_registered(e, sender),  # type: ignore[arg-type]
     )
     bus.subscribe(
-        PasswordChanged, lambda e: handle_password_changed(e, sender)  # type: ignore[arg-type]
+        PasswordChanged,
+        lambda e: handle_password_changed(e, sender),  # type: ignore[arg-type]
     )
     bus.subscribe(
         PasswordResetInitiated,
@@ -170,4 +184,5 @@ def get_redis_client() -> Redis:
         El cliente global de Redis.
     """
     from typing import cast
+
     return cast(Redis, redis_client)
