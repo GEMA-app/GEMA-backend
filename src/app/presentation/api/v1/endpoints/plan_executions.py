@@ -30,7 +30,6 @@ from app.domain.exceptions.plan_execution import (
 )
 from app.presentation.api.v1.endpoints.dependencies import (
     require_permission,
-    require_tenant_read,
 )
 from app.presentation.api.v1.schemas.plan_execution import (
     CreatePlanExecutionRequest as CreatePlanExecutionSchema,
@@ -95,7 +94,7 @@ async def create_plan_execution(
     attrs = body.data.attributes
     dto = PlanExecutionCreateDTO(
         plan_id=UUID(plan_id),
-        work_order_id=UUID(attrs.work_order_id) if attrs.work_order_id else None,
+        work_order_id=UUID(attrs.work_order_id),
         execution_date=attrs.execution_date,
         observations=attrs.observations,
     )

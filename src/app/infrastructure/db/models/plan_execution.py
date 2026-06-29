@@ -34,7 +34,7 @@ class PlanExecutionModel(Base, TimestampMixin):
         ForeignKey("planes_mantenimiento.id", ondelete="CASCADE"),
         nullable=False,
     )
-    work_order_id: Mapped[uuid.UUID | None] = mapped_column(
+    work_order_id: Mapped[uuid.UUID] = mapped_column(
         "ordenes_trabajo_id",
         UUID(as_uuid=True),
         ForeignKey("ordenes_trabajo.id", ondelete="CASCADE"),

@@ -39,7 +39,7 @@ class ListPlanExecutionUseCase:
                     id=str(e.id),
                     empresa_id=str(e.empresa_id),
                     plan_id=str(e.plan_id),
-                    work_order_id=str(e.work_order_id) if e.work_order_id else None,
+                    work_order_id=str(e.work_order_id),
                     execution_date=e.execution_date,
                     observations=e.observations,
                     created_at=e.created_at,

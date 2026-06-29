@@ -7,6 +7,8 @@ from fastapi import APIRouter, Depends, Path, Query, status
 from app.application.dtos.auth_dtos import UserResponse
 from app.application.dtos.intervention_dtos import (
     CreateInterventionRequest as CreateInterventionDTO,
+)
+from app.application.dtos.intervention_dtos import (
     UpdateInterventionRequest as UpdateInterventionDTO,
 )
 from app.application.use_cases.intervention import (

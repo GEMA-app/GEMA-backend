@@ -41,7 +41,7 @@ class GetPlanExecutionUseCase:
                 id=str(execution.id),
                 empresa_id=str(execution.empresa_id),
                 plan_id=str(execution.plan_id),
-                work_order_id=str(execution.work_order_id) if execution.work_order_id else None,
+                work_order_id=str(execution.work_order_id),
                 execution_date=execution.execution_date,
                 observations=execution.observations,
                 created_at=execution.created_at,

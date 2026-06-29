@@ -5,7 +5,6 @@ Implementado como ASGI puro para evitar tareas anyio internas que
 BaseHTTPMiddleware crea y que contaminan el event loop entre tests.
 """
 
-from typing import Any
 
 from starlette.types import ASGIApp, Receive, Scope, Send
 

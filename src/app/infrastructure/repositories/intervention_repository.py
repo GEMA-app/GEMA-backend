@@ -7,7 +7,9 @@ from app.application.ports.intervention_repository import InterventionRepository
 from app.domain.entities.intervention import TechnicalIntervention
 from app.domain.events import DomainEvent
 from app.domain.value_objects.identifier import CompanyId, InterventionId, UserId, WorkOrderId
-from app.infrastructure.db.models.technical_intervention import TechnicalInterventionModel as InterventionModel
+from app.infrastructure.db.models.technical_intervention import (
+    TechnicalInterventionModel as InterventionModel,
+)
 from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 
 

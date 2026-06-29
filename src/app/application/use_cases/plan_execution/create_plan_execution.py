@@ -50,7 +50,7 @@ class CreatePlanExecutionUseCase:
             id=str(entity.id),
             empresa_id=str(entity.empresa_id),
             plan_id=str(entity.plan_id),
-            work_order_id=str(entity.work_order_id) if entity.work_order_id else None,
+            work_order_id=str(entity.work_order_id),
             execution_date=entity.execution_date,
             observations=entity.observations,
             created_at=entity.created_at,

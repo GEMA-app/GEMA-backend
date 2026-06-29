@@ -12,7 +12,9 @@ from app.presentation.exception_handlers import jsonapi_response
 
 
 class AcceptMiddleware:
-    """Middleware ASGI que valida el encabezado Accept para garantizar la compatibilidad con JSON:API."""
+    """Middleware ASGI que valida el encabezado Accept para garantizar la
+    compatibilidad con JSON:API.
+    """
 
     def __init__(self, app: ASGIApp) -> None:
         """Inicializa el middleware con la app ASGI interna."""

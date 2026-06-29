@@ -10,7 +10,7 @@ class PlanExecutionCreateRequest:
     """DTO para la creación de una ejecución de plan."""
 
     plan_id: UUID
-    work_order_id: UUID | None = None
+    work_order_id: UUID
     execution_date: datetime | None = None
     observations: str | None = None
 
@@ -23,7 +23,7 @@ class PlanExecutionResponse:
     empresa_id: str
     plan_id: str
     execution_date: datetime
-    work_order_id: str | None = None
+    work_order_id: str
     observations: str | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None

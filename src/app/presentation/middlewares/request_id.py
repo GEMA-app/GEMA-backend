@@ -12,7 +12,9 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 
 class RequestIdMiddleware:
-    """Middleware ASGI que inyecta un identificador único de correlación (UUID) en cada solicitud."""
+    """Middleware ASGI que inyecta un identificador único de correlación (UUID)
+    en cada solicitud.
+    """
 
     def __init__(self, app: ASGIApp) -> None:
         """Inicializa el middleware con la app ASGI interna."""
