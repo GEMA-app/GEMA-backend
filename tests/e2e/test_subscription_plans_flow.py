@@ -45,7 +45,7 @@ async def test_subscription_plans_crud_and_validation_flow() -> None:
             # =====================================================================
             # Paso 1: LISTAR inicialmente (GET)
             # =====================================================================
-            res_list = await client.get("/v1/planes", headers=auth_h)
+            res_list = await client.get("/v1/planes?limit=100000", headers=auth_h)
             assert res_list.status_code == 200
             initial_count = res_list.json()["meta"]["total"]
 
@@ -104,7 +104,7 @@ async def test_subscription_plans_crud_and_validation_flow() -> None:
             # =====================================================================
             # Paso 5: LISTAR con 2 planes
             # =====================================================================
-            res_list2 = await client.get("/v1/planes", headers=auth_h)
+            res_list2 = await client.get("/v1/planes?limit=100000", headers=auth_h)
             assert res_list2.status_code == 200
             assert res_list2.json()["meta"]["total"] == initial_count + 2
             ids = [i["id"] for i in res_list2.json()["data"]]
@@ -216,7 +216,7 @@ async def test_subscription_plans_crud_and_validation_flow() -> None:
             auth_h_user = {**headers, "Authorization": f"Bearer {token_user}"}
 
             # Listar (GET /) -> 200 (se permite a cualquier usuario activo para ver planes)
-            res_list_allowed = await client.get("/v1/planes", headers=auth_h_user)
+            res_list_allowed = await client.get("/v1/planes?limit=100000", headers=auth_h_user)
             assert res_list_allowed.status_code == 200
 
             # Obtener detalle (GET /{id}) -> 200

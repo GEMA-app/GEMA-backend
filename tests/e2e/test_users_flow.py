@@ -16,7 +16,7 @@ from app.presentation.api.v1.endpoints.dependencies import rate_limit_by_email
 
 @pytest.mark.asyncio
 async def test_users_crud_and_isolation_flow() -> None:
-    """Test E2E para CRUD y aislamiento multi-tenant de usuarios."""
+    """Test E2E para CRUD, validaciones, aislamiento multi-tenant y RBAC de usuarios."""
     app.dependency_overrides[rate_limit_by_email] = lambda: None
 
     try:
@@ -32,7 +32,6 @@ async def test_users_crud_and_isolation_flow() -> None:
             # =================================================================
             tag_a = uuid.uuid4().hex[:8]
             email_a = f"admin_a_{tag_a}@example.com"
-            company_a_name = f"Company A {tag_a}"
             password = "Password123!"
 
             reg_a = {
@@ -42,7 +41,7 @@ async def test_users_crud_and_isolation_flow() -> None:
                         "email": email_a,
                         "password": password,
                         "nombre": "Admin A",
-                        "company_name": company_a_name,
+                        "company_name": f"Company A {tag_a}",
                         "telefono": "+1111111111",
                     },
                 }
@@ -54,6 +53,7 @@ async def test_users_crud_and_isolation_flow() -> None:
             auth_a = {**headers, "Authorization": f"Bearer {access_token}"}
 
             res_me = await client.get("/v1/auth/yo", headers=auth_a)
+            assert res_me.status_code == 200
             empresa_a_id = res_me.json()["data"]["attributes"]["empresa_id"]
 
             # =================================================================
@@ -104,7 +104,7 @@ async def test_users_crud_and_isolation_flow() -> None:
                 headers=auth_a,
             )
             assert res_get.status_code == 200
-            assert res_get.json()["data"]["attributes"]["email"] == user_email
+            assert res_get.json()["data"]["id"] == user_id
 
             # =================================================================
             # Paso 4: LISTAR de nuevo (debe tener 2 usuarios)
@@ -119,20 +119,19 @@ async def test_users_crud_and_isolation_flow() -> None:
             assert user_id in ids
 
             # =================================================================
-            # Paso 5: ACTUALIZAR usuario (PATCH)
+            # Paso 5: ACTUALIZAR nombre y teléfono (PATCH)
             # =================================================================
-            update_payload = {
-                "data": {
-                    "type": "users",
-                    "attributes": {
-                        "nombre": "Juan Actualizado",
-                        "telefono": "+9988776655",
-                    },
-                }
-            }
             res_patch = await client.patch(
                 f"/v1/empresas/{empresa_a_id}/usuarios/{user_id}",
-                json=update_payload,
+                json={
+                    "data": {
+                        "type": "users",
+                        "attributes": {
+                            "nombre": "Juan Actualizado",
+                            "telefono": "+9988776655",
+                        },
+                    }
+                },
                 headers=auth_a,
             )
             assert res_patch.status_code == 200, f"PATCH falló: {res_patch.text}"
@@ -142,7 +141,39 @@ async def test_users_crud_and_isolation_flow() -> None:
             assert upd["email"] == user_email  # unchanged
 
             # =================================================================
-            # Paso 6: ELIMINAR (baja lógica) usuario
+            # Paso 6: DESACTIVAR usuario (PATCH activo=false)
+            # =================================================================
+            res_deactivate = await client.patch(
+                f"/v1/empresas/{empresa_a_id}/usuarios/{user_id}",
+                json={
+                    "data": {
+                        "type": "users",
+                        "attributes": {"activo": False},
+                    }
+                },
+                headers=auth_a,
+            )
+            assert res_deactivate.status_code == 200
+            assert res_deactivate.json()["data"]["attributes"]["activo"] is False
+
+            # =================================================================
+            # Paso 7: REACTIVAR usuario (PATCH activo=true)
+            # =================================================================
+            res_reactivate = await client.patch(
+                f"/v1/empresas/{empresa_a_id}/usuarios/{user_id}",
+                json={
+                    "data": {
+                        "type": "users",
+                        "attributes": {"activo": True},
+                    }
+                },
+                headers=auth_a,
+            )
+            assert res_reactivate.status_code == 200
+            assert res_reactivate.json()["data"]["attributes"]["activo"] is True
+
+            # =================================================================
+            # Paso 8: ELIMINAR (baja lógica) usuario
             # =================================================================
             res_delete = await client.delete(
                 f"/v1/empresas/{empresa_a_id}/usuarios/{user_id}",
@@ -153,7 +184,7 @@ async def test_users_crud_and_isolation_flow() -> None:
             assert res_delete.json()["data"]["id"] == user_id
 
             # =================================================================
-            # Paso 7: OBTENER usuario desactivado (debe responder 200, activo=False)
+            # Paso 9: OBTENER usuario desactivado (activo=False)
             # =================================================================
             res_deactivated = await client.get(
                 f"/v1/empresas/{empresa_a_id}/usuarios/{user_id}",
@@ -163,9 +194,9 @@ async def test_users_crud_and_isolation_flow() -> None:
             assert res_deactivated.json()["data"]["attributes"]["activo"] is False
 
             # =================================================================
-            # Paso 8: OBTENER usuario inexistente → 404
+            # Paso 10: OBTENER usuario inexistente → 404
             # =================================================================
-            fake_id = "00000000-0000-0000-0000-000000000000"
+            fake_id = str(uuid.uuid4())
             res_404 = await client.get(
                 f"/v1/empresas/{empresa_a_id}/usuarios/{fake_id}",
                 headers=auth_a,
@@ -174,7 +205,17 @@ async def test_users_crud_and_isolation_flow() -> None:
             assert "ERR_USER_NOT_FOUND" in res_404.text
 
             # =================================================================
-            # Paso 9: CREAR con email duplicado → 409
+            # Paso 11: ELIMINAR usuario inexistente → 404
+            # =================================================================
+            res_del_404 = await client.delete(
+                f"/v1/empresas/{empresa_a_id}/usuarios/{fake_id}",
+                headers=auth_a,
+            )
+            assert res_del_404.status_code == 404
+            assert "ERR_USER_NOT_FOUND" in res_del_404.text
+
+            # =================================================================
+            # Paso 12: CREAR con email duplicado → 409
             # =================================================================
             res_dup = await client.post(
                 f"/v1/empresas/{empresa_a_id}/usuarios",
@@ -194,7 +235,26 @@ async def test_users_crud_and_isolation_flow() -> None:
             assert "ERR_USER_ALREADY_EXISTS" in res_dup.text
 
             # =================================================================
-            # CONFIG: Registrar Compañía B
+            # Paso 13: CREAR con contraseña débil → 422
+            # =================================================================
+            res_weak = await client.post(
+                f"/v1/empresas/{empresa_a_id}/usuarios",
+                json={
+                    "data": {
+                        "type": "users",
+                        "attributes": {
+                            "email": f"weak_{tag_a}@example.com",
+                            "password": "123",
+                            "nombre": "Weak",
+                        },
+                    }
+                },
+                headers=auth_a,
+            )
+            assert res_weak.status_code == 422
+
+            # =================================================================
+            # CONFIG: Registrar Compañía B (para multi-tenant + RBAC)
             # =================================================================
             tag_b = uuid.uuid4().hex[:8]
             reg_b = {
@@ -214,10 +274,11 @@ async def test_users_crud_and_isolation_flow() -> None:
             tokens_b = res_b.json()["data"]["attributes"]
             auth_b = {**headers, "Authorization": f"Bearer {tokens_b['access_token']}"}
             res_me_b = await client.get("/v1/auth/yo", headers=auth_b)
+            assert res_me_b.status_code == 200
             empresa_b_id = res_me_b.json()["data"]["attributes"]["empresa_id"]
 
             # =================================================================
-            # Paso 10: AISLAMIENTO MULTI-TENANT
+            # Paso 14: AISLAMIENTO MULTI-TENANT
             # =================================================================
             # Token B accediendo a ruta de Empresa A → 403
             res_403 = await client.get(
@@ -236,6 +297,90 @@ async def test_users_crud_and_isolation_flow() -> None:
                 headers=auth_b,
             )
             assert res_200.status_code == 200
+
+            # =================================================================
+            # Paso 15: RBAC — usuario sin permiso admin
+            # =================================================================
+            # Crear un usuario normal dentro de Company A
+            normal_email = f"normal_{tag_a}@example.com"
+            res_normal = await client.post(
+                f"/v1/empresas/{empresa_a_id}/usuarios",
+                json={
+                    "data": {
+                        "type": "users",
+                        "attributes": {
+                            "email": normal_email,
+                            "password": password,
+                            "nombre": "Usuario Normal",
+                        },
+                    }
+                },
+                headers=auth_a,
+            )
+            assert res_normal.status_code == 201
+            normal_user_id = res_normal.json()["data"]["id"]
+
+            # Login como usuario normal
+            res_login = await client.post(
+                "/v1/auth/ingresar",
+                json={
+                    "data": {
+                        "type": "tokens",
+                        "attributes": {
+                            "email": normal_email,
+                            "password": password,
+                        },
+                    }
+                },
+                headers=headers,
+            )
+            assert res_login.status_code == 200
+            normal_token = res_login.json()["data"]["attributes"]["access_token"]
+            auth_normal = {**headers, "Authorization": f"Bearer {normal_token}"}
+
+            # LIST → 403 (sin admin:view)
+            res_list_403 = await client.get(
+                f"/v1/empresas/{empresa_a_id}/usuarios",
+                headers=auth_normal,
+            )
+            assert res_list_403.status_code == 403
+
+            # CREATE → 403 (sin admin:create)
+            res_create_403 = await client.post(
+                f"/v1/empresas/{empresa_a_id}/usuarios",
+                json={
+                    "data": {
+                        "type": "users",
+                        "attributes": {
+                            "email": f"otro_{tag_a}@example.com",
+                            "password": password,
+                            "nombre": "Otro",
+                        },
+                    }
+                },
+                headers=auth_normal,
+            )
+            assert res_create_403.status_code == 403
+
+            # PATCH → 403 (sin admin:edit)
+            res_patch_403 = await client.patch(
+                f"/v1/empresas/{empresa_a_id}/usuarios/{normal_user_id}",
+                json={
+                    "data": {
+                        "type": "users",
+                        "attributes": {"nombre": "Hackeado"},
+                    }
+                },
+                headers=auth_normal,
+            )
+            assert res_patch_403.status_code == 403
+
+            # DELETE → 403 (sin admin:delete)
+            res_del_403 = await client.delete(
+                f"/v1/empresas/{empresa_a_id}/usuarios/{normal_user_id}",
+                headers=auth_normal,
+            )
+            assert res_del_403.status_code == 403
 
     finally:
         app.dependency_overrides.clear()
