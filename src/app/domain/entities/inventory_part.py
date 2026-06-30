@@ -104,3 +104,22 @@ class InventoryPart(EventProducer):
         self.ubicacion_almacen = ubicacion_almacen.strip()
         self.precio_unitario = precio_unitario
         self.moneda = moneda
+
+        def registrar_entrada(self, cantidad: int) -> None:
+         """Incrementa el stock actual validando que la cantidad sea positiva."""
+         if cantidad <= 0:
+            raise InvalidStockError("La cantidad a ingresar debe ser mayor que cero.")
+        
+         self.stock_actual += cantidad
+
+    def registrar_salida(self, cantidad: int) -> None:
+        """Decrementa el stock actual validando existencias suficientes."""
+        if cantidad <= 0:
+            raise InvalidStockError("La cantidad a retirar debe ser mayor que cero.")
+        
+        if self.stock_actual < cantidad:
+            raise InvalidStockError(
+                f"Stock insuficiente. Disponible: {self.stock_actual}, Requerido: {cantidad}."
+            )
+        
+        self.stock_actual -= cantidad

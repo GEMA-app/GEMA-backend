@@ -97,3 +97,56 @@ class UpdateInventoryPartRequest(BaseModel):
     """Solicitud JSON:API de entrada para el endpoint PATCH."""
 
     data: UpdateInventoryPartResource
+
+    # --- Esquemas para Movimientos de Inventario (InventoryEntry) ---
+
+class InventoryEntryAttributes(BaseModel):
+    """Atributos de serialización de un movimiento de inventario."""
+
+    empresa_id: str
+    repuesto_id: str
+    movement_type: str
+    quantity: int
+    work_order_id: str | None = None
+    reason: str | None = None
+
+
+class InventoryEntryResource(BaseModel):
+    """Recurso JSON:API que encapsula un movimiento individual."""
+
+    type: str = Field(default="inventory_entries", description="Tipo de recurso")
+    id: str = Field(..., description="ID único del movimiento registrado")
+    attributes: InventoryEntryAttributes
+    links: LinksObject | None = None
+
+
+class InventoryEntryDocument(BaseModel):
+    """Documento JSON:API de respuesta para un solo movimiento."""
+
+    data: InventoryEntryResource
+    links: LinksObject | None = None
+    meta: dict[str, Any] | None = None
+
+
+# --- Solicitudes de Entrada para Movimientos (Requests) ---
+
+class CreateInventoryEntryAttributes(BaseModel):
+    """Atributos requeridos para registrar una entrada o salida de stock."""
+
+    movement_type: str = Field(..., description="Tipo de movimiento: 'entrada' o 'salida'")
+    quantity: int = Field(..., ge=1, description="Cantidad de repuestos a mover")
+    work_order_id: str | None = Field(default=None, description="ID de la orden de trabajo si aplica")
+    reason: str | None = Field(default=None, max_length=255, description="Motivo del movimiento")
+
+
+class CreateInventoryEntryResource(BaseModel):
+    """Recurso JSON:API para procesar la creación de un movimiento."""
+
+    type: str = Field(default="inventory_entries", description="Tipo de recurso")
+    attributes: CreateInventoryEntryAttributes
+
+
+class CreateInventoryEntryRequest(BaseModel):
+    """Solicitud JSON:API de entrada para el endpoint POST de movimientos."""
+
+    data: CreateInventoryEntryResource

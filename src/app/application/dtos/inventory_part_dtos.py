@@ -63,3 +63,30 @@ class InventoryPartQueryFilter:
     """DTO opcional para capturar los filtros de búsqueda en el listado global."""
 
     articulo_id: str | None = None
+
+    # =====================================================================
+# DTOs PARA MOVIMIENTOS DE INVENTARIO (InventoryEntries)
+# =====================================================================
+
+@dataclass(frozen=True)
+class CreateInventoryEntryRequest:
+    """DTO de entrada para registrar un nuevo movimiento de inventario (Entrada/Salida)."""
+
+    repuesto_id: str
+    movement_type: str  # Recibe "entrada" o "salida"
+    quantity: int
+    work_order_id: str | None = None
+    reason: str | None = None
+
+
+@dataclass(frozen=True)
+class InventoryEntryResponse:
+    """DTO de salida con los datos completos de un movimiento registrado."""
+
+    id: str
+    empresa_id: str
+    repuesto_id: str
+    movement_type: str
+    quantity: int
+    work_order_id: str | None
+    reason: str | None

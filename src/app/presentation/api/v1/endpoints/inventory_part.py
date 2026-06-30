@@ -9,16 +9,19 @@ from app.application.dtos.auth_dtos import UserResponse
 from app.application.dtos.inventory_part_dtos import (
     CreateInventoryPartRequest as CreateInventoryPartDTO,
     UpdateInventoryPartRequest as UpdateInventoryPartDTO,
+    CreateInventoryEntryRequest as CreateInventoryEntryDTO,
 )
 from app.application.use_cases.inventory_part.create_inventory_part import CreateInventoryPartUseCase
 from app.application.use_cases.inventory_part.get_inventory_part import GetInventoryPartUseCase
 from app.application.use_cases.inventory_part.list_inventory_parts import ListInventoryPartsUseCase
 from app.application.use_cases.inventory_part.update_inventory_part import UpdateInventoryPartUseCase
+from app.application.use_cases.inventory_part.create_inventory_entry import CreateInventoryEntryUseCase
 from app.composition.container.inventory_part import (
     get_create_inventory_part_use_case,
     get_inventory_part_use_case,
     get_list_inventory_parts_use_case,
     get_update_inventory_part_use_case,
+    get_create_inventory_entry_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
@@ -32,7 +35,12 @@ from app.presentation.api.v1.schemas.inventory_part import (
     InventoryPartListDocument,
     InventoryPartResource,
     UpdateInventoryPartRequest,
+    CreateInventoryEntryRequest,
+    InventoryEntryDocument,
+    InventoryEntryAttributes,
+    InventoryEntryResource,
 )
+
 
 router = APIRouter()
 
@@ -186,6 +194,47 @@ async def update_inventory_part(
                 precio_unitario=res.precio_unitario,
                 moneda=res.moneda,
                 version=res.version,
+            ),
+        )
+    )
+
+@router.post(
+    "/{part_id}/movements",
+    response_model=InventoryEntryDocument,
+    status_code=status.HTTP_201_CREATED,
+    summary="Registrar un movimiento (entrada o salida) de stock",
+)
+async def create_inventory_movement(
+    empresa_id: str,
+    part_id: str,
+    request: CreateInventoryEntryRequest,
+    current_user: UserResponse = Depends(require_permission(PermissionModule.INVENTORY, "edit")),
+    use_case: CreateInventoryEntryUseCase = Depends(get_create_inventory_entry_use_case),
+) -> InventoryEntryDocument:
+    """Registra una entrada o salida de inventario alterando de forma segura el stock actual.
+
+    Garantiza la consistencia del inventario y guarda el log histórico del movimiento.
+    """
+    dto = CreateInventoryEntryDTO(
+        repuesto_id=part_id,
+        movement_type=request.data.attributes.movement_type,
+        quantity=request.data.attributes.quantity,
+        work_order_id=request.data.attributes.work_order_id,
+        reason=request.data.attributes.reason,
+    )
+    
+    res = await use_case.execute(empresa_id, dto)
+    
+    return InventoryEntryDocument(
+        data=InventoryEntryResource(
+            id=res.id,
+            attributes=InventoryEntryAttributes(
+                empresa_id=res.empresa_id,
+                repuesto_id=res.repuesto_id,
+                movement_type=res.movement_type,
+                quantity=res.quantity,
+                work_order_id=res.work_order_id,
+                reason=res.reason,
             ),
         )
     )
