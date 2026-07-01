@@ -1,3 +1,4 @@
+"""Caso de uso para list article category."""
 
 from app.application.dtos.article_category_dtos import ArticleCategoryResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort

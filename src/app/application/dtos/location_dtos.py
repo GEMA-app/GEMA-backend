@@ -1,3 +1,4 @@
+"""DTOs de entrada y salida para el módulo de Location."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field

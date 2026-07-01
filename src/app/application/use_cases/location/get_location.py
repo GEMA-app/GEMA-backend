@@ -1,3 +1,4 @@
+"""Caso de uso para get location."""
 from app.application.dtos.location_dtos import LocationResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import LocationNotFoundError

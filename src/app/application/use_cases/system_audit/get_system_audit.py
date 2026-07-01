@@ -1,3 +1,4 @@
+"""Caso de uso para get system audit."""
 import uuid
 
 from app.application.dtos.system_audit_dtos import SystemAuditResponse

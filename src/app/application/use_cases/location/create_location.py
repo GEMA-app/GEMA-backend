@@ -1,3 +1,4 @@
+"""Caso de uso para create location."""
 
 
 from app.application.dtos.location_dtos import CreateLocationRequest, LocationResponse

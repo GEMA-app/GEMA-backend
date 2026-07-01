@@ -30,6 +30,7 @@ from app.application.dtos.company_dtos import (
 from app.application.dtos.failure_report_dtos import (
     CreateFailureReportRequest,
     FailureReportResponse,
+    UpdateFailureReportRequest,
 )
 from app.application.dtos.intervention_dtos import (
     CreateInterventionRequest,
@@ -53,6 +54,7 @@ from app.application.dtos.location_dtos import (
 from app.application.dtos.maintenance_plan_dtos import (
     CreateMaintenancePlanRequest,
     MaintenancePlanResponse,
+    PlanExecutionSummary,
     UpdateMaintenancePlanRequest,
 )
 from app.application.dtos.plan_execution_dtos import (
@@ -99,6 +101,7 @@ from app.application.dtos.work_order_dtos import (
     CreateWorkOrderRequest,
     UpdateWorkOrderRequest,
     WorkOrderResponse,
+    WorkOrderStatusLogResponse,
 )
 
 __all__ = [
@@ -135,6 +138,7 @@ __all__ = [
     "UpdateCatalogArticleRequest",
     "CreateFailureReportRequest",
     "FailureReportResponse",
+    "UpdateFailureReportRequest",
     "CreateUsedPartRequest",
     "UpdateUsedPartRequest",
     "UsedPartResponse",
@@ -148,6 +152,7 @@ __all__ = [
     "CreateWorkOrderRequest",
     "UpdateWorkOrderRequest",
     "WorkOrderResponse",
+    "WorkOrderStatusLogResponse",
     "ChangeWorkOrderStatusRequest",
     "CreateSubscriptionPlanRequest",
     "SubscriptionPlanResponse",
@@ -163,6 +168,7 @@ __all__ = [
     "UpdateCategoryRequest",
     "CreateMaintenancePlanRequest",
     "MaintenancePlanResponse",
+    "PlanExecutionSummary",
     "UpdateMaintenancePlanRequest",
     "PlanExecutionCreateRequest",
     "PlanExecutionResponse",

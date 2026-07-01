@@ -1,3 +1,4 @@
+"""Puerto (Protocol) del repositorio de usuarios (UserRepositoryPort)."""
 from typing import Protocol
 
 from app.domain.entities import User

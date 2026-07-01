@@ -1,3 +1,4 @@
+"""DTOs de entrada y salida para el módulo de Company."""
 import uuid
 from dataclasses import dataclass, field
 from datetime import date

@@ -12,15 +12,18 @@ from app.application.ports.company_repository import CompanyRepositoryPort
 from app.application.ports.event_bus import EventBusPort
 from app.application.ports.failure_report_repository import FailureReportRepositoryPort
 from app.application.ports.intervention_repository import InterventionRepositoryPort
+from app.application.ports.inventory_entry_repository import InventoryEntryRepositoryPort
 from app.application.ports.inventory_part_repository import InventoryPartRepositoryPort
 from app.application.ports.location_repository import LocationRepositoryPort
 from app.application.ports.maintenance_plan_repository import MaintenancePlanRepositoryPort
 from app.application.ports.notifications import NotificationPort
 from app.application.ports.plan_execution_repository import PlanExecutionRepositoryPort
 from app.application.ports.preference_repository import PreferenceRepositoryPort
+from app.application.ports.rate_limiter import RateLimiterPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
 from app.application.ports.subscription_plan_repository import SubscriptionPlanRepositoryPort
+from app.application.ports.supplier_repository import SupplierRepositoryPort
 from app.application.ports.system_audit_repository import SystemAuditRepositoryPort
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.application.ports.used_part_repository import UsedPartRepositoryPort
@@ -50,4 +53,7 @@ __all__ = [
     "PlanExecutionRepositoryPort",
     "SystemAuditRepositoryPort",
     "InventoryPartRepositoryPort",
+    "InventoryEntryRepositoryPort",
+    "SupplierRepositoryPort",
+    "RateLimiterPort",
 ]

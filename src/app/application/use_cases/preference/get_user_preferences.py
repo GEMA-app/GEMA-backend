@@ -1,3 +1,4 @@
+"""Caso de uso para get user preferences."""
 from app.application.dtos.preference_dtos import PreferenceResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import PreferenceNotFoundError

@@ -1,3 +1,4 @@
+"""Caso de uso para delete subscription plan."""
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import (
     SubscriptionPlanHasActiveSubscriptionsError,

@@ -1,3 +1,4 @@
+"""Caso de uso para update location."""
 from app.application.dtos.location_dtos import LocationResponse, UpdateLocationRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Location

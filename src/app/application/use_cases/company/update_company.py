@@ -1,3 +1,4 @@
+"""Caso de uso para update company."""
 from app.application.dtos.company_dtos import CompanyResponse, UpdateCompanyRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import CompanyStatus

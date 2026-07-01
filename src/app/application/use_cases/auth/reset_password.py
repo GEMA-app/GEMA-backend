@@ -1,8 +1,8 @@
+"""Caso de uso para restablecer la contrasena con token."""
 import asyncio
 import hashlib
 import uuid
 
-import redis
 import structlog
 
 from app.application.dtos import ResetPasswordRequest
@@ -65,7 +65,7 @@ class ResetPasswordUseCase:
                 await self.token_service.store_reset_token(
                     token_hash, user_id, 1800
                 )
-            except redis.RedisError as cache_err:
+            except Exception as cache_err:
                 logger.error(
                     "Fallo al restaurar token en cache tras rollback de BD",
                     redis_error=str(cache_err),

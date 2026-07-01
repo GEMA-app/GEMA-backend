@@ -1,3 +1,4 @@
+"""Caso de uso para rotar tokens JWT mediante refresh token."""
 import structlog
 
 from app.application.dtos import AuthTokensDTO, RefreshTokenRequest

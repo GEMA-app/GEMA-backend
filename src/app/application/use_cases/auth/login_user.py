@@ -1,3 +1,4 @@
+"""Caso de uso para autenticar un usuario y generar tokens JWT."""
 import asyncio
 
 from app.application.dtos import AuthTokensDTO, LoginUserRequest

@@ -1,3 +1,4 @@
+"""Caso de uso para list asset."""
 from typing import Any
 
 from app.application.dtos.asset_dtos import AssetResponse

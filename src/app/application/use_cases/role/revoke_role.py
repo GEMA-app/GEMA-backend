@@ -1,3 +1,4 @@
+"""Caso de uso para revocar un rol a un usuario rol."""
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import RoleNotFoundError, ValidationException
 from app.domain.value_objects import CompanyId, RoleId, UserId

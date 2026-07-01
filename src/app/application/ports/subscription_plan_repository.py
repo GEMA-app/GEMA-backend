@@ -1,3 +1,4 @@
+"""Puerto (Protocol) del repositorio de Subscription Plan."""
 from typing import Protocol
 
 from app.domain.entities.subscription_plan import SubscriptionPlan

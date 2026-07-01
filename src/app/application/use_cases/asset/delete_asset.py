@@ -1,3 +1,4 @@
+"""Caso de uso para delete asset."""
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import AssetNotFoundError
 from app.domain.value_objects import AssetId, CompanyId

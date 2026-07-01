@@ -1,3 +1,4 @@
+"""Puerto (Protocol) del repositorio de Work Order."""
 from typing import Protocol
 
 from app.application.dtos.work_order_dtos import WorkOrderStatusLogResponse

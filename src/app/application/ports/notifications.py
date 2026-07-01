@@ -1,3 +1,4 @@
+"""Puerto (Protocol) del servicio de notificaciones (NotificationPort)."""
 from typing import Protocol
 
 

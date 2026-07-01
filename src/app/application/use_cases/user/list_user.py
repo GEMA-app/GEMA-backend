@@ -1,3 +1,4 @@
+"""Caso de uso para list user."""
 from datetime import UTC, datetime
 
 from app.application.dtos.user_dtos import UserResponse

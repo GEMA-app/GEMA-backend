@@ -1,3 +1,4 @@
+"""Caso de uso para update subscription plan."""
 from app.application.dtos.subscription_plan_dtos import (
     SubscriptionPlanResponse,
     UpdateSubscriptionPlanRequest,

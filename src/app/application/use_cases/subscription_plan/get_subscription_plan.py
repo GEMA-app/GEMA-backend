@@ -1,3 +1,4 @@
+"""Caso de uso para get subscription plan."""
 from app.application.dtos.subscription_plan_dtos import SubscriptionPlanResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions.subscription_plan import SubscriptionPlanNotFoundError

@@ -1,3 +1,4 @@
+"""Caso de uso para delete location."""
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import LocationNotFoundError
 from app.domain.value_objects import CompanyId, LocationId

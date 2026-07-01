@@ -1,4 +1,4 @@
-﻿"""Caso de uso para listar intervenciones técnicas."""
+"""Caso de uso para listar intervenciones técnicas."""
 
 from app.application.dtos.intervention_dtos import InterventionResponse
 from app.application.dtos.used_part_dtos import UsedPartResponse

@@ -1,3 +1,4 @@
+"""Caso de uso para update asset."""
 import uuid
 from datetime import UTC, datetime
 from decimal import Decimal

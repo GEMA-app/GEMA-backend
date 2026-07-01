@@ -1,3 +1,4 @@
+"""Puertos (Protocol) de autenticación: PasswordHasherPort y TokenServicePort."""
 from typing import Any, Protocol
 
 

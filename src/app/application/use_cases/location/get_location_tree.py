@@ -1,3 +1,4 @@
+"""Caso de uso para get location tree."""
 from typing import Any
 
 import structlog

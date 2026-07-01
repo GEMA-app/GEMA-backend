@@ -1,4 +1,4 @@
-﻿"""Caso de uso para actualizar una intervención técnica."""
+"""Caso de uso para actualizar una intervención técnica."""
 
 from app.application.dtos.intervention_dtos import (
     InterventionResponse,

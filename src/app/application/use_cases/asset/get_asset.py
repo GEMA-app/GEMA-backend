@@ -1,3 +1,4 @@
+"""Caso de uso para get asset."""
 from app.application.dtos.asset_dtos import AssetResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import AssetNotFoundError

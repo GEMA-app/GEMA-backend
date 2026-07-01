@@ -1,3 +1,4 @@
+"""Puerto (Protocol) del servicio de autorización RBAC."""
 from typing import Protocol
 
 from app.domain.enums import PermissionModule

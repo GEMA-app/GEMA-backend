@@ -1,3 +1,4 @@
+"""Puerto (Protocol) del repositorio de Preference."""
 from typing import Protocol
 
 from app.domain.entities import UserPreference

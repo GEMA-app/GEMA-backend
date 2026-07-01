@@ -1,3 +1,4 @@
+"""Puerto (Protocol) del repositorio de System Audit."""
 import uuid
 from typing import Any, Protocol
 

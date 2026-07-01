@@ -1,3 +1,4 @@
+"""DTOs de entrada y salida para el módulo de Auth."""
 from dataclasses import dataclass
 from datetime import datetime
 

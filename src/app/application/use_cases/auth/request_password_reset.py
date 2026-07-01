@@ -1,3 +1,4 @@
+"""Caso de uso para solicitar restablecimiento de contrasena."""
 import hashlib
 import secrets
 

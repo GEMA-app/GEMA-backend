@@ -1,3 +1,4 @@
+"""Caso de uso para obtener los datos del usuario autenticado."""
 from datetime import UTC, datetime
 
 from app.application.dtos import GetCurrentUserRequest, UserResponse

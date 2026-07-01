@@ -1,4 +1,4 @@
-﻿"""DTOs para el módulo de intervenciones técnicas."""
+"""DTOs para el módulo de intervenciones técnicas."""
 
 from dataclasses import dataclass, field
 from datetime import datetime

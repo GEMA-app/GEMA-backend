@@ -74,6 +74,9 @@ from app.domain.exceptions import (
     SubscriptionPlanLimitExceededError,
     SubscriptionPlanNotFoundError,
     SubscriptionPlanPaymentFailedError,
+    SupplierHasInventoryPartsError,
+    SupplierNotFoundError,
+    SupplierRifExistsError,
     SystemAuditNotFoundError,
     TemplateNotFoundError,
     UsedPartInvalidPriceError,
@@ -313,6 +316,18 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     SubscriptionPlanHasActiveSubscriptionsError: (
         status.HTTP_409_CONFLICT,
         "ERR_SUBSCRIPTION_PLAN_HAS_ACTIVE_SUBSCRIPTIONS",
+    ),
+    SupplierNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_SUPPLIER_NOT_FOUND",
+    ),
+    SupplierRifExistsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_SUPPLIER_RIF_EXISTS",
+    ),
+    SupplierHasInventoryPartsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_SUPPLIER_HAS_INVENTORY_PARTS",
     ),
     SystemAuditNotFoundError: (
         status.HTTP_404_NOT_FOUND,
