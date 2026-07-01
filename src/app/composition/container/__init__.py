@@ -72,7 +72,9 @@ from app.composition.container.inventory_part import (
     get_create_inventory_entry_use_case,
     get_create_inventory_part_use_case,
     get_delete_inventory_part_use_case,
+    get_get_inventory_entry_use_case,
     get_inventory_part_use_case,
+    get_list_inventory_entries_use_case,
     get_list_inventory_parts_use_case,
     get_update_inventory_part_use_case,
 )
@@ -270,4 +272,6 @@ __all__ = [
     "get_update_inventory_part_use_case",
     "get_delete_inventory_part_use_case",
     "get_create_inventory_entry_use_case",
+    "get_list_inventory_entries_use_case",
+    "get_get_inventory_entry_use_case",
 ]

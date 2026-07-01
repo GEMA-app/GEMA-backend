@@ -109,6 +109,10 @@ class InventoryEntryAttributes(BaseModel):
     movement_type: str
     quantity: int
     work_order_id: str | None = None
+    usuario_id: str | None = None
+    precio_unitario: Decimal | None = None
+    moneda: str = "USD"
+    fecha_movimiento: str | None = None
     reason: str | None = None
 
 
@@ -125,6 +129,14 @@ class InventoryEntryDocument(BaseModel):
     """Documento JSON:API de respuesta para un solo movimiento."""
 
     data: InventoryEntryResource
+    links: LinksObject | None = None
+    meta: dict[str, Any] | None = None
+
+
+class InventoryEntryListDocument(BaseModel):
+    """Documento JSON:API de respuesta para listados de movimientos."""
+
+    data: list[InventoryEntryResource]
     links: LinksObject | None = None
     meta: dict[str, Any] | None = None
 

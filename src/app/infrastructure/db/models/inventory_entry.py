@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, Index, Numeric, String, Text
+from sqlalchemy import DateTime, ForeignKey, Index, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.db.base import Base
@@ -41,7 +41,7 @@ class InventoryEntryModel(TenantMixin, TimestampMixin, Base):
     precio_unitario: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True)
     moneda: Mapped[str] = mapped_column(String(3), default="USD", nullable=False)
     fecha_movimiento: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(UTC), nullable=False
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )
     observaciones: Mapped[str | None] = mapped_column(Text, nullable=True)
 

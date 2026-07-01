@@ -57,6 +57,19 @@ from app.presentation.api.v1.schemas.intervention import (
     InterventionResource,
     UpdateInterventionRequest,
 )
+from app.presentation.api.v1.schemas.inventory_part import (
+    CreateInventoryEntryRequest,
+    CreateInventoryPartRequest,
+    InventoryEntryAttributes,
+    InventoryEntryDocument,
+    InventoryEntryListDocument,
+    InventoryEntryResource,
+    InventoryPartAttributes,
+    InventoryPartDocument,
+    InventoryPartListDocument,
+    InventoryPartResource,
+    UpdateInventoryPartRequest,
+)
 from app.presentation.api.v1.schemas.location import (
     CreateLocationRequest,
     LocationDocument,
@@ -203,6 +216,18 @@ __all__ = [
     "UsedPartDocument",
     "UsedPartsDocument",
     "UsedPartResource",
+    # Inventory Part
+    "CreateInventoryEntryRequest",
+    "CreateInventoryPartRequest",
+    "InventoryEntryAttributes",
+    "InventoryEntryDocument",
+    "InventoryEntryListDocument",
+    "InventoryEntryResource",
+    "InventoryPartAttributes",
+    "InventoryPartDocument",
+    "InventoryPartListDocument",
+    "InventoryPartResource",
+    "UpdateInventoryPartRequest",
     "UserDocument",
     "UserListDocument",
     "UserResource",

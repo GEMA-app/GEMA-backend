@@ -56,6 +56,7 @@ class SqlAlchemyInventoryPartRepository(
             ubicacion_almacen=model.ubicacion_almacen or "",
             precio_unitario=model.precio_unitario or Decimal("0"),
             moneda=model.moneda,
+            version=model.version,
             created_at=model.created_at,
             updated_at=model.updated_at,
         )

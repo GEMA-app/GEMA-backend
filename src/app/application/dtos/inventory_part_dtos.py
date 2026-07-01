@@ -76,6 +76,7 @@ class CreateInventoryEntryRequest:
     movement_type: str  # Recibe "entrada" o "salida"
     quantity: int
     work_order_id: str | None = None
+    usuario_id: str | None = None
     reason: str | None = None
 
 
@@ -89,4 +90,8 @@ class InventoryEntryResponse:
     movement_type: str
     quantity: int
     work_order_id: str | None
+    usuario_id: str | None
+    precio_unitario: Decimal | None
+    moneda: str
+    fecha_movimiento: str | None
     reason: str | None

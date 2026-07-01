@@ -12,7 +12,11 @@ from app.application.use_cases.inventory_part.create_inventory_part import (
 from app.application.use_cases.inventory_part.delete_inventory_part import (
     DeleteInventoryPartUseCase,
 )
+from app.application.use_cases.inventory_part.get_inventory_entry import GetInventoryEntryUseCase
 from app.application.use_cases.inventory_part.get_inventory_part import GetInventoryPartUseCase
+from app.application.use_cases.inventory_part.list_inventory_entries import (
+    ListInventoryEntriesUseCase,
+)
 from app.application.use_cases.inventory_part.list_inventory_parts import ListInventoryPartsUseCase
 from app.application.use_cases.inventory_part.update_inventory_part import (
     UpdateInventoryPartUseCase,
@@ -60,3 +64,18 @@ async def get_create_inventory_entry_use_case(
 ) -> CreateInventoryEntryUseCase:
     """Fábrica de dependencias para el caso de uso de movimientos de inventario."""
     return CreateInventoryEntryUseCase(uow)
+
+
+async def get_list_inventory_entries_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> ListInventoryEntriesUseCase:
+    """Fábrica de dependencias para el caso de uso de listado de movimientos."""
+    return ListInventoryEntriesUseCase(uow)
+
+
+async def get_get_inventory_entry_use_case(
+    uow: UnitOfWorkPort = Depends(get_uow),
+) -> GetInventoryEntryUseCase:
+    """Fábrica de dependencias para el caso de uso de consulta de un movimiento."""
+    return GetInventoryEntryUseCase(uow)
+

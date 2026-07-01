@@ -36,6 +36,14 @@ from app.application.dtos.intervention_dtos import (
     InterventionResponse,
     UpdateInterventionRequest,
 )
+from app.application.dtos.inventory_part_dtos import (
+    CreateInventoryEntryRequest,
+    CreateInventoryPartRequest,
+    InventoryEntryResponse,
+    InventoryPartQueryFilter,
+    InventoryPartResponse,
+    UpdateInventoryPartRequest,
+)
 from app.application.dtos.location_dtos import (
     CreateLocationRequest,
     LocationResponse,
@@ -125,6 +133,13 @@ __all__ = [
     "CreateUsedPartRequest",
     "UpdateUsedPartRequest",
     "UsedPartResponse",
+    # Inventory Part
+    "CreateInventoryEntryRequest",
+    "CreateInventoryPartRequest",
+    "InventoryEntryResponse",
+    "InventoryPartQueryFilter",
+    "InventoryPartResponse",
+    "UpdateInventoryPartRequest",
     "CreateWorkOrderRequest",
     "UpdateWorkOrderRequest",
     "WorkOrderResponse",

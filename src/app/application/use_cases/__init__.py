@@ -53,6 +53,16 @@ from app.application.use_cases.intervention import (
     ListInterventionsUseCase,
     UpdateInterventionUseCase,
 )
+from app.application.use_cases.inventory_part import (
+    CreateInventoryEntryUseCase,
+    CreateInventoryPartUseCase,
+    DeleteInventoryPartUseCase,
+    GetInventoryEntryUseCase,
+    GetInventoryPartUseCase,
+    ListInventoryEntriesUseCase,
+    ListInventoryPartsUseCase,
+    UpdateInventoryPartUseCase,
+)
 from app.application.use_cases.location import (
     CreateLocationUseCase,
     DeleteLocationUseCase,
@@ -215,6 +225,15 @@ __all__ = [
     "UpdateUsedPartUseCase",
     "DeleteUsedPartUseCase",
     "ListUsedPartsUseCase",
+    # Inventory Part
+    "CreateInventoryEntryUseCase",
+    "CreateInventoryPartUseCase",
+    "DeleteInventoryPartUseCase",
+    "GetInventoryEntryUseCase",
+    "GetInventoryPartUseCase",
+    "ListInventoryEntriesUseCase",
+    "ListInventoryPartsUseCase",
+    "UpdateInventoryPartUseCase",
     # User
     "CreateUserUseCase",
     "GetUserUseCase",
