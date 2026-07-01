@@ -44,6 +44,19 @@ class InventoryPart:
     ) -> "InventoryPart":
         """Crea un nuevo repuesto en el inventario validando reglas iniciales.
 
+        Args:
+            empresa_id: Identificador de la empresa propietaria.
+            articulo_id: Identificador del artículo de catálogo.
+            proveedor_id: Identificador del proveedor.
+            stock_minimo: Cantidad mínima de stock antes de reordenar.
+            ubicacion_almacen: Ubicación física en el almacén.
+            precio_unitario: Precio unitario del repuesto.
+            stock_inicial: Cantidad inicial en stock (por defecto 0).
+            moneda: Moneda del precio (por defecto USD).
+
+        Returns:
+            Una nueva instancia de InventoryPart con los datos proporcionados.
+
         Raises:
             InvalidStockError: Si los valores de stock son negativos.
             InvalidPriceError: Si el precio es menor que cero.
@@ -82,6 +95,13 @@ class InventoryPart:
 
         NOTA DE ARQUITECTURA: 'stock_actual' NO se modifica aquí según reglas de negocio de GEMA.
 
+        Args:
+            proveedor_id: Nuevo identificador del proveedor.
+            stock_minimo: Nuevo stock mínimo.
+            ubicacion_almacen: Nueva ubicación en el almacén.
+            precio_unitario: Nuevo precio unitario.
+            moneda: Nueva moneda.
+
         Raises:
             InvalidStockError: Si el stock mínimo es negativo.
             InvalidPriceError: Si el precio unitario es negativo.
@@ -105,6 +125,9 @@ class InventoryPart:
     def record_incoming_stock(self, cantidad: int) -> None:
         """Incrementa el stock actual validando que la cantidad sea positiva.
 
+        Args:
+            cantidad: Cantidad a agregar al stock (debe ser mayor que cero).
+
         Raises:
             InvalidStockError: Si la cantidad es menor o igual a cero.
         """
@@ -115,6 +138,9 @@ class InventoryPart:
 
     def record_outgoing_stock(self, cantidad: int) -> None:
         """Decrementa el stock actual validando existencias suficientes.
+
+        Args:
+            cantidad: Cantidad a retirar del stock (debe ser mayor que cero).
 
         Raises:
             InvalidStockError: Si la cantidad es menor o igual a cero,

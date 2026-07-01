@@ -6,16 +6,6 @@ from datetime import datetime
 
 from app.domain.exceptions import EmptyCatalogArticleNameError
 
-# ---------------------------------------------------------------------------
-# Constantes de validación
-# ---------------------------------------------------------------------------
-_MAX_CATEGORY_NAME_LENGTH: int = 100
-_MAX_ARTICLE_NAME_LENGTH: int = 255
-_MAX_DESCRIPTION_LENGTH: int = 2000
-_MAX_MANUFACTURER_LENGTH: int = 100
-_MAX_MODEL_LENGTH: int = 100
-_MAX_UNIT_OF_MEASURE_LENGTH: int = 50
-
 
 @dataclass
 class CatalogArticle:

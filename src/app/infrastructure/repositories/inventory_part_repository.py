@@ -61,7 +61,7 @@ class SqlAlchemyInventoryPartRepository(
             updated_at=model.updated_at,
         )
 
-    async def get_all_by_empresa(
+    async def get_all_by_company(
         self, empresa_id: CompanyId, limit: int = 20, offset: int = 0
     ) -> list[InventoryPart]:
         """Lista los repuestos de una empresa con paginación."""

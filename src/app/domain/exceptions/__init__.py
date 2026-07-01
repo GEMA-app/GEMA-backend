@@ -48,7 +48,7 @@ from app.domain.exceptions.company import (
     CompanySlugExistsError,
     EmptyCompanyNameError,
 )
-from app.domain.exceptions.event_bus import EventPublishError
+from app.domain.exceptions.event_bus import EventBusError, EventPublishError
 from app.domain.exceptions.failure_report import (
     EmptyDescriptionError,
     EmptyLocationError,
@@ -209,6 +209,7 @@ __all__ = [
     "PreferenceThemeInvalidError",
     "LastAdminRevocationError",
     "StaleDataError",
+    "EventBusError",
     "EventPublishError",
     "ValidationError",
     "ArticleCategoryException",

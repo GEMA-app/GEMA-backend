@@ -59,16 +59,16 @@ class UpdateRoleUseCase:
             if 'permisos' in request._fields_set:
                 if request.permisos is None:
                     raise ValidationException("Los permisos no pueden ser nulos.")
-                permisos_map = {}
+                permissions_map = {}
                 for p in request.permisos:
-                    permisos_map[p.module] = Permission(
+                    permissions_map[p.module] = Permission(
                         module=PermissionModule(p.module),
                         can_view=p.can_view,
                         can_create=p.can_create,
                         can_edit=p.can_edit,
                         can_delete=p.can_delete,
                     )
-                role.permisos = list(permisos_map.values())
+                role.permisos = list(permissions_map.values())
 
             await self.uow.roles.save(role)
             await self.uow.commit()

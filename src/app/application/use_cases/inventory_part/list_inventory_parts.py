@@ -19,7 +19,7 @@ class ListInventoryPartsUseCase:
 
         async with self.uow:
             # Invocamos el método de listado que definimos en el puerto del repositorio
-            parts = await self.uow.inventory_parts.get_all_by_empresa(
+            parts = await self.uow.inventory_parts.get_all_by_company(
                 empresa_id=company_id, limit=limit, offset=offset
             )
 

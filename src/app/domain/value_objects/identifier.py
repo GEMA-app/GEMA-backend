@@ -342,7 +342,11 @@ class InterventionId:
 
     @classmethod
     def generate(cls) -> "InterventionId":
-        """Genera un nuevo identificador aleatorio."""
+        """Genera un nuevo identificador aleatorio.
+
+        Returns:
+            Un nuevo InterventionId con UUID aleatorio.
+        """
         return cls(value=uuid.uuid4())
 
     @classmethod

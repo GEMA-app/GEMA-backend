@@ -83,7 +83,11 @@ class SubscriptionPlan:
 
     @property
     def is_unlimited(self) -> bool:
-        """Indica si el plan no impone límites de capacidad."""
+        """Indica si el plan no impone límites de capacidad.
+
+        Returns:
+            bool: True si al menos uno de los límites (activos o usuarios) es ilimitado (None).
+        """
         return self.max_activos is None or self.max_usuarios is None
 
     def activate(self) -> None:

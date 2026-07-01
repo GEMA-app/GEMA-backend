@@ -7,5 +7,5 @@ class NotificationError(DomainException):
     """Se lanza cuando ocurre un error al enviar una notificación o correo SMTP."""
 
 
-class TemplateNotFoundError(DomainException):
+class TemplateNotFoundError(NotificationError):
     """Se lanza cuando una plantilla de correo/notificación solicitada no existe."""

@@ -52,7 +52,7 @@ def mock_uow() -> Any:
     uow.inventory_parts = MagicMock()
     uow.inventory_parts.save = AsyncMock()
     uow.inventory_parts.get_by_id = AsyncMock()
-    uow.inventory_parts.get_all_by_empresa = AsyncMock()
+    uow.inventory_parts.get_all_by_company = AsyncMock()
     uow.inventory_parts.delete = AsyncMock()
 
     uow.inventory_entries = MagicMock()

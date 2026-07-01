@@ -24,16 +24,16 @@ class CreateRoleUseCase:
                     f"Ya existe un rol con el nombre '{request.nombre}' en esta empresa."
                 )
 
-            permisos_map = {}
+            permissions_map = {}
             for p in request.permisos:
-                permisos_map[p.module] = Permission(
+                permissions_map[p.module] = Permission(
                     module=PermissionModule(p.module),
                     can_view=p.can_view,
                     can_create=p.can_create,
                     can_edit=p.can_edit,
                     can_delete=p.can_delete,
                 )
-            permisos = list(permisos_map.values())
+            permisos = list(permissions_map.values())
 
             role = Role.create(
                 empresa_id=company_id,
