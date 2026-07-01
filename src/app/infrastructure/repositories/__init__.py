@@ -19,6 +19,9 @@ from app.infrastructure.repositories.failure_report_repository import (
     SqlAlchemyFailureReportRepository,
 )
 from app.infrastructure.repositories.intervention_repository import SqlAlchemyInterventionRepository
+from app.infrastructure.repositories.inventory_entry_repository import (
+    SqlAlchemyInventoryEntryRepository,
+)
 from app.infrastructure.repositories.inventory_part_repository import (
     SqlAlchemyInventoryPartRepository,
 )
@@ -62,5 +65,6 @@ __all__ = [
     "SqlAlchemyWorkOrderRepository",
     "SqlAlchemyInterventionRepository",
     "SqlAlchemySystemAuditRepository",
+    "SqlAlchemyInventoryEntryRepository",
     "SqlAlchemyInventoryPartRepository",
 ]

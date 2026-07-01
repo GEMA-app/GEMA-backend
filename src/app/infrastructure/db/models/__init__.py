@@ -48,12 +48,11 @@ __all__ = [
     "AssetStateLogModel",
     "SupplierModel",
     "SystemAuditModel",
+    "TechnicalInterventionModel",
     "WorkOrderModel",
     "WorkOrderTechnicianModel",
     "WorkOrderStatusLogModel",
-    "SupplierModel",
     "TechnicalInterventionModel",
     "InventoryPartModel",
     "InventoryEntryModel",
 ]
-

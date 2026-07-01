@@ -1,4 +1,5 @@
 """Caso de uso para create subscription plan."""
+
 from app.application.dtos.subscription_plan_dtos import (
     CreateSubscriptionPlanRequest,
     SubscriptionPlanResponse,

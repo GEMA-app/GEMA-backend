@@ -12,9 +12,7 @@ class GetWorkOrderUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, company_id: str, work_order_id: str
-    ) -> WorkOrderResponse:
+    async def execute(self, company_id: str, work_order_id: str) -> WorkOrderResponse:
         """Ejecuta la obtención de una orden de trabajo.
 
         Args:

@@ -65,7 +65,6 @@ class SqlAlchemyRepository(Generic[ModelT, EntityT, IdT], ABC):
         await self.session.merge(model)
         self._collect_events(entity)
 
-
     async def get_by_id(self, id: IdT) -> EntityT | None:
         """Busca una entidad por su identificador único.
 

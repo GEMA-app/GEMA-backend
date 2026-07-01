@@ -35,7 +35,6 @@ class SqlAlchemyPlanExecutionRepository(
             observations=entity.observations,
         )
 
-
     def _to_entity(self, model: PlanExecutionModel) -> PlanExecution:
         """Convierte modelo ORM a entidad de dominio."""
         return PlanExecution(
@@ -49,9 +48,7 @@ class SqlAlchemyPlanExecutionRepository(
             updated_at=model.updated_at,
         )
 
-    async def list_by_plan_id(
-        self, plan_id: UUID, empresa_id: CompanyId
-    ) -> list[PlanExecution]:
+    async def list_by_plan_id(self, plan_id: UUID, empresa_id: CompanyId) -> list[PlanExecution]:
         """Lista ejecuciones por plan y empresa.
 
         Args:

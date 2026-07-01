@@ -1,4 +1,5 @@
 """Puerto (Protocol) del repositorio de Company."""
+
 from typing import Protocol
 
 from app.domain.entities import Company

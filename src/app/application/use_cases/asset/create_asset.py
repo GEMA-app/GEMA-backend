@@ -1,4 +1,5 @@
 """Caso de uso para create asset."""
+
 import uuid
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -85,9 +86,7 @@ class CreateAssetUseCase:
                 if asset.fecha_adquisicion
                 else None,
                 valor_monetario=(
-                    float(asset.valor_monetario)
-                    if asset.valor_monetario is not None
-                    else None
+                    float(asset.valor_monetario) if asset.valor_monetario is not None else None
                 ),
                 moneda=asset.moneda,
                 version=asset.version,

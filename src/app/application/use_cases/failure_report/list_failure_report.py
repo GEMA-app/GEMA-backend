@@ -1,6 +1,5 @@
 """Caso de uso para listar reportes de falla con paginacion y filtros."""
 
-
 from app.application.dtos.failure_report_dtos import FailureReportResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.value_objects import CompanyId
@@ -41,9 +40,7 @@ class ListFailureReportsUseCase:
 
             responses = []
             for r in reports:
-                work_order = await self.uow.work_orders.get_by_report_id(
-                    str(r.id), company_id
-                )
+                work_order = await self.uow.work_orders.get_by_report_id(str(r.id), company_id)
                 responses.append(
                     FailureReportResponse(
                         id=str(r.id),

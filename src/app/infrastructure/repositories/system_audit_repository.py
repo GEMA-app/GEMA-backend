@@ -89,32 +89,22 @@ class SqlAlchemySystemAuditRepository(
         Returns:
             Tupla con la lista de entidades y el total de registros sin paginación.
         """
-        stmt = select(SystemAuditModel).where(
-            SystemAuditModel.empresa_id == company_id.value
-        )
+        stmt = select(SystemAuditModel).where(SystemAuditModel.empresa_id == company_id.value)
 
         if filters.get("usuario_id") is not None:
             stmt = stmt.where(SystemAuditModel.usuario_id == filters["usuario_id"])
         if filters.get("accion"):
             stmt = stmt.where(SystemAuditModel.accion == filters["accion"])
         if filters.get("fecha_inicio"):
-            stmt = stmt.where(
-                SystemAuditModel.ocurrido_en >= filters["fecha_inicio"]
-            )
+            stmt = stmt.where(SystemAuditModel.ocurrido_en >= filters["fecha_inicio"])
         if filters.get("fecha_fin"):
-            stmt = stmt.where(
-                SystemAuditModel.ocurrido_en <= filters["fecha_fin"]
-            )
+            stmt = stmt.where(SystemAuditModel.ocurrido_en <= filters["fecha_fin"])
 
         count_stmt = select(func.count()).select_from(stmt.subquery())
         total_result = await self.session.execute(count_stmt)
         total = total_result.scalar_one()
 
-        stmt = (
-            stmt.order_by(desc(SystemAuditModel.ocurrido_en))
-            .offset(offset)
-            .limit(limit)
-        )
+        stmt = stmt.order_by(desc(SystemAuditModel.ocurrido_en)).offset(offset).limit(limit)
         result = await self.session.execute(stmt)
         models = result.scalars().all()
 

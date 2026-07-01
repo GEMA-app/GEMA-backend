@@ -1,4 +1,5 @@
 """Puerto (Protocol) del repositorio de Work Order."""
+
 from typing import Protocol
 
 from app.application.dtos.work_order_dtos import WorkOrderStatusLogResponse
@@ -39,9 +40,7 @@ class WorkOrderRepositoryPort(Protocol):
         """Lista órdenes de trabajo de una empresa, con filtros opcionales."""
         ...
 
-    async def get_by_report_id(
-        self, reporte_id: str, empresa_id: CompanyId
-    ) -> WorkOrder | None:
+    async def get_by_report_id(self, reporte_id: str, empresa_id: CompanyId) -> WorkOrder | None:
         """Obtiene una orden de trabajo asociada a un reporte de falla."""
         ...
 

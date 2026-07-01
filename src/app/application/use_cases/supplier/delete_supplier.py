@@ -13,9 +13,7 @@ class DeleteSupplierUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, empresa_id_str: str, supplier_id: UUID
-    ) -> None:
+    async def execute(self, empresa_id_str: str, supplier_id: UUID) -> None:
         """Ejecuta la eliminación de un proveedor.
 
         Args:
@@ -28,16 +26,12 @@ class DeleteSupplierUseCase:
         """
         company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
-            supplier = await self.uow.suppliers.get_by_id(
-                supplier_id, company_id.value
-            )
+            supplier = await self.uow.suppliers.get_by_id(supplier_id, company_id.value)
             if not supplier:
                 raise SupplierNotFoundError("Proveedor no encontrado.")
 
             # Verificar si tiene repuestos de inventario asociados
-            has_parts = await self.uow.suppliers.has_inventory_parts(
-                supplier_id, company_id.value
-            )
+            has_parts = await self.uow.suppliers.has_inventory_parts(supplier_id, company_id.value)
             if has_parts:
                 raise SupplierHasInventoryPartsError(
                     "No se puede eliminar un proveedor con repuestos de inventario asociados."

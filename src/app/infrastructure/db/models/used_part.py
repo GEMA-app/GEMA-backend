@@ -19,7 +19,6 @@ class UsedPartModel(VersionMixin, TenantMixin, TimestampMixin, Base):
         Index("ix_repuestos_utilizados_empresa_repuesto", "empresa_id", "repuesto_id"),
     )
 
-
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     intervencion_id: Mapped[UUID] = mapped_column(
         ForeignKey("intervenciones_tecnicas.id", ondelete="CASCADE"), nullable=False

@@ -78,4 +78,3 @@ class CreateInventoryEntryUseCase:
                 else None,
                 reason=request.reason,
             )
-

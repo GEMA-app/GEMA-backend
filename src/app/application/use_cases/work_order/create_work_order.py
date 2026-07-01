@@ -23,9 +23,7 @@ class CreateWorkOrderUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, company_id: str, request: CreateWorkOrderRequest
-    ) -> WorkOrderResponse:
+    async def execute(self, company_id: str, request: CreateWorkOrderRequest) -> WorkOrderResponse:
         """Ejecuta la creación de una orden de trabajo.
 
         Args:
@@ -45,9 +43,7 @@ class CreateWorkOrderUseCase:
         async with self.uow:
             asset = await self.uow.assets.get_by_id(activo_id, company)
             if not asset:
-                raise AssetNotFoundError(
-                    f"Activo con ID '{request.activo_id}' no encontrado."
-                )
+                raise AssetNotFoundError(f"Activo con ID '{request.activo_id}' no encontrado.")
 
             codigo_ot = request.codigo_ot or WorkOrder.generate_code(company)
 
@@ -64,9 +60,7 @@ class CreateWorkOrderUseCase:
                 activo_id=activo_id,
                 tipo=MaintenanceType(request.tipo),
                 supervisor_id=(
-                    UserId.from_string(request.supervisor_id)
-                    if request.supervisor_id
-                    else None
+                    UserId.from_string(request.supervisor_id) if request.supervisor_id else None
                 ),
                 descripcion_trabajo=request.descripcion_trabajo,
                 costo_estimado=request.costo_estimado,
@@ -77,4 +71,3 @@ class CreateWorkOrderUseCase:
             await self.uow.commit()
 
             return WorkOrderResponse.from_entity(work_order)
-

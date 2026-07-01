@@ -1,4 +1,5 @@
 """Caso de uso para create role."""
+
 from app.application.dtos.role_dtos import CreateRoleRequest, PermissionDTO, RoleResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Permission, Role

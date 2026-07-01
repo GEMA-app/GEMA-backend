@@ -26,7 +26,6 @@ class SqlAlchemyRoleRepository(
     ) -> None:
         super().__init__(session, RoleModel, pending_events)
 
-
     async def save(self, entity: Role) -> None:
         """Persiste un rol preservando los UUIDs de permisos existentes.
 
@@ -76,7 +75,6 @@ class SqlAlchemyRoleRepository(
 
         # Recolectar eventos
         self._collect_events(entity)
-
 
     def _to_model(self, entity: Role) -> RoleModel:
         """Mapea la entidad Role a su modelo ORM para inserciones nuevas.
@@ -160,9 +158,7 @@ class SqlAlchemyRoleRepository(
 
         from app.infrastructure.db.models.role import RoleUserModel
 
-        stmt = insert(RoleUserModel).values(
-            usuario_id=user_id.value, rol_id=role_id.value
-        )
+        stmt = insert(RoleUserModel).values(usuario_id=user_id.value, rol_id=role_id.value)
         try:
             async with self.session.begin_nested():
                 await self.session.execute(stmt)

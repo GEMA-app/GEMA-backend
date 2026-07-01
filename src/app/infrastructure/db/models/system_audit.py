@@ -30,7 +30,4 @@ class SystemAuditModel(TimestampMixin, TenantMixin, Base):
     accion: Mapped[str] = mapped_column(String(255))
     detalles: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
     ip_address: Mapped[str | None] = mapped_column(String(45))
-    ocurrido_en: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False
-    )
-
+    ocurrido_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

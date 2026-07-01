@@ -1,4 +1,5 @@
 """Caso de uso para update role."""
+
 from app.application.dtos.role_dtos import PermissionDTO, RoleResponse, UpdateRoleRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Permission
@@ -37,7 +38,7 @@ class UpdateRoleUseCase:
                     f"la actual es {role.version}."
                 )
 
-            if 'nombre' in request._fields_set:
+            if "nombre" in request._fields_set:
                 if request.nombre is None:
                     raise ValidationException("El nombre del rol no puede ser nulo.")
                 new_name = request.nombre.strip()
@@ -53,10 +54,10 @@ class UpdateRoleUseCase:
                     )
                 role.nombre = new_name
 
-            if 'descripcion' in request._fields_set:
+            if "descripcion" in request._fields_set:
                 role.descripcion = request.descripcion or ""
 
-            if 'permisos' in request._fields_set:
+            if "permisos" in request._fields_set:
                 if request.permisos is None:
                     raise ValidationException("Los permisos no pueden ser nulos.")
                 permissions_map = {}

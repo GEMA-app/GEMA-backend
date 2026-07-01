@@ -9,15 +9,11 @@ from app.domain.entities.article_category import ArticleCategory
 class ArticleCategoryRepositoryPort(Protocol):
     """Contrato estructural para el repositorio de categorías de artículos."""
 
-    async def get_by_id(
-        self, category_id: UUID, empresa_id: UUID
-    ) -> ArticleCategory | None:
+    async def get_by_id(self, category_id: UUID, empresa_id: UUID) -> ArticleCategory | None:
         """Busca una categoría por ID dentro del tenant."""
         ...
 
-    async def get_by_name(
-        self, name: str, empresa_id: UUID
-    ) -> ArticleCategory | None:
+    async def get_by_name(self, name: str, empresa_id: UUID) -> ArticleCategory | None:
         """Busca una categoría por nombre exacto dentro del tenant."""
         ...
 

@@ -1,4 +1,5 @@
 """Caso de uso para registrar un nuevo usuario dentro de una empresa."""
+
 import asyncio
 from datetime import UTC, datetime
 
@@ -17,9 +18,7 @@ class CreateUserUseCase:
         self.uow = uow
         self.hasher = hasher
 
-    async def execute(
-        self, company_id_str: str, request: CreateUserRequest
-    ) -> UserResponse:
+    async def execute(self, company_id_str: str, request: CreateUserRequest) -> UserResponse:
         """Registra un nuevo usuario aplicando las reglas de la arquitectura.
 
         Args:
@@ -40,13 +39,10 @@ class CreateUserUseCase:
             existing_user = await self.uow.users.get_by_email(email_vo)
             if existing_user:
                 raise UserAlreadyExistsError(
-                    f"Ya existe un usuario registrado con el correo "
-                    f"'{request.email}'."
+                    f"Ya existe un usuario registrado con el correo '{request.email}'."
                 )
 
-            hashed_val = await asyncio.to_thread(
-                self.hasher.hash, request.password
-            )
+            hashed_val = await asyncio.to_thread(self.hasher.hash, request.password)
             password_hash = HashedPassword(value=hashed_val)
 
             user = User.register(

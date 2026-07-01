@@ -1,4 +1,5 @@
 """Casos de uso para el modulo de Reportes de Falla."""
+
 from app.application.use_cases.failure_report.create_failure_report import (
     CreateFailureReportUseCase,
 )

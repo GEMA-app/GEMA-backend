@@ -90,6 +90,7 @@ class UpdateWorkOrderRequest:
     Todos los campos son opcionales; solo se actualizan los que se
     proporcionan (distintos de None).
     """
+
     descripcion_trabajo: str | None = None
     costo_estimado: float | None = None
     costo_real: float | None = None
@@ -99,6 +100,7 @@ class UpdateWorkOrderRequest:
 @dataclass(frozen=True)
 class ChangeWorkOrderStatusRequest:
     """DTO de solicitud para cambiar el estado de una orden de trabajo."""
+
     estado: str
     motivo: str | None = None
     usuario_id: str | None = None
@@ -107,6 +109,7 @@ class ChangeWorkOrderStatusRequest:
 @dataclass(frozen=True)
 class WorkOrderStatusLogResponse:
     """DTO para representar una entrada del historial de estados de una OT."""
+
     id: str
     ordenes_trabajo_id: str
     estado_anterior: str | None

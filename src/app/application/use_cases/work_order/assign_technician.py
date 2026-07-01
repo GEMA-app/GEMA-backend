@@ -37,7 +37,5 @@ class AssignTechnicianUseCase:
             if not user or str(user.empresa_id) != company_id:
                 raise WorkOrderNotFoundError("El técnico no existe en esta empresa.")
 
-            await self.uow.work_orders.assign_technician(
-                wo_id, UserId(tech_uuid), company
-            )
+            await self.uow.work_orders.assign_technician(wo_id, UserId(tech_uuid), company)
             await self.uow.commit()

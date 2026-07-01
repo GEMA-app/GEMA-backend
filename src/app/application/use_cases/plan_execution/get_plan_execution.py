@@ -12,9 +12,7 @@ class GetPlanExecutionUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, company_id_str: str, execution_id_str: str
-    ) -> PlanExecutionResponse:
+    async def execute(self, company_id_str: str, execution_id_str: str) -> PlanExecutionResponse:
         """Obtiene una ejecución de plan por su ID.
 
         Args:
@@ -31,9 +29,7 @@ class GetPlanExecutionUseCase:
         exec_id = PlanExecutionId.from_string(execution_id_str)
 
         async with self.uow:
-            execution = await self.uow.plan_executions.get_by_id(
-                exec_id, company_id
-            )
+            execution = await self.uow.plan_executions.get_by_id(exec_id, company_id)
             if not execution:
                 raise PlanExecutionNotFoundError(execution_id_str, company_id_str)
 

@@ -1,4 +1,5 @@
 """Caso de uso para get user preferences."""
+
 from app.application.dtos.preference_dtos import PreferenceResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import PreferenceNotFoundError
@@ -11,9 +12,7 @@ class GetUserPreferencesUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, company_id_str: str, user_id_str: str
-    ) -> PreferenceResponse:
+    async def execute(self, company_id_str: str, user_id_str: str) -> PreferenceResponse:
         """Obtiene las preferencias del usuario."""
         company_id = CompanyId.from_string(company_id_str)
         user_id = UserId.from_string(user_id_str)

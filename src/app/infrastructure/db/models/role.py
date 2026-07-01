@@ -44,8 +44,11 @@ class PermissionModel(TenantMixin, TimestampMixin, Base):
         ForeignKey("roles.id", ondelete="CASCADE"), nullable=False
     )
     modulo: Mapped[PermissionModule] = mapped_column(
-        Enum(PermissionModule, name="modulo_permiso",
-             values_callable=lambda obj: [e.value for e in obj]),
+        Enum(
+            PermissionModule,
+            name="modulo_permiso",
+            values_callable=lambda obj: [e.value for e in obj],
+        ),
         nullable=False,
     )
     puede_ver: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

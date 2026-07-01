@@ -45,9 +45,7 @@ class UpdateWorkOrderUseCase:
                 )
 
             supervisor = (
-                UserId.from_string(request.supervisor_id)
-                if request.supervisor_id
-                else None
+                UserId.from_string(request.supervisor_id) if request.supervisor_id else None
             )
             wo.update_details(
                 descripcion_trabajo=request.descripcion_trabajo,

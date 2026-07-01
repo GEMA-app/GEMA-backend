@@ -51,6 +51,7 @@ class InventoryPartListDocument(BaseModel):
 
 # --- Solicitudes de Entrada (Requests) ---
 
+
 class CreateInventoryPartAttributes(BaseModel):
     """Atributos requeridos para registrar un repuesto con stock inicial."""
 
@@ -101,6 +102,7 @@ class UpdateInventoryPartRequest(BaseModel):
 
     # --- Esquemas para Movimientos de Inventario (InventoryEntry) ---
 
+
 class InventoryEntryAttributes(BaseModel):
     """Atributos de serialización de un movimiento de inventario."""
 
@@ -142,6 +144,7 @@ class InventoryEntryListDocument(BaseModel):
 
 
 # --- Solicitudes de Entrada para Movimientos (Requests) ---
+
 
 class CreateInventoryEntryAttributes(BaseModel):
     """Atributos requeridos para registrar una entrada o salida de stock."""

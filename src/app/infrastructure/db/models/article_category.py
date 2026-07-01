@@ -24,9 +24,7 @@ class ArticleCategoryModel(Base, TenantMixin, TimestampMixin, VersionMixin):
 
     __tablename__ = "categorias_articulos"
     __table_args__ = (
-        UniqueConstraint(
-            "empresa_id", "nombre", name="uq_categorias_articulos_empresa_nombre"
-        ),
+        UniqueConstraint("empresa_id", "nombre", name="uq_categorias_articulos_empresa_nombre"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -38,4 +36,3 @@ class ArticleCategoryModel(Base, TenantMixin, TimestampMixin, VersionMixin):
         back_populates="categoria",
         cascade="save-update, merge",
     )
-

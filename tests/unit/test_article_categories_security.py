@@ -4,7 +4,7 @@ import inspect
 from collections.abc import Callable
 from typing import Any
 
-from app.presentation.api.v1.endpoints.article_category import (
+from app.presentation.api.v1.endpoints.article_categories import (
     create_category,
     delete_category,
     get_category_by_id,

@@ -8,7 +8,7 @@ import inspect
 from collections.abc import Callable
 from typing import Any
 
-from app.presentation.api.v1.endpoints.system_audit import (
+from app.presentation.api.v1.endpoints.system_audits import (
     get_system_audit_by_id,
     list_system_audits,
 )

@@ -1,4 +1,5 @@
 """Caso de uso para update subscription plan."""
+
 from app.application.dtos.subscription_plan_dtos import (
     SubscriptionPlanResponse,
     UpdateSubscriptionPlanRequest,
@@ -15,9 +16,7 @@ class UpdateSubscriptionPlanUseCase:
         self._uow = uow
 
     async def execute(
-        self,
-        plan_id_str: str,
-        request: UpdateSubscriptionPlanRequest
+        self, plan_id_str: str, request: UpdateSubscriptionPlanRequest
     ) -> SubscriptionPlanResponse:
         """Ejecuta el caso de uso para actualizar un plan de suscripción."""
         subscription_plan_id = SubscriptionPlanId.from_string(plan_id_str)
@@ -32,8 +31,7 @@ class UpdateSubscriptionPlanUseCase:
             if request.nombre is not None or request.descripcion is not None:
                 nuevo_nombre = request.nombre if request.nombre is not None else plan.nombre
                 nueva_desc = (
-                    request.descripcion if request.descripcion is not None
-                    else plan.descripcion
+                    request.descripcion if request.descripcion is not None else plan.descripcion
                 )
                 plan.update_details(nuevo_nombre, nueva_desc)
 
@@ -42,12 +40,10 @@ class UpdateSubscriptionPlanUseCase:
 
             if request.max_activos is not None or request.max_usuarios is not None:
                 nuevo_max_activos = (
-                    request.max_activos if request.max_activos is not None
-                    else plan.max_activos
+                    request.max_activos if request.max_activos is not None else plan.max_activos
                 )
                 nuevo_max_usuarios = (
-                    request.max_usuarios if request.max_usuarios is not None
-                    else plan.max_usuarios
+                    request.max_usuarios if request.max_usuarios is not None else plan.max_usuarios
                 )
                 plan.update_limits(nuevo_max_activos, nuevo_max_usuarios)
 

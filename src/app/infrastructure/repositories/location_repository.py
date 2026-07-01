@@ -21,8 +21,6 @@ class SqlAlchemyLocationRepository(
     ) -> None:
         super().__init__(session, LocationModel, pending_events)
 
-
-
     def _to_model(self, entity: Location) -> LocationModel:
         return LocationModel(
             id=entity.id.value,
@@ -59,9 +57,7 @@ class SqlAlchemyLocationRepository(
         models = result.scalars().all()
         return [self._to_entity(m) for m in models]
 
-    async def get_children(
-        self, parent_id: LocationId, empresa_id: CompanyId
-    ) -> list[Location]:
+    async def get_children(self, parent_id: LocationId, empresa_id: CompanyId) -> list[Location]:
         """Obtiene las ubicaciones hijas directas de un nodo padre.
 
         Args:

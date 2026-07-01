@@ -1,4 +1,5 @@
 """Puerto (Protocol) del repositorio de System Audit."""
+
 import uuid
 from typing import Any, Protocol
 
@@ -19,9 +20,6 @@ class SystemAuditRepositoryPort(Protocol):
         """Obtiene la lista de entidades de dominio filtradas y el total."""
         ...
 
-    async def get_by_id(
-        self, company_id: CompanyId, audit_id: uuid.UUID
-    ) -> SystemAudit | None:
+    async def get_by_id(self, company_id: CompanyId, audit_id: uuid.UUID) -> SystemAudit | None:
         """Obtiene una entidad de auditoría específica por ID."""
         ...
-

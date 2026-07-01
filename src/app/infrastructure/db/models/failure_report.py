@@ -22,8 +22,11 @@ class FailureReportModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     description: Mapped[str] = mapped_column(Text, nullable=False)
     location: Mapped[str] = mapped_column(String(255), nullable=False)
     priority: Mapped[PriorityLevel] = mapped_column(
-        Enum(PriorityLevel, name="prioridad_nivel",
-             values_callable=lambda obj: [e.value for e in obj]),
+        Enum(
+            PriorityLevel,
+            name="prioridad_nivel",
+            values_callable=lambda obj: [e.value for e in obj],
+        ),
         default=PriorityLevel.MEDIUM,
         nullable=False,
     )
@@ -32,8 +35,9 @@ class FailureReportModel(VersionMixin, TenantMixin, TimestampMixin, Base):
         ForeignKey("activos.id", ondelete="RESTRICT"), nullable=True
     )
     status: Mapped[ReportStatus] = mapped_column(
-        Enum(ReportStatus, name="estado_reporte",
-             values_callable=lambda obj: [e.value for e in obj]),
+        Enum(
+            ReportStatus, name="estado_reporte", values_callable=lambda obj: [e.value for e in obj]
+        ),
         default=ReportStatus.PENDING,
         nullable=False,
     )

@@ -50,8 +50,6 @@ class GetCatalogArticleUseCase:
             if not article:
                 raise CatalogArticleNotFoundError(article_id_str)
 
-
-
             return CatalogArticleResponse(
                 id=str(article.id),
                 empresa_id=str(article.empresa_id),

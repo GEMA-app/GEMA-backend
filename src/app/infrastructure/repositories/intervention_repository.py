@@ -129,8 +129,10 @@ class SqlAlchemyInterventionRepository(
         Returns:
             Una tupla con la lista de intervenciones y el total de registros.
         """
-        count_stmt = select(func.count()).select_from(InterventionModel).where(
-            InterventionModel.empresa_id == empresa_id.value
+        count_stmt = (
+            select(func.count())
+            .select_from(InterventionModel)
+            .where(InterventionModel.empresa_id == empresa_id.value)
         )
         total_result = await self.session.execute(count_stmt)
         total = total_result.scalar() or 0

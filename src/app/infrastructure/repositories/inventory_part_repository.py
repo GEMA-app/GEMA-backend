@@ -48,8 +48,7 @@ class SqlAlchemyInventoryPartRepository(
             empresa_id=CompanyId(model.empresa_id),
             articulo_id=ArticleId(model.articulo_id),
             proveedor_id=(
-                ProviderId(model.proveedor_id)
-                if model.proveedor_id else ProviderId(UUID(int=0))
+                ProviderId(model.proveedor_id) if model.proveedor_id else ProviderId(UUID(int=0))
             ),
             stock_actual=model.stock_actual,
             stock_minimo=model.stock_minimo,

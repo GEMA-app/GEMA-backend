@@ -23,11 +23,7 @@ class SupplierModel(Base, TenantMixin, TimestampMixin, VersionMixin):
     """
 
     __tablename__ = "proveedores"
-    __table_args__ = (
-        UniqueConstraint(
-            "empresa_id", "rif", name="uq_proveedores_empresa_rif"
-        ),
-    )
+    __table_args__ = (UniqueConstraint("empresa_id", "rif", name="uq_proveedores_empresa_rif"),)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     nombre: Mapped[str] = mapped_column(String(150), nullable=False)

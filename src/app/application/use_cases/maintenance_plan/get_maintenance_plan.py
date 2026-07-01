@@ -39,9 +39,7 @@ class GetMaintenancePlanUseCase:
             if not plan:
                 raise MaintenancePlanNotFoundError(plan_id_str, company_id_str)
 
-            ejecuciones = await self.uow.plan_executions.list_by_plan_id(
-                plan_id.value, company_id
-            )
+            ejecuciones = await self.uow.plan_executions.list_by_plan_id(plan_id.value, company_id)
 
             return MaintenancePlanResponse(
                 id=str(plan.id),

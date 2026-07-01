@@ -1,4 +1,5 @@
 """Caso de uso para list subscription plan."""
+
 from app.application.dtos.subscription_plan_dtos import SubscriptionPlanResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 

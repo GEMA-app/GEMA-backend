@@ -72,9 +72,7 @@ class SqlAlchemyFailureReportRepository(
         Returns:
             Una tupla con la lista de entidades FailureReport y el conteo total.
         """
-        stmt = select(FailureReportModel).where(
-            FailureReportModel.empresa_id == empresa_id.value
-        )
+        stmt = select(FailureReportModel).where(FailureReportModel.empresa_id == empresa_id.value)
         count_stmt = select(func.count(FailureReportModel.id)).where(
             FailureReportModel.empresa_id == empresa_id.value
         )
@@ -82,16 +80,10 @@ class SqlAlchemyFailureReportRepository(
         if filters:
             if "status" in filters and filters["status"]:
                 stmt = stmt.where(FailureReportModel.status == filters["status"])
-                count_stmt = count_stmt.where(
-                    FailureReportModel.status == filters["status"]
-                )
+                count_stmt = count_stmt.where(FailureReportModel.status == filters["status"])
             if "priority" in filters and filters["priority"]:
-                stmt = stmt.where(
-                    FailureReportModel.priority == filters["priority"]
-                )
-                count_stmt = count_stmt.where(
-                    FailureReportModel.priority == filters["priority"]
-                )
+                stmt = stmt.where(FailureReportModel.priority == filters["priority"])
+                count_stmt = count_stmt.where(FailureReportModel.priority == filters["priority"])
             if "search" in filters and filters["search"]:
                 search_term = f"%{filters['search']}%"
                 stmt = stmt.where(

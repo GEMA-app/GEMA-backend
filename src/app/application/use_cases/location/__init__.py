@@ -5,6 +5,7 @@ se exponen mediante el árbol jerárquico completo (`GetLocationTreeUseCase`)
 y la consulta de hijos directos (`GetLocationChildrenUseCase`), en lugar de
 una lista plana sin contexto de jerarquía.
 """
+
 from app.application.use_cases.location.create_location import CreateLocationUseCase
 from app.application.use_cases.location.delete_location import DeleteLocationUseCase
 from app.application.use_cases.location.get_location import GetLocationUseCase

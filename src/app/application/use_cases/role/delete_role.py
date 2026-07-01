@@ -1,4 +1,5 @@
 """Caso de uso para delete role."""
+
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import RoleNotFoundError
 from app.domain.value_objects import CompanyId, RoleId

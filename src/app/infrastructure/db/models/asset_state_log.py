@@ -25,10 +25,7 @@ class AssetStateLogModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     """
 
     __tablename__ = "logs_estados_activos"
-    __table_args__ = (
-        Index("ix_logs_estados_activos_empresa_activo", "empresa_id", "activo_id"),
-    )
-
+    __table_args__ = (Index("ix_logs_estados_activos_empresa_activo", "empresa_id", "activo_id"),)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     activo_id: Mapped[uuid.UUID] = mapped_column(

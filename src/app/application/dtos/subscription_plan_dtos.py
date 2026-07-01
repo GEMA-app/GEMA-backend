@@ -1,4 +1,5 @@
 """DTOs de entrada y salida para el módulo de Subscription Plan."""
+
 from dataclasses import dataclass, field
 from decimal import Decimal
 
@@ -12,6 +13,7 @@ class CreateSubscriptionPlanRequest:
     descripcion: str | None = None
     max_activos: int | None = None
     max_usuarios: int | None = None
+
 
 @dataclass(frozen=True)
 class UpdateSubscriptionPlanRequest:
@@ -31,10 +33,12 @@ class UpdateSubscriptionPlanRequest:
         """Calcula el conjunto de campos explícitamente establecidos en la inicialización."""
         if not self._fields_set:
             fields_with_values = {
-                name for name, val in self.__dict__.items()
+                name
+                for name, val in self.__dict__.items()
                 if name != "_fields_set" and val is not None
             }
             object.__setattr__(self, "_fields_set", frozenset(fields_with_values))
+
 
 @dataclass(frozen=True)
 class SubscriptionPlanResponse:

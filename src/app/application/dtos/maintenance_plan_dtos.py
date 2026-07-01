@@ -72,7 +72,6 @@ class UpdateMaintenancePlanRequest:
                 self,
                 "_fields_set",
                 frozenset(
-                    k for k, v in self.__dict__.items()
-                    if v is not None and k != "_fields_set"
+                    k for k, v in self.__dict__.items() if v is not None and k != "_fields_set"
                 ),
             )

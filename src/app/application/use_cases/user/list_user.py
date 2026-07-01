@@ -1,4 +1,5 @@
 """Caso de uso para list user."""
+
 from datetime import UTC, datetime
 
 from app.application.dtos.user_dtos import UserResponse
@@ -24,14 +25,17 @@ class ListUsersUseCase:
         company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
             users = await self.uow.users.list_by_company(company_id)
-            return [UserResponse(
-                id=str(u.id.value),
-                email=u.email.value,
-                nombre=u.nombre,
-                telefono=u.telefono,
-                activo=u.activo,
-                empresa_id=str(u.empresa_id.value),
-                created_at=u.created_at or datetime.now(UTC),
-                updated_at=u.updated_at or datetime.now(UTC),
-                roles=[r.nombre for r in u.roles],
-            ) for u in users]
+            return [
+                UserResponse(
+                    id=str(u.id.value),
+                    email=u.email.value,
+                    nombre=u.nombre,
+                    telefono=u.telefono,
+                    activo=u.activo,
+                    empresa_id=str(u.empresa_id.value),
+                    created_at=u.created_at or datetime.now(UTC),
+                    updated_at=u.updated_at or datetime.now(UTC),
+                    roles=[r.nombre for r in u.roles],
+                )
+                for u in users
+            ]

@@ -20,9 +20,7 @@ class PlanExecutionModel(TenantMixin, TimestampMixin, Base):
         Index("ix_planes_ejecuciones_empresa_ot", "empresa_id", "ordenes_trabajo_id"),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     plan_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("planes_mantenimiento.id", ondelete="CASCADE"),
@@ -38,9 +36,7 @@ class PlanExecutionModel(TenantMixin, TimestampMixin, Base):
     execution_date: Mapped[datetime] = mapped_column(
         "fecha_ejecucion", DateTime(timezone=True), nullable=False
     )
-    observations: Mapped[str | None] = mapped_column(
-        "observaciones", Text, nullable=True
-    )
+    observations: Mapped[str | None] = mapped_column("observaciones", Text, nullable=True)
 
     empresa = relationship("CompanyModel", back_populates="plan_executions")
     # ponytail: FK a MaintenancePlanModel y WorkOrderModel en ramas separadas.
@@ -49,4 +45,3 @@ class PlanExecutionModel(TenantMixin, TimestampMixin, Base):
     def __repr__(self) -> str:
         """Representación legible del modelo."""
         return f"<PlanExecutionModel id={self.id} plan_id={self.plan_id}>"
-

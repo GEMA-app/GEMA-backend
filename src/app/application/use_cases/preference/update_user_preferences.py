@@ -1,4 +1,5 @@
 """Caso de uso para update user preferences."""
+
 from app.application.dtos.preference_dtos import (
     PreferenceResponse,
     UpdatePreferenceRequest,

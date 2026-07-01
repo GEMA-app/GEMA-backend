@@ -1,4 +1,5 @@
 """Caso de uso para get system audit."""
+
 import uuid
 
 from app.application.dtos.system_audit_dtos import SystemAuditResponse
@@ -42,4 +43,3 @@ class GetSystemAuditUseCase:
                 ip_address=audit.ip_address,
                 ocurrido_en=audit.ocurrido_en,
             )
-

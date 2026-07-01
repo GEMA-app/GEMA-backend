@@ -14,9 +14,7 @@ class GetSupplierUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, empresa_id_str: str, supplier_id: UUID
-    ) -> SupplierResponse:
+    async def execute(self, empresa_id_str: str, supplier_id: UUID) -> SupplierResponse:
         """Ejecuta la obtención de un proveedor por ID.
 
         Args:
@@ -31,9 +29,7 @@ class GetSupplierUseCase:
         """
         company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
-            supplier = await self.uow.suppliers.get_by_id(
-                supplier_id, company_id.value
-            )
+            supplier = await self.uow.suppliers.get_by_id(supplier_id, company_id.value)
             if not supplier:
                 raise SupplierNotFoundError("Proveedor no encontrado.")
             return SupplierResponse(

@@ -1,6 +1,5 @@
 """Caso de Uso para listar los movimientos de inventario de un repuesto."""
 
-
 from app.application.dtos.inventory_part_dtos import InventoryEntryResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import InventoryPartNotFoundError

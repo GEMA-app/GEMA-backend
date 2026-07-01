@@ -86,8 +86,10 @@ class SqlAlchemyMaintenancePlanRepository(
         base = select(MaintenancePlanModel).where(
             MaintenancePlanModel.empresa_id == company_id.value
         )
-        count_q = select(func.count()).select_from(MaintenancePlanModel).where(
-            MaintenancePlanModel.empresa_id == company_id.value
+        count_q = (
+            select(func.count())
+            .select_from(MaintenancePlanModel)
+            .where(MaintenancePlanModel.empresa_id == company_id.value)
         )
 
         # Aplica filtros opcionales tanto a la query de datos como al count

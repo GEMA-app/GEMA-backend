@@ -81,15 +81,16 @@ class SqlAlchemySupplierRepository(
         return self._to_entity(model) if model else None
 
     async def get_all_by_company(
-        self, empresa_id: UUID, search: str | None = None,
+        self,
+        empresa_id: UUID,
+        search: str | None = None,
     ) -> list[Supplier]:
         """Retorna todos los proveedores de un tenant, con filtro opcional."""
         stmt = select(SupplierModel).where(SupplierModel.empresa_id == empresa_id)
         if search:
             pattern = f"%{search}%"
             stmt = stmt.where(
-                SupplierModel.nombre.ilike(pattern)
-                | SupplierModel.rif.ilike(pattern)
+                SupplierModel.nombre.ilike(pattern) | SupplierModel.rif.ilike(pattern)
             )
         stmt = stmt.order_by(SupplierModel.nombre)
         result = await self.session.execute(stmt)
@@ -99,9 +100,13 @@ class SqlAlchemySupplierRepository(
         """Verifica si un proveedor tiene repuestos de inventario asociados."""
         from app.infrastructure.db.models.inventory_part import InventoryPartModel
 
-        stmt = select(InventoryPartModel.id).where(
-            InventoryPartModel.proveedor_id == supplier_id,
-            InventoryPartModel.empresa_id == empresa_id,
-        ).limit(1)
+        stmt = (
+            select(InventoryPartModel.id)
+            .where(
+                InventoryPartModel.proveedor_id == supplier_id,
+                InventoryPartModel.empresa_id == empresa_id,
+            )
+            .limit(1)
+        )
         result = await self.session.execute(stmt)
         return result.first() is not None

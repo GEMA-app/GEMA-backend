@@ -9,6 +9,7 @@ from uuid import UUID
 @dataclass(frozen=True)
 class UsedPartResponse:
     """DTO de respuesta para un repuesto utilizado."""
+
     id: UUID
     empresa_id: UUID
     intervencion_id: UUID
@@ -24,6 +25,7 @@ class UsedPartResponse:
 @dataclass(frozen=True)
 class CreateUsedPartRequest:
     """DTO para solicitar la creación de un repuesto utilizado."""
+
     intervencion_id: UUID
     repuesto_id: UUID
     cantidad_usada: int
@@ -34,4 +36,5 @@ class CreateUsedPartRequest:
 @dataclass(frozen=True)
 class UpdateUsedPartRequest:
     """DTO para solicitar la actualización de un repuesto utilizado."""
+
     cantidad_usada: int | None = None

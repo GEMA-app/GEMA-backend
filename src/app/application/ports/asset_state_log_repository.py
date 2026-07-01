@@ -9,9 +9,7 @@ from app.domain.value_objects.identifier import AssetId, CompanyId
 class AssetStateLogRepositoryPort(Protocol):
     """Puerto de repositorio para la persistencia y consulta de AssetStateLog."""
 
-    async def list_by_asset(
-        self, activo_id: AssetId, empresa_id: CompanyId
-    ) -> list[AssetStateLog]:
+    async def list_by_asset(self, activo_id: AssetId, empresa_id: CompanyId) -> list[AssetStateLog]:
         """Lista los cambios de estado de un activo ordenados cronológicamente.
 
         Args:

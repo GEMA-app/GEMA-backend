@@ -34,13 +34,9 @@ class CreateSupplierUseCase:
         company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
             if request.rif:
-                existing = await self.uow.suppliers.get_by_rif(
-                    request.rif, company_id.value
-                )
+                existing = await self.uow.suppliers.get_by_rif(request.rif, company_id.value)
                 if existing:
-                    raise SupplierRifExistsError(
-                        f"El RIF '{request.rif}' ya está registrado."
-                    )
+                    raise SupplierRifExistsError(f"El RIF '{request.rif}' ya está registrado.")
             supplier = Supplier.create(
                 id=uuid.uuid4(),
                 empresa_id=company_id.value,

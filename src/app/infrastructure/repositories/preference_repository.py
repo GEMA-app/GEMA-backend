@@ -43,9 +43,7 @@ class SqlAlchemyPreferenceRepository(
             updated_at=model.updated_at,
         )
 
-    async def get_by_user(
-        self, usuario_id: UserId, empresa_id: CompanyId
-    ) -> UserPreference | None:
+    async def get_by_user(self, usuario_id: UserId, empresa_id: CompanyId) -> UserPreference | None:
         """Obtiene las preferencias de un usuario en una empresa.
 
         Returns:

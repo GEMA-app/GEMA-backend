@@ -1,4 +1,5 @@
 """Caso de uso para registrar un nuevo usuario (onboarding SaaS)."""
+
 import asyncio
 
 from app.application.dtos import AuthTokensDTO, RegisterUserRequest

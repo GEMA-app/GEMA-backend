@@ -116,9 +116,7 @@ class SqlAlchemyWorkOrderRepository(
         Returns:
             Tupla con la lista de órdenes de trabajo y el total de registros.
         """
-        stmt = select(WorkOrderModel).where(
-            WorkOrderModel.empresa_id == empresa_id.value
-        )
+        stmt = select(WorkOrderModel).where(WorkOrderModel.empresa_id == empresa_id.value)
         count_stmt = select(func.count(WorkOrderModel.id)).where(
             WorkOrderModel.empresa_id == empresa_id.value
         )
@@ -143,9 +141,7 @@ class SqlAlchemyWorkOrderRepository(
         total = total_res.scalar() or 0
         return entities, total
 
-    async def get_by_report_id(
-        self, reporte_id: str, empresa_id: CompanyId
-    ) -> WorkOrder | None:
+    async def get_by_report_id(self, reporte_id: str, empresa_id: CompanyId) -> WorkOrder | None:
         """Obtiene una orden de trabajo asociada a un reporte de falla.
 
         Returns:
@@ -225,10 +221,14 @@ class SqlAlchemyWorkOrderRepository(
         from app.application.dtos.work_order_dtos import WorkOrderStatusLogResponse
         from app.infrastructure.db.models.work_order import WorkOrderStatusLogModel
 
-        stmt = select(WorkOrderStatusLogModel).where(
-            WorkOrderStatusLogModel.ordenes_trabajo_id == id.value,
-            WorkOrderStatusLogModel.empresa_id == empresa_id.value,
-        ).order_by(WorkOrderStatusLogModel.fecha_cambio.asc())
+        stmt = (
+            select(WorkOrderStatusLogModel)
+            .where(
+                WorkOrderStatusLogModel.ordenes_trabajo_id == id.value,
+                WorkOrderStatusLogModel.empresa_id == empresa_id.value,
+            )
+            .order_by(WorkOrderStatusLogModel.fecha_cambio.asc())
+        )
 
         res = await self.session.execute(stmt)
         models = res.scalars().all()

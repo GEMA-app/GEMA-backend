@@ -27,8 +27,6 @@ class SqlAlchemyCompanyRepository(
         """
         super().__init__(session, CompanyModel, pending_events)
 
-
-
     def _to_model(self, entity: Company) -> CompanyModel:
         return CompanyModel(
             id=entity.id.value,

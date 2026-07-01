@@ -1,4 +1,5 @@
 """Caso de uso para list system audit."""
+
 from app.application.dtos.system_audit_dtos import ListSystemAuditsRequest, SystemAuditResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.value_objects import CompanyId

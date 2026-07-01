@@ -78,4 +78,3 @@ async def get_get_inventory_entry_use_case(
 ) -> GetInventoryEntryUseCase:
     """Fábrica de dependencias para el caso de uso de consulta de un movimiento."""
     return GetInventoryEntryUseCase(uow)
-

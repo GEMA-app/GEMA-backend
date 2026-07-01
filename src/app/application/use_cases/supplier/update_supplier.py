@@ -36,9 +36,7 @@ class UpdateSupplierUseCase:
         """
         company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
-            supplier = await self.uow.suppliers.get_by_id(
-                supplier_id, company_id.value
-            )
+            supplier = await self.uow.suppliers.get_by_id(supplier_id, company_id.value)
             if not supplier:
                 raise SupplierNotFoundError("Proveedor no encontrado.")
 
@@ -47,13 +45,9 @@ class UpdateSupplierUseCase:
                 and request.rif is not None
                 and request.rif != supplier.rif
             ):
-                existing = await self.uow.suppliers.get_by_rif(
-                    request.rif, company_id.value
-                )
+                existing = await self.uow.suppliers.get_by_rif(request.rif, company_id.value)
                 if existing:
-                    raise SupplierRifExistsError(
-                        f"El RIF '{request.rif}' ya está en uso."
-                    )
+                    raise SupplierRifExistsError(f"El RIF '{request.rif}' ya está en uso.")
 
             supplier.update(
                 name=request.name,

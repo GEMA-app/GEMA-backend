@@ -23,8 +23,6 @@ class SqlAlchemyAssetRepository(
     ) -> None:
         super().__init__(session, AssetModel, pending_events)
 
-
-
     def _to_model(self, entity: Asset) -> AssetModel:
         return AssetModel(
             id=entity.id.value,

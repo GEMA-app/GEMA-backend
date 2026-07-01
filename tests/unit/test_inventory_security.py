@@ -4,7 +4,7 @@ import inspect
 from collections.abc import Callable
 from typing import Any
 
-from app.presentation.api.v1.endpoints.inventory_part import (
+from app.presentation.api.v1.endpoints.inventory_parts import (
     create_inventory_movement,
     create_inventory_part,
     delete_inventory_part,

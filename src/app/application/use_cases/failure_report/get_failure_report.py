@@ -12,9 +12,7 @@ class GetFailureReportUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, company_id_str: str, report_id_str: str
-    ) -> FailureReportResponse:
+    async def execute(self, company_id_str: str, report_id_str: str) -> FailureReportResponse:
         """Obtiene un reporte de falla por su ID.
 
         Incluye el ID de la orden de trabajo generada si existe.
@@ -39,9 +37,7 @@ class GetFailureReportUseCase:
                     f"El reporte de falla con ID '{report_id_str}' no existe en esta empresa."
                 )
 
-            work_order = await self.uow.work_orders.get_by_report_id(
-                report_id_str, company_id
-            )
+            work_order = await self.uow.work_orders.get_by_report_id(report_id_str, company_id)
 
             return FailureReportResponse(
                 id=str(report.id),

@@ -46,9 +46,7 @@ class SqlAlchemySubscriptionPlanRepository(
             updated_at=model.updated_at,
         )
 
-    async def get_by_id(
-        self, plan_id: SubscriptionPlanId
-    ) -> SubscriptionPlan | None:
+    async def get_by_id(self, plan_id: SubscriptionPlanId) -> SubscriptionPlan | None:
         """Obtiene un plan por su ID.
 
         Returns:
@@ -81,9 +79,7 @@ class SqlAlchemySubscriptionPlanRepository(
         models = result.scalars().all()
         return [self._to_entity(m) for m in models]
 
-    async def list_all_plans(
-        self, offset: int, limit: int
-    ) -> tuple[list[SubscriptionPlan], int]:
+    async def list_all_plans(self, offset: int, limit: int) -> tuple[list[SubscriptionPlan], int]:
         """Lista todos los planes paginados.
 
         Returns:

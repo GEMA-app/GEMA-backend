@@ -32,7 +32,5 @@ class RemoveTechnicianUseCase:
                     f"Orden de trabajo con ID '{work_order_id}' no encontrada."
                 )
 
-            await self.uow.work_orders.remove_technician(
-                wo_id, UserId(tech_uuid), company
-            )
+            await self.uow.work_orders.remove_technician(wo_id, UserId(tech_uuid), company)
             await self.uow.commit()

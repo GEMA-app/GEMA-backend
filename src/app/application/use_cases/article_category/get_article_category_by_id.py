@@ -14,9 +14,7 @@ class GetArticleCategoryByIdUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, empresa_id_str: str, category_id: UUID
-    ) -> ArticleCategoryResponse:
+    async def execute(self, empresa_id_str: str, category_id: UUID) -> ArticleCategoryResponse:
         """Ejecuta la obtención de una categoría por ID.
 
         Args:
@@ -31,13 +29,9 @@ class GetArticleCategoryByIdUseCase:
         """
         company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
-            category = await self.uow.article_categories.get_by_id(
-                category_id, company_id.value
-            )
+            category = await self.uow.article_categories.get_by_id(category_id, company_id.value)
             if not category:
-                raise ArticleCategoryNotFoundError(
-                    "Categoría de catálogo no encontrada."
-                )
+                raise ArticleCategoryNotFoundError("Categoría de catálogo no encontrada.")
             return ArticleCategoryResponse(
                 id=category.id,
                 empresa_id=category.empresa_id,

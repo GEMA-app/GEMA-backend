@@ -16,9 +16,7 @@ class ListPlanExecutionUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, company_id_str: str, plan_id_str: str
-    ) -> PlanExecutionListResponse:
+    async def execute(self, company_id_str: str, plan_id_str: str) -> PlanExecutionListResponse:
         """Lista ejecuciones de un plan.
 
         Args:

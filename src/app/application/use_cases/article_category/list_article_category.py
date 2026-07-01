@@ -10,9 +10,7 @@ class ListArticleCategoriesUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, empresa_id_str: str
-    ) -> list[ArticleCategoryResponse]:
+    async def execute(self, empresa_id_str: str) -> list[ArticleCategoryResponse]:
         """Ejecuta la obtención de todas las categorías de la empresa.
 
         Args:
@@ -25,9 +23,7 @@ class ListArticleCategoriesUseCase:
 
         company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
-            categories = await self.uow.article_categories.get_all_by_company(
-                company_id.value
-            )
+            categories = await self.uow.article_categories.get_all_by_company(company_id.value)
             return [
                 ArticleCategoryResponse(
                     id=c.id,

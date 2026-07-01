@@ -42,4 +42,3 @@ class DeleteInventoryPartUseCase:
 
             await self.uow.inventory_parts.delete(part_id, company_id)
             await self.uow.commit()
-

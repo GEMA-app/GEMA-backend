@@ -15,9 +15,7 @@ class GetUsedPartUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, company_id_str: str, used_part_id: UUID
-    ) -> UsedPartResponse:
+    async def execute(self, company_id_str: str, used_part_id: UUID) -> UsedPartResponse:
         """Ejecuta la obtención de un repuesto utilizado.
 
         Args:

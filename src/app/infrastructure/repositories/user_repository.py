@@ -11,9 +11,7 @@ from app.infrastructure.db.models import UserModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
 
 
-class SqlAlchemyUserRepository(
-    SqlAlchemyRepository[UserModel, User, UserId], UserRepositoryPort
-):
+class SqlAlchemyUserRepository(SqlAlchemyRepository[UserModel, User, UserId], UserRepositoryPort):
     """Implementación de UserRepositoryPort utilizando la clase base SqlAlchemyRepository."""
 
     def __init__(
@@ -26,7 +24,6 @@ class SqlAlchemyUserRepository(
             pending_events: Lista para la acumulación de eventos de dominio.
         """
         super().__init__(session, UserModel, pending_events)
-
 
     async def get_by_email(self, email: Email) -> User | None:
         """Busca un usuario por email globalmente en la base de datos.

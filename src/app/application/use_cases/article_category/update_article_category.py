@@ -42,9 +42,7 @@ class UpdateArticleCategoryUseCase:
 
         company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
-            category = await self.uow.article_categories.get_by_id(
-                category_id, company_id.value
-            )
+            category = await self.uow.article_categories.get_by_id(category_id, company_id.value)
             if not category:
                 raise ArticleCategoryNotFoundError("Categoría no encontrada.")
 
@@ -53,14 +51,14 @@ class UpdateArticleCategoryUseCase:
                 and request.name is not None
                 and request.name != category.name
             ):
-                    existing = await self.uow.article_categories.get_by_name(
-                        request.name, company_id.value
+                existing = await self.uow.article_categories.get_by_name(
+                    request.name, company_id.value
+                )
+                if existing:
+                    raise ArticleCategoryNameExistsError(
+                        f"El nombre '{request.name}' ya está en uso."
                     )
-                    if existing:
-                        raise ArticleCategoryNameExistsError(
-                            f"El nombre '{request.name}' ya está en uso."
-                        )
-                    category.change_name(request.name)
+                category.change_name(request.name)
 
             if "description" in request._fields_set:
                 category.change_description(request.description)

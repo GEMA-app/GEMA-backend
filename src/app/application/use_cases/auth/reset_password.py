@@ -1,4 +1,5 @@
 """Caso de uso para restablecer la contrasena con token."""
+
 import asyncio
 import hashlib
 import uuid
@@ -62,9 +63,7 @@ class ResetPasswordUseCase:
             # Restaurar token si el commit/proceso falla (rollback automático de BD)
             # ⚠️ SIEMPRE propagar error original, incluso si Redis falla
             try:
-                await self.token_service.store_reset_token(
-                    token_hash, user_id, 1800
-                )
+                await self.token_service.store_reset_token(token_hash, user_id, 1800)
             except Exception as cache_err:
                 logger.error(
                     "Fallo al restaurar token en cache tras rollback de BD",

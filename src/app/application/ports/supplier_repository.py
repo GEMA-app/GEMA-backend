@@ -18,7 +18,9 @@ class SupplierRepositoryPort(Protocol):
         ...
 
     async def get_all_by_company(
-        self, empresa_id: UUID, search: str | None = None,
+        self,
+        empresa_id: UUID,
+        search: str | None = None,
     ) -> list[Supplier]:
         """Retorna todos los proveedores de un tenant, filtro opcional por nombre o RIF."""
         ...

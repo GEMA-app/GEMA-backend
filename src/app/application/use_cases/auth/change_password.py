@@ -1,4 +1,5 @@
 """Caso de uso para cambiar la contrasena del usuario autenticado."""
+
 import asyncio
 import uuid
 

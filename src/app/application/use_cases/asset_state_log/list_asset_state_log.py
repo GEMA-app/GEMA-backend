@@ -13,9 +13,7 @@ class ListAssetStateLogUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, company_id_str: str, activo_id_str: str
-    ) -> list[AssetStateLogResponse]:
+    async def execute(self, company_id_str: str, activo_id_str: str) -> list[AssetStateLogResponse]:
         """Ejecuta la consulta del historial de estados de un activo.
 
         Args:
@@ -34,9 +32,7 @@ class ListAssetStateLogUseCase:
                     id=str(log.id),
                     empresa_id=str(log.empresa_id),
                     activo_id=str(log.activo_id),
-                    estado_anterior=log.estado_anterior.value
-                    if log.estado_anterior
-                    else None,
+                    estado_anterior=log.estado_anterior.value if log.estado_anterior else None,
                     estado_nuevo=log.estado_nuevo.value,
                     motivo=log.motivo,
                     fecha_cambio=(

@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 class SubscriptionPlanModel(Base, TimestampMixin):
     """Modelo ORM para la tabla de planes de suscripción (plataforma, sin tenant)."""
+
     __tablename__ = "planes_suscripcion"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -26,6 +27,4 @@ class SubscriptionPlanModel(Base, TimestampMixin):
     precio_mensual_usd: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     is_active: Mapped[bool] = mapped_column(nullable=False, default=True)
 
-    empresas: Mapped[list["CompanyModel"]] = relationship(
-        "CompanyModel", back_populates="plan"
-    )
+    empresas: Mapped[list["CompanyModel"]] = relationship("CompanyModel", back_populates="plan")

@@ -36,6 +36,7 @@ from app.domain.exceptions import (
     EmptyStockLocationError,
     EmptyTitleError,
     EventPublishError,
+    FailureReportInvalidTransitionError,
     FailureReportNotFoundError,
     InsufficientPermissionsError,
     InsufficientStockError,
@@ -44,6 +45,7 @@ from app.domain.exceptions import (
     InterventionNotFoundError,
     InvalidCredentialsError,
     InvalidEmailError,
+    InvalidMovementTypeError,
     InvalidPriceError,
     InvalidSlugError,
     InvalidStockError,
@@ -225,6 +227,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         status.HTTP_404_NOT_FOUND,
         "ERR_FAILURE_REPORT_NOT_FOUND",
     ),
+    FailureReportInvalidTransitionError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_FAILURE_REPORT_INVALID_TRANSITION",
+    ),
     LastAdminRevocationError: (
         status.HTTP_403_FORBIDDEN,
         "ERR_LAST_ADMIN_REVOCATION",
@@ -344,6 +350,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     InventoryEntryNotFoundError: (
         status.HTTP_404_NOT_FOUND,
         "ERR_INVENTORY_ENTRY_NOT_FOUND",
+    ),
+    InvalidMovementTypeError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_INVALID_MOVEMENT_TYPE",
     ),
     InvalidStockError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,

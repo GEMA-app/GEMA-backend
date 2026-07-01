@@ -1,4 +1,5 @@
 """Puertos (Protocol) de autenticación: PasswordHasherPort y TokenServicePort."""
+
 from typing import Any, Protocol
 
 
@@ -33,9 +34,7 @@ class TokenServicePort(Protocol):
         """Revoca un token identificándolo por su JTI e indicando su fecha de expiración."""
         ...
 
-    async def store_reset_token(
-        self, token_hash: str, user_id: str, ttl_seconds: int
-    ) -> None:
+    async def store_reset_token(self, token_hash: str, user_id: str, ttl_seconds: int) -> None:
         """Almacena el hash de un token de reset de contraseña en Redis con TTL."""
         ...
 

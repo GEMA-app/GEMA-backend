@@ -14,9 +14,7 @@ class ListUsedPartsUseCase:
     def __init__(self, uow: UnitOfWorkPort) -> None:
         self.uow = uow
 
-    async def execute(
-        self, company_id_str: str, intervention_id: UUID
-    ) -> list[UsedPartResponse]:
+    async def execute(self, company_id_str: str, intervention_id: UUID) -> list[UsedPartResponse]:
         """Ejecuta el listado de repuestos utilizados.
 
         Args:
@@ -30,9 +28,7 @@ class ListUsedPartsUseCase:
         intervention_id_vo = InterventionId.from_string(str(intervention_id))
 
         async with self.uow:
-            parts = await self.uow.used_parts.get_by_intervention(
-                company_id, intervention_id_vo
-            )
+            parts = await self.uow.used_parts.get_by_intervention(company_id, intervention_id_vo)
 
             return [
                 UsedPartResponse(

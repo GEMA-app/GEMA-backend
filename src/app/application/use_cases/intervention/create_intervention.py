@@ -1,6 +1,5 @@
 """Caso de uso para crear una intervención técnica."""
 
-
 from app.application.dtos.intervention_dtos import CreateInterventionRequest, InterventionResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.intervention import TechnicalIntervention

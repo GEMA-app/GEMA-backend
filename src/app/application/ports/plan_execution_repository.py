@@ -10,9 +10,7 @@ from app.domain.value_objects import CompanyId, PlanExecutionId
 class PlanExecutionRepositoryPort(Protocol):
     """Puerto para el repositorio de ejecuciones de plan."""
 
-    async def get_by_id(
-        self, id: PlanExecutionId, empresa_id: CompanyId
-    ) -> PlanExecution | None:
+    async def get_by_id(self, id: PlanExecutionId, empresa_id: CompanyId) -> PlanExecution | None:
         """Obtiene una ejecución por su ID y empresa.
 
         Args:
@@ -24,9 +22,7 @@ class PlanExecutionRepositoryPort(Protocol):
         """
         ...
 
-    async def list_by_plan_id(
-        self, plan_id: UUID, empresa_id: CompanyId
-    ) -> list[PlanExecution]:
+    async def list_by_plan_id(self, plan_id: UUID, empresa_id: CompanyId) -> list[PlanExecution]:
         """Lista todas las ejecuciones de un plan en una empresa.
 
         Args:

@@ -1,4 +1,5 @@
 """DTOs de entrada y salida para el módulo de System Audit."""
+
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
@@ -15,7 +16,6 @@ class SystemAuditResponse:
     detalles: dict[str, Any]
     ip_address: str | None
     ocurrido_en: datetime
-
 
 
 @dataclass(frozen=True)

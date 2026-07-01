@@ -1,4 +1,5 @@
 """Caso de uso para consultar los detalles de un usuario específico."""
+
 from datetime import UTC, datetime
 
 from app.application.dtos.user_dtos import UserResponse

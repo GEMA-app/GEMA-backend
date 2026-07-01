@@ -112,9 +112,7 @@ class PyJwtTokenService(TokenServicePort):
         if ttl > 0:
             await self.redis.set(f"blocklist:{jti}", "revoked", ex=ttl)
 
-    async def store_reset_token(
-        self, token_hash: str, user_id: str, ttl_seconds: int
-    ) -> None:
+    async def store_reset_token(self, token_hash: str, user_id: str, ttl_seconds: int) -> None:
         """Almacena el hash del token y registra el usuario en el set de tokens.
 
         Args:

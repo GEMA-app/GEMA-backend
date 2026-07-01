@@ -217,6 +217,7 @@ async def update_inventory_part(
         )
     )
 
+
 @router.post(
     "/{repuesto_id}/movimientos",
     response_model=InventoryEntryDocument,

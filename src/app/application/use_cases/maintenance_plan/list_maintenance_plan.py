@@ -36,7 +36,10 @@ class ListMaintenancePlansUseCase:
 
         async with self.uow:
             plans, total = await self.uow.maintenance_plans.get_all_by_company(
-                company_id, offset, limit, filters or {},
+                company_id,
+                offset,
+                limit,
+                filters or {},
             )
 
             result = [

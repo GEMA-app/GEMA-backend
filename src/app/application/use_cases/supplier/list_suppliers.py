@@ -25,9 +25,7 @@ class ListSuppliersUseCase:
         """
         company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
-            suppliers = await self.uow.suppliers.get_all_by_company(
-                company_id.value, search=search
-            )
+            suppliers = await self.uow.suppliers.get_all_by_company(company_id.value, search=search)
             return [
                 SupplierResponse(
                     id=s.id,

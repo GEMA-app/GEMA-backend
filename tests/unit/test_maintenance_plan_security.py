@@ -3,7 +3,7 @@ import inspect
 from collections.abc import Callable
 from typing import Any
 
-from app.presentation.api.v1.endpoints.maintenance_plan import (
+from app.presentation.api.v1.endpoints.maintenance_plans import (
     create_maintenance_plan,
     delete_maintenance_plan,
     get_maintenance_plan,

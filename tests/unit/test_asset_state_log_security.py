@@ -5,7 +5,7 @@ from collections.abc import Callable
 from typing import Any
 from unittest.mock import AsyncMock
 
-from app.presentation.api.v1.endpoints.asset_state_log import (
+from app.presentation.api.v1.endpoints.asset_state_logs import (
     list_asset_state_logs,
 )
 

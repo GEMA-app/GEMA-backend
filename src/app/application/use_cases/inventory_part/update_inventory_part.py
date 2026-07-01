@@ -45,19 +45,19 @@ class UpdateInventoryPartUseCase:
             current_precio = inventory_part.precio_unitario
             current_moneda = inventory_part.moneda
 
-            if 'proveedor_id' in request._fields_set and request.proveedor_id is not None:
+            if "proveedor_id" in request._fields_set and request.proveedor_id is not None:
                 current_proveedor_id = ProviderId.from_string(request.proveedor_id)
 
-            if 'stock_minimo' in request._fields_set and request.stock_minimo is not None:
+            if "stock_minimo" in request._fields_set and request.stock_minimo is not None:
                 current_stock_minimo = request.stock_minimo
 
-            if 'ubicacion_almacen' in request._fields_set and request.ubicacion_almacen is not None:
+            if "ubicacion_almacen" in request._fields_set and request.ubicacion_almacen is not None:
                 current_ubicacion = request.ubicacion_almacen
 
-            if 'precio_unitario' in request._fields_set and request.precio_unitario is not None:
+            if "precio_unitario" in request._fields_set and request.precio_unitario is not None:
                 current_precio = request.precio_unitario
 
-            if 'moneda' in request._fields_set and request.moneda is not None:
+            if "moneda" in request._fields_set and request.moneda is not None:
                 current_moneda = request.moneda
 
             # 4. Pasar los datos limpios al método con comportamiento de la Entidad
@@ -66,7 +66,7 @@ class UpdateInventoryPartUseCase:
                 stock_minimo=current_stock_minimo,
                 ubicacion_almacen=current_ubicacion,
                 precio_unitario=current_precio,
-                moneda=current_moneda
+                moneda=current_moneda,
             )
 
             # 5. Persistir y confirmar

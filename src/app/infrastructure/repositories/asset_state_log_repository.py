@@ -30,9 +30,7 @@ class SqlAlchemyAssetStateLogRepository(
     ) -> None:
         super().__init__(session, AssetStateLogModel, pending_events)
 
-    async def list_by_asset(
-        self, activo_id: AssetId, empresa_id: CompanyId
-    ) -> list[AssetStateLog]:
+    async def list_by_asset(self, activo_id: AssetId, empresa_id: CompanyId) -> list[AssetStateLog]:
         """Lista los cambios de estado de un activo ordenados del más reciente al más antiguo.
 
         Args:

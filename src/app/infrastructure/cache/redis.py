@@ -43,10 +43,13 @@ class RedisClient:
     async def _ensure_connected(self) -> aioredis.Redis:
         """Establece la conexión Redis si aún no se ha hecho."""
         if self._client is None:
-            self._client = cast(aioredis.Redis, cast(Any, aioredis).from_url(
-                settings.REDIS_URL,
-                decode_responses=True,
-            ))
+            self._client = cast(
+                aioredis.Redis,
+                cast(Any, aioredis).from_url(
+                    settings.REDIS_URL,
+                    decode_responses=True,
+                ),
+            )
         return self._client
 
     def register_script(self, script: str) -> _LazyScript:

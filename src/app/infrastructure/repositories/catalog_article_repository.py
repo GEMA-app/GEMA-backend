@@ -104,48 +104,30 @@ class SqlAlchemyCatalogArticleRepository(
         Returns:
             Tupla con la lista de artículos y el total de registros sin paginación.
         """
-        stmt = select(CatalogArticleModel).where(
-            CatalogArticleModel.empresa_id == empresa_id.value
-        )
+        stmt = select(CatalogArticleModel).where(CatalogArticleModel.empresa_id == empresa_id.value)
 
-        count_stmt = select(
-            func.count(CatalogArticleModel.id)
-        ).where(
+        count_stmt = select(func.count(CatalogArticleModel.id)).where(
             CatalogArticleModel.empresa_id == empresa_id.value
         )
 
         if filters:
             if filters.get("category_id"):
-                stmt = stmt.where(
-                    CatalogArticleModel.category_id
-                    == filters["category_id"]
-                )
+                stmt = stmt.where(CatalogArticleModel.category_id == filters["category_id"])
                 count_stmt = count_stmt.where(
-                    CatalogArticleModel.category_id
-                    == filters["category_id"]
+                    CatalogArticleModel.category_id == filters["category_id"]
                 )
 
             if filters.get("search"):
                 search = f"%{filters['search']}%"
 
-                stmt = stmt.where(
-                    CatalogArticleModel.name.ilike(search)
-                )
+                stmt = stmt.where(CatalogArticleModel.name.ilike(search))
 
-                count_stmt = count_stmt.where(
-                    CatalogArticleModel.name.ilike(search)
-                )
+                count_stmt = count_stmt.where(CatalogArticleModel.name.ilike(search))
 
-        count_result = await self.session.execute(
-            count_stmt
-        )
+        count_result = await self.session.execute(count_stmt)
         total = count_result.scalar_one()
 
-        stmt = (
-            stmt.order_by(CatalogArticleModel.name)
-            .offset(offset)
-            .limit(limit)
-        )
+        stmt = stmt.order_by(CatalogArticleModel.name).offset(offset).limit(limit)
 
         result = await self.session.execute(stmt)
 
@@ -188,8 +170,6 @@ class SqlAlchemyCatalogArticleRepository(
         Returns:
             True si el artículo existe, False en caso contrario.
         """
-        stmt = select(CatalogArticleModel.id).where(
-            CatalogArticleModel.id == article_id
-        )
+        stmt = select(CatalogArticleModel.id).where(CatalogArticleModel.id == article_id)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none() is not None

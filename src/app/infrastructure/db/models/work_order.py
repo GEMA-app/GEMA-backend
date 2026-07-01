@@ -36,7 +36,6 @@ class WorkOrderModel(VersionMixin, TenantMixin, TimestampMixin, Base):
         Index("ix_ordenes_trabajo_empresa_estado", "empresa_id", "estado"),
     )
 
-
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     codigo_ot: Mapped[str] = mapped_column(String(30), nullable=False)
     activo_id: Mapped[uuid.UUID] = mapped_column(
@@ -49,17 +48,22 @@ class WorkOrderModel(VersionMixin, TenantMixin, TimestampMixin, Base):
         ForeignKey("planes_mantenimiento.id", ondelete="SET NULL"), nullable=True
     )
     supervisor_id: Mapped[uuid.UUID | None] = mapped_column(
-
         ForeignKey("usuarios.id", ondelete="SET NULL"), nullable=True
     )
     tipo: Mapped[MaintenanceType] = mapped_column(
-        Enum(MaintenanceType, name="tipo_mantenimiento",
-             values_callable=lambda obj: [e.value for e in obj]),
+        Enum(
+            MaintenanceType,
+            name="tipo_mantenimiento",
+            values_callable=lambda obj: [e.value for e in obj],
+        ),
         nullable=False,
     )
     estado: Mapped[WorkOrderStatus] = mapped_column(
-        Enum(WorkOrderStatus, name="estado_orden_trabajo",
-             values_callable=lambda obj: [e.value for e in obj]),
+        Enum(
+            WorkOrderStatus,
+            name="estado_orden_trabajo",
+            values_callable=lambda obj: [e.value for e in obj],
+        ),
         default=WorkOrderStatus.OPEN,
         nullable=False,
     )
@@ -111,22 +115,26 @@ class WorkOrderStatusLogModel(TenantMixin, Base):
     """Modelo ORM para la tabla logs_estados_ordenes_trabajo (auditoría de estados)."""
 
     __tablename__ = "logs_estados_ordenes_trabajo"
-    __table_args__ = (
-        Index("ix_logs_estados_ot_empresa_ot", "empresa_id", "ordenes_trabajo_id"),
-    )
+    __table_args__ = (Index("ix_logs_estados_ot_empresa_ot", "empresa_id", "ordenes_trabajo_id"),)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     ordenes_trabajo_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("ordenes_trabajo.id", ondelete="CASCADE"), nullable=False
     )
     estado_anterior: Mapped[WorkOrderStatus | None] = mapped_column(
-        Enum(WorkOrderStatus, name="estado_orden_trabajo",
-             values_callable=lambda obj: [e.value for e in obj]),
+        Enum(
+            WorkOrderStatus,
+            name="estado_orden_trabajo",
+            values_callable=lambda obj: [e.value for e in obj],
+        ),
         nullable=True,
     )
     estado_nuevo: Mapped[WorkOrderStatus] = mapped_column(
-        Enum(WorkOrderStatus, name="estado_orden_trabajo",
-             values_callable=lambda obj: [e.value for e in obj]),
+        Enum(
+            WorkOrderStatus,
+            name="estado_orden_trabajo",
+            values_callable=lambda obj: [e.value for e in obj],
+        ),
         nullable=False,
     )
     usuario_id: Mapped[uuid.UUID | None] = mapped_column(
@@ -136,5 +144,3 @@ class WorkOrderStatusLogModel(TenantMixin, Base):
     fecha_cambio: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )
-
-

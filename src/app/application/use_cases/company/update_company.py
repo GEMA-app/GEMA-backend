@@ -1,4 +1,5 @@
 """Caso de uso para update company."""
+
 from app.application.dtos.company_dtos import CompanyResponse, UpdateCompanyRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import CompanyStatus
@@ -27,21 +28,21 @@ class UpdateCompanyUseCase:
                     f"la actual es {company.version}."
                 )
 
-            if 'nombre' in request._fields_set:
+            if "nombre" in request._fields_set:
                 if request.nombre is None or not request.nombre.strip():
                     raise ValidationException("El nombre de la empresa no puede estar vacío.")
                 company.rename(request.nombre)
 
-            if 'rif' in request._fields_set or 'email_contacto' in request._fields_set:
-                rif = request.rif if 'rif' in request._fields_set else company.rif
+            if "rif" in request._fields_set or "email_contacto" in request._fields_set:
+                rif = request.rif if "rif" in request._fields_set else company.rif
                 email_contacto = (
                     request.email_contacto
-                    if 'email_contacto' in request._fields_set
+                    if "email_contacto" in request._fields_set
                     else company.email_contacto
                 )
                 company.update_profile(rif=rif, email_contacto=email_contacto)
 
-            if 'estado' in request._fields_set:
+            if "estado" in request._fields_set:
                 if request.estado is None:
                     raise ValidationException("El estado no puede ser nulo.")
                 target = CompanyStatus(request.estado)

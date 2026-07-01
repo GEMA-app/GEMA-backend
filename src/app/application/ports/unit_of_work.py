@@ -1,4 +1,5 @@
 """Puerto (Protocol) de la Unidad de Trabajo (UnitOfWorkPort)."""
+
 from typing import Any, Protocol, Self
 
 from app.application.ports.article_category_repository import ArticleCategoryRepositoryPort

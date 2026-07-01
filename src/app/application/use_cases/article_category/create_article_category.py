@@ -37,13 +37,9 @@ class CreateArticleCategoryUseCase:
 
         company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
-            existing = await self.uow.article_categories.get_by_name(
-                request.name, company_id.value
-            )
+            existing = await self.uow.article_categories.get_by_name(request.name, company_id.value)
             if existing:
-                raise ArticleCategoryNameExistsError(
-                    f"La categoría '{request.name}' ya existe."
-                )
+                raise ArticleCategoryNameExistsError(f"La categoría '{request.name}' ya existe.")
             category = ArticleCategory.create(
                 id=uuid.uuid4(),
                 empresa_id=company_id.value,
