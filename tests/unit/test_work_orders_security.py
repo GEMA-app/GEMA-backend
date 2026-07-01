@@ -6,12 +6,16 @@ from typing import Any
 
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.work_orders import (
+    assign_technician,
     change_work_order_status,
     create_work_order,
     delete_work_order,
     get_work_order,
+    get_work_order_status_history,
     list_work_orders,
+    remove_technician,
     update_work_order,
+    validate_work_order,
 )
 
 
@@ -90,3 +94,39 @@ def test_change_work_order_status_security() -> None:
     module, action = _get_permission_details(dep)
     assert module == PermissionModule.MAINTENANCE
     assert action == "edit"
+
+
+def test_assign_technician_security() -> None:
+    dep = _get_dependency(assign_technician, "current_user")
+    assert dep is not None
+    assert callable(dep)
+    module, action = _get_permission_details(dep)
+    assert module == PermissionModule.MAINTENANCE
+    assert action == "edit"
+
+
+def test_remove_technician_security() -> None:
+    dep = _get_dependency(remove_technician, "current_user")
+    assert dep is not None
+    assert callable(dep)
+    module, action = _get_permission_details(dep)
+    assert module == PermissionModule.MAINTENANCE
+    assert action == "edit"
+
+
+def test_validate_work_order_security() -> None:
+    dep = _get_dependency(validate_work_order, "current_user")
+    assert dep is not None
+    assert callable(dep)
+    module, action = _get_permission_details(dep)
+    assert module == PermissionModule.MAINTENANCE
+    assert action == "edit"
+
+
+def test_get_work_order_status_history_security() -> None:
+    dep = _get_dependency(get_work_order_status_history, "current_user")
+    assert dep is not None
+    assert callable(dep)
+    module, action = _get_permission_details(dep)
+    assert module == PermissionModule.MAINTENANCE
+    assert action == "view"

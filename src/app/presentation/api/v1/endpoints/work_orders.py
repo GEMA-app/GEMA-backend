@@ -310,7 +310,7 @@ async def change_work_order_status(
 
 
 @router.post(
-    "/{ot_id}/tecnicos",
+    "/{ot_id}/asignar-tecnico",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Asignar técnico a orden de trabajo",
 )
@@ -326,14 +326,14 @@ async def assign_technician(
 
 
 @router.delete(
-    "/{ot_id}/tecnicos/{tecnico_id}",
+    "/{ot_id}/remover-tecnico",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Remover técnico de orden de trabajo",
 )
 async def remove_technician(
     empresa_id: str,
     ot_id: str,
-    tecnico_id: str,
+    tecnico_id: str = Query(..., description="ID del técnico a remover"),
     current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
     use_case: RemoveTechnicianUseCase = Depends(get_remove_technician_use_case),
 ) -> None:
@@ -381,7 +381,7 @@ async def validate_work_order(
 
 
 @router.get(
-    "/{ot_id}/historial",
+    "/{ot_id}/historial-estados",
     response_model=WorkOrderStatusLogListDocument,
     summary="Obtener historial de estados de orden de trabajo",
 )

@@ -47,9 +47,10 @@ async def test_work_orders_crud_and_isolation_flow():
             tokens_a = res_reg_a.json()["data"]["attributes"]
             access_token_a = tokens_a["access_token"]
 
-            # Obtener empresa_id de la Compañía A desde perfil
+            # Obtener empresa_id y user_id de la Compañía A desde perfil
             auth_headers_a = {**headers, "Authorization": f"Bearer {access_token_a}"}
             res_me_a = await client.get("/v1/auth/yo", headers=auth_headers_a)
+            admin_user_id = res_me_a.json()["data"]["id"]
             empresa_a_id = res_me_a.json()["data"]["attributes"]["empresa_id"]
 
             # =====================================================================
@@ -294,15 +295,114 @@ async def test_work_orders_crud_and_isolation_flow():
             assert res_cross_tenant_real.status_code == 404
 
             # =====================================================================
-            # Paso 7: ELIMINAR la orden de trabajo (DELETE)
+            # Paso 7: REABRIR para probar asignación y validación
             # =====================================================================
+            # Necesitamos una OT en estado "abierta" para asignar técnico
+            # Creamos una segunda OT para no interferir con la cerrada
+            create_payload_2 = {
+                "data": {
+                    "type": "work_orders",
+                    "attributes": {
+                        "activo_id": activo_id,
+                        "tipo": "preventivo",
+                        "codigo_ot": f"OT-TEST-{id_a}-002",
+                        "descripcion_trabajo": "Lubricación de rodamientos",
+                        "costo_estimado": 500.00,
+                        "moneda": "USD",
+                    },
+                }
+            }
+            res_create_2 = await client.post(
+                f"/v1/empresas/{empresa_a_id}/ordenes-trabajo",
+                json=create_payload_2,
+                headers=auth_headers_a,
+            )
+            assert res_create_2.status_code == 201
+            wo_id_2 = res_create_2.json()["data"]["id"]
+
+            # =====================================================================
+            # Paso 8: ASIGNAR TÉCNICO (POST .../asignar-tecnico)
+            # =====================================================================
+            asignar_payload = {
+                "data": {
+                    "type": "work_orders",
+                    "attributes": {
+                        "tecnico_id": admin_user_id,
+                    },
+                }
+            }
+            res_asignar = await client.post(
+                f"/v1/empresas/{empresa_a_id}/ordenes-trabajo/{wo_id_2}/asignar-tecnico",
+                json=asignar_payload,
+                headers=auth_headers_a,
+            )
+            assert res_asignar.status_code == 204, f"Asignar técnico falló: {res_asignar.text}"
+
+            # =====================================================================
+            # Paso 9: REMOVER TÉCNICO (DELETE .../remover-tecnico?tecnico_id=)
+            # =====================================================================
+            res_remover = await client.delete(
+                f"/v1/empresas/{empresa_a_id}/ordenes-trabajo/{wo_id_2}/remover-tecnico",
+                params={"tecnico_id": admin_user_id},
+                headers=auth_headers_a,
+            )
+            assert res_remover.status_code == 204, f"Remover técnico falló: {res_remover.text}"
+
+            # =====================================================================
+            # Paso 10: VALIDAR orden de trabajo (POST .../validar)
+            # =====================================================================
+            # Pasar a en_proceso primero, luego cerrar, luego validar
+            status_payload["data"]["attributes"]["estado"] = "en_proceso"
+            await client.patch(
+                f"/v1/empresas/{empresa_a_id}/ordenes-trabajo/{wo_id_2}/estado",
+                json=status_payload,
+                headers=auth_headers_a,
+            )
+            status_payload["data"]["attributes"]["estado"] = "cerrada"
+            await client.patch(
+                f"/v1/empresas/{empresa_a_id}/ordenes-trabajo/{wo_id_2}/estado",
+                json=status_payload,
+                headers=auth_headers_a,
+            )
+
+            res_validar = await client.post(
+                f"/v1/empresas/{empresa_a_id}/ordenes-trabajo/{wo_id_2}/validar",
+                headers=auth_headers_a,
+            )
+            assert res_validar.status_code == 200, f"Validar OT falló: {res_validar.text}"
+            assert res_validar.json()["data"]["attributes"]["estado"] == "cerrada"
+            assert "fecha_validacion" in res_validar.json()["data"]["attributes"]
+
+            # =====================================================================
+            # Paso 11: HISTORIAL DE ESTADOS (GET .../historial-estados)
+            # =====================================================================
+            res_historial = await client.get(
+                f"/v1/empresas/{empresa_a_id}/ordenes-trabajo/{wo_id_2}/historial-estados",
+                headers=auth_headers_a,
+            )
+            assert res_historial.status_code == 200
+            historial = res_historial.json()["data"]
+            assert len(historial) >= 2  # abierta→en_proceso, en_proceso→cerrada
+            estados = [h["attributes"]["estado_nuevo"] for h in historial]
+            assert "en_proceso" in estados
+            assert "cerrada" in estados
+
+            # =====================================================================
+            # Paso 12: ELIMINAR órdenes de trabajo (DELETE)
+            # =====================================================================
+            res_delete = await client.delete(
+                f"/v1/empresas/{empresa_a_id}/ordenes-trabajo/{wo_id_2}",
+                headers=auth_headers_a,
+            )
+            assert res_delete.status_code == 204, f"Eliminar OT2 falló: {res_delete.text}"
+
             res_delete = await client.delete(
                 f"/v1/empresas/{empresa_a_id}/ordenes-trabajo/{wo_id}",
                 headers=auth_headers_a,
             )
             assert res_delete.status_code == 204
 
-            # Verificar que obtener la orden borrada retorna HTTP 404
+            # Verificar que obtener las órdenes borradas retorna HTTP 404
             res_get_deleted = await client.get(
                 f"/v1/empresas/{empresa_a_id}/ordenes-trabajo/{wo_id}",
                 headers=auth_headers_a,
