@@ -228,7 +228,7 @@ class TestWorkOrderStateMachine:
         assert wo.estado == WorkOrderStatus.OPEN
 
         wo.start()
-        assert wo.estado == WorkOrderStatus.IN_PROGRESS  # type: ignore[comparison-overlap]
+        assert wo.estado == WorkOrderStatus.IN_PROGRESS
         assert wo.fecha_inicio_trabajo is not None
 
         wo.pause()

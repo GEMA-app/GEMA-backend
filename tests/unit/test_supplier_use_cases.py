@@ -43,7 +43,7 @@ def supplier_id() -> UUID:
 
 
 @pytest.fixture
-def sample_supplier(empresa_id, supplier_id) -> Supplier:
+def sample_supplier(empresa_id: UUID, supplier_id: UUID) -> Supplier:
     return Supplier.create(
         id=supplier_id,
         empresa_id=empresa_id,

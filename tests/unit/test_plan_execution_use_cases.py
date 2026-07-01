@@ -1,7 +1,8 @@
 """Tests unitarios para casos de uso de ejecuciones de plan de mantenimiento."""
 
+from datetime import datetime
 from unittest.mock import AsyncMock
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -25,12 +26,12 @@ def mock_uow():
     return uow
 
 
-def _make_execution(plan_id=None, work_order_id=None):
+def _make_execution(        plan_id: UUID | None = None, work_order_id: UUID | None = None) -> PlanExecution:
     return PlanExecution.create(
         empresa_id=CompanyId(uuid4()),
         plan_id=plan_id or uuid4(),
         work_order_id=work_order_id or uuid4(),
-        execution_date="2026-06-15",
+        execution_date=datetime(2026, 6, 15),
         observations="Test",
     )
 
@@ -42,7 +43,7 @@ class TestCreatePlanExecutionUseCase:
         dto = PlanExecutionCreateRequest(
             plan_id=plan_id,
             work_order_id=work_order_id,
-            execution_date="2026-06-15",
+            execution_date=datetime(2026, 6, 15),
             observations="Ejecución de prueba",
         )
         saved = _make_execution(plan_id=plan_id, work_order_id=work_order_id)
@@ -59,7 +60,7 @@ class TestCreatePlanExecutionUseCase:
         dto = PlanExecutionCreateRequest(
             plan_id=uuid4(),
             work_order_id=uuid4(),
-            execution_date="2026-06-15",
+            execution_date=datetime(2026, 6, 15),
             observations=None,
         )
         saved = _make_execution()
@@ -79,7 +80,7 @@ class TestListPlanExecutionUseCase:
             empresa_id=CompanyId(company_id),
             plan_id=plan_id,
             work_order_id=uuid4(),
-            execution_date="2026-06-15",
+            execution_date=datetime(2026, 6, 15),
             observations="Test",
         )
         mock_uow.plan_executions.list_by_plan_id.return_value = [execution]

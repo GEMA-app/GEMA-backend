@@ -83,7 +83,7 @@ def test_inventory_endpoints_use_correct_path_params() -> None:
         get_inventory_movement,
     ]
     for endpoint in endpoints_with_part_id:
-        sig = inspect.signature(endpoint)
+        sig = inspect.signature(endpoint)  # type: ignore[arg-type]
         assert "empresa_id" in sig.parameters
         assert "repuesto_id" in sig.parameters
 
@@ -92,6 +92,6 @@ def test_inventory_endpoints_use_correct_path_params() -> None:
         list_inventory_parts,
     ]
     for endpoint in endpoints_without_part_id:
-        sig = inspect.signature(endpoint)
+        sig = inspect.signature(endpoint)  # type: ignore[arg-type]
         assert "empresa_id" in sig.parameters
         assert "repuesto_id" not in sig.parameters

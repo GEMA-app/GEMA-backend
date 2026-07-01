@@ -142,7 +142,7 @@ class TestRevokeRoleFromUserUseCase:
         use_case = RevokeRoleFromUserUseCase(uow=mock_uow)
 
         # Cambiamos role.record_revocation a un mock para verificar si se llama
-        role.record_revocation = MagicMock()  # type: ignore[method-assign]
+        role.record_revocation = MagicMock()
 
         await use_case.execute(str(company_id.value), str(role_id.value), str(user_id.value))
 
@@ -181,7 +181,7 @@ class TestAssignRoleToUserUseCase:
         use_case = AssignRoleToUserUseCase(uow=mock_uow)
 
         # Cambiamos role.record_assignment a un mock para verificar si se llama
-        role.record_assignment = MagicMock()  # type: ignore[method-assign]
+        role.record_assignment = MagicMock()
 
         await use_case.execute(str(company_id.value), str(role_id.value), str(user_id.value))
 

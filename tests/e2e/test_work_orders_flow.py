@@ -1,4 +1,5 @@
 import uuid
+from typing import Any
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -179,7 +180,7 @@ async def test_work_orders_crud_and_isolation_flow():
             # =====================================================================
             # Paso 4: CAMBIAR ESTADO a "en_proceso" (PATCH .../estado)
             # =====================================================================
-            status_payload = {
+            status_payload: dict[str, Any] = {
                 "data": {
                     "type": "work_orders",
                     "attributes": {
