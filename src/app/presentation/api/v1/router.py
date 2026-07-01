@@ -4,22 +4,22 @@ de endpoints bajo el prefijo /v1.
 
 from fastapi import APIRouter
 
-from app.presentation.api.v1.endpoints.article_category import router as article_category_router
-from app.presentation.api.v1.endpoints.asset_state_log import router as asset_state_log_router
+from app.presentation.api.v1.endpoints.article_categories import router as article_categories_router
+from app.presentation.api.v1.endpoints.asset_state_logs import router as asset_state_logs_router
 from app.presentation.api.v1.endpoints.assets import router as assets_router
 from app.presentation.api.v1.endpoints.auth import router as auth_router
 from app.presentation.api.v1.endpoints.catalog_articles import router as catalog_articles_router
 from app.presentation.api.v1.endpoints.companies import router as companies_router
 from app.presentation.api.v1.endpoints.failure_reports import router as failure_reports_router
 from app.presentation.api.v1.endpoints.interventions import router as interventions_router
-from app.presentation.api.v1.endpoints.inventory_part import router as inventory_part_router
+from app.presentation.api.v1.endpoints.inventory_parts import router as inventory_parts_router
 from app.presentation.api.v1.endpoints.locations import router as locations_router
-from app.presentation.api.v1.endpoints.maintenance_plan import router as maintenance_plan_router
+from app.presentation.api.v1.endpoints.maintenance_plans import router as maintenance_plans_router
 from app.presentation.api.v1.endpoints.plan_executions import router as plan_executions_router
 from app.presentation.api.v1.endpoints.preferences import router as preferences_router
 from app.presentation.api.v1.endpoints.roles import router as roles_router
 from app.presentation.api.v1.endpoints.subscription_plans import router as subscription_plans_router
-from app.presentation.api.v1.endpoints.system_audit import router as system_audit_router
+from app.presentation.api.v1.endpoints.system_audits import router as system_audits_router
 from app.presentation.api.v1.endpoints.used_parts import router as used_parts_router
 from app.presentation.api.v1.endpoints.users import router as users_router
 from app.presentation.api.v1.endpoints.work_orders import router as work_orders_router
@@ -64,13 +64,13 @@ v1_router.include_router(
 )
 
 v1_router.include_router(
-    asset_state_log_router,
+    asset_state_logs_router,
     prefix="/empresas/{empresa_id}/activos",
     tags=["Historial Estados Activos"],
 )
 
 v1_router.include_router(
-    article_category_router,
+    article_categories_router,
     prefix="/empresas/{empresa_id}/catalogo/categorias",
     tags=["Categorías de Catálogo"],
 )
@@ -96,7 +96,7 @@ v1_router.include_router(
 v1_router.include_router(subscription_plans_router, prefix="/planes", tags=["planes"])
 
 v1_router.include_router(
-    maintenance_plan_router,
+    maintenance_plans_router,
     prefix="/empresas/{empresa_id}/planes-mantenimiento",
     tags=["planes-mantenimiento"],
 )
@@ -108,7 +108,7 @@ v1_router.include_router(
 )
 
 v1_router.include_router(
-    system_audit_router,
+    system_audits_router,
     prefix="/empresas/{empresa_id}/auditorias",
     tags=["auditorias"],
 )
@@ -119,7 +119,7 @@ v1_router.include_router(
 )
 
 v1_router.include_router(
-    inventory_part_router,
+    inventory_parts_router,
     prefix="/empresas/{empresa_id}/inventario",
     tags=["inventario"],
 )

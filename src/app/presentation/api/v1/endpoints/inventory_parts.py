@@ -24,7 +24,11 @@ from app.application.use_cases.inventory_part.create_inventory_part import (
 from app.application.use_cases.inventory_part.delete_inventory_part import (
     DeleteInventoryPartUseCase,
 )
+from app.application.use_cases.inventory_part.get_inventory_entry import GetInventoryEntryUseCase
 from app.application.use_cases.inventory_part.get_inventory_part import GetInventoryPartUseCase
+from app.application.use_cases.inventory_part.list_inventory_entries import (
+    ListInventoryEntriesUseCase,
+)
 from app.application.use_cases.inventory_part.list_inventory_parts import ListInventoryPartsUseCase
 from app.application.use_cases.inventory_part.update_inventory_part import (
     UpdateInventoryPartUseCase,
@@ -33,20 +37,22 @@ from app.composition.container.inventory_part import (
     get_create_inventory_entry_use_case,
     get_create_inventory_part_use_case,
     get_delete_inventory_part_use_case,
+    get_get_inventory_entry_use_case,
     get_inventory_part_use_case,
+    get_list_inventory_entries_use_case,
     get_list_inventory_parts_use_case,
     get_update_inventory_part_use_case,
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
     require_permission,
-    require_tenant_read,
 )
 from app.presentation.api.v1.schemas.inventory_part import (
     CreateInventoryEntryRequest,
     CreateInventoryPartRequest,
     InventoryEntryAttributes,
     InventoryEntryDocument,
+    InventoryEntryListDocument,
     InventoryEntryResource,
     InventoryPartAttributes,
     InventoryPartDocument,
@@ -110,7 +116,7 @@ async def create_inventory_part(
 async def get_inventory_part(
     empresa_id: str,
     repuesto_id: str,
-    current_user: UserResponse = Depends(require_tenant_read),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.INVENTORY, "view")),
     use_case: GetInventoryPartUseCase = Depends(get_inventory_part_use_case),
 ) -> InventoryPartDocument:
     """Obtiene los detalles informativos de un repuesto bajo aislamiento multi-tenant."""
@@ -142,7 +148,7 @@ async def list_inventory_parts(
     empresa_id: str,
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
-    current_user: UserResponse = Depends(require_tenant_read),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.INVENTORY, "view")),
     use_case: ListInventoryPartsUseCase = Depends(get_list_inventory_parts_use_case),
 ) -> InventoryPartListDocument:
     """Retorna la colección paginada y controlada de repuestos de la empresa."""
@@ -212,7 +218,7 @@ async def update_inventory_part(
     )
 
 @router.post(
-    "/{repuesto_id}/movements",
+    "/{repuesto_id}/movimientos",
     response_model=InventoryEntryDocument,
     status_code=status.HTTP_201_CREATED,
     summary="Registrar un movimiento (entrada o salida) de stock",
@@ -221,7 +227,7 @@ async def create_inventory_movement(
     empresa_id: str,
     repuesto_id: str,
     request: CreateInventoryEntryRequest,
-    current_user: UserResponse = Depends(require_permission(PermissionModule.INVENTORY, "edit")),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.INVENTORY, "create")),
     use_case: CreateInventoryEntryUseCase = Depends(get_create_inventory_entry_use_case),
 ) -> InventoryEntryDocument:
     """Registra una entrada o salida de inventario alterando de forma segura el stock actual.
@@ -233,6 +239,7 @@ async def create_inventory_movement(
         movement_type=request.data.attributes.movement_type,
         quantity=request.data.attributes.quantity,
         work_order_id=request.data.attributes.work_order_id,
+        usuario_id=current_user.id,
         reason=request.data.attributes.reason,
     )
 
@@ -247,6 +254,80 @@ async def create_inventory_movement(
                 movement_type=res.movement_type,
                 quantity=res.quantity,
                 work_order_id=res.work_order_id,
+                usuario_id=res.usuario_id,
+                precio_unitario=res.precio_unitario,
+                moneda=res.moneda,
+                fecha_movimiento=res.fecha_movimiento,
+                reason=res.reason,
+            ),
+        )
+    )
+
+
+@router.get(
+    "/{repuesto_id}/movimientos",
+    response_model=InventoryEntryListDocument,
+    summary="Listar movimientos de inventario de un repuesto",
+)
+async def list_inventory_movements(
+    empresa_id: str,
+    repuesto_id: str,
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.INVENTORY, "view")),
+    use_case: ListInventoryEntriesUseCase = Depends(get_list_inventory_entries_use_case),
+) -> InventoryEntryListDocument:
+    """Retorna el historial paginado de movimientos de un repuesto específico."""
+    entries = await use_case.execute(empresa_id, repuesto_id, limit=limit, offset=offset)
+    return InventoryEntryListDocument(
+        data=[
+            InventoryEntryResource(
+                id=e.id,
+                attributes=InventoryEntryAttributes(
+                    empresa_id=e.empresa_id,
+                    repuesto_id=e.repuesto_id,
+                    movement_type=e.movement_type,
+                    quantity=e.quantity,
+                    work_order_id=e.work_order_id,
+                    usuario_id=e.usuario_id,
+                    precio_unitario=e.precio_unitario,
+                    moneda=e.moneda,
+                    fecha_movimiento=e.fecha_movimiento,
+                    reason=e.reason,
+                ),
+            )
+            for e in entries
+        ]
+    )
+
+
+@router.get(
+    "/{repuesto_id}/movimientos/{movimiento_id}",
+    response_model=InventoryEntryDocument,
+    summary="Obtener un movimiento de inventario por ID",
+)
+async def get_inventory_movement(
+    empresa_id: str,
+    repuesto_id: str,
+    movimiento_id: str,
+    current_user: UserResponse = Depends(require_permission(PermissionModule.INVENTORY, "view")),
+    use_case: GetInventoryEntryUseCase = Depends(get_get_inventory_entry_use_case),
+) -> InventoryEntryDocument:
+    """Retorna los detalles de un movimiento de inventario específico."""
+    res = await use_case.execute(empresa_id, movimiento_id)
+    return InventoryEntryDocument(
+        data=InventoryEntryResource(
+            id=res.id,
+            attributes=InventoryEntryAttributes(
+                empresa_id=res.empresa_id,
+                repuesto_id=res.repuesto_id,
+                movement_type=res.movement_type,
+                quantity=res.quantity,
+                work_order_id=res.work_order_id,
+                usuario_id=res.usuario_id,
+                precio_unitario=res.precio_unitario,
+                moneda=res.moneda,
+                fecha_movimiento=res.fecha_movimiento,
                 reason=res.reason,
             ),
         )
