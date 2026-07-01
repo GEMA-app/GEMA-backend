@@ -10,14 +10,14 @@ from app.domain.exceptions import (
     InvalidPriceError,
     InvalidStockError,
 )
-from app.domain.value_objects import ArticleId, CompanyId, ProviderId, RepuestoId
+from app.domain.value_objects import ArticleId, CompanyId, ProviderId, SparePartId
 
 
 @dataclass
 class InventoryPart:
     """Entidad de dominio con comportamiento que representa un repuesto en el inventario."""
 
-    id: RepuestoId
+    id: SparePartId
     empresa_id: CompanyId
     articulo_id: ArticleId
     proveedor_id: ProviderId
@@ -72,7 +72,7 @@ class InventoryPart:
             raise EmptyStockLocationError("La ubicación en almacén es obligatoria.")
 
         return cls(
-            id=RepuestoId(uuid.uuid4()),
+            id=SparePartId(uuid.uuid4()),
             empresa_id=empresa_id,
             articulo_id=articulo_id,
             proveedor_id=proveedor_id,

@@ -4,7 +4,7 @@ from typing import Protocol
 from uuid import UUID
 
 from app.domain.entities.inventory_part import InventoryPart
-from app.domain.value_objects import CompanyId, RepuestoId
+from app.domain.value_objects import CompanyId, SparePartId
 
 
 class InventoryPartRepositoryPort(Protocol):
@@ -14,7 +14,7 @@ class InventoryPartRepositoryPort(Protocol):
         """Persiste o actualiza un repuesto en el inventario."""
         ...
 
-    async def get_by_id(self, part_id: RepuestoId, empresa_id: CompanyId) -> InventoryPart | None:
+    async def get_by_id(self, part_id: SparePartId, empresa_id: CompanyId) -> InventoryPart | None:
         """Obtiene un repuesto por ID filtrado por empresa.
 
         Returns:
@@ -37,7 +37,7 @@ class InventoryPartRepositoryPort(Protocol):
         """
         ...
 
-    async def delete(self, part_id: RepuestoId, empresa_id: CompanyId) -> None:
+    async def delete(self, part_id: SparePartId, empresa_id: CompanyId) -> None:
         """Elimina un repuesto del inventario filtrado por empresa."""
         ...
 

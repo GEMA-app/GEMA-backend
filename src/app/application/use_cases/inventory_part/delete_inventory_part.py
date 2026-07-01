@@ -2,7 +2,7 @@
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import InvalidStockError, InventoryPartNotFoundError
-from app.domain.value_objects import CompanyId, RepuestoId
+from app.domain.value_objects import CompanyId, SparePartId
 
 
 class DeleteInventoryPartUseCase:
@@ -14,7 +14,7 @@ class DeleteInventoryPartUseCase:
     async def execute(self, company_id_str: str, part_id_str: str) -> None:
         """Elimina el repuesto validando stock actual y existencia de movimientos."""
         company_id = CompanyId.from_string(company_id_str)
-        part_id = RepuestoId.from_string(part_id_str)
+        part_id = SparePartId.from_string(part_id_str)
 
         async with self.uow:
             inventory_part = await self.uow.inventory_parts.get_by_id(part_id, company_id)

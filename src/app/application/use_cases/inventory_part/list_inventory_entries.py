@@ -3,7 +3,7 @@
 from app.application.dtos.inventory_part_dtos import InventoryEntryResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import InventoryPartNotFoundError
-from app.domain.value_objects import CompanyId, RepuestoId
+from app.domain.value_objects import CompanyId, SparePartId
 
 
 class ListInventoryEntriesUseCase:
@@ -17,7 +17,7 @@ class ListInventoryEntriesUseCase:
     ) -> list[InventoryEntryResponse]:
         """Obtiene y mapea los movimientos de inventario de un repuesto."""
         company_id = CompanyId.from_string(company_id_str)
-        part_id = RepuestoId.from_string(part_id_str)
+        part_id = SparePartId.from_string(part_id_str)
 
         async with self.uow:
             # Validar que el repuesto existe en la empresa

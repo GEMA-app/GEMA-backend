@@ -10,13 +10,13 @@ from app.application.ports.inventory_part_repository import InventoryPartReposit
 from app.domain.entities.inventory_part import InventoryPart
 from app.domain.events import DomainEvent
 from app.domain.exceptions.used_part import InsufficientStockError
-from app.domain.value_objects import CompanyId, RepuestoId
+from app.domain.value_objects import CompanyId, SparePartId
 from app.infrastructure.db.models.inventory_part import InventoryPartModel
 from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 
 
 class SqlAlchemyInventoryPartRepository(
-    SqlAlchemyTenantRepository[InventoryPartModel, InventoryPart, RepuestoId],
+    SqlAlchemyTenantRepository[InventoryPartModel, InventoryPart, SparePartId],
     InventoryPartRepositoryPort,
 ):
     """Implementación en SQLAlchemy para el repositorio de repuestos del inventario."""
@@ -44,7 +44,7 @@ class SqlAlchemyInventoryPartRepository(
         from app.domain.value_objects import ArticleId, ProviderId
 
         return InventoryPart(
-            id=RepuestoId(model.id),
+            id=SparePartId(model.id),
             empresa_id=CompanyId(model.empresa_id),
             articulo_id=ArticleId(model.articulo_id),
             proveedor_id=(

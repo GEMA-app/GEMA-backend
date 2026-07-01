@@ -51,20 +51,20 @@ class UserPreference:
         if self.tema is None:
             raise PreferenceThemeInvalidError("El tema visual no puede estar vacío.")
 
-    def change_theme(self, nuevo_tema: str) -> None:
+    def change_theme(self, new_theme: str) -> None:
         """Cambia el tema visual. Acepta str para que la validación sea en dominio.
 
         Args:
-            nuevo_tema: El nuevo tema visual a aplicar.
+            new_theme: El nuevo tema visual a aplicar.
 
         Raises:
             PreferenceThemeInvalidError: Si el tema no es uno de los valores válidos.
         """
         try:
-            tema_validado = Theme(nuevo_tema)
+            tema_validado = Theme(new_theme)
         except ValueError:
             raise PreferenceThemeInvalidError(
-                f"El tema '{nuevo_tema}' no es válido. "
+                f"El tema '{new_theme}' no es válido. "
                 f"Valores permitidos: {', '.join(t.value for t in Theme)}."
             ) from None
         self.tema = tema_validado

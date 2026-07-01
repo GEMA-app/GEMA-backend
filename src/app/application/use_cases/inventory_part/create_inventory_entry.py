@@ -9,7 +9,7 @@ from app.application.dtos.inventory_part_dtos import (
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.inventory_entry import InventoryEntry
 from app.domain.exceptions import InventoryPartNotFoundError, ValidationException
-from app.domain.value_objects import CompanyId, RepuestoId
+from app.domain.value_objects import CompanyId, SparePartId
 
 
 class CreateInventoryEntryUseCase:
@@ -23,7 +23,7 @@ class CreateInventoryEntryUseCase:
     ) -> InventoryEntryResponse:
         """Registra el movimiento, altera el stock del repuesto y guarda en la BD."""
         company_id = CompanyId.from_string(company_id_str)
-        part_id = RepuestoId.from_string(request.repuesto_id)
+        part_id = SparePartId.from_string(request.repuesto_id)
 
         async with self.uow:
             # 1. Buscar el repuesto en el repositorio (entidad de dominio)

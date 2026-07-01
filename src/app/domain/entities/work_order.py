@@ -15,6 +15,8 @@ from app.domain.value_objects.identifier import (
     WorkOrderId,
 )
 
+# Máquina de estados explícita: cada estado enumera sus transiciones válidas.
+# Agregar un estado nuevo = actualizar este dict + crear método _transition.
 _VALID_TRANSITIONS: dict[WorkOrderStatus, set[WorkOrderStatus]] = {
     WorkOrderStatus.OPEN: {WorkOrderStatus.IN_PROGRESS, WorkOrderStatus.CANCELLED},
     WorkOrderStatus.IN_PROGRESS: {
@@ -206,6 +208,9 @@ class WorkOrder:
         """Valida la orden de trabajo.
 
         Solo se pueden validar órdenes de trabajo cerradas (CLOSED).
+
+        Args:
+            validator_id: Identificador del usuario que realiza la validación.
 
         Raises:
             WorkOrderInvalidStateError: Si la orden no está en estado CLOSED.

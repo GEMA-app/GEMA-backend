@@ -39,7 +39,7 @@ from app.domain.exceptions import (
     InventoryPartNotFoundError,
     StaleDataError,
 )
-from app.domain.value_objects import ArticleId, CompanyId, ProviderId, RepuestoId
+from app.domain.value_objects import ArticleId, CompanyId, ProviderId, SparePartId
 
 
 @pytest.fixture
@@ -94,7 +94,7 @@ class TestInventoryPartUseCases:
     async def test_get_inventory_part_success(self, mock_uow: Any) -> None:
         use_case = GetInventoryPartUseCase(uow=mock_uow)
         company_id = CompanyId(uuid4())
-        part_id = RepuestoId(uuid4())
+        part_id = SparePartId(uuid4())
 
         part = InventoryPart(
             id=part_id,
@@ -127,7 +127,7 @@ class TestInventoryPartUseCases:
     async def test_update_inventory_part_success(self, mock_uow: Any) -> None:
         use_case = UpdateInventoryPartUseCase(uow=mock_uow)
         company_id = CompanyId(uuid4())
-        part_id = RepuestoId(uuid4())
+        part_id = SparePartId(uuid4())
 
         part = InventoryPart(
             id=part_id,
@@ -155,7 +155,7 @@ class TestInventoryPartUseCases:
     async def test_update_inventory_part_stale_data(self, mock_uow: Any) -> None:
         use_case = UpdateInventoryPartUseCase(uow=mock_uow)
         company_id = CompanyId(uuid4())
-        part_id = RepuestoId(uuid4())
+        part_id = SparePartId(uuid4())
 
         part = InventoryPart(
             id=part_id,
@@ -178,7 +178,7 @@ class TestInventoryPartUseCases:
     async def test_delete_inventory_part_success(self, mock_uow: Any) -> None:
         use_case = DeleteInventoryPartUseCase(uow=mock_uow)
         company_id = CompanyId(uuid4())
-        part_id = RepuestoId(uuid4())
+        part_id = SparePartId(uuid4())
 
         part = InventoryPart(
             id=part_id,
@@ -202,7 +202,7 @@ class TestInventoryPartUseCases:
     async def test_delete_inventory_part_fails_stock_not_zero(self, mock_uow: Any) -> None:
         use_case = DeleteInventoryPartUseCase(uow=mock_uow)
         company_id = CompanyId(uuid4())
-        part_id = RepuestoId(uuid4())
+        part_id = SparePartId(uuid4())
 
         part = InventoryPart(
             id=part_id,
@@ -223,7 +223,7 @@ class TestInventoryPartUseCases:
     async def test_delete_inventory_part_fails_has_movements(self, mock_uow: Any) -> None:
         use_case = DeleteInventoryPartUseCase(uow=mock_uow)
         company_id = CompanyId(uuid4())
-        part_id = RepuestoId(uuid4())
+        part_id = SparePartId(uuid4())
 
         part = InventoryPart(
             id=part_id,
@@ -260,7 +260,7 @@ class TestInventoryEntryUseCases:
     async def test_create_inventory_movement_entrada(self, mock_uow: Any) -> None:
         use_case = CreateInventoryEntryUseCase(uow=mock_uow)
         company_id = CompanyId(uuid4())
-        part_id = RepuestoId(uuid4())
+        part_id = SparePartId(uuid4())
 
         part = InventoryPart(
             id=part_id,
@@ -295,7 +295,7 @@ class TestInventoryEntryUseCases:
     async def test_create_inventory_movement_salida_insufficient_stock(self, mock_uow: Any) -> None:
         use_case = CreateInventoryEntryUseCase(uow=mock_uow)
         company_id = CompanyId(uuid4())
-        part_id = RepuestoId(uuid4())
+        part_id = SparePartId(uuid4())
 
         part = InventoryPart(
             id=part_id,
@@ -325,7 +325,7 @@ class TestInventoryEntryUseCases:
     async def test_list_inventory_entries_success(self, mock_uow: Any) -> None:
         use_case = ListInventoryEntriesUseCase(uow=mock_uow)
         company_id = CompanyId(uuid4())
-        part_id = RepuestoId(uuid4())
+        part_id = SparePartId(uuid4())
 
         part = InventoryPart(
             id=part_id,

@@ -6,7 +6,7 @@ from app.application.dtos.inventory_part_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import InventoryPartNotFoundError, StaleDataError
-from app.domain.value_objects import CompanyId, ProviderId, RepuestoId
+from app.domain.value_objects import CompanyId, ProviderId, SparePartId
 
 
 class UpdateInventoryPartUseCase:
@@ -20,7 +20,7 @@ class UpdateInventoryPartUseCase:
     ) -> InventoryPartResponse:
         """Actualiza detalles permitidos controlando la versión del registro."""
         company_id = CompanyId.from_string(company_id_str)
-        part_id = RepuestoId.from_string(part_id_str)
+        part_id = SparePartId.from_string(part_id_str)
 
         async with self.uow:
             # 1. Obtener la entidad actual

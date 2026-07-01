@@ -1,7 +1,7 @@
 """Value Objects para identificadores UUID.
 
 UserId, CompanyId, RoleId, AssetId, LocationId, FailureReportId,
-InterventionId, RepuestoId, WorkOrderId y PlanExecutionId.
+InterventionId, SparePartId, WorkOrderId y PlanExecutionId.
 """
 
 import uuid
@@ -398,7 +398,7 @@ class WorkOrderId:
 
 
 @dataclass(frozen=True)
-class RepuestoId:
+class SparePartId:
     """Objeto de valor que representa el identificador único de un repuesto (UUID)."""
 
     value: uuid.UUID
@@ -408,14 +408,14 @@ class RepuestoId:
         return str(self.value)
 
     @classmethod
-    def from_string(cls, value: str) -> "RepuestoId":
-        """Crea un RepuestoId a partir de un string UUID.
+    def from_string(cls, value: str) -> "SparePartId":
+        """Crea un SparePartId a partir de un string UUID.
 
         Args:
             value: String con el UUID del repuesto.
 
         Returns:
-            Un nuevo RepuestoId.
+            Un nuevo SparePartId.
 
         Raises:
             InvalidUUIDError: Si el string no es un UUID válido.
