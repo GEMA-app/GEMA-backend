@@ -69,8 +69,7 @@ class CompanyId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -103,8 +102,7 @@ class RoleId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -137,8 +135,7 @@ class AssetId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -171,8 +168,7 @@ class MaintenancePlanId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -205,8 +201,7 @@ class LocationId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -239,8 +234,7 @@ class FailureReportId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -273,8 +267,7 @@ class PlanExecutionId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -307,8 +300,7 @@ class SubscriptionPlanId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -341,8 +333,7 @@ class InterventionId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -367,6 +358,7 @@ class InterventionId:
         if value is None:
             return cls.generate()
         return cls.from_string(value)
+
 
 @dataclass(frozen=True)
 class WorkOrderId:
@@ -393,8 +385,7 @@ class WorkOrderId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -427,8 +418,7 @@ class RepuestoId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -461,8 +451,7 @@ class ArticleId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))
@@ -495,8 +484,7 @@ class ProviderId:
         """
         if not isinstance(value, str) or not value:
             raise InvalidUUIDError(
-                f"El identificador debe ser un string no vacío, se recibió: "
-                f"{type(value).__name__}"
+                f"El identificador debe ser un string no vacío, se recibió: {type(value).__name__}"
             )
         try:
             return cls(value=uuid.UUID(value))

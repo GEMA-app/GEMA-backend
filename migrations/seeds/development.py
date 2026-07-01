@@ -9,7 +9,7 @@ from app.domain.entities import Asset, Company, Location, Permission, Role, User
 from app.domain.enums import AssetStatus, CompanyStatus, LocationType, PermissionModule, Theme
 from app.domain.value_objects import CompanyId, Email, HashedPassword, Slug
 from app.infrastructure.db.models import ArticleCategoryModel, CatalogArticleModel
-from app.infrastructure.db.models.company import SubscriptionPlanModel
+from app.infrastructure.db.models.subscription_plan import SubscriptionPlanModel
 from app.infrastructure.events.bus import InProcessEventBus
 from app.infrastructure.security.hashing import BcryptPasswordHasher
 from app.infrastructure.uow import SqlAlchemyUnitOfWork
@@ -293,13 +293,13 @@ async def seed() -> None:
             articulo_id = uuid.uuid4()
             art_model = CatalogArticleModel(
                 id=articulo_id,
-                categoria_id=cat_id,
+                category_id=cat_id,
                 empresa_id=company.id.value,
-                nombre="Motor Eléctrico trifásico 5HP",
-                descripcion="Motor eléctrico WEG W22 Premium IP55",
-                fabricante="WEG",
-                modelo="W22 5HP",
-                unidad_medida="unidad"
+                name="Motor Eléctrico trifásico 5HP",
+                description="Motor eléctrico WEG W22 Premium IP55",
+                manufacturer="WEG",
+                model="W22 5HP",
+                unit_of_measure="unidad"
             )
             uow.session.add(art_model)
             await uow.session.flush()

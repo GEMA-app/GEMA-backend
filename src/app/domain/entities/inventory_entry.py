@@ -5,7 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
-from app.domain.exceptions.inventory_part import InvalidStockError
+from app.domain.exceptions.inventory_part import InvalidMovementTypeError, InvalidStockError
 from app.domain.value_objects import CompanyId
 
 
@@ -32,12 +32,12 @@ class InventoryEntry:
 
         Raises:
             InvalidStockError: Si la cantidad es menor o igual a cero.
-            ValueError: Si el tipo de movimiento no es 'entrada' o 'salida'.
+            InvalidMovementTypeError: Si el tipo de movimiento no es 'entrada' o 'salida'.
         """
         if self.cantidad <= 0:
             raise InvalidStockError("La cantidad del movimiento debe ser mayor que cero.")
         if self.tipo_movimiento not in ("entrada", "salida"):
-            raise ValueError(f"Tipo de movimiento inválido: {self.tipo_movimiento}")
+            raise InvalidMovementTypeError(f"Tipo de movimiento inválido: {self.tipo_movimiento}")
 
     @classmethod
     def create(

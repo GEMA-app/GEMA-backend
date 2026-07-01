@@ -63,21 +63,15 @@ class Supplier:
         if not name or len(name.strip()) == 0:
             raise ValidationError("El nombre del proveedor es obligatorio.")
         if len(name) > _NAME_MAX_LENGTH:
-            raise ValidationError(
-                f"El nombre no puede exceder los {_NAME_MAX_LENGTH} caracteres."
-            )
+            raise ValidationError(f"El nombre no puede exceder los {_NAME_MAX_LENGTH} caracteres.")
         if rif and len(rif) > _RIF_MAX_LENGTH:
-            raise ValidationError(
-                f"El RIF no puede exceder los {_RIF_MAX_LENGTH} caracteres."
-            )
+            raise ValidationError(f"El RIF no puede exceder los {_RIF_MAX_LENGTH} caracteres.")
         if phone and len(phone) > _PHONE_MAX_LENGTH:
             raise ValidationError(
                 f"El teléfono no puede exceder los {_PHONE_MAX_LENGTH} caracteres."
             )
         if email and len(email) > _EMAIL_MAX_LENGTH:
-            raise ValidationError(
-                f"El email no puede exceder los {_EMAIL_MAX_LENGTH} caracteres."
-            )
+            raise ValidationError(f"El email no puede exceder los {_EMAIL_MAX_LENGTH} caracteres.")
         if contact and len(contact) > _CONTACT_MAX_LENGTH:
             raise ValidationError(
                 f"El contacto no puede exceder los {_CONTACT_MAX_LENGTH} caracteres."
@@ -124,9 +118,7 @@ class Supplier:
 
         if rif is not None:
             if len(rif) > _RIF_MAX_LENGTH:
-                raise ValidationError(
-                    f"El RIF no puede exceder los {_RIF_MAX_LENGTH} caracteres."
-                )
+                raise ValidationError(f"El RIF no puede exceder los {_RIF_MAX_LENGTH} caracteres.")
             self.rif = rif.strip() if rif else None
 
         if phone is not None:

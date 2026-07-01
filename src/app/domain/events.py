@@ -6,11 +6,11 @@ from datetime import UTC, datetime
 from typing import Protocol, runtime_checkable
 
 # Registry automático para reconstrucción de eventos en outbox (Sprint V)
-_EVENT_REGISTRY: dict[str, type["DomainEvent"]] = {}
+_event_registry: dict[str, type["DomainEvent"]] = {}
 
 
 def auto_register(cls: type["DomainEvent"]) -> type["DomainEvent"]:
-    """Decorador que registra un DomainEvent en el _EVENT_REGISTRY para su reconstrucción.
+    """Decorador que registra un DomainEvent en el _event_registry para su reconstrucción.
 
     Args:
         cls: La clase DomainEvent a registrar.
@@ -18,7 +18,7 @@ def auto_register(cls: type["DomainEvent"]) -> type["DomainEvent"]:
     Returns:
         La misma clase sin modificar (decorador de identidad).
     """
-    _EVENT_REGISTRY[cls.__name__] = cls
+    _event_registry[cls.__name__] = cls
     return cls
 
 

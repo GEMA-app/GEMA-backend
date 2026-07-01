@@ -1,11 +1,10 @@
 """Entidad InventoryPart — Gestión del inventario de repuestos con control de stock."""
 
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 
-from app.domain.events import DomainEvent, EventProducer
 from app.domain.exceptions import (
     EmptyStockLocationError,
     InvalidPriceError,
@@ -15,7 +14,7 @@ from app.domain.value_objects import ArticleId, CompanyId, ProviderId, RepuestoI
 
 
 @dataclass
-class InventoryPart(EventProducer):
+class InventoryPart:
     """Entidad de dominio con comportamiento que representa un repuesto en el inventario."""
 
     id: RepuestoId
@@ -30,13 +29,6 @@ class InventoryPart(EventProducer):
     version: int = 1
     created_at: datetime | None = None
     updated_at: datetime | None = None
-    _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
-
-    def pull_events(self) -> list[DomainEvent]:
-        """Extrae y limpia la lista de eventos acumulados."""
-        events = self._events.copy()
-        self._events.clear()
-        return events
 
     @classmethod
     def create(
@@ -89,6 +81,11 @@ class InventoryPart(EventProducer):
         """Actualiza los datos permitidos del repuesto.
 
         NOTA DE ARQUITECTURA: 'stock_actual' NO se modifica aquí según reglas de negocio de GEMA.
+
+        Raises:
+            InvalidStockError: Si el stock mínimo es negativo.
+            InvalidPriceError: Si el precio unitario es negativo.
+            EmptyStockLocationError: Si la ubicación en almacén está vacía.
         """
         if stock_minimo < 0:
             raise InvalidStockError("El stock mínimo no puede ser negativo.")
@@ -106,14 +103,23 @@ class InventoryPart(EventProducer):
         self.moneda = moneda
 
     def record_incoming_stock(self, cantidad: int) -> None:
-        """Incrementa el stock actual validando que la cantidad sea positiva."""
+        """Incrementa el stock actual validando que la cantidad sea positiva.
+
+        Raises:
+            InvalidStockError: Si la cantidad es menor o igual a cero.
+        """
         if cantidad <= 0:
             raise InvalidStockError("La cantidad a ingresar debe ser mayor que cero.")
 
         self.stock_actual += cantidad
 
     def record_outgoing_stock(self, cantidad: int) -> None:
-        """Decrementa el stock actual validando existencias suficientes."""
+        """Decrementa el stock actual validando existencias suficientes.
+
+        Raises:
+            InvalidStockError: Si la cantidad es menor o igual a cero,
+                o si el stock disponible es insuficiente.
+        """
         if cantidad <= 0:
             raise InvalidStockError("La cantidad a retirar debe ser mayor que cero.")
 

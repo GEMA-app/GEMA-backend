@@ -27,7 +27,6 @@ class SystemAudit:
     ip_address: str | None
     ocurrido_en: datetime
 
-
     @classmethod
     def create(
         cls,

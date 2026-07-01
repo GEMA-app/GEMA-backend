@@ -7,6 +7,7 @@ from app.domain.exceptions.base import DomainException
 
 class SystemAuditException(DomainException):
     """Clase base para excepciones del módulo de auditoría de sistema."""
+
     pass
 
 
@@ -32,4 +33,3 @@ class NullCompanyError(SystemAuditException):
 
     def __init__(self) -> None:
         super().__init__("La auditoría debe estar vinculada a una empresa válida.")
-

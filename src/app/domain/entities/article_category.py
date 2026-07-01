@@ -48,9 +48,7 @@ class ArticleCategory:
         if not name or len(name.strip()) == 0:
             raise ValidationError("El nombre de la categoría es obligatorio.")
         if len(name) > _NAME_MAX_LENGTH:
-            raise ValidationError(
-                f"El nombre no puede exceder los {_NAME_MAX_LENGTH} caracteres."
-            )
+            raise ValidationError(f"El nombre no puede exceder los {_NAME_MAX_LENGTH} caracteres.")
         return cls(
             id=id,
             empresa_id=empresa_id,
@@ -71,9 +69,7 @@ class ArticleCategory:
         if not new_name or len(new_name.strip()) == 0:
             raise ValidationError("El nombre de la categoría es obligatorio.")
         if len(new_name) > _NAME_MAX_LENGTH:
-            raise ValidationError(
-                f"El nombre no puede exceder los {_NAME_MAX_LENGTH} caracteres."
-            )
+            raise ValidationError(f"El nombre no puede exceder los {_NAME_MAX_LENGTH} caracteres.")
         self.name = new_name.strip()
 
     def change_description(self, new_description: str | None) -> None:

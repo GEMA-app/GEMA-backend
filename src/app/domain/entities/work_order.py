@@ -1,7 +1,7 @@
 """Entidad de dominio para Órdenes de Trabajo."""
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 
 from app.domain.enums import MaintenanceType, WorkOrderStatus
 from app.domain.exceptions.work_order import (
@@ -106,7 +106,7 @@ class WorkOrder:
             descripcion_trabajo=descripcion_trabajo.strip() if descripcion_trabajo else None,
             costo_estimado=costo_estimado,
             moneda=moneda,
-            fecha_apertura=datetime.now(),
+            fecha_apertura=datetime.now(UTC),
         )
 
     def _transition(self, new_status: WorkOrderStatus) -> None:
@@ -132,7 +132,7 @@ class WorkOrder:
         Registra la fecha y hora de inicio del trabajo.
         """
         self._transition(WorkOrderStatus.IN_PROGRESS)
-        self.fecha_inicio_trabajo = datetime.now()
+        self.fecha_inicio_trabajo = datetime.now(UTC)
 
     def pause(self) -> None:
         """Pausa la orden de trabajo, moviéndola a estado PAUSADA."""
@@ -148,7 +148,7 @@ class WorkOrder:
         Registra la fecha y hora de cierre.
         """
         self._transition(WorkOrderStatus.CLOSED)
-        self.fecha_cierre = datetime.now()
+        self.fecha_cierre = datetime.now(UTC)
 
     def cancel(self) -> None:
         """Cancela la orden de trabajo, moviéndola a estado CANCELADA."""
@@ -165,7 +165,7 @@ class WorkOrder:
         Returns:
             str: Código de orden de trabajo en formato OT-año-XXXX.
         """
-        year = datetime.now().year
+        year = datetime.now(UTC).year
         return f"OT-{year}-{hash(company_id.value) % 10000:04d}"
 
     def update_details(
@@ -213,4 +213,4 @@ class WorkOrder:
         if self.estado != WorkOrderStatus.CLOSED:
             raise WorkOrderInvalidStateError("Solo se pueden validar órdenes de trabajo cerradas.")
         self.validado_por_id = validator_id
-        self.fecha_validacion = datetime.now()
+        self.fecha_validacion = datetime.now(UTC)

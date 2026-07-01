@@ -14,8 +14,7 @@ class PlanExecutionNotFoundError(PlanExecutionException):
         self.execution_id = execution_id
         self.empresa_id = empresa_id
         self.message = (
-            f"Ejecución de plan '{execution_id}' no encontrada "
-            f"en la empresa '{empresa_id}'."
+            f"Ejecución de plan '{execution_id}' no encontrada en la empresa '{empresa_id}'."
         )
         super().__init__(self.message)
 

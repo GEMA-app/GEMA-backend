@@ -37,3 +37,9 @@ class FailureReportNotFoundError(FailureReportException):
     """Lanzada cuando un reporte de falla no es encontrado."""
 
     pass
+
+
+class FailureReportInvalidTransitionError(FailureReportException):
+    """Lanzada cuando se intenta una transición de estado no permitida."""
+
+    pass

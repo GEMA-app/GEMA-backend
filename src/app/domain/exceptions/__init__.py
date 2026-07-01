@@ -3,6 +3,7 @@
 Re-exporta todas las excepciones para mantener compatibilidad con los
 imports existentes (``from app.domain.exceptions import X``).
 """
+
 from app.domain.exceptions.article_category import (
     ArticleCategoryException,
     ArticleCategoryNameExistsError,
@@ -54,6 +55,7 @@ from app.domain.exceptions.failure_report import (
     EmptyReportedByError,
     EmptyTitleError,
     FailureReportException,
+    FailureReportInvalidTransitionError,
     FailureReportNotFoundError,
 )
 from app.domain.exceptions.intervention import (
@@ -64,6 +66,7 @@ from app.domain.exceptions.intervention import (
 )
 from app.domain.exceptions.inventory_part import (
     EmptyStockLocationError,
+    InvalidMovementTypeError,
     InvalidPriceError,
     InvalidStockError,
     InventoryEntryNotFoundError,
@@ -212,6 +215,7 @@ __all__ = [
     "ArticleCategoryNameExistsError",
     "ArticleCategoryNotFoundError",
     "FailureReportException",
+    "FailureReportInvalidTransitionError",
     "FailureReportNotFoundError",
     "EmptyTitleError",
     "EmptyDescriptionError",
@@ -258,6 +262,7 @@ __all__ = [
     "TemplateNotFoundError",
     # Excepciones de inventario de repuestos
     "EmptyStockLocationError",
+    "InvalidMovementTypeError",
     "InvalidPriceError",
     "InvalidStockError",
     "InventoryPartException",

@@ -11,8 +11,15 @@ from app.domain.exceptions import (
     EmptyLocationError,
     EmptyReportedByError,
     EmptyTitleError,
+    FailureReportInvalidTransitionError,
 )
 from app.domain.value_objects import AssetId, CompanyId, FailureReportId
+
+# ─── Máquina de estados ────────────────────────────────────────────
+_VALID_REPORT_TRANSITIONS: dict[ReportStatus, set[ReportStatus]] = {
+    ReportStatus.PENDING: {ReportStatus.IN_PROGRESS, ReportStatus.DISCARDED},
+    ReportStatus.IN_PROGRESS: {ReportStatus.RESOLVED},
+}
 
 
 @dataclass
@@ -103,3 +110,38 @@ class FailureReport(EventProducer):
             )
         )
         return report
+
+    # ─── Máquina de estados ────────────────────────────────────────────
+
+    def _transition(self, new_status: ReportStatus) -> None:
+        """Valida y ejecuta la transición de estado."""
+        allowed = _VALID_REPORT_TRANSITIONS.get(self.status, set())
+        if new_status not in allowed:
+            raise FailureReportInvalidTransitionError(
+                f"No se puede cambiar de '{self.status.value}' a '{new_status.value}'."
+            )
+        self.status = new_status
+
+    def mark_as_in_progress(self) -> None:
+        """Cambia el estado a 'en_proceso'.
+
+        Raises:
+            FailureReportInvalidTransitionError: Si el estado actual no permite esta transición.
+        """
+        self._transition(ReportStatus.IN_PROGRESS)
+
+    def resolve(self) -> None:
+        """Cambia el estado a 'atendido'.
+
+        Raises:
+            FailureReportInvalidTransitionError: Si el estado actual no permite esta transición.
+        """
+        self._transition(ReportStatus.RESOLVED)
+
+    def discard(self) -> None:
+        """Descartar el reporte (no procede).
+
+        Raises:
+            FailureReportInvalidTransitionError: Si el estado actual no permite esta transición.
+        """
+        self._transition(ReportStatus.DISCARDED)
