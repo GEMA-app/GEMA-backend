@@ -62,6 +62,13 @@ from app.domain.exceptions.intervention import (
     InterventionInvalidTransitionError,
     InterventionNotFoundError,
 )
+from app.domain.exceptions.inventory_part import (
+    EmptyStockLocationError,
+    InvalidPriceError,
+    InvalidStockError,
+    InventoryPartException,
+    InventoryPartNotFoundError,
+)
 from app.domain.exceptions.location import (
     EmptyLocationNameError,
     LocationCircularReferenceError,
@@ -237,4 +244,10 @@ __all__ = [
     # Excepciones de notificaciones
     "NotificationError",
     "TemplateNotFoundError",
+    # Excepciones de inventario de repuestos
+    "EmptyStockLocationError",
+    "InvalidPriceError",
+    "InvalidStockError",
+    "InventoryPartException",
+    "InventoryPartNotFoundError",
 ]

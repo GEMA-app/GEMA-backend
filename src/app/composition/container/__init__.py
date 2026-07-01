@@ -68,6 +68,14 @@ from app.composition.container.intervention import (
     get_list_interventions_use_case,
     get_update_intervention_use_case,
 )
+from app.composition.container.inventory_part import (
+    get_create_inventory_entry_use_case,
+    get_create_inventory_part_use_case,
+    get_delete_inventory_part_use_case,
+    get_inventory_part_use_case,
+    get_list_inventory_parts_use_case,
+    get_update_inventory_part_use_case,
+)
 from app.composition.container.location import (
     get_create_location_use_case,
     get_delete_location_use_case,
@@ -255,4 +263,11 @@ __all__ = [
     "get_list_interventions_use_case",
     "get_update_intervention_use_case",
     "get_delete_intervention_use_case",
+    # Inventory Parts
+    "get_create_inventory_part_use_case",
+    "get_inventory_part_use_case",
+    "get_list_inventory_parts_use_case",
+    "get_update_inventory_part_use_case",
+    "get_delete_inventory_part_use_case",
+    "get_create_inventory_entry_use_case",
 ]

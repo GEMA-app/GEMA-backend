@@ -8,14 +8,14 @@ from sqlalchemy import ForeignKey, Index, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.db.base import Base
-from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
+from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin, VersionMixin
 
 if TYPE_CHECKING:
     from app.infrastructure.db.models.catalog_article import CatalogArticleModel
     from app.infrastructure.db.models.supplier import SupplierModel
 
 
-class InventoryPartModel(TenantMixin, TimestampMixin, Base):
+class InventoryPartModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla de inventario de repuestos (`inventario_repuestos`)."""
 
     __tablename__ = "inventario_repuestos"

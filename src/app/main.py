@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("app_shutdown")
 
 
-app = FastAPI(title=settings.APP_TITLE, version=settings.APP_VERSION, lifespan=lifespan)
+app = FastAPI(title=settings.APP_TITLE, version=settings.APP_VERSION, lifespan=lifespan, root_path="/api")
 
 # --- Registro de Manejadores de Excepciones ---
 register_exception_handlers(app)

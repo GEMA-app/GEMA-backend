@@ -7,6 +7,7 @@ from app.domain.entities.catalog_article import CatalogArticle
 from app.domain.entities.company import Company
 from app.domain.entities.failure_report import FailureReport
 from app.domain.entities.intervention import TechnicalIntervention
+from app.domain.entities.inventory_part import InventoryPart
 from app.domain.entities.location import Location
 from app.domain.entities.maintenance_plan import MaintenancePlan
 from app.domain.entities.permission import Permission
@@ -35,6 +36,7 @@ __all__ = [
     "SystemAudit",
     "UserPreference",
     "FailureReport",
+    "InventoryPart",
     "WorkOrder",
     "SubscriptionPlan",
     "TechnicalIntervention",

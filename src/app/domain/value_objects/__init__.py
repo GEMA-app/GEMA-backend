@@ -6,6 +6,7 @@ imports existentes (``from app.domain.value_objects import X``).
 
 from app.domain.value_objects.credential import Email, HashedPassword, PlainPassword
 from app.domain.value_objects.identifier import (
+    ArticleId,
     AssetId,
     CompanyId,
     FailureReportId,
@@ -13,6 +14,7 @@ from app.domain.value_objects.identifier import (
     LocationId,
     MaintenancePlanId,
     PlanExecutionId,
+    ProviderId,
     RepuestoId,
     RoleId,
     SubscriptionPlanId,
@@ -28,11 +30,13 @@ __all__ = [
     "UserId",
     "CompanyId",
     "RoleId",
+    "ArticleId",
     "AssetId",
     "FailureReportId",
     "InterventionId",
     "LocationId",
     "PlanExecutionId",
+    "ProviderId",
     "RepuestoId",
     "MaintenancePlanId",
     "WorkOrderId",

@@ -98,7 +98,7 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
             self.session, self._pending_events
         )
         self.used_parts = SqlAlchemyUsedPartRepository(self.session, self._pending_events)
-        self.inventory_parts = SqlAlchemyInventoryPartRepository(self.session)
+        self.inventory_parts = SqlAlchemyInventoryPartRepository(self.session, self._pending_events)
         self.work_orders = SqlAlchemyWorkOrderRepository(self.session, self._pending_events)
         self.plan_executions = SqlAlchemyPlanExecutionRepository(self.session, self._pending_events)
         self.interventions = SqlAlchemyInterventionRepository(self.session, self._pending_events)

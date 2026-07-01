@@ -33,6 +33,7 @@ from app.domain.exceptions import (
     EmptyReportedByError,
     EmptyRoleNameError,
     EmptySerialError,
+    EmptyStockLocationError,
     EmptyTitleError,
     EventPublishError,
     FailureReportNotFoundError,
@@ -43,9 +44,12 @@ from app.domain.exceptions import (
     InterventionNotFoundError,
     InvalidCredentialsError,
     InvalidEmailError,
+    InvalidPriceError,
     InvalidSlugError,
+    InvalidStockError,
     InvalidTokenError,
     InvalidUUIDError,
+    InventoryPartNotFoundError,
     LastAdminRevocationError,
     LocationCircularReferenceError,
     LocationInvalidTypeHierarchyError,
@@ -321,6 +325,22 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     EmptyActionError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_EMPTY_ACTION",
+    ),
+    InventoryPartNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_INVENTORY_PART_NOT_FOUND",
+    ),
+    InvalidStockError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_INVALID_STOCK",
+    ),
+    InvalidPriceError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_INVALID_PRICE",
+    ),
+    EmptyStockLocationError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_STOCK_LOCATION",
     ),
     NullCompanyError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
