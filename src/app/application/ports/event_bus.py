@@ -1,3 +1,5 @@
+"""Puerto (Protocol) del bus de eventos de dominio (EventBusPort)."""
+
 from collections.abc import Awaitable, Callable, Sequence
 from typing import Protocol
 

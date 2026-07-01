@@ -74,7 +74,7 @@ async def create_asset(
         valor_monetario=request.data.attributes.valor_monetario,
         moneda=request.data.attributes.moneda,
     )
-    res = await use_case.execute(empresa_id, dto)
+    res = await use_case.execute(empresa_id, dto, current_user.id)
     return AssetDocument(
         data=AssetResource(
             id=res.id,
@@ -237,7 +237,7 @@ async def update_asset(
         version=sent.get("version") if "version" in sent else None,
         _fields_set=frozenset(sent.keys()),
     )
-    res = await use_case.execute(empresa_id, activo_id, dto)
+    res = await use_case.execute(empresa_id, activo_id, dto, current_user.id)
     return AssetDocument(
         data=AssetResource(
             id=res.id,

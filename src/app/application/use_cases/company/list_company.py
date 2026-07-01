@@ -1,3 +1,5 @@
+"""Caso de uso para list company."""
+
 from app.application.dtos.company_dtos import CompanyResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 
@@ -15,9 +17,8 @@ class ListCompaniesUseCase:
         async with self.uow:
             if company_id is not None:
                 from app.domain.value_objects import CompanyId
-                company = await self.uow.companies.get_by_id(
-                    CompanyId.from_string(company_id)
-                )
+
+                company = await self.uow.companies.get_by_id(CompanyId.from_string(company_id))
                 if not company:
                     return [], 0
                 dto = CompanyResponse(

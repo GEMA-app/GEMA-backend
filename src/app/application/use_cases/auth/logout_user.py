@@ -1,3 +1,5 @@
+"""Caso de uso para cerrar sesion e invalidar tokens."""
+
 from app.application.dtos import LogoutUserRequest
 from app.application.ports.auth import TokenServicePort
 from app.domain.exceptions import InvalidTokenError

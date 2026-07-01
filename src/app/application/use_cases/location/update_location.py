@@ -1,3 +1,5 @@
+"""Caso de uso para update location."""
+
 from app.application.dtos.location_dtos import LocationResponse, UpdateLocationRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Location
@@ -40,7 +42,7 @@ class UpdateLocationUseCase:
 
             new_parent_id = location.parent_id
 
-            if 'parent_id' in request._fields_set:
+            if "parent_id" in request._fields_set:
                 if request.parent_id is not None:
                     p_id_str = request.parent_id.strip()
                     if not p_id_str:
@@ -81,20 +83,20 @@ class UpdateLocationUseCase:
                 else:
                     parent_type = None
 
-            if 'nombre' in request._fields_set:
+            if "nombre" in request._fields_set:
                 if request.nombre is None or not request.nombre.strip():
                     raise ValidationException("El nombre de la ubicación no puede estar vacío.")
                 location.nombre = request.nombre.strip()
 
-            if 'descripcion' in request._fields_set:
+            if "descripcion" in request._fields_set:
                 location.descripcion = request.descripcion
 
-            if 'tipo' in request._fields_set or 'parent_id' in request._fields_set:
-                if 'tipo' in request._fields_set and request.tipo is None:
+            if "tipo" in request._fields_set or "parent_id" in request._fields_set:
+                if "tipo" in request._fields_set and request.tipo is None:
                     raise ValidationException("El tipo de ubicación no puede ser nulo.")
                 new_tipo_enum = (
                     LocationType(request.tipo)
-                    if ('tipo' in request._fields_set and request.tipo is not None)
+                    if ("tipo" in request._fields_set and request.tipo is not None)
                     else None
                 )
 
@@ -103,6 +105,7 @@ class UpdateLocationUseCase:
                 new_tipo = new_tipo_enum if new_tipo_enum is not None else old_tipo
                 if new_tipo != old_tipo:
                     from app.domain.exceptions import LocationInvalidTypeHierarchyError
+
                     children = await self.uow.locations.get_children(location.id, company_id)
                     for child in children:
                         try:

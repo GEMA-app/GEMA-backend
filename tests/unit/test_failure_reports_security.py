@@ -89,6 +89,6 @@ def test_failure_reports_endpoint_ids_convention() -> None:
         assert "empresa_id" in sig.parameters
         assert "reporte_id" in sig.parameters
 
-    for func in (create_failure_report, list_failure_reports):
+    for func in (create_failure_report, list_failure_reports):  # type: ignore[assignment]
         sig = inspect.signature(func)
         assert "empresa_id" in sig.parameters

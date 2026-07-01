@@ -7,16 +7,24 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 
 from app.domain.exceptions import (
+    ArticleCategoryNameExistsError,
+    ArticleCategoryNotFoundError,
     AssetCodeExistsError,
     AssetInvalidTransitionError,
     AssetNotFoundError,
     AssetSerialExistsError,
+    AssetStateLogNotFoundError,
+    CatalogArticleHasAssetsError,
+    CatalogArticleNotFoundError,
     CompanyAlreadyCancelledError,
     CompanyNotFoundError,
     CompanyNotSuspendedError,
     CompanySlugExistsError,
     DomainException,
+    EmptyActionError,
     EmptyAssetCodeError,
+    EmptyCatalogArticleCodeError,
+    EmptyCatalogArticleNameError,
     EmptyCompanyNameError,
     EmptyDescriptionError,
     EmptyHashedPasswordError,
@@ -25,30 +33,68 @@ from app.domain.exceptions import (
     EmptyReportedByError,
     EmptyRoleNameError,
     EmptySerialError,
+    EmptyStockLocationError,
     EmptyTitleError,
     EventPublishError,
+    FailureReportInvalidTransitionError,
     FailureReportNotFoundError,
     InsufficientPermissionsError,
+    InsufficientStockError,
+    InterventionInvalidDataError,
+    InterventionInvalidTransitionError,
+    InterventionNotFoundError,
     InvalidCredentialsError,
     InvalidEmailError,
+    InvalidMovementTypeError,
+    InvalidPriceError,
     InvalidSlugError,
+    InvalidStockError,
     InvalidTokenError,
     InvalidUUIDError,
+    InventoryEntryNotFoundError,
+    InventoryPartNotFoundError,
     LastAdminRevocationError,
     LocationCircularReferenceError,
     LocationInvalidTypeHierarchyError,
     LocationNotFoundError,
+    MaintenancePlanDueDateError,
+    MaintenancePlanIntervalError,
+    MaintenancePlanNameEmptyError,
+    MaintenancePlanNotFoundError,
+    NotificationError,
+    NullCompanyError,
+    PlanExecutionNotFoundError,
+    PlanExecutionObservationsEmptyError,
     PreferenceNotFoundError,
     PreferenceThemeInvalidError,
     RoleNameExistsError,
     RoleNotFoundError,
     StaleDataError,
+    SubscriptionPlanAlreadyExistsError,
+    SubscriptionPlanHasActiveSubscriptionsError,
+    SubscriptionPlanInvalidDataError,
+    SubscriptionPlanLimitExceededError,
+    SubscriptionPlanNotFoundError,
+    SubscriptionPlanPaymentFailedError,
+    SupplierHasInventoryPartsError,
+    SupplierNotFoundError,
+    SupplierRifExistsError,
+    SystemAuditNotFoundError,
+    TemplateNotFoundError,
+    UsedPartInvalidPriceError,
+    UsedPartInvalidQuantityError,
+    UsedPartNotFoundError,
     UserAlreadyExistsError,
     UserInactiveError,
+    UserNotFoundError,
+    ValidationError,
     ValidationException,
     WeakPasswordError,
+    WorkOrderCodeExistsError,
+    WorkOrderInvalidDataError,
+    WorkOrderInvalidStateError,
+    WorkOrderNotFoundError,
 )
-from app.infrastructure.notifications.email_sender import NotificationError, TemplateNotFoundError
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers.base import jsonapi_response
 
@@ -57,66 +103,35 @@ from app.presentation.exception_handlers.base import jsonapi_response
 # Para agregar una excepción nueva, basta con añadir una línea al dict.
 # ---------------------------------------------------------------------------
 _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
-    WeakPasswordError: (
+    WeakPasswordError: (status.HTTP_422_UNPROCESSABLE_ENTITY, "ERR_WEAK_PASSWORD"),
+    InvalidEmailError: (status.HTTP_422_UNPROCESSABLE_ENTITY, "ERR_INVALID_EMAIL"),
+    UserAlreadyExistsError: (status.HTTP_409_CONFLICT, "ERR_USER_ALREADY_EXISTS"),
+    InvalidCredentialsError: (status.HTTP_401_UNAUTHORIZED, "ERR_INVALID_CREDENTIALS"),
+    UserInactiveError: (status.HTTP_403_FORBIDDEN, "ERR_USER_INACTIVE"),
+    UserNotFoundError: (status.HTTP_404_NOT_FOUND, "ERR_USER_NOT_FOUND"),
+    InvalidTokenError: (status.HTTP_401_UNAUTHORIZED, "ERR_INVALID_TOKEN"),
+    CompanyNotFoundError: (status.HTTP_404_NOT_FOUND, "ERR_COMPANY_NOT_FOUND"),
+    CompanySlugExistsError: (status.HTTP_409_CONFLICT, "ERR_COMPANY_SLUG_EXISTS"),
+    RoleNotFoundError: (status.HTTP_404_NOT_FOUND, "ERR_ROLE_NOT_FOUND"),
+    RoleNameExistsError: (status.HTTP_409_CONFLICT, "ERR_ROLE_NAME_EXISTS"),
+    InsufficientPermissionsError: (status.HTTP_403_FORBIDDEN, "ERR_INSUFFICIENT_PERMISSIONS"),
+    AssetNotFoundError: (status.HTTP_404_NOT_FOUND, "ERR_ASSET_NOT_FOUND"),
+    MaintenancePlanDueDateError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
-        "ERR_WEAK_PASSWORD"
+        "ERR_MAINTENANCE_PLAN_DUE_DATE",
     ),
-    InvalidEmailError: (
+    MaintenancePlanIntervalError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
-        "ERR_INVALID_EMAIL"
+        "ERR_MAINTENANCE_PLAN_INTERVAL",
     ),
-    UserAlreadyExistsError: (
-        status.HTTP_409_CONFLICT,
-        "ERR_USER_ALREADY_EXISTS"
+    MaintenancePlanNameEmptyError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_MAINTENANCE_PLAN_NAME_EMPTY",
     ),
-    InvalidCredentialsError: (
-        status.HTTP_401_UNAUTHORIZED,
-        "ERR_INVALID_CREDENTIALS"
-    ),
-    UserInactiveError: (
-        status.HTTP_403_FORBIDDEN,
-        "ERR_USER_INACTIVE"
-    ),
-    InvalidTokenError: (
-        status.HTTP_401_UNAUTHORIZED,
-        "ERR_INVALID_TOKEN"
-    ),
-    CompanyNotFoundError: (
-        status.HTTP_404_NOT_FOUND,
-        "ERR_COMPANY_NOT_FOUND"
-    ),
-    CompanySlugExistsError: (
-        status.HTTP_409_CONFLICT,
-        "ERR_COMPANY_SLUG_EXISTS"
-    ),
-    RoleNotFoundError: (
-        status.HTTP_404_NOT_FOUND,
-        "ERR_ROLE_NOT_FOUND"
-    ),
-    RoleNameExistsError: (
-        status.HTTP_409_CONFLICT,
-        "ERR_ROLE_NAME_EXISTS"
-    ),
-    InsufficientPermissionsError: (
-        status.HTTP_403_FORBIDDEN,
-        "ERR_INSUFFICIENT_PERMISSIONS"
-    ),
-    AssetNotFoundError: (
-        status.HTTP_404_NOT_FOUND,
-        "ERR_ASSET_NOT_FOUND"
-    ),
-    AssetCodeExistsError: (
-        status.HTTP_409_CONFLICT,
-        "ERR_ASSET_CODE_EXISTS"
-    ),
-    AssetSerialExistsError: (
-        status.HTTP_409_CONFLICT,
-        "ERR_ASSET_SERIAL_EXISTS"
-    ),
-    LocationNotFoundError: (
-        status.HTTP_404_NOT_FOUND,
-        "ERR_LOCATION_NOT_FOUND"
-    ),
+    MaintenancePlanNotFoundError: (status.HTTP_404_NOT_FOUND, "ERR_MAINTENANCE_PLAN_NOT_FOUND"),
+    AssetCodeExistsError: (status.HTTP_409_CONFLICT, "ERR_ASSET_CODE_EXISTS"),
+    AssetSerialExistsError: (status.HTTP_409_CONFLICT, "ERR_ASSET_SERIAL_EXISTS"),
+    LocationNotFoundError: (status.HTTP_404_NOT_FOUND, "ERR_LOCATION_NOT_FOUND"),
     LocationCircularReferenceError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_LOCATION_CIRCULAR_REFERENCE",
@@ -125,14 +140,17 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_LOCATION_INVALID_TYPE_HIERARCHY",
     ),
-    InvalidUUIDError: (
+    InterventionNotFoundError: (status.HTTP_404_NOT_FOUND, "ERR_INTERVENTION_NOT_FOUND"),
+    InterventionInvalidTransitionError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
-        "ERR_INVALID_UUID"
+        "ERR_INTERVENTION_INVALID_TRANSITION",
     ),
-    InvalidSlugError: (
+    InterventionInvalidDataError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
-        "ERR_INVALID_SLUG"
+        "ERR_INTERVENTION_INVALID_DATA",
     ),
+    InvalidUUIDError: (status.HTTP_422_UNPROCESSABLE_ENTITY, "ERR_INVALID_UUID"),
+    InvalidSlugError: (status.HTTP_422_UNPROCESSABLE_ENTITY, "ERR_INVALID_SLUG"),
     CompanyAlreadyCancelledError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_COMPANY_ALREADY_CANCELLED",
@@ -141,29 +159,21 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_COMPANY_NOT_SUSPENDED",
     ),
-    EmptyCompanyNameError: (
-        status.HTTP_422_UNPROCESSABLE_ENTITY,
-        "ERR_EMPTY_COMPANY_NAME"
-    ),
-    EmptyRoleNameError: (
-        status.HTTP_422_UNPROCESSABLE_ENTITY,
-        "ERR_EMPTY_ROLE_NAME"
-    ),
-    EmptyHashedPasswordError: (
-        status.HTTP_422_UNPROCESSABLE_ENTITY,
-        "ERR_EMPTY_HASHED_PASSWORD"
-    ),
+    EmptyCompanyNameError: (status.HTTP_422_UNPROCESSABLE_ENTITY, "ERR_EMPTY_COMPANY_NAME"),
+    EmptyRoleNameError: (status.HTTP_422_UNPROCESSABLE_ENTITY, "ERR_EMPTY_ROLE_NAME"),
+    EmptyHashedPasswordError: (status.HTTP_422_UNPROCESSABLE_ENTITY, "ERR_EMPTY_HASHED_PASSWORD"),
     ValidationException: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_VALIDATION",
     ),
-    PreferenceNotFoundError: (
-        status.HTTP_404_NOT_FOUND,
-        "ERR_PREFERENCE_NOT_FOUND"
-    ),
+    PreferenceNotFoundError: (status.HTTP_404_NOT_FOUND, "ERR_PREFERENCE_NOT_FOUND"),
     PreferenceThemeInvalidError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
-        "ERR_PREFERENCE_THEME_INVALID"
+        "ERR_PREFERENCE_THEME_INVALID",
+    ),
+    AssetStateLogNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_ASSET_STATE_LOG_NOT_FOUND",
     ),
     AssetInvalidTransitionError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -176,6 +186,22 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     EmptyAssetCodeError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_EMPTY_ASSET_CODE",
+    ),
+    CatalogArticleNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_CATALOG_ARTICLE_NOT_FOUND",
+    ),
+    EmptyCatalogArticleNameError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_CATALOG_ARTICLE_NAME",
+    ),
+    EmptyCatalogArticleCodeError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_CATALOG_ARTICLE_CODE",
+    ),
+    CatalogArticleHasAssetsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_CATALOG_ARTICLE_HAS_ASSETS",
     ),
     EmptyLocationNameError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -201,6 +227,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         status.HTTP_404_NOT_FOUND,
         "ERR_FAILURE_REPORT_NOT_FOUND",
     ),
+    FailureReportInvalidTransitionError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_FAILURE_REPORT_INVALID_TRANSITION",
+    ),
     LastAdminRevocationError: (
         status.HTTP_403_FORBIDDEN,
         "ERR_LAST_ADMIN_REVOCATION",
@@ -213,13 +243,137 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         status.HTTP_502_BAD_GATEWAY,
         "ERR_EVENT_PUBLISH",
     ),
+    UsedPartNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_USED_PART_NOT_FOUND",
+    ),
+    UsedPartInvalidQuantityError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_USED_PART_INVALID_QUANTITY",
+    ),
+    UsedPartInvalidPriceError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_USED_PART_INVALID_PRICE",
+    ),
+    InsufficientStockError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_INSUFFICIENT_STOCK",
+    ),
+    PlanExecutionNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_PLAN_EXECUTION_NOT_FOUND",
+    ),
+    PlanExecutionObservationsEmptyError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_PLAN_EXECUTION_OBSERVATIONS_EMPTY",
+    ),
     NotificationError: (
         status.HTTP_502_BAD_GATEWAY,
         "ERR_NOTIFICATION",
     ),
     TemplateNotFoundError: (
-        status.HTTP_502_BAD_GATEWAY,
+        status.HTTP_500_INTERNAL_SERVER_ERROR,
         "ERR_TEMPLATE_NOT_FOUND",
+    ),
+    ArticleCategoryNameExistsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_ARTICLE_CATEGORY_NAME_EXISTS",
+    ),
+    ArticleCategoryNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_ARTICLE_CATEGORY_NOT_FOUND",
+    ),
+    WorkOrderNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_WORK_ORDER_NOT_FOUND",
+    ),
+    WorkOrderCodeExistsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_WORK_ORDER_CODE_EXISTS",
+    ),
+    WorkOrderInvalidStateError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_WORK_ORDER_INVALID_STATE",
+    ),
+    WorkOrderInvalidDataError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_WORK_ORDER_INVALID_DATA",
+    ),
+    SubscriptionPlanNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_SUBSCRIPTION_PLAN_NOT_FOUND",
+    ),
+    SubscriptionPlanAlreadyExistsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_SUBSCRIPTION_PLAN_ALREADY_EXISTS",
+    ),
+    SubscriptionPlanInvalidDataError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_SUBSCRIPTION_PLAN_INVALID_DATA",
+    ),
+    SubscriptionPlanLimitExceededError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_SUBSCRIPTION_PLAN_LIMIT_EXCEEDED",
+    ),
+    SubscriptionPlanPaymentFailedError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_SUBSCRIPTION_PLAN_PAYMENT_FAILED",
+    ),
+    SubscriptionPlanHasActiveSubscriptionsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_SUBSCRIPTION_PLAN_HAS_ACTIVE_SUBSCRIPTIONS",
+    ),
+    SupplierNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_SUPPLIER_NOT_FOUND",
+    ),
+    SupplierRifExistsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_SUPPLIER_RIF_EXISTS",
+    ),
+    SupplierHasInventoryPartsError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_SUPPLIER_HAS_INVENTORY_PARTS",
+    ),
+    SystemAuditNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_SYSTEM_AUDIT_NOT_FOUND",
+    ),
+    EmptyActionError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_ACTION",
+    ),
+    InventoryPartNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_INVENTORY_PART_NOT_FOUND",
+    ),
+    InventoryEntryNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_INVENTORY_ENTRY_NOT_FOUND",
+    ),
+    InvalidMovementTypeError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_INVALID_MOVEMENT_TYPE",
+    ),
+    InvalidStockError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_INVALID_STOCK",
+    ),
+    InvalidPriceError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_INVALID_PRICE",
+    ),
+    EmptyStockLocationError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_EMPTY_STOCK_LOCATION",
+    ),
+    NullCompanyError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_NULL_COMPANY",
+    ),
+    ValidationError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_VALIDATION_ERROR",
     ),
 }
 

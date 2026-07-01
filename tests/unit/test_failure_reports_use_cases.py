@@ -1,9 +1,9 @@
 """Tests for failure report use cases."""
 
+from datetime import UTC, datetime
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
-from datetime import UTC, datetime
 
 import pytest
 
@@ -11,11 +11,17 @@ from app.application.dtos.failure_report_dtos import (
     CreateFailureReportRequest,
     UpdateFailureReportRequest,
 )
-from app.application.use_cases.create_failure_report import CreateFailureReportUseCase
-from app.application.use_cases.delete_failure_report import DeleteFailureReportUseCase
-from app.application.use_cases.get_failure_report import GetFailureReportUseCase
-from app.application.use_cases.list_failure_report import ListFailureReportsUseCase
-from app.application.use_cases.update_failure_report import UpdateFailureReportUseCase
+from app.application.use_cases.failure_report.create_failure_report import (
+    CreateFailureReportUseCase,
+)
+from app.application.use_cases.failure_report.delete_failure_report import (
+    DeleteFailureReportUseCase,
+)
+from app.application.use_cases.failure_report.get_failure_report import GetFailureReportUseCase
+from app.application.use_cases.failure_report.list_failure_report import ListFailureReportsUseCase
+from app.application.use_cases.failure_report.update_failure_report import (
+    UpdateFailureReportUseCase,
+)
 from app.domain.entities.failure_report import FailureReport
 from app.domain.enums import PriorityLevel, ReportStatus
 from app.domain.exceptions.failure_report import (
@@ -38,6 +44,8 @@ def mock_uow() -> Any:
     uow.failure_reports.get_by_id = AsyncMock()
     uow.failure_reports.list_by_company = AsyncMock()
     uow.failure_reports.delete = AsyncMock()
+    uow.work_orders = MagicMock()
+    uow.work_orders.get_by_report_id = AsyncMock()
     uow.commit = AsyncMock()
     return uow
 

@@ -9,11 +9,13 @@ from app.application.dtos.failure_report_dtos import (
 from app.application.dtos.failure_report_dtos import (
     UpdateFailureReportRequest as UpdateFailureReportDTO,
 )
-from app.application.use_cases.create_failure_report import CreateFailureReportUseCase
-from app.application.use_cases.delete_failure_report import DeleteFailureReportUseCase
-from app.application.use_cases.get_failure_report import GetFailureReportUseCase
-from app.application.use_cases.list_failure_report import ListFailureReportsUseCase
-from app.application.use_cases.update_failure_report import UpdateFailureReportUseCase
+from app.application.use_cases.failure_report import (
+    CreateFailureReportUseCase,
+    DeleteFailureReportUseCase,
+    GetFailureReportUseCase,
+    ListFailureReportsUseCase,
+    UpdateFailureReportUseCase,
+)
 from app.composition.container import (
     get_create_failure_report_use_case,
     get_delete_failure_report_use_case,
@@ -68,6 +70,7 @@ async def create_failure_report(
         location=attrs.location,
         priority=attrs.priority,
         reported_by=attrs.reported_by,
+        activo_id=attrs.activo_id,
     )
     res = await use_case.execute(empresa_id, dto)
     return FailureReportDocument(
@@ -81,6 +84,9 @@ async def create_failure_report(
                 reported_by=res.reported_by,
                 status=res.status,
                 created_at=res.created_at,
+                activo_id=res.activo_id,
+                version=res.version,
+                orden_trabajo_id=res.orden_trabajo_id,
             ),
         )
     )
@@ -100,9 +106,7 @@ async def list_failure_reports(
     search: str | None = Query(
         None, min_length=2, max_length=100, description="Buscar por título o descripción"
     ),
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.MAINTENANCE, "view")
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
     use_case: ListFailureReportsUseCase = Depends(get_list_failure_reports_use_case),
 ) -> FailureReportListDocument:
     """Lista los reportes de falla de una empresa con paginación y filtros opcionales.
@@ -141,6 +145,9 @@ async def list_failure_reports(
                     reported_by=r.reported_by,
                     status=r.status,
                     created_at=r.created_at,
+                    activo_id=r.activo_id,
+                    version=r.version,
+                    orden_trabajo_id=r.orden_trabajo_id,
                 ),
             )
             for r in reports
@@ -157,9 +164,7 @@ async def list_failure_reports(
 async def get_failure_report(
     empresa_id: str,
     reporte_id: str,
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.MAINTENANCE, "view")
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
     use_case: GetFailureReportUseCase = Depends(get_failure_report_use_case),
 ) -> FailureReportDocument:
     """Obtiene un reporte de falla por su ID dentro de una empresa.
@@ -188,6 +193,9 @@ async def get_failure_report(
                 reported_by=res.reported_by,
                 status=res.status,
                 created_at=res.created_at,
+                activo_id=res.activo_id,
+                version=res.version,
+                orden_trabajo_id=res.orden_trabajo_id,
             ),
         )
     )
@@ -202,9 +210,7 @@ async def update_failure_report(
     empresa_id: str,
     reporte_id: str,
     request: UpdateFailureReportRequest,
-    current_user: UserResponse = Depends(
-        require_permission(PermissionModule.MAINTENANCE, "edit")
-    ),
+    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
     use_case: UpdateFailureReportUseCase = Depends(get_update_failure_report_use_case),
 ) -> FailureReportDocument:
     """Actualiza parcialmente un reporte de falla existente.
@@ -231,6 +237,7 @@ async def update_failure_report(
         priority=sent.get("priority"),
         reported_by=sent.get("reported_by"),
         status=sent.get("status"),
+        activo_id=sent.get("activo_id"),
         version=sent.get("version"),
         _fields_set=frozenset(sent.keys()),
     )
@@ -246,6 +253,9 @@ async def update_failure_report(
                 reported_by=res.reported_by,
                 status=res.status,
                 created_at=res.created_at,
+                activo_id=res.activo_id,
+                version=res.version,
+                orden_trabajo_id=res.orden_trabajo_id,
             ),
         )
     )

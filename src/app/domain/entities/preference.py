@@ -1,16 +1,15 @@
 """Entidad UserPreference — preferencias de interfaz de usuario por empresa."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 
 from app.domain.enums import Theme
-from app.domain.events import DomainEvent, EventProducer
 from app.domain.exceptions import PreferenceThemeInvalidError
 from app.domain.value_objects import CompanyId, UserId
 
 
 @dataclass
-class UserPreference(EventProducer):
+class UserPreference:
     """Preferencias de interfaz de usuario para un usuario en una empresa."""
 
     usuario_id: UserId
@@ -19,7 +18,6 @@ class UserPreference(EventProducer):
     created_at: datetime | None = None
     updated_at: datetime | None = None
     version: int = 1
-    _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
     @classmethod
     def create(
@@ -51,34 +49,22 @@ class UserPreference(EventProducer):
             PreferenceThemeInvalidError: Si el tema visual está vacío.
         """
         if self.tema is None:
-            raise PreferenceThemeInvalidError(
-                "El tema visual no puede estar vacío."
-            )
+            raise PreferenceThemeInvalidError("El tema visual no puede estar vacío.")
 
-    def pull_events(self) -> list[DomainEvent]:
-        """Devuelve los eventos de dominio acumulados y limpia la lista interna.
-
-        Returns:
-            La lista de eventos de dominio acumulados, vaciando la lista interna.
-        """
-        events = self._events.copy()
-        self._events.clear()
-        return events
-
-    def change_theme(self, nuevo_tema: str) -> None:
+    def change_theme(self, new_theme: str) -> None:
         """Cambia el tema visual. Acepta str para que la validación sea en dominio.
 
         Args:
-            nuevo_tema: El nuevo tema visual a aplicar.
+            new_theme: El nuevo tema visual a aplicar.
 
         Raises:
             PreferenceThemeInvalidError: Si el tema no es uno de los valores válidos.
         """
         try:
-            tema_validado = Theme(nuevo_tema)
+            tema_validado = Theme(new_theme)
         except ValueError:
             raise PreferenceThemeInvalidError(
-                f"El tema '{nuevo_tema}' no es válido. "
+                f"El tema '{new_theme}' no es válido. "
                 f"Valores permitidos: {', '.join(t.value for t in Theme)}."
             ) from None
         self.tema = tema_validado

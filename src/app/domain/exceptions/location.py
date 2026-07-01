@@ -22,10 +22,7 @@ class LocationCircularReferenceError(LocationException):
 
 
 class LocationInvalidTypeHierarchyError(LocationException):
-    """Lanzada cuando se intenta establecer una relación de jerarquía inválida
-
-    entre tipos de ubicación.
-    """
+    """Lanzada al establecer una jerarquía inválida entre tipos de ubicación."""
 
     pass
 

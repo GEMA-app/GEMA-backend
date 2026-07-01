@@ -7,7 +7,7 @@ from app.application.ports.failure_report_repository import FailureReportReposit
 from app.domain.entities import FailureReport
 from app.domain.enums import PriorityLevel, ReportStatus
 from app.domain.events import DomainEvent
-from app.domain.value_objects import CompanyId, FailureReportId
+from app.domain.value_objects import AssetId, CompanyId, FailureReportId
 from app.infrastructure.db.models.failure_report import FailureReportModel
 from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 
@@ -35,6 +35,8 @@ class SqlAlchemyFailureReportRepository(
             priority=entity.priority.value,
             reported_by=entity.reported_by,
             status=entity.status.value,
+            activo_id=entity.activo_id.value if entity.activo_id else None,
+            version=entity.version,
         )
 
     def _to_entity(self, model: FailureReportModel) -> FailureReport:
@@ -47,6 +49,8 @@ class SqlAlchemyFailureReportRepository(
             priority=PriorityLevel(model.priority),
             reported_by=model.reported_by,
             status=ReportStatus(model.status),
+            activo_id=AssetId(model.activo_id) if model.activo_id else None,
+            version=model.version,
             created_at=model.created_at,
         )
 
@@ -68,9 +72,7 @@ class SqlAlchemyFailureReportRepository(
         Returns:
             Una tupla con la lista de entidades FailureReport y el conteo total.
         """
-        stmt = select(FailureReportModel).where(
-            FailureReportModel.empresa_id == empresa_id.value
-        )
+        stmt = select(FailureReportModel).where(FailureReportModel.empresa_id == empresa_id.value)
         count_stmt = select(func.count(FailureReportModel.id)).where(
             FailureReportModel.empresa_id == empresa_id.value
         )
@@ -78,16 +80,10 @@ class SqlAlchemyFailureReportRepository(
         if filters:
             if "status" in filters and filters["status"]:
                 stmt = stmt.where(FailureReportModel.status == filters["status"])
-                count_stmt = count_stmt.where(
-                    FailureReportModel.status == filters["status"]
-                )
+                count_stmt = count_stmt.where(FailureReportModel.status == filters["status"])
             if "priority" in filters and filters["priority"]:
-                stmt = stmt.where(
-                    FailureReportModel.priority == filters["priority"]
-                )
-                count_stmt = count_stmt.where(
-                    FailureReportModel.priority == filters["priority"]
-                )
+                stmt = stmt.where(FailureReportModel.priority == filters["priority"])
+                count_stmt = count_stmt.where(FailureReportModel.priority == filters["priority"])
             if "search" in filters and filters["search"]:
                 search_term = f"%{filters['search']}%"
                 stmt = stmt.where(

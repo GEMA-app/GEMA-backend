@@ -1,3 +1,5 @@
+"""Caso de uso para get asset."""
+
 from app.application.dtos.asset_dtos import AssetResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import AssetNotFoundError
@@ -34,9 +36,7 @@ class GetAssetUseCase:
                 if asset.fecha_adquisicion
                 else None,
                 valor_monetario=(
-                    float(asset.valor_monetario)
-                    if asset.valor_monetario is not None
-                    else None
+                    float(asset.valor_monetario) if asset.valor_monetario is not None else None
                 ),
                 moneda=asset.moneda,
                 version=asset.version,

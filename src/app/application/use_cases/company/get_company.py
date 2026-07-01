@@ -1,3 +1,5 @@
+"""Caso de uso para get company."""
+
 from app.application.dtos.company_dtos import CompanyResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import CompanyNotFoundError

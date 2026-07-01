@@ -1,3 +1,5 @@
+"""Caso de uso para asignar un rol a un usuario rol."""
+
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import RoleNotFoundError, ValidationException
 from app.domain.value_objects import CompanyId, RoleId, UserId
@@ -31,4 +33,3 @@ class AssignRoleToUserUseCase:
                 await self.uow.roles.save(role)
 
             await self.uow.commit()
-

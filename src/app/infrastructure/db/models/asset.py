@@ -8,7 +8,8 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from app.infrastructure.db.models.catalog import CatalogArticleModel
+    from app.infrastructure.db.models.asset_state_log import AssetStateLogModel
+    from app.infrastructure.db.models.catalog_article import CatalogArticleModel
     from app.infrastructure.db.models.location import LocationModel
 
 from sqlalchemy import Date, Enum, ForeignKey, Index, Numeric, String, text
@@ -48,7 +49,7 @@ class AssetModel(VersionMixin, TenantMixin, TimestampMixin, Base):
     serial_interno: Mapped[str] = mapped_column(String(100), nullable=False)
     codigo_activo: Mapped[str] = mapped_column(String(100), nullable=False)
     estado: Mapped[AssetStatus] = mapped_column(
-        Enum(AssetStatus, values_callable=lambda obj: [e.value for e in obj]),
+        Enum(AssetStatus, name="estado_activo", values_callable=lambda obj: [e.value for e in obj]),
         default=AssetStatus.OPERATIONAL,
         nullable=False,
     )
@@ -58,3 +59,6 @@ class AssetModel(VersionMixin, TenantMixin, TimestampMixin, Base):
 
     articulo: Mapped[CatalogArticleModel] = relationship("CatalogArticleModel")
     ubicacion: Mapped[LocationModel | None] = relationship("LocationModel")
+    state_logs: Mapped[list[AssetStateLogModel]] = relationship(
+        back_populates="asset", cascade="all, delete-orphan"
+    )

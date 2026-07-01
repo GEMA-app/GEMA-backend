@@ -1,3 +1,5 @@
+"""Caso de uso para list asset."""
+
 from typing import Any
 
 from app.application.dtos.asset_dtos import AssetResponse
@@ -33,9 +35,7 @@ class ListAssetsUseCase:
                     if a.fecha_adquisicion
                     else None,
                     valor_monetario=(
-                        float(a.valor_monetario)
-                        if a.valor_monetario is not None
-                        else None
+                        float(a.valor_monetario) if a.valor_monetario is not None else None
                     ),
                     moneda=a.moneda,
                     version=a.version,

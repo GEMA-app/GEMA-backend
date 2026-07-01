@@ -20,7 +20,7 @@ from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
     require_permission,
 )
-from app.presentation.api.v1.schemas.preferences import (
+from app.presentation.api.v1.schemas.preference import (
     PreferenceAttributes,
     PreferenceDocument,
     PreferenceResource,

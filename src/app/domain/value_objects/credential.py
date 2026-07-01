@@ -21,7 +21,7 @@ class Email:
         if self.value is None or not isinstance(self.value, str):
             raise InvalidEmailError("El correo electrónico no puede estar vacío.")
 
-        object.__setattr__(self, 'value', self.value.strip().lower())
+        object.__setattr__(self, "value", self.value.strip().lower())
         if not self.value:
             raise InvalidEmailError("El correo electrónico no puede estar vacío.")
 

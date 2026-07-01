@@ -1,3 +1,5 @@
+"""Puerto (Protocol) del servicio de notificaciones (NotificationPort)."""
+
 from typing import Protocol
 
 
@@ -12,9 +14,7 @@ class NotificationPort(Protocol):
         """Envía la alerta de seguridad cuando la contraseña ha sido cambiada."""
         ...
 
-    async def send_password_reset(
-        self, email: str, reset_url: str, expire_minutes: int
-    ) -> None:
+    async def send_password_reset(self, email: str, reset_url: str, expire_minutes: int) -> None:
         """Envía el email con el enlace de restablecimiento de contraseña."""
         ...
 

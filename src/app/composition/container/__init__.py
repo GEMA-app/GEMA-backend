@@ -4,12 +4,22 @@ Re-exporta todas las fábricas públicas para mantener compatibilidad con los
 imports existentes (``from app.composition.container import X``).
 """
 
+from app.composition.container.article_category import (
+    get_article_category_by_id_use_case,
+    get_create_article_category_use_case,
+    get_delete_article_category_use_case,
+    get_list_article_categories_use_case,
+    get_update_article_category_use_case,
+)
 from app.composition.container.asset import (
     get_asset_use_case,
     get_create_asset_use_case,
     get_delete_asset_use_case,
     get_list_assets_use_case,
     get_update_asset_use_case,
+)
+from app.composition.container.asset_state_log import (
+    get_list_asset_state_log_use_case,
 )
 from app.composition.container.auth import (
     get_change_password_use_case,
@@ -20,6 +30,13 @@ from app.composition.container.auth import (
     get_register_user_use_case,
     get_request_password_reset_use_case,
     get_reset_password_use_case,
+)
+from app.composition.container.catalog_article import (
+    get_catalog_article_use_case,
+    get_create_catalog_article_use_case,
+    get_delete_catalog_article_use_case,
+    get_list_catalog_articles_use_case,
+    get_update_catalog_article_use_case,
 )
 from app.composition.container.common import (
     get_authorization_service,
@@ -44,6 +61,23 @@ from app.composition.container.failure_report import (
     get_list_failure_reports_use_case,
     get_update_failure_report_use_case,
 )
+from app.composition.container.intervention import (
+    get_create_intervention_use_case,
+    get_delete_intervention_use_case,
+    get_intervention_use_case,
+    get_list_interventions_use_case,
+    get_update_intervention_use_case,
+)
+from app.composition.container.inventory_part import (
+    get_create_inventory_entry_use_case,
+    get_create_inventory_part_use_case,
+    get_delete_inventory_part_use_case,
+    get_get_inventory_entry_use_case,
+    get_inventory_part_use_case,
+    get_list_inventory_entries_use_case,
+    get_list_inventory_parts_use_case,
+    get_update_inventory_part_use_case,
+)
 from app.composition.container.location import (
     get_create_location_use_case,
     get_delete_location_use_case,
@@ -51,6 +85,18 @@ from app.composition.container.location import (
     get_location_tree_use_case,
     get_location_use_case,
     get_update_location_use_case,
+)
+from app.composition.container.maintenance_plan import (
+    get_create_maintenance_plan_use_case,
+    get_delete_maintenance_plan_use_case,
+    get_get_maintenance_plan_use_case,
+    get_list_maintenance_plans_use_case,
+    get_update_maintenance_plan_use_case,
+)
+from app.composition.container.plan_execution import (
+    get_create_plan_execution_use_case,
+    get_list_plan_executions_use_case,
+    get_plan_execution_use_case,
 )
 from app.composition.container.preference import (
     get_update_preference_use_case,
@@ -65,8 +111,58 @@ from app.composition.container.role import (
     get_role_use_case,
     get_update_role_use_case,
 )
+from app.composition.container.subscription_plan import (
+    get_create_subscription_plan_use_case,
+    get_delete_subscription_plan_use_case,
+    get_list_subscription_plans_use_case,
+    get_subscription_plan_use_case,
+    get_update_subscription_plan_use_case,
+)
+from app.composition.container.supplier import (
+    get_create_supplier_use_case,
+    get_delete_supplier_use_case,
+    get_get_supplier_use_case,
+    get_list_suppliers_use_case,
+    get_update_supplier_use_case,
+)
+from app.composition.container.system_audit import (
+    get_list_system_audits_use_case,
+    get_system_audit_use_case,
+)
+from app.composition.container.used_part import (
+    get_create_used_part_use_case,
+    get_delete_used_part_use_case,
+    get_get_used_part_use_case,
+    get_list_used_parts_use_case,
+    get_update_used_part_use_case,
+)
+from app.composition.container.user import (
+    get_create_user_use_case,
+    get_delete_user_use_case,
+    get_list_users_use_case,
+    get_update_user_use_case,
+    get_user_use_case,
+)
+from app.composition.container.work_order import (
+    get_assign_technician_use_case,
+    get_change_work_order_status_use_case,
+    get_create_work_order_use_case,
+    get_delete_work_order_use_case,
+    get_get_work_order_status_history_use_case,
+    get_list_work_orders_use_case,
+    get_remove_technician_use_case,
+    get_update_work_order_use_case,
+    get_validate_work_order_use_case,
+    get_work_order_use_case,
+)
 
 __all__ = [
+    # Article Category
+    "get_create_article_category_use_case",
+    "get_article_category_by_id_use_case",
+    "get_list_article_categories_use_case",
+    "get_update_article_category_use_case",
+    "get_delete_article_category_use_case",
     # Common
     "get_uow",
     "get_password_hasher",
@@ -104,6 +200,8 @@ __all__ = [
     "get_list_assets_use_case",
     "get_update_asset_use_case",
     "get_delete_asset_use_case",
+    # Asset State Log
+    "get_list_asset_state_log_use_case",
     # Location
     "get_create_location_use_case",
     "get_location_use_case",
@@ -111,13 +209,82 @@ __all__ = [
     "get_location_children_use_case",
     "get_update_location_use_case",
     "get_delete_location_use_case",
+    # Plan Execution
+    "get_create_plan_execution_use_case",
+    "get_plan_execution_use_case",
+    "get_list_plan_executions_use_case",
     # Preferences
     "get_update_preference_use_case",
     "get_user_preference_use_case",
+    # Catalog Article
+    "get_create_catalog_article_use_case",
+    "get_catalog_article_use_case",
+    "get_list_catalog_articles_use_case",
+    "get_update_catalog_article_use_case",
+    "get_delete_catalog_article_use_case",
     # FailureReport
     "get_create_failure_report_use_case",
     "get_failure_report_use_case",
     "get_list_failure_reports_use_case",
     "get_update_failure_report_use_case",
     "get_delete_failure_report_use_case",
+    # Used Parts
+    "get_create_used_part_use_case",
+    "get_delete_used_part_use_case",
+    "get_get_used_part_use_case",
+    "get_list_used_parts_use_case",
+    "get_update_used_part_use_case",
+    # Work Orders
+    "get_create_work_order_use_case",
+    "get_work_order_use_case",
+    "get_list_work_orders_use_case",
+    "get_update_work_order_use_case",
+    "get_delete_work_order_use_case",
+    "get_change_work_order_status_use_case",
+    "get_assign_technician_use_case",
+    "get_remove_technician_use_case",
+    "get_validate_work_order_use_case",
+    "get_get_work_order_status_history_use_case",
+    # Subscription Plans
+    "get_subscription_plan_use_case",
+    "get_create_subscription_plan_use_case",
+    "get_delete_subscription_plan_use_case",
+    "get_list_subscription_plans_use_case",
+    "get_update_subscription_plan_use_case",
+    # Supplier
+    "get_create_supplier_use_case",
+    "get_get_supplier_use_case",
+    "get_list_suppliers_use_case",
+    "get_update_supplier_use_case",
+    "get_delete_supplier_use_case",
+    # System Audit
+    "get_list_system_audits_use_case",
+    "get_system_audit_use_case",
+    # Maintenance Plan
+    "get_create_maintenance_plan_use_case",
+    "get_get_maintenance_plan_use_case",
+    "get_list_maintenance_plans_use_case",
+    "get_update_maintenance_plan_use_case",
+    "get_delete_maintenance_plan_use_case",
+    # User
+    "get_create_user_use_case",
+    "get_user_use_case",
+    "get_list_users_use_case",
+    "get_update_user_use_case",
+    "get_delete_user_use_case",
+    # Interventions
+    "get_create_intervention_use_case",
+    "get_intervention_use_case",
+    "get_list_interventions_use_case",
+    "get_update_intervention_use_case",
+    "get_delete_intervention_use_case",
+    # Inventory Parts
+    "get_create_inventory_part_use_case",
+    "get_inventory_part_use_case",
+    "get_list_inventory_parts_use_case",
+    "get_update_inventory_part_use_case",
+    "get_delete_inventory_part_use_case",
+    "get_create_inventory_entry_use_case",
+    "get_list_inventory_entries_use_case",
+    "get_get_inventory_entry_use_case",
 ]

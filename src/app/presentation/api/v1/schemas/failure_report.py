@@ -20,6 +20,9 @@ class FailureReportAttributes(BaseModel):
     reported_by: str
     status: str
     created_at: datetime
+    activo_id: str | None = None
+    version: int
+    orden_trabajo_id: str | None = None
 
 
 class FailureReportResource(BaseModel):
@@ -55,6 +58,7 @@ class CreateFailureReportAttributes(BaseModel):
     location: str
     priority: str
     reported_by: str
+    activo_id: str | None = None
 
 
 class CreateFailureReportResource(BaseModel):
@@ -79,6 +83,7 @@ class UpdateFailureReportAttributes(BaseModel):
     priority: str | None = None
     reported_by: str | None = None
     status: str | None = None
+    activo_id: str | None = None
     version: int | None = None
 
 

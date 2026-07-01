@@ -1,3 +1,5 @@
+"""Puerto (Protocol) del repositorio de Asset."""
+
 from typing import Any, Protocol
 
 from app.domain.entities import Asset

@@ -10,15 +10,44 @@ from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.events import DomainEvent
 from app.domain.exceptions import EventPublishError
 from app.infrastructure.db.session import async_session_factory
+from app.infrastructure.repositories.article_category_repository import (
+    SqlAlchemyArticleCategoryRepository,
+)
 from app.infrastructure.repositories.asset_repository import SqlAlchemyAssetRepository
+from app.infrastructure.repositories.asset_state_log_repository import (
+    SqlAlchemyAssetStateLogRepository,
+)
+from app.infrastructure.repositories.catalog_article_repository import (
+    SqlAlchemyCatalogArticleRepository,
+)
 from app.infrastructure.repositories.company_repository import SqlAlchemyCompanyRepository
 from app.infrastructure.repositories.failure_report_repository import (
     SqlAlchemyFailureReportRepository,
 )
+from app.infrastructure.repositories.intervention_repository import SqlAlchemyInterventionRepository
+from app.infrastructure.repositories.inventory_entry_repository import (
+    SqlAlchemyInventoryEntryRepository,
+)
+from app.infrastructure.repositories.inventory_part_repository import (
+    SqlAlchemyInventoryPartRepository,
+)
 from app.infrastructure.repositories.location_repository import SqlAlchemyLocationRepository
+from app.infrastructure.repositories.maintenance_plan_repository import (
+    SqlAlchemyMaintenancePlanRepository,
+)
+from app.infrastructure.repositories.plan_execution_repository import (
+    SqlAlchemyPlanExecutionRepository,
+)
 from app.infrastructure.repositories.preference_repository import SqlAlchemyPreferenceRepository
 from app.infrastructure.repositories.role_repository import SqlAlchemyRoleRepository
+from app.infrastructure.repositories.subscription_plan_repository import (
+    SqlAlchemySubscriptionPlanRepository,
+)
+from app.infrastructure.repositories.supplier_repository import SqlAlchemySupplierRepository
+from app.infrastructure.repositories.system_audit_repository import SqlAlchemySystemAuditRepository
+from app.infrastructure.repositories.used_part_repository import SqlAlchemyUsedPartRepository
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
+from app.infrastructure.repositories.work_order_repository import SqlAlchemyWorkOrderRepository
 
 logger = structlog.get_logger()
 
@@ -42,7 +71,11 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         self._pending_events: list[DomainEvent] = []
 
     async def __aenter__(self) -> Self:
-        """Inicia la sesión asíncrona y construye los repositorios asociados a ella."""
+        """Inicia la sesión asíncrona y construye los repositorios asociados a ella.
+
+        Returns:
+            La instancia del Unit of Work con los repositorios inicializados.
+        """
         self.session = self.session_factory()
         self._pending_events.clear()
         self.users = SqlAlchemyUserRepository(self.session, self._pending_events)
@@ -50,8 +83,33 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         self.roles = SqlAlchemyRoleRepository(self.session, self._pending_events)
         self.assets = SqlAlchemyAssetRepository(self.session, self._pending_events)
         self.failure_reports = SqlAlchemyFailureReportRepository(self.session, self._pending_events)
+        self.asset_state_logs = SqlAlchemyAssetStateLogRepository(
+            self.session, self._pending_events
+        )
+        self.catalog_articles = SqlAlchemyCatalogArticleRepository(
+            self.session, self._pending_events
+        )
         self.locations = SqlAlchemyLocationRepository(self.session, self._pending_events)
         self.preferences = SqlAlchemyPreferenceRepository(self.session, self._pending_events)
+        self.article_categories = SqlAlchemyArticleCategoryRepository(
+            self.session, self._pending_events
+        )
+        self.subscription_plans = SqlAlchemySubscriptionPlanRepository(
+            self.session, self._pending_events
+        )
+        self.suppliers = SqlAlchemySupplierRepository(self.session, self._pending_events)
+        self.system_audits = SqlAlchemySystemAuditRepository(self.session, self._pending_events)
+        self.maintenance_plans = SqlAlchemyMaintenancePlanRepository(
+            self.session, self._pending_events
+        )
+        self.used_parts = SqlAlchemyUsedPartRepository(self.session, self._pending_events)
+        self.inventory_parts = SqlAlchemyInventoryPartRepository(self.session, self._pending_events)
+        self.inventory_entries = SqlAlchemyInventoryEntryRepository(
+            self.session, self._pending_events
+        )
+        self.work_orders = SqlAlchemyWorkOrderRepository(self.session, self._pending_events)
+        self.plan_executions = SqlAlchemyPlanExecutionRepository(self.session, self._pending_events)
+        self.interventions = SqlAlchemyInterventionRepository(self.session, self._pending_events)
         return self
 
     async def __aexit__(self, exc_type: Any, exc_val: Any, tb: Any) -> None:
@@ -79,6 +137,9 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         """Confirma la transacción actual en la base de datos.
 
         Despacha eventos de dominio despachados con éxito.
+
+        Raises:
+            EventPublishError: Si ocurre un error al despachar los eventos de dominio.
         """
         await self.session.commit()
 

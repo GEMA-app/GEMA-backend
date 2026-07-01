@@ -27,13 +27,15 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("app_shutdown")
 
 
-app = FastAPI(title=settings.APP_TITLE, version=settings.APP_VERSION, lifespan=lifespan)
+app = FastAPI(
+    title=settings.APP_TITLE, version=settings.APP_VERSION, lifespan=lifespan, root_path="/api"
+)
 
 # --- Registro de Manejadores de Excepciones ---
 register_exception_handlers(app)
 
 # --- Registro de Middlewares (el último añadido se ejecuta primero) ---
-app.add_middleware(RateLimitMiddleware, redis_client=redis_client)
+app.add_middleware(RateLimitMiddleware, redis_client=redis_client)  # type: ignore[arg-type]
 app.add_middleware(AcceptMiddleware)
 app.add_middleware(ContentTypeMiddleware, strict_jsonapi=settings.STRICT_JSONAPI)
 app.add_middleware(RequestIdMiddleware)

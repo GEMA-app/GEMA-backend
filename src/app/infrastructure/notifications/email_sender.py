@@ -9,18 +9,13 @@ import anyio
 import structlog
 
 from app.application.ports.notifications import NotificationPort
-from app.domain.exceptions import DomainException
+from app.domain.exceptions import (
+    NotificationError,
+    TemplateNotFoundError,
+)
 from app.infrastructure.config.settings import settings
 
 logger = structlog.get_logger()
-
-
-class NotificationError(DomainException):
-    """Excepción base para errores del servicio de notificaciones."""
-
-
-class TemplateNotFoundError(DomainException):
-    """Se lanza cuando se solicita un template que no existe."""
 
 
 class SmtpNotificationSender(NotificationPort):
@@ -54,12 +49,13 @@ class SmtpNotificationSender(NotificationPort):
             template_path = self._templates_dir / f"{template_name}.html"
             try:
                 from anyio import Path
+
                 path = Path(template_path)
                 if await path.exists():
                     content = await path.read_text(encoding="utf-8")
                     template = Template(content)
                     self._cache[template_name] = template
-            except Exception as e:
+            except (FileNotFoundError, PermissionError, OSError, UnicodeDecodeError) as e:
                 logger.error(
                     "Error al cargar la plantilla de correo",
                     template=template_name,
@@ -81,9 +77,7 @@ class SmtpNotificationSender(NotificationPort):
             TemplateNotFoundError: Si el template welcome no existe.
             NotificationError: Si falla el envío SMTP.
         """
-        body = await self._render(
-            "welcome", nombre=nombre, company_name=company_name
-        )
+        body = await self._render("welcome", nombre=nombre, company_name=company_name)
         await self._send(email, "¡Bienvenido a GEMA!", body)
 
     async def send_password_changed(self, email: str) -> None:
@@ -99,9 +93,7 @@ class SmtpNotificationSender(NotificationPort):
         body = await self._render("password_changed")
         await self._send(email, "Tu contraseña de GEMA ha sido cambiada", body)
 
-    async def send_password_reset(
-        self, email: str, reset_url: str, expire_minutes: int
-    ) -> None:
+    async def send_password_reset(self, email: str, reset_url: str, expire_minutes: int) -> None:
         """Envía el email con el enlace para restablecer la contraseña.
 
         Args:
@@ -156,9 +148,7 @@ class SmtpNotificationSender(NotificationPort):
         def _blocking_send() -> None:
             msg = MIMEText(html_body, "html", "utf-8")
             msg["Subject"] = subject
-            msg["From"] = (
-                f"{settings.EMAIL_FROM_NAME} <{settings.EMAIL_FROM_ADDRESS}>"
-            )
+            msg["From"] = f"{settings.EMAIL_FROM_NAME} <{settings.EMAIL_FROM_ADDRESS}>"
             msg["To"] = to
 
             start = time.monotonic()

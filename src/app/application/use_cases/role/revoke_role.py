@@ -1,3 +1,5 @@
+"""Caso de uso para revocar un rol a un usuario rol."""
+
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import RoleNotFoundError, ValidationException
 from app.domain.value_objects import CompanyId, RoleId, UserId
@@ -46,4 +48,3 @@ class RevokeRoleFromUserUseCase:
                 await self.uow.roles.revoke_from_user(role_id, user_id)
 
             await self.uow.commit()
-

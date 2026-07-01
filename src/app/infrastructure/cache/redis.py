@@ -43,10 +43,13 @@ class RedisClient:
     async def _ensure_connected(self) -> aioredis.Redis:
         """Establece la conexión Redis si aún no se ha hecho."""
         if self._client is None:
-            self._client = cast(aioredis.Redis, cast(Any, aioredis).from_url(
-                settings.REDIS_URL,
-                decode_responses=True,
-            ))
+            self._client = cast(
+                aioredis.Redis,
+                cast(Any, aioredis).from_url(
+                    settings.REDIS_URL,
+                    decode_responses=True,
+                ),
+            )
         return self._client
 
     def register_script(self, script: str) -> _LazyScript:
@@ -63,7 +66,11 @@ class RedisClient:
     def __getattr__(self, name: str) -> Any:
         """Reenvía atributos no encontrados al cliente Redis subyacente.
 
-        Retorna una coroutine function que conecta Redis bajo demanda.
+        Args:
+            name: Nombre del atributo a reenviar.
+
+        Returns:
+            Una coroutine function que conecta Redis bajo demanda.
         """
 
         async def _proxy(*args: Any, **kwargs: Any) -> Any:

@@ -15,7 +15,11 @@ class SqlAlchemyTenantRepository(SqlAlchemyRepository[ModelT, EntityT, IdT], ABC
     """
 
     async def get_by_id(self, id: IdT, empresa_id: CompanyId) -> EntityT | None:  # type: ignore[override]
-        """Busca una entidad por ID filtrado por tenant."""
+        """Busca una entidad por ID filtrado por tenant.
+
+        Returns:
+            La entidad encontrada o None si no existe.
+        """
         id_val = id.value if hasattr(id, "value") else id
         pk_attr = getattr(self.model_class, self.pk_column)
         stmt = select(self.model_class).where(

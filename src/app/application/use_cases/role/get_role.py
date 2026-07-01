@@ -1,3 +1,5 @@
+"""Caso de uso para get role."""
+
 from app.application.dtos.role_dtos import PermissionDTO, RoleResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.exceptions import RoleNotFoundError

@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.application.ports.company_repository import CompanyRepositoryPort
 from app.domain.entities import Company
 from app.domain.events import DomainEvent
-from app.domain.value_objects import CompanyId, Slug
+from app.domain.value_objects import CompanyId, Slug, SubscriptionPlanId
 from app.infrastructure.db.models.company import CompanyModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
 
@@ -26,8 +26,6 @@ class SqlAlchemyCompanyRepository(
             pending_events: Lista para la acumulación de eventos de dominio.
         """
         super().__init__(session, CompanyModel, pending_events)
-
-
 
     def _to_model(self, entity: Company) -> CompanyModel:
         return CompanyModel(
@@ -93,3 +91,18 @@ class SqlAlchemyCompanyRepository(
         result = await self.session.execute(stmt)
         models = result.scalars().all()
         return [self._to_entity(m) for m in models], total
+
+    async def count_by_plan_id(self, plan_id: SubscriptionPlanId) -> int:
+        """Cuenta el número de empresas asociadas a un plan de suscripción.
+
+        Args:
+            plan_id: El identificador del plan de suscripción.
+
+        Returns:
+            El total de empresas asociadas al plan.
+        """
+        from sqlalchemy import func
+
+        stmt = select(func.count(CompanyModel.id)).where(CompanyModel.plan_id == plan_id.value)
+        result = await self.session.execute(stmt)
+        return result.scalar_one()

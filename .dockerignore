@@ -3,5 +3,7 @@ __pycache__/
 .env
 .git/
 .ruff_cache/
+.venv/
+.venv
 tests/
 *.md

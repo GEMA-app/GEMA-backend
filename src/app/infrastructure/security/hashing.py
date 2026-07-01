@@ -12,14 +12,29 @@ class BcryptPasswordHasher(PasswordHasherPort):
     """Implementación de PasswordHasherPort utilizando la librería bcrypt nativa."""
 
     def hash(self, password: str) -> str:
-        """Genera un hash seguro utilizando bcrypt con salt automático."""
+        """Genera un hash seguro utilizando bcrypt con salt automático.
+
+        Args:
+            password: La contraseña en texto plano a hashear.
+
+        Returns:
+            El hash bcrypt resultante en formato string.
+        """
         password_bytes = password.encode("utf-8")
         salt = bcrypt.gensalt()
         hashed_bytes = bcrypt.hashpw(password_bytes, salt)
         return hashed_bytes.decode("utf-8")
 
     def verify(self, password: str, hashed_password: str) -> bool:
-        """Verifica que la contraseña en texto plano coincida con el hash almacenado."""
+        """Verifica que la contraseña en texto plano coincida con el hash almacenado.
+
+        Args:
+            password: La contraseña en texto plano a verificar.
+            hashed_password: El hash almacenado contra el cual verificar.
+
+        Returns:
+            True si coincide, False en caso contrario.
+        """
         password_bytes = password.encode("utf-8")
         hashed_bytes = hashed_password.encode("utf-8")
         try:

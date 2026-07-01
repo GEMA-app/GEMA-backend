@@ -11,6 +11,8 @@ from app.domain.events import (
     PasswordChanged,
     PasswordResetCompleted,
     PasswordResetInitiated,
+    UserActivated,
+    UserDeactivated,
     UserLoggedIn,
     UserRegistered,
 )
@@ -109,10 +111,14 @@ class User(EventProducer):
     def deactivate(self) -> None:
         """Desactiva el usuario. No puede iniciar sesión si está inactivo."""
         self.activo = False
+        self.updated_at = datetime.now(UTC)
+        self._events.append(UserDeactivated(user_id=str(self.id), email=self.email.value))
 
     def activate(self) -> None:
         """Activa el usuario. Puede iniciar sesión."""
         self.activo = True
+        self.updated_at = datetime.now(UTC)
+        self._events.append(UserActivated(user_id=str(self.id), email=self.email.value))
 
     def request_password_reset(self) -> None:
         """Emite PasswordResetInitiated como evento de auditoría.

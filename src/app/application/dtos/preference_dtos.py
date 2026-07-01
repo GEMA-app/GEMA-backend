@@ -1,3 +1,5 @@
+"""DTOs de entrada y salida para el módulo de Preference."""
+
 from dataclasses import dataclass
 
 

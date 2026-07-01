@@ -1,3 +1,5 @@
+"""Puerto (Protocol) del repositorio de usuarios (UserRepositoryPort)."""
+
 from typing import Protocol
 
 from app.domain.entities import User
@@ -24,4 +26,15 @@ class UserRepositoryPort(Protocol):
 
     async def get_by_id(self, id: UserId) -> User | None:
         """Busca un usuario por su identificador único."""
+        ...
+
+    async def get_by_id_and_company(self, id: UserId, empresa_id: CompanyId) -> User | None:
+        """Busca un usuario por su ID garantizando que pertenezca a la empresa indicada.
+
+        Previene IDOR: un admin de empresa A no puede consultar usuarios de empresa B.
+        """
+        ...
+
+    async def list_by_company(self, empresa_id: CompanyId) -> list[User]:
+        """Retorna todos los usuarios pertenecientes a una empresa."""
         ...

@@ -22,8 +22,11 @@ class FailureReportRepositoryPort(Protocol):
         ...
 
     async def list_by_company(
-        self, empresa_id: CompanyId, offset: int = 0, limit: int = 10,
-        filters: dict[str, str] | None = None
+        self,
+        empresa_id: CompanyId,
+        offset: int = 0,
+        limit: int = 10,
+        filters: dict[str, str] | None = None,
     ) -> tuple[list[FailureReport], int]:
         """Lista reportes de falla de una empresa con paginación y filtros."""
         ...

@@ -1,3 +1,7 @@
+"""Caso de uso para autenticar un usuario y generar tokens JWT."""
+
+import asyncio
+
 from app.application.dtos import AuthTokensDTO, LoginUserRequest
 from app.application.ports.auth import PasswordHasherPort, TokenServicePort
 from app.application.ports.unit_of_work import UnitOfWorkPort
@@ -33,10 +37,7 @@ class LoginUserUseCase:
             user = await self.uow.users.get_by_email(email)
             stored_hash = user.password_hash.value if user else _FAKE_HASH
 
-            import asyncio
-            is_valid = await asyncio.to_thread(
-                self.hasher.verify, request.password, stored_hash
-            )
+            is_valid = await asyncio.to_thread(self.hasher.verify, request.password, stored_hash)
             if not is_valid:
                 raise InvalidCredentialsError("Credenciales inválidas.")
 

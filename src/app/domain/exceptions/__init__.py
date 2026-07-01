@@ -4,6 +4,11 @@ Re-exporta todas las excepciones para mantener compatibilidad con los
 imports existentes (``from app.domain.exceptions import X``).
 """
 
+from app.domain.exceptions.article_category import (
+    ArticleCategoryException,
+    ArticleCategoryNameExistsError,
+    ArticleCategoryNotFoundError,
+)
 from app.domain.exceptions.asset import (
     AssetCodeExistsError,
     AssetException,
@@ -12,6 +17,10 @@ from app.domain.exceptions.asset import (
     AssetSerialExistsError,
     EmptyAssetCodeError,
     EmptySerialError,
+)
+from app.domain.exceptions.asset_state_log import (
+    AssetStateLogException,
+    AssetStateLogNotFoundError,
 )
 from app.domain.exceptions.auth import (
     AuthException,
@@ -23,7 +32,14 @@ from app.domain.exceptions.auth import (
     UserInactiveError,
     WeakPasswordError,
 )
-from app.domain.exceptions.base import DomainException
+from app.domain.exceptions.base import DomainException, ValidationError
+from app.domain.exceptions.catalog import (
+    CatalogArticleException,
+    CatalogArticleHasAssetsError,
+    CatalogArticleNotFoundError,
+    EmptyCatalogArticleCodeError,
+    EmptyCatalogArticleNameError,
+)
 from app.domain.exceptions.company import (
     CompanyAlreadyCancelledError,
     CompanyException,
@@ -32,14 +48,30 @@ from app.domain.exceptions.company import (
     CompanySlugExistsError,
     EmptyCompanyNameError,
 )
-from app.domain.exceptions.event_bus import EventPublishError
+from app.domain.exceptions.event_bus import EventBusError, EventPublishError
 from app.domain.exceptions.failure_report import (
     EmptyDescriptionError,
     EmptyLocationError,
     EmptyReportedByError,
     EmptyTitleError,
     FailureReportException,
+    FailureReportInvalidTransitionError,
     FailureReportNotFoundError,
+)
+from app.domain.exceptions.intervention import (
+    InterventionException,
+    InterventionInvalidDataError,
+    InterventionInvalidTransitionError,
+    InterventionNotFoundError,
+)
+from app.domain.exceptions.inventory_part import (
+    EmptyStockLocationError,
+    InvalidMovementTypeError,
+    InvalidPriceError,
+    InvalidStockError,
+    InventoryEntryNotFoundError,
+    InventoryPartException,
+    InventoryPartNotFoundError,
 )
 from app.domain.exceptions.location import (
     EmptyLocationNameError,
@@ -48,9 +80,25 @@ from app.domain.exceptions.location import (
     LocationInvalidTypeHierarchyError,
     LocationNotFoundError,
 )
+from app.domain.exceptions.maintenance_plan import (
+    MaintenancePlanDueDateError,
+    MaintenancePlanException,
+    MaintenancePlanIntervalError,
+    MaintenancePlanNameEmptyError,
+    MaintenancePlanNotFoundError,
+)
+from app.domain.exceptions.notifications import (
+    NotificationError,
+    TemplateNotFoundError,
+)
 from app.domain.exceptions.permission import (
     InsufficientPermissionsError,
     PermissionException,
+)
+from app.domain.exceptions.plan_execution import (
+    PlanExecutionException,
+    PlanExecutionNotFoundError,
+    PlanExecutionObservationsEmptyError,
 )
 from app.domain.exceptions.preference import (
     PreferenceException,
@@ -65,14 +113,55 @@ from app.domain.exceptions.role import (
     RoleNotFoundError,
 )
 from app.domain.exceptions.stale_data import StaleDataError
+from app.domain.exceptions.subscription_plan import (
+    SubscriptionPlanAlreadyExistsError,
+    SubscriptionPlanException,
+    SubscriptionPlanHasActiveSubscriptionsError,
+    SubscriptionPlanInvalidDataError,
+    SubscriptionPlanLimitExceededError,
+    SubscriptionPlanNotFoundError,
+    SubscriptionPlanPaymentFailedError,
+)
+from app.domain.exceptions.supplier import (
+    SupplierException,
+    SupplierHasInventoryPartsError,
+    SupplierNotFoundError,
+    SupplierRifExistsError,
+)
+from app.domain.exceptions.system_audit import (
+    EmptyActionError,
+    NullCompanyError,
+    SystemAuditException,
+    SystemAuditNotFoundError,
+)
+from app.domain.exceptions.used_part import (
+    InsufficientStockError,
+    UsedPartException,
+    UsedPartInvalidPriceError,
+    UsedPartInvalidQuantityError,
+    UsedPartNotFoundError,
+)
+from app.domain.exceptions.user import UserException, UserNotFoundError
 from app.domain.exceptions.validation import (
     InvalidSlugError,
     InvalidUUIDError,
     ValidationException,
 )
+from app.domain.exceptions.work_order import (
+    WorkOrderCodeExistsError,
+    WorkOrderException,
+    WorkOrderInvalidDataError,
+    WorkOrderInvalidStateError,
+    WorkOrderNotFoundError,
+)
 
 __all__ = [
     "DomainException",
+    "CatalogArticleException",
+    "CatalogArticleNotFoundError",
+    "CatalogArticleHasAssetsError",
+    "EmptyCatalogArticleNameError",
+    "EmptyCatalogArticleCodeError",
     "EmptyCompanyNameError",
     "EmptyHashedPasswordError",
     "EmptyRoleNameError",
@@ -100,6 +189,13 @@ __all__ = [
     "AssetInvalidTransitionError",
     "EmptySerialError",
     "EmptyAssetCodeError",
+    "AssetStateLogException",
+    "AssetStateLogNotFoundError",
+    "MaintenancePlanDueDateError",
+    "MaintenancePlanException",
+    "MaintenancePlanNotFoundError",
+    "MaintenancePlanNameEmptyError",
+    "MaintenancePlanIntervalError",
     "EmptyLocationNameError",
     "CompanyAlreadyCancelledError",
     "CompanyNotSuspendedError",
@@ -113,11 +209,64 @@ __all__ = [
     "PreferenceThemeInvalidError",
     "LastAdminRevocationError",
     "StaleDataError",
+    "EventBusError",
     "EventPublishError",
+    "ValidationError",
+    "ArticleCategoryException",
+    "ArticleCategoryNameExistsError",
+    "ArticleCategoryNotFoundError",
     "FailureReportException",
+    "FailureReportInvalidTransitionError",
     "FailureReportNotFoundError",
     "EmptyTitleError",
     "EmptyDescriptionError",
     "EmptyLocationError",
     "EmptyReportedByError",
+    "UsedPartException",
+    "UsedPartNotFoundError",
+    "UsedPartInvalidQuantityError",
+    "UsedPartInvalidPriceError",
+    "InsufficientStockError",
+    "WorkOrderException",
+    "WorkOrderNotFoundError",
+    "WorkOrderCodeExistsError",
+    "WorkOrderInvalidStateError",
+    "WorkOrderInvalidDataError",
+    "PlanExecutionException",
+    "PlanExecutionNotFoundError",
+    "PlanExecutionObservationsEmptyError",
+    "SubscriptionPlanException",
+    "SubscriptionPlanNotFoundError",
+    "SubscriptionPlanAlreadyExistsError",
+    "SubscriptionPlanInvalidDataError",
+    "SubscriptionPlanLimitExceededError",
+    "SubscriptionPlanPaymentFailedError",
+    "SubscriptionPlanHasActiveSubscriptionsError",
+    # Excepciones de proveedores
+    "SupplierException",
+    "SupplierNotFoundError",
+    "SupplierRifExistsError",
+    "SupplierHasInventoryPartsError",
+    "SystemAuditException",
+    "SystemAuditNotFoundError",
+    "EmptyActionError",
+    "NullCompanyError",
+    "UserException",
+    "UserNotFoundError",
+    # Excepciones de intervención
+    "InterventionException",
+    "InterventionInvalidDataError",
+    "InterventionInvalidTransitionError",
+    "InterventionNotFoundError",
+    # Excepciones de notificaciones
+    "NotificationError",
+    "TemplateNotFoundError",
+    # Excepciones de inventario de repuestos
+    "EmptyStockLocationError",
+    "InvalidMovementTypeError",
+    "InvalidPriceError",
+    "InvalidStockError",
+    "InventoryPartException",
+    "InventoryPartNotFoundError",
+    "InventoryEntryNotFoundError",
 ]

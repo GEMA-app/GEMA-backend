@@ -1,0 +1,50 @@
+"""Caso de uso para eliminar un artículo de catálogo."""
+
+import uuid
+
+from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.exceptions import CatalogArticleNotFoundError
+from app.domain.value_objects import CompanyId
+
+
+class DeleteCatalogArticleUseCase:
+    """Caso de uso para eliminar un artículo de catálogo.
+
+    Verifica que el artículo exista y pertenezca a la empresa antes de eliminarlo.
+    """
+
+    def __init__(self, uow: UnitOfWorkPort) -> None:
+        """Inicializa el caso de uso con una unidad de trabajo.
+
+        Args:
+            uow: Unidad de trabajo que gestiona la transacción y los repositorios.
+        """
+        self._uow = uow
+
+    async def execute(
+        self,
+        company_id_str: str,
+        article_id_str: str,
+    ) -> None:
+        """Ejecuta la eliminación de un artículo de catálogo.
+
+        Args:
+            company_id_str: Identificador de la empresa como string.
+            article_id_str: Identificador del artículo como string.
+
+        Raises:
+            CatalogArticleNotFoundError: Si el artículo no existe en la empresa.
+            InvalidUUIDError: Si algún identificador no es un UUID válido.
+        """
+        company_id = CompanyId.from_string(company_id_str)
+        article_uuid = uuid.UUID(article_id_str)
+
+        async with self._uow:
+            article = await self._uow.catalog_articles.get_by_company_and_id(
+                article_uuid, company_id
+            )
+            if not article:
+                raise CatalogArticleNotFoundError(article_id_str)
+
+            await self._uow.catalog_articles.delete(article_uuid, company_id)
+            await self._uow.commit()

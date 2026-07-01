@@ -1,3 +1,5 @@
+"""DTOs de entrada y salida para el módulo de Company."""
+
 import uuid
 from dataclasses import dataclass, field
 from datetime import date
@@ -30,7 +32,8 @@ class UpdateCompanyRequest:
         """Calcula el conjunto de campos explícitamente establecidos en la inicialización."""
         if not self._fields_set:
             fields_with_values = {
-                name for name, val in self.__dict__.items()
+                name
+                for name, val in self.__dict__.items()
                 if name != "_fields_set" and val is not None
             }
             object.__setattr__(self, "_fields_set", frozenset(fields_with_values))

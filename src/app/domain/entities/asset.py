@@ -45,6 +45,8 @@ class Asset(EventProducer):
     updated_at: datetime | None = None
     _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
+    # Máquina de estados explícita: cada estado enumera sus transiciones válidas.
+    # Agregar un estado nuevo = actualizar este dict + crear método _transition_to.
     _VALID_TRANSITIONS: ClassVar[dict[AssetStatus, set[AssetStatus]]] = {
         AssetStatus.OPERATIONAL: {
             AssetStatus.UNDER_MAINTENANCE,

@@ -16,33 +16,68 @@ from app.composition.container.common import get_uow
 async def get_create_asset_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> CreateAssetUseCase:
-    """Fábrica de dependencias para el caso de uso de creación de activo."""
+    """Fábrica de dependencias para el caso de uso de creación de activo.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso CreateAssetUseCase.
+    """
     return CreateAssetUseCase(uow)
 
 
 async def get_asset_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> GetAssetUseCase:
-    """Fábrica de dependencias para el caso de uso de consulta de activo."""
+    """Fábrica de dependencias para el caso de uso de consulta de activo.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso GetAssetUseCase.
+    """
     return GetAssetUseCase(uow)
 
 
 async def get_list_assets_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> ListAssetsUseCase:
-    """Fábrica de dependencias para el caso de uso de listado de activos."""
+    """Fábrica de dependencias para el caso de uso de listado de activos.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso ListAssetsUseCase.
+    """
     return ListAssetsUseCase(uow)
 
 
 async def get_update_asset_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> UpdateAssetUseCase:
-    """Fábrica de dependencias para el caso de uso de actualización de activo."""
+    """Fábrica de dependencias para el caso de uso de actualización de activo.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso UpdateAssetUseCase.
+    """
     return UpdateAssetUseCase(uow)
 
 
 async def get_delete_asset_use_case(
     uow: UnitOfWorkPort = Depends(get_uow),
 ) -> DeleteAssetUseCase:
-    """Fábrica de dependencias para el caso de uso de eliminación de activo."""
+    """Fábrica de dependencias para el caso de uso de eliminación de activo.
+
+    Args:
+        uow: Unidad de trabajo inyectada.
+
+    Returns:
+        Instancia del caso de uso DeleteAssetUseCase.
+    """
     return DeleteAssetUseCase(uow)

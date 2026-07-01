@@ -43,10 +43,12 @@ class SqlAlchemyPreferenceRepository(
             updated_at=model.updated_at,
         )
 
-    async def get_by_user(
-        self, usuario_id: UserId, empresa_id: CompanyId
-    ) -> UserPreference | None:
-        """Obtiene las preferencias de un usuario en una empresa."""
+    async def get_by_user(self, usuario_id: UserId, empresa_id: CompanyId) -> UserPreference | None:
+        """Obtiene las preferencias de un usuario en una empresa.
+
+        Returns:
+            La entidad UserPreference si existe, None en caso contrario.
+        """
         stmt = select(UserPreferenceModel).where(
             UserPreferenceModel.usuario_id == usuario_id.value,
             UserPreferenceModel.empresa_id == empresa_id.value,

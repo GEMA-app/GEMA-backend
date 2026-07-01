@@ -11,9 +11,7 @@ from app.infrastructure.db.models import UserModel
 from app.infrastructure.repositories.base import SqlAlchemyRepository
 
 
-class SqlAlchemyUserRepository(
-    SqlAlchemyRepository[UserModel, User, UserId], UserRepositoryPort
-):
+class SqlAlchemyUserRepository(SqlAlchemyRepository[UserModel, User, UserId], UserRepositoryPort):
     """Implementación de UserRepositoryPort utilizando la clase base SqlAlchemyRepository."""
 
     def __init__(
@@ -26,7 +24,6 @@ class SqlAlchemyUserRepository(
             pending_events: Lista para la acumulación de eventos de dominio.
         """
         super().__init__(session, UserModel, pending_events)
-
 
     async def get_by_email(self, email: Email) -> User | None:
         """Busca un usuario por email globalmente en la base de datos.
@@ -69,6 +66,20 @@ class SqlAlchemyUserRepository(
             return None
         return self._to_entity(model)
 
+    async def list_by_company(self, empresa_id: CompanyId) -> list[User]:
+        """Retorna todos los usuarios pertenecientes a una empresa.
+
+        Args:
+            empresa_id: Identificador de la empresa (tenant).
+
+        Returns:
+            Lista de entidades User asociadas a la empresa.
+        """
+        stmt = select(UserModel).where(UserModel.empresa_id == empresa_id.value)
+        result = await self.session.execute(stmt)
+        models = result.scalars().all()
+        return [self._to_entity(m) for m in models]
+
     async def get_by_id(self, id: UserId) -> User | None:
         """Busca un usuario por ID.
 
@@ -84,6 +95,28 @@ class SqlAlchemyUserRepository(
             La entidad User si fue encontrada; de lo contrario, None.
         """
         return await super().get_by_id(id)
+
+    async def get_by_id_and_company(self, id: UserId, empresa_id: CompanyId) -> User | None:
+        """Busca un usuario por ID garantizando que pertenezca a la empresa indicada.
+
+        Previene IDOR: impide que un admin de empresa A acceda a usuarios de empresa B.
+
+        Args:
+            id: Identificador del usuario.
+            empresa_id: Identificador de la empresa (tenant).
+
+        Returns:
+            La entidad User si fue encontrada dentro del tenant; de lo contrario, None.
+        """
+        stmt = select(UserModel).where(
+            UserModel.id == id.value,
+            UserModel.empresa_id == empresa_id.value,
+        )
+        result = await self.session.execute(stmt)
+        model = result.scalar_one_or_none()
+        if not model:
+            return None
+        return self._to_entity(model)
 
     def _to_model(self, entity: User) -> UserModel:
         return UserModel(

@@ -37,6 +37,8 @@ class Settings(BaseSettings):
     EMAIL_TEMPLATES_DIR: Path = Path("src/app/infrastructure/notifications/templates")
     FRONTEND_URL: str = "http://localhost:3000"
 
+    SUPER_ADMIN_IDS: list[str] = []
+
     @field_validator("JWT_SECRET_KEY")
     @classmethod
     def validate_secret_key(cls, v: str, info: ValidationInfo) -> str:
