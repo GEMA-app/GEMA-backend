@@ -28,7 +28,6 @@ from app.application.use_cases.inventory_part.get_inventory_part import GetInven
 from app.application.use_cases.inventory_part.list_inventory_entries import (
     ListInventoryEntriesUseCase,
 )
-from app.application.use_cases.inventory_part.list_inventory_parts import ListInventoryPartsUseCase
 from app.application.use_cases.inventory_part.update_inventory_part import (
     UpdateInventoryPartUseCase,
 )
@@ -48,7 +47,7 @@ def mock_uow() -> Any:
     uow = MagicMock()
     uow.__aenter__ = AsyncMock(return_value=uow)
     uow.__aexit__ = AsyncMock(return_value=None)
-    
+
     uow.inventory_parts = MagicMock()
     uow.inventory_parts.save = AsyncMock()
     uow.inventory_parts.get_by_id = AsyncMock()
@@ -59,7 +58,7 @@ def mock_uow() -> Any:
     uow.inventory_entries.save = AsyncMock()
     uow.inventory_entries.get_by_id = AsyncMock()
     uow.inventory_entries.get_all_by_repuesto = AsyncMock()
-    
+
     uow.commit = AsyncMock()
     uow.session = None
     return uow
@@ -142,7 +141,7 @@ class TestInventoryPartUseCases:
             moneda="USD",
             version=1,
         )
-        
+
         # Simular get_by_id inicial y recarga
         mock_uow.inventory_parts.get_by_id.side_effect = [part, part]
 
@@ -238,7 +237,7 @@ class TestInventoryPartUseCases:
             moneda="USD",
         )
         mock_uow.inventory_parts.get_by_id.return_value = part
-        
+
         # Simular que tiene al menos un movimiento
         movement = InventoryEntry(
             id=uuid4(),

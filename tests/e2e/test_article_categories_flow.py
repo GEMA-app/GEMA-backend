@@ -1,4 +1,5 @@
 import uuid
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 
@@ -73,11 +74,7 @@ async def test_article_categories_crud_and_isolation_flow():
             tokens_b = res_reg_b.json()["data"]["attributes"]
             access_token_b = tokens_b["access_token"]
 
-            # Obtener empresa_id de la Compañía B desde perfil
             auth_headers_b = {**headers, "Authorization": f"Bearer {access_token_b}"}
-            res_me_b = await client.get("/v1/auth/yo", headers=auth_headers_b)
-            empresa_b_id = res_me_b.json()["data"]["attributes"]["empresa_id"]
-
             # =====================================================================
             # Paso 1: CREAR una categoría en Compañía A (POST)
             # =====================================================================

@@ -12,9 +12,9 @@ import pytest
 from app.application.dtos.user_dtos import CreateUserRequest, UpdateUserRequest
 from app.application.use_cases.user.create_user import CreateUserUseCase
 from app.application.use_cases.user.delete_user import DeleteUserUseCase
-from app.application.use_cases.user.update_user import UpdateUserUseCase
 from app.application.use_cases.user.get_user import GetUserUseCase
 from app.application.use_cases.user.list_user import ListUsersUseCase
+from app.application.use_cases.user.update_user import UpdateUserUseCase
 from app.domain.entities.user import User
 from app.domain.exceptions import UserAlreadyExistsError
 from app.domain.exceptions.user import UserNotFoundError

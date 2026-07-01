@@ -16,11 +16,11 @@ from app.application.use_cases.article_category.create_article_category import (
 from app.application.use_cases.article_category.delete_article_category import (
     DeleteArticleCategoryUseCase,
 )
-from app.application.use_cases.article_category.list_article_category import (
-    ListArticleCategoriesUseCase,
-)
 from app.application.use_cases.article_category.get_article_category_by_id import (
     GetArticleCategoryByIdUseCase,
+)
+from app.application.use_cases.article_category.list_article_category import (
+    ListArticleCategoriesUseCase,
 )
 from app.application.use_cases.article_category.update_article_category import (
     UpdateArticleCategoryUseCase,

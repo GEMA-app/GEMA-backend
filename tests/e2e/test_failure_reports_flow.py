@@ -187,7 +187,7 @@ async def test_failure_reports_crud_and_concurrency_flow():
             assert res_cross_tenant_path.status_code == 403
 
             # Caso B: Intentar solicitar reporte de Empresa A usando path de Empresa B (HTTP 404)
-            res_cross_tenant_report = await client.get(
+            await client.get(
                 f"/v1/empresas/{empresa_a_id}/reportes-fallas/{reporte_id}".replace(empresa_a_id, tokens_b.get("empresa_id", "") or "00000000-0000-0000-0000-000000000000"),
                 headers=auth_headers_b,
             )

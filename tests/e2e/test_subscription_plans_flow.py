@@ -3,8 +3,8 @@
 Endpoint plataforma: /v1/planes — sin empresa_id, requiere autenticación.
 """
 
-from decimal import Decimal
 import uuid
+from decimal import Decimal
 
 import pytest
 from httpx import ASGITransport, AsyncClient

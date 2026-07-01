@@ -11,11 +11,17 @@ from app.application.dtos.failure_report_dtos import (
     CreateFailureReportRequest,
     UpdateFailureReportRequest,
 )
-from app.application.use_cases.failure_report.create_failure_report import CreateFailureReportUseCase
-from app.application.use_cases.failure_report.delete_failure_report import DeleteFailureReportUseCase
+from app.application.use_cases.failure_report.create_failure_report import (
+    CreateFailureReportUseCase,
+)
+from app.application.use_cases.failure_report.delete_failure_report import (
+    DeleteFailureReportUseCase,
+)
 from app.application.use_cases.failure_report.get_failure_report import GetFailureReportUseCase
 from app.application.use_cases.failure_report.list_failure_report import ListFailureReportsUseCase
-from app.application.use_cases.failure_report.update_failure_report import UpdateFailureReportUseCase
+from app.application.use_cases.failure_report.update_failure_report import (
+    UpdateFailureReportUseCase,
+)
 from app.domain.entities.failure_report import FailureReport
 from app.domain.enums import PriorityLevel, ReportStatus
 from app.domain.exceptions.failure_report import (

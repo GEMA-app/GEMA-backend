@@ -58,7 +58,6 @@ async def test_complete_auth_flow():
             assert "access_token" in tokens
             assert "refresh_token" in tokens
             access_token = tokens["access_token"]
-            refresh_token = tokens["refresh_token"]
 
             # =====================================================================
             # Paso 2: Obtener perfil de usuario actual (/v1/auth/yo)
@@ -88,7 +87,6 @@ async def test_complete_auth_flow():
             tokens_login = res_login.json()["data"]["attributes"]
             assert "access_token" in tokens_login
             assert "refresh_token" in tokens_login
-            access_token_login = tokens_login["access_token"]
             refresh_token_login = tokens_login["refresh_token"]
 
             # =====================================================================
@@ -125,7 +123,6 @@ async def test_complete_auth_flow():
             assert "access_token" in tokens_refreshed
             assert "refresh_token" in tokens_refreshed
             access_token_new = tokens_refreshed["access_token"]
-            refresh_token_new = tokens_refreshed["refresh_token"]
 
             # =====================================================================
             # Paso 6: Cambiar contraseña (/v1/auth/cambiar-contrasena)
@@ -163,7 +160,6 @@ async def test_complete_auth_flow():
                 "/v1/auth/ingresar", json=login_payload_new, headers=headers
             )
             assert res_new_login.status_code == 200
-            access_token_final = res_new_login.json()["data"]["attributes"]["access_token"]
 
             # =====================================================================
             # Paso 7: Solicitar reset de contraseña (/v1/auth/olvide-contrasena)

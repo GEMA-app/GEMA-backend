@@ -1,14 +1,15 @@
 """Test E2E para verificar el listado, filtrado y aislamiento multi-tenant de las Auditorías de Sistema."""
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.infrastructure.db.models.system_audit import SystemAuditModel
+from app.infrastructure.db.session import async_session_factory
 from app.main import app
 from app.presentation.api.v1.endpoints.dependencies import rate_limit_by_email
-from app.infrastructure.db.session import async_session_factory
-from app.infrastructure.db.models.system_audit import SystemAuditModel
 
 
 @pytest.mark.asyncio
@@ -96,7 +97,7 @@ async def test_system_audits_crud_and_isolation_flow() -> None:
                     accion="user.login",
                     detalles={"description": "Admin logged in"},
                     ip_address="127.0.0.1",
-                    ocurrido_en=datetime.now(timezone.utc),
+                    ocurrido_en=datetime.now(UTC),
                 )
                 # Audit 2 (Company A)
                 audit_a2 = SystemAuditModel(
@@ -106,7 +107,7 @@ async def test_system_audits_crud_and_isolation_flow() -> None:
                     accion="asset.create",
                     detalles={"asset_name": "Bomba-101"},
                     ip_address="192.168.1.10",
-                    ocurrido_en=datetime.now(timezone.utc),
+                    ocurrido_en=datetime.now(UTC),
                 )
                 # Audit 3 (Company A, without user_id)
                 audit_a3 = SystemAuditModel(
@@ -116,7 +117,7 @@ async def test_system_audits_crud_and_isolation_flow() -> None:
                     accion="system.background_job",
                     detalles={"job": "cleanup"},
                     ip_address=None,
-                    ocurrido_en=datetime.now(timezone.utc),
+                    ocurrido_en=datetime.now(UTC),
                 )
                 # Audit 4 (Company B)
                 audit_b1 = SystemAuditModel(
@@ -126,7 +127,7 @@ async def test_system_audits_crud_and_isolation_flow() -> None:
                     accion="user.login",
                     detalles={"description": "Admin B logged in"},
                     ip_address="10.0.0.1",
-                    ocurrido_en=datetime.now(timezone.utc),
+                    ocurrido_en=datetime.now(UTC),
                 )
 
                 session.add_all([audit_a1, audit_a2, audit_a3, audit_b1])

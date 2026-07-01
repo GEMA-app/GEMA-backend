@@ -1,6 +1,5 @@
 """Test E2E para verificar el CRUD y aislamiento multi-tenant de Ejecuciones de Plan (PlanExecution)."""
 
-from datetime import datetime, timezone
 import uuid
 
 import pytest
@@ -52,9 +51,6 @@ async def test_plan_executions_crud_and_isolation_flow() -> None:
             assert reg_b.status_code == 201
             token_b = reg_b.json()["data"]["attributes"]["access_token"]
             ah_b = {**headers, "Authorization": f"Bearer {token_b}"}
-            me_b = await client.get("/v1/auth/yo", headers=ah_b)
-            eid_b = me_b.json()["data"]["attributes"]["empresa_id"]
-
             # =====================================================================
             # PREREQUISITOS: artículo catálogo + activo + plan + orden trabajo
             # =====================================================================

@@ -1,11 +1,9 @@
 """Test E2E para CRUD, transacciones de movimientos, aislamiento multi-tenant y bloqueos en Inventario."""
 
 import uuid
-from decimal import Decimal
 
 import pytest
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
