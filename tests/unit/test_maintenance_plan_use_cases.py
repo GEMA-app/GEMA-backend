@@ -43,7 +43,7 @@ def _make_plan(**overrides: Any) -> MaintenancePlan:
         "updated_at": datetime.now(UTC),
     }
     defaults.update(overrides)
-    return MaintenancePlan(**defaults)
+    return MaintenancePlan(**defaults)  # type: ignore[arg-type]
 
 
 class TestCreateMaintenancePlan:

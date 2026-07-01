@@ -147,7 +147,7 @@ class TestCreateUserUseCase:
         """Verifica que un usuario nuevo se persiste y el commit ocurre."""
         # Arrange
         uow = FakeUnitOfWork()
-        use_case = CreateUserUseCase(uow=uow, hasher=FakeHasher())
+        use_case = CreateUserUseCase(uow=uow, hasher=FakeHasher())  # type: ignore[arg-type]
         request = CreateUserRequest(
             email=TEST_EMAIL,
             password=TEST_PASSWORD,
@@ -170,7 +170,7 @@ class TestCreateUserUseCase:
     async def test_crea_usuario_sin_telefono(self) -> None:
         """Verifica que el teléfono es opcional y puede ser None."""
         uow = FakeUnitOfWork()
-        use_case = CreateUserUseCase(uow=uow, hasher=FakeHasher())
+        use_case = CreateUserUseCase(uow=uow, hasher=FakeHasher())  # type: ignore[arg-type]
         request = CreateUserRequest(
             email="sin.telefono@gema.com",
             password=TEST_PASSWORD,
@@ -189,7 +189,7 @@ class TestCreateUserUseCase:
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user(email=TEST_EMAIL))
 
-        use_case = CreateUserUseCase(uow=uow, hasher=FakeHasher())
+        use_case = CreateUserUseCase(uow=uow, hasher=FakeHasher())  # type: ignore[arg-type]
         request = CreateUserRequest(
             email=TEST_EMAIL,
             password="otraClave123!",
@@ -204,7 +204,7 @@ class TestCreateUserUseCase:
     async def test_persiste_usuario_en_repositorio(self) -> None:
         """Verifica que el usuario queda guardado en el repositorio tras ejecutar el use case."""
         uow = FakeUnitOfWork()
-        use_case = CreateUserUseCase(uow=uow, hasher=FakeHasher())
+        use_case = CreateUserUseCase(uow=uow, hasher=FakeHasher())  # type: ignore[arg-type]
         request = CreateUserRequest(
             email="persistido@gema.com",
             password=TEST_PASSWORD,
@@ -225,7 +225,7 @@ class TestCreateUserUseCase:
         hasher_mock.hash.return_value = "hashed_resultado"
 
         uow = FakeUnitOfWork()
-        use_case = CreateUserUseCase(uow=uow, hasher=hasher_mock)
+        use_case = CreateUserUseCase(uow=uow, hasher=hasher_mock)  # type: ignore[arg-type]
         request = CreateUserRequest(
             email="hash.test@gema.com",
             password="MiClave123!",
@@ -251,7 +251,7 @@ class TestGetUserUseCase:
         # Arrange
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user())
-        use_case = GetUserUseCase(uow=uow)
+        use_case = GetUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         # Act
         response = await use_case.execute(user_id_str=USER_ID, empresa_id_str=COMPANY_ID)
@@ -267,7 +267,7 @@ class TestGetUserUseCase:
     async def test_lanza_user_not_found_si_id_inexistente(self) -> None:
         """Verifica que UserNotFoundError se lanza si no existe el ID."""
         uow = FakeUnitOfWork()
-        use_case = GetUserUseCase(uow=uow)
+        use_case = GetUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         with pytest.raises(UserNotFoundError):
             await use_case.execute(
@@ -280,7 +280,7 @@ class TestGetUserUseCase:
         """Un usuario inactivo puede ser consultado (solo el login falla)."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user(activo=False))
-        use_case = GetUserUseCase(uow=uow)
+        use_case = GetUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         response = await use_case.execute(user_id_str=USER_ID, empresa_id_str=COMPANY_ID)
 
@@ -301,7 +301,7 @@ class TestUpdateUserUseCase:
         # Arrange
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user())
-        use_case = UpdateUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         request = UpdateUserRequest(nombre="Nuevo Nombre")
 
@@ -319,7 +319,7 @@ class TestUpdateUserUseCase:
         """Verifica que el email se actualiza correctamente."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user())
-        use_case = UpdateUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         response = await use_case.execute(
             user_id_str=USER_ID,
@@ -334,7 +334,7 @@ class TestUpdateUserUseCase:
         """Verifica que el teléfono se actualiza correctamente."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user())
-        use_case = UpdateUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         response = await use_case.execute(
             user_id_str=USER_ID,
@@ -349,7 +349,7 @@ class TestUpdateUserUseCase:
         """Verifica que activo=False llama a user.deactivate() correctamente."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user(activo=True))
-        use_case = UpdateUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         response = await use_case.execute(
             user_id_str=USER_ID,
@@ -364,7 +364,7 @@ class TestUpdateUserUseCase:
         """Verifica que activo=True llama a user.activate() correctamente."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user(activo=False))
-        use_case = UpdateUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         response = await use_case.execute(
             user_id_str=USER_ID,
@@ -379,7 +379,7 @@ class TestUpdateUserUseCase:
         """Verifica que pasar None en campos opcionales no altera los valores existentes."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user(nombre=TEST_NOMBRE))
-        use_case = UpdateUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         # Request completamente vacío (todos None)
         response = await use_case.execute(
@@ -395,7 +395,7 @@ class TestUpdateUserUseCase:
     async def test_lanza_user_not_found_si_id_inexistente(self) -> None:
         """Verifica que UserNotFoundError se lanza si el usuario no existe."""
         uow = FakeUnitOfWork()
-        use_case = UpdateUserUseCase(uow=uow)
+        use_case = UpdateUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         with pytest.raises(UserNotFoundError):
             await use_case.execute(
@@ -419,7 +419,7 @@ class TestDeleteUserUseCase:
         # Arrange
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user(activo=True))
-        use_case = DeleteUserUseCase(uow=uow)
+        use_case = DeleteUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         # Act
         response = await use_case.execute(user_id_str=USER_ID, empresa_id_str=COMPANY_ID)
@@ -433,7 +433,7 @@ class TestDeleteUserUseCase:
         """Verifica que el registro aún existe en el repositorio tras la baja."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user())
-        use_case = DeleteUserUseCase(uow=uow)
+        use_case = DeleteUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         await use_case.execute(user_id_str=USER_ID, empresa_id_str=COMPANY_ID)
 
@@ -446,7 +446,7 @@ class TestDeleteUserUseCase:
     async def test_lanza_user_not_found_si_id_inexistente(self) -> None:
         """Verifica que UserNotFoundError se lanza si el usuario no existe."""
         uow = FakeUnitOfWork()
-        use_case = DeleteUserUseCase(uow=uow)
+        use_case = DeleteUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         with pytest.raises(UserNotFoundError):
             await use_case.execute(
@@ -459,7 +459,7 @@ class TestDeleteUserUseCase:
         """Verifica que la respuesta incluye todos los campos del usuario desactivado."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user(nombre=TEST_NOMBRE))
-        use_case = DeleteUserUseCase(uow=uow)
+        use_case = DeleteUserUseCase(uow=uow)  # type: ignore[arg-type]
 
         response = await use_case.execute(user_id_str=USER_ID, empresa_id_str=COMPANY_ID)
 
@@ -481,7 +481,7 @@ class TestListUsersUseCase:
     async def test_retorna_lista_vacia_cuando_no_hay_usuarios(self) -> None:
         """Verifica que una empresa sin usuarios retorna lista vacía."""
         uow = FakeUnitOfWork()
-        use_case = ListUsersUseCase(uow=uow)
+        use_case = ListUsersUseCase(uow=uow)  # type: ignore[arg-type]
 
         result = await use_case.execute(empresa_id_str=COMPANY_ID)
 
@@ -495,7 +495,7 @@ class TestListUsersUseCase:
         await uow.users.save(
             _make_user(user_id=OTHER_USER_ID, email="user2@gema.com")
         )
-        use_case = ListUsersUseCase(uow=uow)
+        use_case = ListUsersUseCase(uow=uow)  # type: ignore[arg-type]
 
         result = await use_case.execute(empresa_id_str=COMPANY_ID)
 
@@ -516,7 +516,7 @@ class TestListUsersUseCase:
         await uow.users.save(
             _make_user(user_id=OTHER_USER_ID, email="ajeno@gema.com", company_id=other_company)
         )
-        use_case = ListUsersUseCase(uow=uow)
+        use_case = ListUsersUseCase(uow=uow)  # type: ignore[arg-type]
 
         result = await use_case.execute(empresa_id_str=COMPANY_ID)
 
@@ -528,7 +528,7 @@ class TestListUsersUseCase:
         """Verifica que cada UserResponse contiene todos los campos esperados."""
         uow = FakeUnitOfWork()
         await uow.users.save(_make_user())
-        use_case = ListUsersUseCase(uow=uow)
+        use_case = ListUsersUseCase(uow=uow)  # type: ignore[arg-type]
 
         result = await use_case.execute(empresa_id_str=COMPANY_ID)
 

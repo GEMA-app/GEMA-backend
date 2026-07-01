@@ -80,7 +80,7 @@ def test_interventions_endpoint_ids_convention() -> None:
         assert "ot_id" in sig.parameters
         assert "intervencion_id" in sig.parameters
 
-    for func in (create_intervention, list_interventions):
+    for func in (create_intervention, list_interventions):  # type: ignore[assignment]
         sig = inspect.signature(func)
         assert "empresa_id" in sig.parameters
         assert "ot_id" in sig.parameters
