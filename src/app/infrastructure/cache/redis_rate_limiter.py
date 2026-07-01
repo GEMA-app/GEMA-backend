@@ -42,6 +42,3 @@ class RedisRateLimiter(RateLimiterPort):
         except redis.RedisError as e:
             logger.error("redis_rate_limit_error", key=key, error=str(e))
             return False  # Fail-open por diseño de tolerancia a fallos
-        except Exception as e:
-            logger.error("unexpected_rate_limit_error", key=key, error=str(e))
-            return False

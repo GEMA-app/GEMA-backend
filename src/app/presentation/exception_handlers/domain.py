@@ -49,6 +49,7 @@ from app.domain.exceptions import (
     InvalidStockError,
     InvalidTokenError,
     InvalidUUIDError,
+    InventoryEntryNotFoundError,
     InventoryPartNotFoundError,
     LastAdminRevocationError,
     LocationCircularReferenceError,
@@ -73,7 +74,6 @@ from app.domain.exceptions import (
     SubscriptionPlanLimitExceededError,
     SubscriptionPlanNotFoundError,
     SubscriptionPlanPaymentFailedError,
-    SystemAuditException,
     SystemAuditNotFoundError,
     TemplateNotFoundError,
     UsedPartInvalidPriceError,
@@ -263,7 +263,7 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         "ERR_NOTIFICATION",
     ),
     TemplateNotFoundError: (
-        status.HTTP_502_BAD_GATEWAY,
+        status.HTTP_500_INTERNAL_SERVER_ERROR,
         "ERR_TEMPLATE_NOT_FOUND",
     ),
     ArticleCategoryNameExistsError: (
@@ -318,10 +318,6 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         status.HTTP_404_NOT_FOUND,
         "ERR_SYSTEM_AUDIT_NOT_FOUND",
     ),
-    SystemAuditException: (
-        status.HTTP_400_BAD_REQUEST,
-        "ERR_SYSTEM_AUDIT_ERROR",
-    ),
     EmptyActionError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_EMPTY_ACTION",
@@ -329,6 +325,10 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     InventoryPartNotFoundError: (
         status.HTTP_404_NOT_FOUND,
         "ERR_INVENTORY_PART_NOT_FOUND",
+    ),
+    InventoryEntryNotFoundError: (
+        status.HTTP_404_NOT_FOUND,
+        "ERR_INVENTORY_ENTRY_NOT_FOUND",
     ),
     InvalidStockError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,

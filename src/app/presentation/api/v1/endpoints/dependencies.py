@@ -16,11 +16,14 @@ from redis.exceptions import RedisError
 from app.application.dtos.auth_dtos import GetCurrentUserRequest, UserResponse
 from app.application.services.authorization_service import AuthorizationService
 from app.application.use_cases.auth import GetCurrentUserUseCase
-from app.composition.container import get_authorization_service, get_current_user_use_case
+from app.composition.container import (
+    get_authorization_service,
+    get_current_user_use_case,
+    get_redis_client,
+)
 from app.domain.enums import PermissionModule
 from app.domain.exceptions import InsufficientPermissionsError, InvalidUUIDError
 from app.domain.value_objects import CompanyId, UserId
-from app.infrastructure.cache.redis import redis_client
 from app.infrastructure.config.settings import settings
 from app.presentation.api.v1.schemas.auth import RateLimitEmailBody
 
@@ -153,7 +156,7 @@ end
 return current
 """
 
-email_rate_limit_script = redis_client.register_script(EMAIL_LUA_SCRIPT)
+email_rate_limit_script = get_redis_client().register_script(EMAIL_LUA_SCRIPT)
 
 
 async def rate_limit_by_email(request: Request) -> None:

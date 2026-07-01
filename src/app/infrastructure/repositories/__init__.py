@@ -1,3 +1,8 @@
+"""Adaptadores concretos de repositorios SQLAlchemy.
+
+Implementaciones de los puertos de repositorio definidos en la capa de aplicación.
+"""
+
 from app.infrastructure.repositories.article_category_repository import (
     SqlAlchemyArticleCategoryRepository,
 )

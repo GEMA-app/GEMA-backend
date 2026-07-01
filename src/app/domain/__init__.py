@@ -1,4 +1,4 @@
-﻿"""Paquete raíz del dominio de GEMA.
+"""Paquete raíz del dominio de GEMA.
 
 Re-exporta todos los símbolos públicos de los submódulos del dominio
 para permitir imports planos (``from app.domain import User``).
@@ -13,6 +13,7 @@ from app.domain.entities import (
     CatalogArticle,
     Company,
     FailureReport,
+    InventoryEntry,
     InventoryPart,
     Location,
     MaintenancePlan,
@@ -120,6 +121,7 @@ from app.domain.exceptions import (
     InvalidStockError,
     InvalidTokenError,
     InvalidUUIDError,
+    InventoryEntryNotFoundError,
     InventoryPartException,
     InventoryPartNotFoundError,
     LastAdminRevocationError,
@@ -132,6 +134,7 @@ from app.domain.exceptions import (
     MaintenancePlanIntervalError,
     MaintenancePlanNameEmptyError,
     MaintenancePlanNotFoundError,
+    NotificationError,
     NullCompanyError,
     PermissionException,
     PlanExecutionException,
@@ -153,6 +156,7 @@ from app.domain.exceptions import (
     SubscriptionPlanPaymentFailedError,
     SystemAuditException,
     SystemAuditNotFoundError,
+    TemplateNotFoundError,
     UsedPartException,
     UsedPartInvalidPriceError,
     UsedPartInvalidQuantityError,
@@ -237,6 +241,7 @@ __all__ = [
     "Company",
     "FailureReport",
     "InventoryPart",
+    "InventoryEntry",
     "Location",
     "MaintenancePlan",
     "Permission",
@@ -298,6 +303,7 @@ __all__ = [
     "InvalidUUIDError",
     "InventoryPartException",
     "InventoryPartNotFoundError",
+    "InventoryEntryNotFoundError",
     "LastAdminRevocationError",
     "LocationCircularReferenceError",
     "LocationException",
@@ -353,6 +359,7 @@ __all__ = [
     "MaintenancePlanIntervalError",
     "MaintenancePlanNameEmptyError",
     "MaintenancePlanNotFoundError",
+    "NotificationError",
     "NullCompanyError",
     "PlanExecutionException",
     "PlanExecutionNotFoundError",
@@ -361,6 +368,7 @@ __all__ = [
     "SubscriptionPlanHasActiveSubscriptionsError",
     "SystemAuditException",
     "SystemAuditNotFoundError",
+    "TemplateNotFoundError",
     "UserException",
     "UserNotFoundError",
     "ValidationError",

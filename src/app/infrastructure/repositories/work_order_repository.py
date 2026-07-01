@@ -16,11 +16,11 @@ from app.domain.enums import MaintenanceType, WorkOrderStatus
 from app.domain.events import DomainEvent
 from app.domain.value_objects import AssetId, CompanyId, UserId, WorkOrderId
 from app.infrastructure.db.models.work_order import WorkOrderModel
-from app.infrastructure.repositories.base import SqlAlchemyRepository
+from app.infrastructure.repositories.tenant_repository import SqlAlchemyTenantRepository
 
 
 class SqlAlchemyWorkOrderRepository(
-    SqlAlchemyRepository[WorkOrderModel, WorkOrder, WorkOrderId],
+    SqlAlchemyTenantRepository[WorkOrderModel, WorkOrder, WorkOrderId],
     WorkOrderRepositoryPort,
 ):
     """Repositorio SQLAlchemy para órdenes de trabajo.
@@ -86,20 +86,6 @@ class SqlAlchemyWorkOrderRepository(
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
-
-    async def get_by_id(self, id: WorkOrderId, empresa_id: CompanyId) -> WorkOrder | None:  # type: ignore[override]
-        """Obtiene una orden de trabajo por su ID y empresa.
-
-        Returns:
-            La entidad WorkOrder si existe, None en caso contrario.
-        """
-        stmt = select(WorkOrderModel).where(
-            WorkOrderModel.id == id.value,
-            WorkOrderModel.empresa_id == empresa_id.value,
-        )
-        result = await self.session.execute(stmt)
-        model = result.scalar_one_or_none()
-        return self._to_entity(model) if model else None
 
     async def get_by_code(self, codigo_ot: str, empresa_id: CompanyId) -> WorkOrder | None:
         """Obtiene una orden de trabajo por su código único dentro de la empresa.
@@ -172,14 +158,6 @@ class SqlAlchemyWorkOrderRepository(
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None
-
-    async def delete(self, id: WorkOrderId, empresa_id: CompanyId) -> None:  # type: ignore[override]
-        """Elimina una orden de trabajo por su ID y empresa."""
-        stmt = delete(WorkOrderModel).where(
-            WorkOrderModel.id == id.value,
-            WorkOrderModel.empresa_id == empresa_id.value,
-        )
-        await self.session.execute(stmt)
 
     async def assign_technician(
         self, id: WorkOrderId, technician_id: UserId, empresa_id: CompanyId

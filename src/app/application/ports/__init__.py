@@ -1,3 +1,8 @@
+"""Puertos (interfaces) de la capa de aplicación.
+
+Define los contratos que la infraestructura debe implementar para cada repositorio y servicio.
+"""
+
 from app.application.ports.article_category_repository import ArticleCategoryRepositoryPort
 from app.application.ports.asset_repository import AssetRepositoryPort
 from app.application.ports.asset_state_log_repository import AssetStateLogRepositoryPort

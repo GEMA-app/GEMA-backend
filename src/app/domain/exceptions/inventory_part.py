@@ -26,3 +26,8 @@ class InvalidPriceError(InventoryPartException):
 class EmptyStockLocationError(InventoryPartException):
     """Excepción lanzada cuando la ubicación del almacén está vacía."""
     pass
+
+
+class InventoryEntryNotFoundError(InventoryPartException):
+    """Excepción lanzada cuando no se encuentra un movimiento de inventario."""
+    pass

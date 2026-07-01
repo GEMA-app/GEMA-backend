@@ -66,6 +66,7 @@ from app.domain.exceptions.inventory_part import (
     EmptyStockLocationError,
     InvalidPriceError,
     InvalidStockError,
+    InventoryEntryNotFoundError,
     InventoryPartException,
     InventoryPartNotFoundError,
 )
@@ -250,4 +251,5 @@ __all__ = [
     "InvalidStockError",
     "InventoryPartException",
     "InventoryPartNotFoundError",
+    "InventoryEntryNotFoundError",
 ]

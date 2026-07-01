@@ -73,6 +73,13 @@ class UpdateInventoryPartUseCase:
             await self.uow.inventory_parts.save(inventory_part)
             await self.uow.commit()
 
+            # 6. Recargar para obtener version incrementada y timestamps frescos de la BD
+            recargado = await self.uow.inventory_parts.get_by_id(
+                inventory_part.id, inventory_part.empresa_id
+            )
+            if recargado:
+                inventory_part = recargado
+
             return InventoryPartResponse(
                 id=str(inventory_part.id),
                 empresa_id=str(inventory_part.empresa_id),
