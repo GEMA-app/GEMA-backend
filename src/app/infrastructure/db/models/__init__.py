@@ -46,6 +46,7 @@ __all__ = [
     "TimestampMixin",
     "VersionMixin",
     "AssetStateLogModel",
+    "SupplierModel",
     "SystemAuditModel",
     "WorkOrderModel",
     "WorkOrderTechnicianModel",

@@ -119,6 +119,12 @@ from app.domain.exceptions.subscription_plan import (
     SubscriptionPlanNotFoundError,
     SubscriptionPlanPaymentFailedError,
 )
+from app.domain.exceptions.supplier import (
+    SupplierException,
+    SupplierHasInventoryPartsError,
+    SupplierNotFoundError,
+    SupplierRifExistsError,
+)
 from app.domain.exceptions.system_audit import (
     EmptyActionError,
     NullCompanyError,
@@ -231,6 +237,11 @@ __all__ = [
     "SubscriptionPlanLimitExceededError",
     "SubscriptionPlanPaymentFailedError",
     "SubscriptionPlanHasActiveSubscriptionsError",
+    # Excepciones de proveedores
+    "SupplierException",
+    "SupplierNotFoundError",
+    "SupplierRifExistsError",
+    "SupplierHasInventoryPartsError",
     "SystemAuditException",
     "SystemAuditNotFoundError",
     "EmptyActionError",

@@ -19,6 +19,7 @@ from app.presentation.api.v1.endpoints.plan_executions import router as plan_exe
 from app.presentation.api.v1.endpoints.preferences import router as preferences_router
 from app.presentation.api.v1.endpoints.roles import router as roles_router
 from app.presentation.api.v1.endpoints.subscription_plans import router as subscription_plans_router
+from app.presentation.api.v1.endpoints.suppliers import router as suppliers_router
 from app.presentation.api.v1.endpoints.system_audits import router as system_audits_router
 from app.presentation.api.v1.endpoints.used_parts import router as used_parts_router
 from app.presentation.api.v1.endpoints.users import router as users_router
@@ -39,6 +40,7 @@ __all__ = [
     "plan_executions_router",
     "preferences_router",
     "roles_router",
+    "suppliers_router",
     "subscription_plans_router",
     "system_audits_router",
     "used_parts_router",

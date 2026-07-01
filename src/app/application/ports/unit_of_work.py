@@ -19,6 +19,7 @@ from app.application.ports.preference_repository import PreferenceRepositoryPort
 from app.application.ports.repository import UserRepositoryPort
 from app.application.ports.role_repository import RoleRepositoryPort
 from app.application.ports.subscription_plan_repository import SubscriptionPlanRepositoryPort
+from app.application.ports.supplier_repository import SupplierRepositoryPort
 from app.application.ports.system_audit_repository import SystemAuditRepositoryPort
 from app.application.ports.used_part_repository import UsedPartRepositoryPort
 from app.application.ports.work_order_repository import WorkOrderRepositoryPort
@@ -44,6 +45,7 @@ class UnitOfWorkPort(Protocol):
     inventory_entries: InventoryEntryRepositoryPort
     work_orders: WorkOrderRepositoryPort
     plan_executions: PlanExecutionRepositoryPort
+    suppliers: SupplierRepositoryPort
     subscription_plans: SubscriptionPlanRepositoryPort
     maintenance_plans: MaintenancePlanRepositoryPort
     interventions: InterventionRepositoryPort

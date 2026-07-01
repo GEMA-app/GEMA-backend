@@ -16,6 +16,7 @@ from app.domain.entities.plan_execution import PlanExecution
 from app.domain.entities.preference import UserPreference
 from app.domain.entities.role import Role
 from app.domain.entities.subscription_plan import SubscriptionPlan
+from app.domain.entities.supplier import Supplier
 from app.domain.entities.system_audit import SystemAudit
 from app.domain.entities.used_part import UsedPart
 from app.domain.entities.user import User
@@ -34,6 +35,7 @@ __all__ = [
     "AssetStateLog",
     "ArticleCategory",
     "CatalogArticle",
+    "Supplier",
     "SystemAudit",
     "UserPreference",
     "FailureReport",

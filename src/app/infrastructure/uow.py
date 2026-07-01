@@ -43,6 +43,7 @@ from app.infrastructure.repositories.role_repository import SqlAlchemyRoleReposi
 from app.infrastructure.repositories.subscription_plan_repository import (
     SqlAlchemySubscriptionPlanRepository,
 )
+from app.infrastructure.repositories.supplier_repository import SqlAlchemySupplierRepository
 from app.infrastructure.repositories.system_audit_repository import SqlAlchemySystemAuditRepository
 from app.infrastructure.repositories.used_part_repository import SqlAlchemyUsedPartRepository
 from app.infrastructure.repositories.user_repository import SqlAlchemyUserRepository
@@ -96,6 +97,7 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
         self.subscription_plans = SqlAlchemySubscriptionPlanRepository(
             self.session, self._pending_events
         )
+        self.suppliers = SqlAlchemySupplierRepository(self.session, self._pending_events)
         self.system_audits = SqlAlchemySystemAuditRepository(self.session, self._pending_events)
         self.maintenance_plans = SqlAlchemyMaintenancePlanRepository(
             self.session, self._pending_events

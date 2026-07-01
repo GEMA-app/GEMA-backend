@@ -73,6 +73,11 @@ from app.application.dtos.subscription_plan_dtos import (
     SubscriptionPlanResponse,
     UpdateSubscriptionPlanRequest,
 )
+from app.application.dtos.supplier_dtos import (
+    CreateSupplierRequest,
+    SupplierResponse,
+    UpdateSupplierRequest,
+)
 from app.application.dtos.system_audit_dtos import (
     ListSystemAuditsRequest,
     SystemAuditResponse,
@@ -147,6 +152,9 @@ __all__ = [
     "CreateSubscriptionPlanRequest",
     "SubscriptionPlanResponse",
     "UpdateSubscriptionPlanRequest",
+    "CreateSupplierRequest",
+    "SupplierResponse",
+    "UpdateSupplierRequest",
     "CreateInterventionRequest",
     "InterventionResponse",
     "UpdateInterventionRequest",

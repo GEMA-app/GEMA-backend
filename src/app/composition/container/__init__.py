@@ -118,6 +118,13 @@ from app.composition.container.subscription_plan import (
     get_subscription_plan_use_case,
     get_update_subscription_plan_use_case,
 )
+from app.composition.container.supplier import (
+    get_create_supplier_use_case,
+    get_delete_supplier_use_case,
+    get_get_supplier_use_case,
+    get_list_suppliers_use_case,
+    get_update_supplier_use_case,
+)
 from app.composition.container.system_audit import (
     get_list_system_audits_use_case,
     get_system_audit_use_case,
@@ -244,6 +251,12 @@ __all__ = [
     "get_delete_subscription_plan_use_case",
     "get_list_subscription_plans_use_case",
     "get_update_subscription_plan_use_case",
+    # Supplier
+    "get_create_supplier_use_case",
+    "get_get_supplier_use_case",
+    "get_list_suppliers_use_case",
+    "get_update_supplier_use_case",
+    "get_delete_supplier_use_case",
     # System Audit
     "get_list_system_audits_use_case",
     "get_system_audit_use_case",

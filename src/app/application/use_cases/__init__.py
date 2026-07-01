@@ -103,6 +103,13 @@ from app.application.use_cases.subscription_plan import (
     ListSubscriptionPlansUseCase,
     UpdateSubscriptionPlanUseCase,
 )
+from app.application.use_cases.supplier import (
+    CreateSupplierUseCase,
+    DeleteSupplierUseCase,
+    GetSupplierUseCase,
+    ListSuppliersUseCase,
+    UpdateSupplierUseCase,
+)
 from app.application.use_cases.system_audit import (
     GetSystemAuditUseCase,
     ListSystemAuditsUseCase,
@@ -215,6 +222,12 @@ __all__ = [
     "GetSubscriptionPlanUseCase",
     "UpdateSubscriptionPlanUseCase",
     "DeleteSubscriptionPlanUseCase",
+    # Supplier
+    "CreateSupplierUseCase",
+    "GetSupplierUseCase",
+    "ListSuppliersUseCase",
+    "UpdateSupplierUseCase",
+    "DeleteSupplierUseCase",
     "ListSubscriptionPlansUseCase",
     # System Audit
     "GetSystemAuditUseCase",
