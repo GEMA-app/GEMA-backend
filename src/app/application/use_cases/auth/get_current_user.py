@@ -38,6 +38,13 @@ class GetCurrentUserUseCase:
             if company and company.estado != CompanyStatus.ACTIVE:
                 raise UserInactiveError("La empresa se encuentra suspendida o cancelada.")
 
+            roles_list: list[str] = []
+            try:
+                roles = await self.uow.roles.get_user_roles(user.id, user.empresa_id)
+                roles_list = [r.nombre for r in roles]
+            except Exception:
+                roles_list = []
+
             created_at = user.created_at or datetime.now(UTC)
             updated_at = user.updated_at or datetime.now(UTC)
 
@@ -48,6 +55,7 @@ class GetCurrentUserUseCase:
                 empresa_id=str(user.empresa_id),
                 telefono=user.telefono,
                 activo=user.activo,
+                roles=roles_list,
                 created_at=created_at,
                 updated_at=updated_at,
             )
