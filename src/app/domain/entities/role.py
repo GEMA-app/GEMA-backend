@@ -93,6 +93,94 @@ class Role(EventProducer):
             permisos=permisos,
         )
 
+    @classmethod
+    def create_default_roles(cls, empresa_id: CompanyId) -> list["Role"]:
+        """Crea los roles por defecto de una empresa nueva (sin incluir Administrador).
+
+        Args:
+            empresa_id: Identificador de la empresa.
+
+        Returns:
+            Lista de roles por defecto creados.
+        """
+        default_roles: list[tuple[str, str, dict[PermissionModule, tuple[bool, bool, bool, bool]]]] = [
+            (
+                "Supervisor de Activos",
+                "Gestiona activos y supervisa su ciclo de vida",
+                {
+                    PermissionModule.ASSETS: (True, True, True, True),
+                    PermissionModule.MAINTENANCE: (True, False, False, False),
+                    PermissionModule.INVENTORY: (True, False, False, False),
+                    PermissionModule.REPORTS: (True, False, False, False),
+                    PermissionModule.ADMIN: (False, False, False, False),
+                    PermissionModule.PREFERENCES: (True, False, True, False),
+                },
+            ),
+            (
+                "Técnico de Mantenimiento",
+                "Ejecuta y registra mantenimiento de activos",
+                {
+                    PermissionModule.ASSETS: (True, False, False, False),
+                    PermissionModule.MAINTENANCE: (True, True, True, False),
+                    PermissionModule.INVENTORY: (True, False, False, False),
+                    PermissionModule.REPORTS: (True, True, False, False),
+                    PermissionModule.ADMIN: (False, False, False, False),
+                    PermissionModule.PREFERENCES: (True, False, True, False),
+                },
+            ),
+            (
+                "Almacenista",
+                "Gestiona inventario y catálogo de artículos",
+                {
+                    PermissionModule.ASSETS: (True, False, False, False),
+                    PermissionModule.MAINTENANCE: (False, False, False, False),
+                    PermissionModule.INVENTORY: (True, True, True, True),
+                    PermissionModule.REPORTS: (True, False, False, False),
+                    PermissionModule.ADMIN: (False, False, False, False),
+                    PermissionModule.PREFERENCES: (True, False, True, False),
+                },
+            ),
+            (
+                "Supervisor de Operaciones",
+                "Supervisa operaciones diarias y genera reportes",
+                {
+                    PermissionModule.ASSETS: (True, False, False, False),
+                    PermissionModule.MAINTENANCE: (True, True, True, True),
+                    PermissionModule.INVENTORY: (True, True, True, True),
+                    PermissionModule.REPORTS: (True, True, True, True),
+                    PermissionModule.ADMIN: (True, False, False, False),
+                    PermissionModule.PREFERENCES: (True, False, True, False),
+                },
+            ),
+            (
+                "Consultor (Solo Lectura)",
+                "Acceso de solo lectura a todos los módulos",
+                {
+                    PermissionModule.ASSETS: (True, False, False, False),
+                    PermissionModule.MAINTENANCE: (True, False, False, False),
+                    PermissionModule.INVENTORY: (True, False, False, False),
+                    PermissionModule.REPORTS: (True, False, False, False),
+                    PermissionModule.ADMIN: (True, False, False, False),
+                    PermissionModule.PREFERENCES: (True, False, True, False),
+                },
+            ),
+        ]
+
+        roles: list["Role"] = []
+        for nombre, desc, permisos_config in default_roles:
+            permisos = [
+                Permission(module=mod, can_view=v, can_create=c, can_edit=e, can_delete=d)
+                for mod, (v, c, e, d) in permisos_config.items()
+            ]
+            roles.append(cls(
+                id=RoleId(uuid.uuid4()),
+                empresa_id=empresa_id,
+                nombre=nombre,
+                descripcion=desc,
+                permisos=permisos,
+            ))
+        return roles
+
     def has_permission(self, module: PermissionModule, action: str) -> bool:
         """Verifica si el rol tiene el permiso solicitado para un módulo.
 
