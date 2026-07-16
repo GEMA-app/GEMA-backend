@@ -41,6 +41,8 @@ class SqlAlchemySystemAuditRepository(
 
     def _to_entity(self, model: SystemAuditModel) -> SystemAuditEntity:
         """Convierte un modelo ORM a entidad de dominio."""
+        usuario_nombre = model.usuario.nombre if model.usuario is not None else None
+        usuario_email = model.usuario.email if model.usuario is not None else None
         return SystemAuditEntity(
             id=model.id,
             empresa_id=CompanyId(model.empresa_id),
@@ -49,7 +51,10 @@ class SqlAlchemySystemAuditRepository(
             detalles=model.detalles,
             ip_address=model.ip_address,
             ocurrido_en=model.ocurrido_en,
+            usuario_nombre=usuario_nombre,
+            usuario_email=usuario_email,
         )
+
 
     async def get_by_id(  # type: ignore[override]
         self, company_id: CompanyId, audit_id: uuid.UUID

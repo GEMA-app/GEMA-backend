@@ -23,3 +23,8 @@ class SystemAuditRepositoryPort(Protocol):
     async def get_by_id(self, company_id: CompanyId, audit_id: uuid.UUID) -> SystemAudit | None:
         """Obtiene una entidad de auditoría específica por ID."""
         ...
+
+    async def save(self, entity: SystemAudit) -> None:
+        """Guarda o actualiza una entidad de auditoría."""
+        ...
+

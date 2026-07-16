@@ -166,7 +166,7 @@ class Role(EventProducer):
             ),
         ]
 
-        roles: list["Role"] = []
+        roles: list[Role] = []
         for nombre, desc, permisos_config in default_roles:
             permisos = [
                 Permission(module=mod, can_view=v, can_create=c, can_edit=e, can_delete=d)

@@ -12,6 +12,9 @@ class SystemAuditAttributes(BaseModel):
     detalles: dict[str, Any]
     ip_address: str | None
     ocurrido_en: datetime
+    usuario_nombre: str | None = None
+    usuario_email: str | None = None
+
 
 
 class SystemAuditResource(BaseModel):
