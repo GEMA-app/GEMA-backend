@@ -62,6 +62,7 @@ class UserLoggedIn(DomainEvent):
 
     user_id: str
     email: str
+    empresa_id: str
 
 
 @auto_register

@@ -1,14 +1,20 @@
 """Handlers de eventos de dominio que despachan notificaciones por correo."""
 
+import uuid
+
 import structlog
 
 from app.application.ports.notifications import NotificationPort
+from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.entities.system_audit import SystemAudit
 from app.domain.events import (
     PasswordChanged,
     PasswordResetCompleted,
     PasswordResetInitiated,
+    UserLoggedIn,
     UserRegistered,
 )
+from app.domain.value_objects import CompanyId, UserId
 
 logger = structlog.get_logger()
 
@@ -79,3 +85,27 @@ async def handle_password_reset_completed(
     """
     logger.info("handle_password_reset_completed", user_id=event.user_id)
     await notification.send_password_reset_confirmation(email=event.email)
+
+
+async def handle_user_logged_in(
+    event: UserLoggedIn,
+    uow: UnitOfWorkPort,
+) -> None:
+    """Registra el inicio de sesión en la tabla de auditoría.
+
+    Args:
+        event: Evento de dominio con datos del usuario que inició sesión.
+        uow: Unit of Work para persistir el registro de auditoría.
+    """
+    logger.info("handle_user_logged_in", user_id=event.user_id, email=event.email)
+
+    audit = SystemAudit.create(
+        empresa_id=CompanyId(value=uuid.UUID(event.empresa_id)),
+        usuario_id=UserId(value=uuid.UUID(event.user_id)),
+        accion="inicio_sesion",
+        detalles={"email": event.email},
+    )
+
+    async with uow:
+        await uow.system_audits.save(audit)
+        await uow.commit()

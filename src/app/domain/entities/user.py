@@ -96,7 +96,13 @@ class User(EventProducer):
         """
         if not self.activo:
             raise UserInactiveError(f"El usuario {self.email.value} está inactivo.")
-        self._events.append(UserLoggedIn(user_id=str(self.id), email=self.email.value))
+        self._events.append(
+            UserLoggedIn(
+                user_id=str(self.id),
+                email=self.email.value,
+                empresa_id=str(self.empresa_id),
+            )
+        )
 
     def change_password(self, new_hashed: str) -> None:
         """Cambia la contraseña del usuario y emite PasswordChanged.
