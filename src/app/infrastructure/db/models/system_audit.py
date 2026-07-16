@@ -4,14 +4,18 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import DateTime, ForeignKey, Index, String
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.db.base import Base
 from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
+
+if TYPE_CHECKING:
+    from app.infrastructure.db.models.user import UserModel
+
 
 
 class SystemAuditModel(TimestampMixin, TenantMixin, Base):
@@ -31,3 +35,6 @@ class SystemAuditModel(TimestampMixin, TenantMixin, Base):
     detalles: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
     ip_address: Mapped[str | None] = mapped_column(String(45))
     ocurrido_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+    usuario: Mapped[UserModel | None] = relationship("UserModel", lazy="selectin")
+

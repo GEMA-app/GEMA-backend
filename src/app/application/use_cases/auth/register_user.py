@@ -68,10 +68,15 @@ class RegisterUserUseCase:
             admin_role.record_assignment(user.id)
             await self.uow.roles.save(admin_role)
 
-            # 6. Asignar el rol al usuario creado
+            # 6. Crear roles por defecto (Técnico, Supervisor, etc.)
+            default_roles = Role.create_default_roles(empresa_id=company.id)
+            for rol in default_roles:
+                await self.uow.roles.save(rol)
+
+            # 8. Asignar el rol administrador al usuario creado
             await self.uow.roles.assign_to_user(admin_role.id, user.id)
 
-            # 7. Crear preferencias por defecto (evita 404 en GET /preferences)
+            # 9. Crear preferencias por defecto (evita 404 en GET /preferences)
             prefs = UserPreference.create(
                 usuario_id=user.id,
                 empresa_id=company.id,

@@ -20,6 +20,7 @@ class UserAttributes(BaseModel):
     empresa_id: str = Field(..., description="Identificador único de la empresa")
     telefono: str | None = Field(None, description="Teléfono de contacto")
     activo: bool = Field(..., description="Estado de activación del usuario")
+    roles: list[str] = Field(default_factory=list, description="Roles asignados al usuario")
     created_at: datetime = Field(..., description="Fecha y hora de creación")
     updated_at: datetime = Field(..., description="Fecha y hora de última actualización")
 

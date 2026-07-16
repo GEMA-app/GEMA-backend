@@ -43,7 +43,10 @@ def mock_audit_entity(company_id_str: str) -> Any:
     entity.detalles = {"ip": "192.168.1.1"}
     entity.ip_address = "192.168.1.1"
     entity.ocurrido_en = datetime.now(UTC)
+    entity.usuario_nombre = None
+    entity.usuario_email = None
     return entity
+
 
 
 @pytest.fixture

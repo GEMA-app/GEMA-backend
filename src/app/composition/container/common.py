@@ -12,6 +12,7 @@ from app.domain.events import (
     PasswordChanged,
     PasswordResetCompleted,
     PasswordResetInitiated,
+    UserLoggedIn,
     UserRegistered,
 )
 from app.infrastructure.cache.redis import get_redis, redis_client
@@ -21,6 +22,7 @@ from app.infrastructure.events.handlers.notifications import (
     handle_password_changed,
     handle_password_reset_completed,
     handle_password_reset_initiated,
+    handle_user_logged_in,
     handle_user_registered,
 )
 from app.infrastructure.notifications.email_sender import SmtpNotificationSender
@@ -88,6 +90,10 @@ def _register_handlers(bus: InProcessEventBus) -> None:
     bus.subscribe(
         PasswordResetCompleted,
         lambda e: handle_password_reset_completed(e, sender),  # type: ignore[arg-type]
+    )
+    bus.subscribe(
+        UserLoggedIn,
+        lambda e: handle_user_logged_in(e, get_uow()),  # type: ignore[arg-type]  # ponytail: fresh UoW per event, OK for single login
     )
 
 

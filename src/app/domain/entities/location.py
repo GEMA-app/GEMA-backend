@@ -48,19 +48,19 @@ class Location(EventProducer):
         """
         if tipo == LocationType.HEADQUARTERS and parent_type is not None:
             raise LocationInvalidTypeHierarchyError(
-                "Una sede (HEADQUARTERS) no puede tener una ubicación padre."
+                "Una sede no puede tener una ubicación padre."
             )
         elif tipo == LocationType.PLANT and parent_type != LocationType.HEADQUARTERS:
             raise LocationInvalidTypeHierarchyError(
-                "Una planta (PLANT) debe tener una sede (HEADQUARTERS) como padre."
+                "Una planta debe tener una sede como padre."
             )
         elif tipo == LocationType.AREA and parent_type != LocationType.PLANT:
             raise LocationInvalidTypeHierarchyError(
-                "Un área (AREA) debe tener una planta (PLANT) como padre."
+                "Un área debe tener una planta como padre."
             )
         elif tipo == LocationType.SECTION and parent_type != LocationType.AREA:
             raise LocationInvalidTypeHierarchyError(
-                "Una sección (SECTION) debe tener un área (AREA) como padre."
+                "Una sección debe tener un área como padre."
             )
 
     def pull_events(self) -> list[DomainEvent]:

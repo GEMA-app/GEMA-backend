@@ -3,6 +3,7 @@
 import smtplib
 import time
 from email.mime.text import MIMEText
+from pathlib import Path as SyncPath
 from string import Template
 
 import anyio
@@ -28,7 +29,10 @@ class SmtpNotificationSender(NotificationPort):
 
     def __init__(self) -> None:
         """Inicializa el cargador de templates desde el directorio configurado."""
-        self._templates_dir = settings.EMAIL_TEMPLATES_DIR
+        templates_dir = settings.EMAIL_TEMPLATES_DIR
+        if not templates_dir.is_absolute():
+            templates_dir = (SyncPath(__file__).resolve().parent / templates_dir).resolve()
+        self._templates_dir = templates_dir
         self._cache: dict[str, Template] = {}
 
     async def _render(self, template_name: str, **kwargs: str) -> str:

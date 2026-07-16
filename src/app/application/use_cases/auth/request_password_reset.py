@@ -67,10 +67,14 @@ class RequestPasswordResetUseCase:
 
         # El email se envía directamente desde el use case para que el raw_token
         # nunca toque el bus de eventos ni la tabla outbox.
-        await self.notification.send_password_reset(
-            email=user.email.value,
-            reset_url=f"{self.frontend_url}/reset-password?token={raw_token}",
-            expire_minutes=_RESET_TOKEN_EXPIRE_MINUTES,
-        )
+        # ponytail: best-effort, si falla la notificación el token igual quedó en Redis.
+        try:
+            await self.notification.send_password_reset(
+                email=user.email.value,
+                reset_url=f"{self.frontend_url}/reset-password?token={raw_token}",
+                expire_minutes=_RESET_TOKEN_EXPIRE_MINUTES,
+            )
+        except Exception:
+            logger.exception("password_reset_email_failed", user_id=str(user.id))
 
         logger.info("password_reset_requested", user_id=str(user.id))

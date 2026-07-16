@@ -42,4 +42,7 @@ class GetSystemAuditUseCase:
                 detalles=audit.detalles,
                 ip_address=audit.ip_address,
                 ocurrido_en=audit.ocurrido_en,
+                usuario_nombre=audit.usuario_nombre,
+                usuario_email=audit.usuario_email,
             )
+

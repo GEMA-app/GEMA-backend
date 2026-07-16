@@ -69,6 +69,8 @@ async def list_system_audits(
                 detalles=dto.detalles,
                 ip_address=dto.ip_address,
                 ocurrido_en=dto.ocurrido_en,
+                usuario_nombre=dto.usuario_nombre,
+                usuario_email=dto.usuario_email,
             ),
         )
         for dto in dtos
@@ -111,6 +113,8 @@ async def get_system_audit_by_id(
                 detalles=dto.detalles,
                 ip_address=dto.ip_address,
                 ocurrido_en=dto.ocurrido_en,
+                usuario_nombre=dto.usuario_nombre,
+                usuario_email=dto.usuario_email,
             ),
         )
     )

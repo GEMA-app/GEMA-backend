@@ -55,8 +55,11 @@ class ListSystemAuditsUseCase:
                     detalles=e.detalles,
                     ip_address=e.ip_address,
                     ocurrido_en=e.ocurrido_en,
+                    usuario_nombre=e.usuario_nombre,
+                    usuario_email=e.usuario_email,
                 )
                 for e in entities
             ]
+
 
             return dtos, total
