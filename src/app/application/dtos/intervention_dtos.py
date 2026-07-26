@@ -61,3 +61,4 @@ class UpdateInterventionRequest:
 
     tareas_realizadas: str | None = None
     horas_hombre: float | None = None
+    fecha_fin: datetime | None = None

@@ -49,6 +49,7 @@ class UpdateInterventionAttributes(BaseModel):
         None, description="Descripción detallada de las tareas realizadas"
     )
     horas_hombre: float | None = Field(None, description="Horas hombre dedicadas a la intervención")
+    fecha_fin: datetime | None = Field(None, description="Fecha y hora de finalización")
 
 
 class InterventionResource(BaseModel):
