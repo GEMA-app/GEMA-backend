@@ -31,3 +31,10 @@ class EmptyLocationNameError(LocationException):
     """Lanzada cuando se intenta asignar un nombre vacío a una ubicación."""
 
     pass
+
+
+class LocationHasChildrenError(LocationException):
+    """Lanzada cuando se intenta eliminar una ubicación que tiene sububicaciones hijas."""
+
+    pass
+

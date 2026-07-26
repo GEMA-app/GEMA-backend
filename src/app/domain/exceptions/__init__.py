@@ -77,6 +77,7 @@ from app.domain.exceptions.location import (
     EmptyLocationNameError,
     LocationCircularReferenceError,
     LocationException,
+    LocationHasChildrenError,
     LocationInvalidTypeHierarchyError,
     LocationNotFoundError,
 )
@@ -202,6 +203,7 @@ __all__ = [
     "LocationException",
     "LocationNotFoundError",
     "LocationCircularReferenceError",
+    "LocationHasChildrenError",
     "LocationInvalidTypeHierarchyError",
     "ValidationException",
     "PreferenceException",
