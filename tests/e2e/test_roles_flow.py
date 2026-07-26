@@ -118,8 +118,8 @@ async def test_roles_crud_and_assign_flow():
 
             res = await client.get(f"/v1/empresas/{empresa_b}/roles", headers=auth_b)
             assert res.status_code == 200
-            # B no ve roles de A
-            assert len(res.json()["data"]) == 1  # solo el rol Administrador creado al registrar
+            # B no ve roles de A (solo ve sus roles por defecto creados al registrar)
+            assert len(res.json()["data"]) == 6
 
     finally:
         app.dependency_overrides.clear()
