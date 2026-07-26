@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 class PlanExecutionAttributes(BaseModel):
     """Atributos de una ejecución de plan en formato JSON:API."""
 
+    id: str = Field(..., description="ID único de la ejecución")
     work_order_id: str = Field(..., description="ID de la orden de trabajo generada")
     execution_date: datetime = Field(..., description="Fecha de ejecución")
     observations: str | None = Field(None, description="Observaciones de la ejecución")
@@ -29,6 +30,7 @@ class MaintenancePlanAttributes(BaseModel):
     created_at: datetime | None = None
     updated_at: datetime | None = None
     es_urgente: bool = False
+    version: int | None = Field(None, description="Versión para lock optimista")
     ejecuciones: list[PlanExecutionAttributes] = Field(
         default_factory=list, description="Historial de ejecuciones del plan"
     )
@@ -94,6 +96,7 @@ class UpdateMaintenancePlanRequest(BaseModel):
             tecnico_responsable_id: str | None = None
             descripcion_tareas: str | None = None
             activo: bool | None = None
+            version: int | None = Field(None, description="Versión para lock optimista")
 
         type: str = Field(default="maintenance-plans")
         attributes: Attributes

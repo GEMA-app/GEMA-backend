@@ -199,6 +199,7 @@ async def get_maintenance_plan(
                 es_urgente=res.es_urgente,
                 ejecuciones=[
                     PlanExecutionAttributes(
+                        id=e.id,
                         work_order_id=e.work_order_id,
                         execution_date=e.execution_date,
                         observations=e.observations,

@@ -24,14 +24,16 @@ class DeleteRoleUseCase:
             from app.domain.enums import PermissionModule
             from app.domain.exceptions import LastAdminRevocationError, ValidationException
 
-            if role.nombre == "Administrador":
+            if role.nombre.lower() == "administrador":
                 raise ValidationException(
                     "No se puede eliminar el rol de Administrador del sistema."
                 )
 
             if any(p.module == PermissionModule.ADMIN and p.can_delete for p in role.permisos):
-                remaining_admins = await self.uow.roles.count_admin_users(empresa_id=company_id)
-                if remaining_admins <= 1:
+                remaining_admins = await self.uow.roles.count_admin_users_excluding_role(
+                    empresa_id=company_id, exclude_role_id=role_id
+                )
+                if remaining_admins == 0:
                     raise LastAdminRevocationError()
 
             await self.uow.roles.delete(role_id, company_id)

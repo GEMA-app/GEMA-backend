@@ -44,3 +44,13 @@ class RoleRepositoryPort(Protocol):
     ) -> int:
         """Cuenta usuarios con permiso admin:delete en la empresa, opcionalmente excluyendo uno."""
         ...
+
+    async def count_admin_users_excluding_role(
+        self, empresa_id: CompanyId, exclude_role_id: RoleId
+    ) -> int:
+        """Cuenta usuarios administradores con permisos en la empresa excluyendo un rol."""
+        ...
+
+    async def count_role_users(self, role_id: RoleId, empresa_id: CompanyId) -> int:
+        """Cuenta usuarios asignados a un rol específico dentro de una empresa."""
+        ...
