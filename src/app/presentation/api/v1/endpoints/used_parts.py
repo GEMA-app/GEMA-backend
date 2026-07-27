@@ -218,7 +218,11 @@ async def update_used_part(
     used_part_id: UUID,
     request: UpdateUsedPartRequest,
     use_case: UpdateUsedPartUseCase = Depends(get_update_used_part_use_case),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(
+            PermissionModule.MAINTENANCE, "edit", PermissionModule.INVENTORY, "edit"
+        )
+    ),
 ) -> UsedPartDocument:
     """Actualiza la cantidad de un repuesto utilizado.
 
@@ -272,7 +276,9 @@ async def delete_used_part(
     used_part_id: UUID,
     use_case: DeleteUsedPartUseCase = Depends(get_delete_used_part_use_case),
     current_user: UserResponse = Depends(
-        require_permission(PermissionModule.MAINTENANCE, "delete")
+        require_dual_permission(
+            PermissionModule.MAINTENANCE, "delete", PermissionModule.INVENTORY, "delete"
+        )
     ),
 ) -> None:
     """Elimina un repuesto utilizado.
