@@ -158,17 +158,19 @@ class WorkOrder:
 
     @staticmethod
     def generate_code(company_id: CompanyId) -> str:
-        """Genera un código de orden de trabajo con formato OT-año-XXXX.
+        """Genera un código de orden de trabajo con formato OT-año-XXXXXX.
 
         Args:
             company_id: Identificador de la empresa, usado para derivar
                 un código único por tenant.
 
         Returns:
-            str: Código de orden de trabajo en formato OT-año-XXXX.
+            str: Código de orden de trabajo en formato OT-año-XXXXXX.
         """
+        import random
         year = datetime.now(UTC).year
-        return f"OT-{year}-{hash(company_id.value) % 10000:04d}"
+        suffix = "".join(random.choices("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=5))
+        return f"OT-{year}-{suffix}"
 
     def update_details(
         self,

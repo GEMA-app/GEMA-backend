@@ -45,13 +45,23 @@ class CreateWorkOrderUseCase:
             if not asset:
                 raise AssetNotFoundError(f"Activo con ID '{request.activo_id}' no encontrado.")
 
-            codigo_ot = request.codigo_ot or WorkOrder.generate_code(company)
-
-            existing = await self.uow.work_orders.get_by_code(codigo_ot, company)
-            if existing:
-                raise WorkOrderCodeExistsError(
-                    f"Ya existe una orden de trabajo con código '{codigo_ot}' en esta empresa."
-                )
+            if request.codigo_ot:
+                codigo_ot = request.codigo_ot
+                existing = await self.uow.work_orders.get_by_code(codigo_ot, company)
+                if existing:
+                    raise WorkOrderCodeExistsError(
+                        f"Ya existe una orden de trabajo con código '{codigo_ot}' en esta empresa."
+                    )
+            else:
+                for _ in range(10):
+                    codigo_ot = WorkOrder.generate_code(company)
+                    existing = await self.uow.work_orders.get_by_code(codigo_ot, company)
+                    if not existing:
+                        break
+                else:
+                    raise WorkOrderCodeExistsError(
+                        "No se pudo generar un código único de orden de trabajo. Reintente."
+                    )
 
             work_order = WorkOrder.create(
                 work_order_id=WorkOrderId(uuid.uuid4()),
