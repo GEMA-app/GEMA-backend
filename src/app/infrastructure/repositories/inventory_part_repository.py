@@ -3,7 +3,7 @@
 from decimal import Decimal
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.ports.inventory_part_repository import InventoryPartRepositoryPort
@@ -62,8 +62,8 @@ class SqlAlchemyInventoryPartRepository(
 
     async def get_all_by_company(
         self, empresa_id: CompanyId, limit: int = 20, offset: int = 0
-    ) -> list[InventoryPart]:
-        """Lista los repuestos de una empresa con paginación."""
+    ) -> tuple[list[InventoryPart], int]:
+        """Lista los repuestos de una empresa con paginación y conteo total."""
         stmt = (
             select(InventoryPartModel)
             .where(InventoryPartModel.empresa_id == empresa_id.value)
@@ -71,9 +71,15 @@ class SqlAlchemyInventoryPartRepository(
             .limit(limit)
             .order_by(InventoryPartModel.id)
         )
+        count_stmt = select(func.count(InventoryPartModel.id)).where(
+            InventoryPartModel.empresa_id == empresa_id.value
+        )
+        count_res = await self.session.execute(count_stmt)
+        total = count_res.scalar_one()
+
         result = await self.session.execute(stmt)
         models = result.scalars().all()
-        return [self._to_entity(m) for m in models]
+        return [self._to_entity(m) for m in models], total
 
     async def validate_and_decrement_stock(
         self, repuesto_id: UUID, cantidad: int, empresa_id: CompanyId
