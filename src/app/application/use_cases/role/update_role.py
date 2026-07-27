@@ -78,6 +78,7 @@ class UpdateRoleUseCase:
 
             await self.uow.roles.save(role)
             await self.uow.commit()
+            role.version += 1
 
             return RoleResponse(
                 id=str(role.id),

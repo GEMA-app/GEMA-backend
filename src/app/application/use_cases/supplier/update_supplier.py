@@ -59,6 +59,7 @@ class UpdateSupplierUseCase:
 
             await self.uow.suppliers.save(supplier)
             await self.uow.commit()
+            supplier.version += 1
             return SupplierResponse(
                 id=supplier.id,
                 empresa_id=supplier.empresa_id,

@@ -7,13 +7,14 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from app.domain.enums import PermissionModule
 from app.presentation.api.v1.schemas.jsonapi_base import LinksObject
 
 
 class PermissionAttributes(BaseModel):
     """Atributos de un permiso individual."""
 
-    module: str
+    module: PermissionModule
     can_view: bool = False
     can_create: bool = False
     can_edit: bool = False
