@@ -46,3 +46,9 @@ class InventoryPartRepositoryPort(Protocol):
     ) -> None:
         """Valida que exista stock suficiente para el consumo de repuestos y lo decrementa."""
         ...
+
+    async def restore_stock(
+        self, repuesto_id: UUID, cantidad: int, empresa_id: CompanyId
+    ) -> None:
+        """Incrementa el stock del repuesto en inventario tras eliminar o reducir consumo."""
+        ...
