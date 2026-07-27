@@ -30,7 +30,6 @@ class MaintenancePlanAttributes(BaseModel):
     created_at: datetime | None = None
     updated_at: datetime | None = None
     es_urgente: bool = False
-    version: int | None = Field(None, description="Versión para lock optimista")
     ejecuciones: list[PlanExecutionAttributes] = Field(
         default_factory=list, description="Historial de ejecuciones del plan"
     )
@@ -96,7 +95,6 @@ class UpdateMaintenancePlanRequest(BaseModel):
             tecnico_responsable_id: str | None = None
             descripcion_tareas: str | None = None
             activo: bool | None = None
-            version: int | None = Field(None, description="Versión para lock optimista")
 
         type: str = Field(default="maintenance-plans")
         attributes: Attributes

@@ -10,6 +10,7 @@ from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.maintenance_plan import MaintenancePlan
 from app.domain.enums import MaintenanceType
 from app.domain.value_objects import AssetId, CompanyId, UserId
+from app.domain.exceptions.asset import AssetNotFoundError
 
 
 class CreateMaintenancePlanUseCase:
@@ -36,6 +37,11 @@ class CreateMaintenancePlanUseCase:
         tecnico_id: UserId | None = None
         if request.tecnico_responsable_id:
             tecnico_id = UserId.from_string(request.tecnico_responsable_id)
+
+        # Verify the asset belongs to the same tenant
+        asset = await self.uow.assets.get_by_id(activo_id, company_id)
+        if not asset:
+            raise AssetNotFoundError(str(activo_id))
 
         plan = MaintenancePlan.create(
             empresa_id=company_id,
