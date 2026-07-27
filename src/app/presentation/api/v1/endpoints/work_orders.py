@@ -281,7 +281,11 @@ async def change_work_order_status(
     use_case: ChangeWorkOrderStatusUseCase = Depends(get_change_work_order_status_use_case),
 ) -> WorkOrderDocument:
     """Cambia el estado de una orden de trabajo (iniciar, pausar, reanudar, cerrar, cancelar)."""
-    dto = ChangeStatusDTO(estado=request.data.attributes.estado)
+    dto = ChangeStatusDTO(
+        estado=request.data.attributes.estado,
+        motivo=request.data.attributes.motivo,
+        usuario_id=request.data.attributes.usuario_id or current_user.id,
+    )
     res = await use_case.execute(empresa_id, ot_id, dto)
     return WorkOrderDocument(
         data=WorkOrderResource(
