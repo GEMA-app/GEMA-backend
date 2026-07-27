@@ -27,5 +27,6 @@ class ListSystemAuditsRequest:
 
     usuario_id: str | None = None
     accion: str | None = None
+    modulo: str | None = None
     fecha_inicio: datetime | None = None
     fecha_fin: datetime | None = None

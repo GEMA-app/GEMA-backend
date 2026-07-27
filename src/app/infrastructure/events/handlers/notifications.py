@@ -44,15 +44,30 @@ async def handle_user_registered(
 async def handle_password_changed(
     event: PasswordChanged,
     notification: NotificationPort,
+    uow: UnitOfWorkPort | None = None,
 ) -> None:
     """Envía la alerta de seguridad cuando la contraseña ha sido cambiada.
 
     Args:
         event: Evento de dominio con datos del cambio de contraseña.
         notification: Puerto de notificaciones para enviar el correo.
+        uow: Unit of Work opcional para persistir auditoría.
     """
     logger.info("handle_password_changed", user_id=event.user_id)
     await notification.send_password_changed(email=event.email)
+    if uow and event.empresa_id and event.user_id:
+        try:
+            audit = SystemAudit.create(
+                empresa_id=CompanyId(value=uuid.UUID(event.empresa_id)),
+                usuario_id=UserId(value=uuid.UUID(event.user_id)),
+                accion="cambio_contrasena",
+                detalles={"email": event.email},
+            )
+            async with uow:
+                await uow.system_audits.save(audit)
+                await uow.commit()
+        except Exception as err:
+            logger.warning("audit_log_failed", error=str(err))
 
 
 async def handle_password_reset_initiated(
@@ -76,15 +91,30 @@ async def handle_password_reset_initiated(
 async def handle_password_reset_completed(
     event: PasswordResetCompleted,
     notification: NotificationPort,
+    uow: UnitOfWorkPort | None = None,
 ) -> None:
     """Envía la confirmación de que la contraseña fue restablecida.
 
     Args:
         event: Evento de dominio con datos del restablecimiento completado.
         notification: Puerto de notificaciones para enviar el correo.
+        uow: Unit of Work opcional para auditoría.
     """
     logger.info("handle_password_reset_completed", user_id=event.user_id)
     await notification.send_password_reset_confirmation(email=event.email)
+    if uow and event.empresa_id and event.user_id:
+        try:
+            audit = SystemAudit.create(
+                empresa_id=CompanyId(value=uuid.UUID(event.empresa_id)),
+                usuario_id=UserId(value=uuid.UUID(event.user_id)),
+                accion="restablecimiento_contrasena",
+                detalles={"email": event.email},
+            )
+            async with uow:
+                await uow.system_audits.save(audit)
+                await uow.commit()
+        except Exception as err:
+            logger.warning("audit_log_failed", error=str(err))
 
 
 async def handle_user_logged_in(

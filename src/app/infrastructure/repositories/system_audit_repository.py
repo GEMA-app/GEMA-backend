@@ -99,7 +99,9 @@ class SqlAlchemySystemAuditRepository(
         if filters.get("usuario_id") is not None:
             stmt = stmt.where(SystemAuditModel.usuario_id == filters["usuario_id"])
         if filters.get("accion"):
-            stmt = stmt.where(SystemAuditModel.accion == filters["accion"])
+            stmt = stmt.where(SystemAuditModel.accion.ilike(f"%{filters['accion']}%"))
+        if filters.get("modulo"):
+            stmt = stmt.where(SystemAuditModel.accion.ilike(f"%{filters['modulo']}%"))
         if filters.get("fecha_inicio"):
             stmt = stmt.where(SystemAuditModel.ocurrido_en >= filters["fecha_inicio"])
         if filters.get("fecha_fin"):
