@@ -58,7 +58,6 @@ class UpdateUsedPartUseCase:
                 part = part.change_quantity(request.cantidad_usada)
                 await self.uow.used_parts.save(part)
                 await self.uow.commit()
-                part.version += 1
 
         return UsedPartResponse(
             id=part.id,

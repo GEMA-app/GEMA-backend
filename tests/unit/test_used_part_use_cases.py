@@ -33,6 +33,7 @@ def mock_uow() -> Any:
     uow.used_parts.delete = AsyncMock()
     uow.inventory_parts = MagicMock()
     uow.inventory_parts.validate_and_decrement_stock = AsyncMock()
+    uow.inventory_parts.restore_stock = AsyncMock()
     uow.commit = AsyncMock()
     # Sin sesión real: el bloque de descuento de stock se omite correctamente
     uow.session = None
