@@ -68,9 +68,5 @@ class CreateUsedPartUseCase:
             moneda=new_part.moneda,
             created_at=new_part.created_at or datetime.now(),
             updated_at=new_part.updated_at or datetime.now(),
-            precio_total=(
-                new_part.cantidad_usada * new_part.precio_unitario
-                if new_part.precio_unitario is not None
-                else None
-            ),
+            precio_total=new_part.precio_total,
         )

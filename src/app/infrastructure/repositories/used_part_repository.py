@@ -42,6 +42,7 @@ class SqlAlchemyUsedPartRepository(
             cantidad_usada=model.cantidad_usada,
             precio_unitario=model.precio_unitario,
             moneda=model.moneda,
+            version=model.version,
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
@@ -63,6 +64,7 @@ class SqlAlchemyUsedPartRepository(
             cantidad_usada=entity.cantidad_usada,
             precio_unitario=entity.precio_unitario,
             moneda=entity.moneda,
+            version=entity.version,
         )
 
     async def get_by_intervention(

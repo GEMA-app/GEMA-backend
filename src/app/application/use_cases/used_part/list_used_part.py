@@ -41,11 +41,7 @@ class ListUsedPartsUseCase:
                     moneda=p.moneda,
                     created_at=p.created_at or datetime.now(),
                     updated_at=p.updated_at or datetime.now(),
-                    precio_total=(
-                        p.cantidad_usada * p.precio_unitario
-                        if p.precio_unitario is not None
-                        else None
-                    ),
+                    precio_total=p.precio_total,
                 )
                 for p in parts
             ]

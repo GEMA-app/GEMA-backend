@@ -58,6 +58,7 @@ class UpdateUsedPartUseCase:
                 part = part.change_quantity(request.cantidad_usada)
                 await self.uow.used_parts.save(part)
                 await self.uow.commit()
+                part.version += 1
 
         return UsedPartResponse(
             id=part.id,
@@ -69,9 +70,5 @@ class UpdateUsedPartUseCase:
             moneda=part.moneda,
             created_at=part.created_at or datetime.now(),
             updated_at=part.updated_at or datetime.now(),
-            precio_total=(
-                part.cantidad_usada * part.precio_unitario
-                if part.precio_unitario is not None
-                else None
-            ),
+            precio_total=part.precio_total,
         )
