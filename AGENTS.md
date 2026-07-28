@@ -395,7 +395,7 @@ Los siguientes endpoints GET usan `require_tenant_read` en lugar de `require_per
 ### 2. Estructura de Semillas de Personal y Roles
 Para la inicialización del sistema en desarrollo y staging, se define una estructura estándar con **6 roles** granularizados por módulo en la empresa de pruebas:
 - **Administrador:** Acceso completo (puede_ver/crear/editar/eliminar) en todos los módulos.
-- **Supervisor de Activos:** CRUD en Activos, solo lectura en el resto (excepto Admin).
+- **Supervisor de Activos:** CRU en Activos (sin eliminar), solo lectura en el resto (excepto Admin).
 - **Técnico de Mantenimiento:** CRUD en Mantenimiento, lectura en Activos e Inventario, creación en Reportes.
 - **Almacenista:** CRUD en Inventario, lectura en Activos y Reportes.
 - **Supervisor de Operaciones:** CRUD en Reportes, Mantenimiento e Inventario, lectura en Administración.

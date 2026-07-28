@@ -31,6 +31,7 @@ from app.composition.container.user import (
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
     require_permission,
+    require_tenant_read,
 )
 from app.presentation.api.v1.schemas.user import (
     CreateUserRequest,
@@ -84,6 +85,50 @@ async def list_users(
         ],
         meta={"total": len(users)},
     )
+
+
+@router.get(
+    "/basico",
+    response_model=UserListDocument,
+    summary="Listar información básica de usuarios de la empresa",
+)
+async def list_basic_users(
+    empresa_id: str,
+    current_user: CurrentUserResponse = Depends(require_tenant_read),
+    use_case: ListUsersUseCase = Depends(get_list_users_use_case),
+) -> UserListDocument:
+    """Retorna información básica de todos los usuarios de la empresa.
+    Usado para selectores e interfaces que no requieren permisos de administrador.
+
+    Args:
+        empresa_id: Identificador de la empresa (tenant).
+        current_user: Usuario autenticado (validado por tenant).
+        use_case: Caso de uso de listado inyectado por composición.
+
+    Returns:
+        Documento JSON:API con la lista básica de usuarios (sin roles ni info sensible).
+    """
+    users = await use_case.execute(empresa_id)
+    return UserListDocument(
+        data=[
+            UserResource(
+                id=u.id,
+                attributes=UserAttributes(
+                    email=u.email,
+                    nombre=u.nombre,
+                    telefono=u.telefono,
+                    activo=u.activo,
+                    empresa_id=u.empresa_id,
+                    roles=[],  # Se omiten intencionalmente por seguridad
+                    created_at=u.created_at,
+                    updated_at=u.updated_at,
+                ),
+            )
+            for u in users
+        ],
+        meta={"total": len(users)},
+    )
+
 
 
 @router.post(

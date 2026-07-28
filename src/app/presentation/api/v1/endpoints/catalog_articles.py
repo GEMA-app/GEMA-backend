@@ -29,6 +29,7 @@ from app.composition.container import (
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
+    require_dual_permission,
     require_permission,
 )
 from app.presentation.api.v1.schemas.catalog_article import (
@@ -103,7 +104,7 @@ async def list_catalog_articles(
     limit: int = Query(20, ge=1, le=100, description="Máximo de registros"),
     category_id: str | None = Query(None, description="Filtrar por categoría"),
     search: str | None = Query(None, description="Búsqueda por nombre"),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
+    current_user: UserResponse = Depends(require_dual_permission(PermissionModule.ASSETS, "view", PermissionModule.INVENTORY, "view")),
     use_case: ListCatalogArticlesUseCase = Depends(get_list_catalog_articles_use_case),
 ) -> CatalogArticleListDocument:
     """Lista los artículos de catálogo de una empresa.
@@ -156,7 +157,7 @@ async def list_catalog_articles(
 async def get_catalog_article(
     empresa_id: str,
     articulo_id: str,
-    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
+    current_user: UserResponse = Depends(require_dual_permission(PermissionModule.ASSETS, "view", PermissionModule.INVENTORY, "view")),
     use_case: GetCatalogArticleUseCase = Depends(get_catalog_article_use_case),
 ) -> CatalogArticleDocument:
     """Obtiene un artículo de catálogo por su ID.
