@@ -105,7 +105,7 @@ class UsedPart:
             cantidad_usada=new_quantity,
             precio_unitario=self.precio_unitario,
             moneda=self.moneda,
-            version=self.version + 1,
+            version=self.version,
             created_at=self.created_at,
             updated_at=datetime.now(),
         )
