@@ -123,6 +123,7 @@ async def list_work_orders(
     activo_id: str | None = Query(None, description="Filtrar por activo"),
     tipo: str | None = Query(None, description="Filtrar por tipo de mantenimiento"),
     supervisor_id: str | None = Query(None, description="Filtrar por supervisor"),
+    tecnico_id: str | None = Query(None, description="Filtrar por técnico asignado"),
     offset: int = Query(0, ge=0, description="Desplazamiento"),
     limit: int = Query(20, ge=1, le=100, description="Máximo de resultados"),
 ) -> WorkOrderListDocument:
@@ -133,6 +134,7 @@ async def list_work_orders(
         activo_id=activo_id,
         tipo=tipo,
         supervisor_id=supervisor_id,
+        tecnico_id=tecnico_id,
         offset=offset,
         limit=limit,
     )

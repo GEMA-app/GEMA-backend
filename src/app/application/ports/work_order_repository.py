@@ -34,6 +34,7 @@ class WorkOrderRepositoryPort(Protocol):
         activo_id: AssetId | None = None,
         tipo: str | None = None,
         supervisor_id: str | None = None,
+        tecnico_id: str | None = None,
         offset: int = 0,
         limit: int = 20,
     ) -> tuple[list[WorkOrder], int]:

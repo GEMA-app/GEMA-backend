@@ -3,7 +3,7 @@
 from app.application.dtos.intervention_dtos import InterventionResponse
 from app.application.dtos.used_part_dtos import UsedPartResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
-from app.domain.value_objects.identifier import CompanyId, InterventionId, WorkOrderId
+from app.domain.value_objects.identifier import CompanyId, InterventionId, UserId, WorkOrderId
 
 
 class ListInterventionsUseCase:
@@ -13,7 +13,8 @@ class ListInterventionsUseCase:
         self._uow = uow
 
     async def execute(
-        self, empresa_id: str, ot_id: str, offset: int = 0, limit: int = 100
+        self, empresa_id: str, ot_id: str, offset: int = 0, limit: int = 100,
+        tecnico_id: str | None = None,
     ) -> tuple[list[InterventionResponse], int]:
         """Ejecuta el caso de uso para listar intervenciones de una orden de trabajo.
 
@@ -22,6 +23,7 @@ class ListInterventionsUseCase:
             ot_id: Identificador UUID de la orden de trabajo.
             offset: Número de registros a omitir (paginación).
             limit: Cantidad máxima de registros a retornar.
+            tecnico_id: Filtrar por ID del técnico asignado.
 
         Returns:
             Una tupla con la lista de InterventionResponse y el total de registros.
@@ -34,6 +36,10 @@ class ListInterventionsUseCase:
                 work_order_id=work_order_id,
                 empresa_id=company_id,
             )
+
+            if tecnico_id:
+                tech_id = UserId.from_string(tecnico_id)
+                interventions = [i for i in interventions if i.technician_id == tech_id]
 
             # ponytail: N+1 query — acceptable for typical intervention counts (<50).
             # Optimize with JOIN if pagination exceeds 50.

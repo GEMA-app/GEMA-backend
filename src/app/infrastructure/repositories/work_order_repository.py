@@ -108,6 +108,7 @@ class SqlAlchemyWorkOrderRepository(
         activo_id: AssetId | None = None,
         tipo: str | None = None,
         supervisor_id: str | None = None,
+        tecnico_id: str | None = None,
         offset: int = 0,
         limit: int = 20,
     ) -> tuple[list[WorkOrder], int]:
@@ -132,6 +133,16 @@ class SqlAlchemyWorkOrderRepository(
         if supervisor_id:
             stmt = stmt.where(WorkOrderModel.supervisor_id == uuid.UUID(supervisor_id))
             count_stmt = count_stmt.where(WorkOrderModel.supervisor_id == uuid.UUID(supervisor_id))
+        if tecnico_id:
+            from app.infrastructure.db.models.work_order import WorkOrderTechnicianModel
+            stmt = stmt.join(
+                WorkOrderTechnicianModel,
+                WorkOrderModel.id == WorkOrderTechnicianModel.ordenes_trabajo_id,
+            ).where(WorkOrderTechnicianModel.tecnico_id == uuid.UUID(tecnico_id))
+            count_stmt = count_stmt.join(
+                WorkOrderTechnicianModel,
+                WorkOrderModel.id == WorkOrderTechnicianModel.ordenes_trabajo_id,
+            ).where(WorkOrderTechnicianModel.tecnico_id == uuid.UUID(tecnico_id))
         stmt = stmt.order_by(WorkOrderModel.created_at.desc())
         stmt = stmt.offset(offset).limit(limit)
         result = await self.session.execute(stmt)
