@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 class PlanExecutionAttributes(BaseModel):
     """Atributos de una ejecución de plan en formato JSON:API."""
 
+    id: str = Field(..., description="ID único de la ejecución")
     work_order_id: str = Field(..., description="ID de la orden de trabajo generada")
     execution_date: datetime = Field(..., description="Fecha de ejecución")
     observations: str | None = Field(None, description="Observaciones de la ejecución")

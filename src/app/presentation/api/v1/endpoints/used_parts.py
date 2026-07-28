@@ -128,8 +128,11 @@ async def create_used_part(
     Returns:
         UsedPartDocument con los datos del repuesto creado.
     """
+    if request.data.attributes.intervencion_id != UUID(intervencion_id):
+        raise ValueError("El intervencion_id del payload no coincide con la URL.")
+
     dto = CreateUsedPartDTO(
-        intervencion_id=request.data.attributes.intervencion_id,
+        intervencion_id=UUID(intervencion_id),
         repuesto_id=request.data.attributes.repuesto_id,
         cantidad_usada=request.data.attributes.cantidad_usada,
         precio_unitario=request.data.attributes.precio_unitario,
@@ -167,7 +170,11 @@ async def get_used_part(
     intervencion_id: str,
     used_part_id: UUID,
     use_case: GetUsedPartUseCase = Depends(get_get_used_part_use_case),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "view")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(
+            PermissionModule.MAINTENANCE, "view", PermissionModule.INVENTORY, "view"
+        )
+    ),
 ) -> UsedPartDocument:
     """Obtiene un repuesto utilizado por su ID.
 
@@ -218,7 +225,11 @@ async def update_used_part(
     used_part_id: UUID,
     request: UpdateUsedPartRequest,
     use_case: UpdateUsedPartUseCase = Depends(get_update_used_part_use_case),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.MAINTENANCE, "edit")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(
+            PermissionModule.MAINTENANCE, "edit", PermissionModule.INVENTORY, "edit"
+        )
+    ),
 ) -> UsedPartDocument:
     """Actualiza la cantidad de un repuesto utilizado.
 
@@ -272,7 +283,9 @@ async def delete_used_part(
     used_part_id: UUID,
     use_case: DeleteUsedPartUseCase = Depends(get_delete_used_part_use_case),
     current_user: UserResponse = Depends(
-        require_permission(PermissionModule.MAINTENANCE, "delete")
+        require_dual_permission(
+            PermissionModule.MAINTENANCE, "delete", PermissionModule.INVENTORY, "delete"
+        )
     ),
 ) -> None:
     """Elimina un repuesto utilizado.

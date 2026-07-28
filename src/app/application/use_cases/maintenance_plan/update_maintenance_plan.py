@@ -8,7 +8,10 @@ from app.application.dtos.maintenance_plan_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import MaintenanceType
-from app.domain.exceptions.maintenance_plan import MaintenancePlanNotFoundError
+from app.domain.exceptions.maintenance_plan import (
+    MaintenancePlanIntervalError,
+    MaintenancePlanNotFoundError,
+)
 from app.domain.value_objects import CompanyId, MaintenancePlanId, UserId
 
 
@@ -48,6 +51,8 @@ class UpdateMaintenancePlanUseCase:
             if "tipo" in request._fields_set and request.tipo is not None:
                 plan.tipo = MaintenanceType(request.tipo)
             if "intervalo_dias" in request._fields_set and request.intervalo_dias is not None:
+                if request.intervalo_dias <= 0:
+                    raise MaintenancePlanIntervalError(request.intervalo_dias)
                 plan.intervalo_dias = request.intervalo_dias
             if "proxima_ejecucion" in request._fields_set and request.proxima_ejecucion is not None:
                 plan.proxima_ejecucion = request.proxima_ejecucion

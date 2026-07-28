@@ -32,6 +32,11 @@ class UpdateRoleUseCase:
             if not role:
                 raise RoleNotFoundError(f"El rol con ID '{role_id_str}' no existe en esta empresa.")
 
+            if role.nombre.lower() == "administrador":
+                raise ValidationException(
+                    "No se puede modificar el rol de Administrador del sistema."
+                )
+
             if request.version is not None and request.version != role.version:
                 raise StaleDataError(
                     f"Conflicto de versión para rol: se esperaba {request.version}, "
@@ -73,6 +78,7 @@ class UpdateRoleUseCase:
 
             await self.uow.roles.save(role)
             await self.uow.commit()
+            role.version += 1
 
             return RoleResponse(
                 id=str(role.id),

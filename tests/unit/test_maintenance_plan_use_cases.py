@@ -15,6 +15,8 @@ def mock_uow() -> Any:
     uow = MagicMock()
     uow.__aenter__ = AsyncMock(return_value=uow)
     uow.__aexit__ = AsyncMock(return_value=None)
+    uow.assets = MagicMock()
+    uow.assets.get_by_id = AsyncMock(return_value=MagicMock())
     uow.maintenance_plans = MagicMock()
     uow.maintenance_plans.save = AsyncMock()
     uow.maintenance_plans.get_by_id = AsyncMock()

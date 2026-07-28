@@ -62,7 +62,13 @@ class UpdateFailureReportUseCase:
             if "reported_by" in request._fields_set and request.reported_by is not None:
                 report.reported_by = request.reported_by.strip()
             if "status" in request._fields_set and request.status is not None:
-                report.status = ReportStatus(request.status.lower())
+                target = ReportStatus(request.status.lower())
+                if target == ReportStatus.IN_PROGRESS:
+                    report.mark_as_in_progress()
+                elif target == ReportStatus.RESOLVED:
+                    report.resolve()
+                elif target == ReportStatus.DISCARDED:
+                    report.discard()
             if "activo_id" in request._fields_set:
                 report.activo_id = (
                     AssetId.from_string(request.activo_id) if request.activo_id else None

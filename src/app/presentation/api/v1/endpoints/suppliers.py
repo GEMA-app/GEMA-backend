@@ -30,7 +30,10 @@ from app.composition.container.supplier import (
     get_update_supplier_use_case,
 )
 from app.domain.enums import PermissionModule
-from app.presentation.api.v1.endpoints.dependencies import require_permission
+from app.presentation.api.v1.endpoints.dependencies import (
+    require_dual_permission,
+    require_permission,
+)
 from app.presentation.api.v1.schemas.supplier import (
     CreateSupplierRequest,
     SupplierAttributes,
@@ -78,7 +81,9 @@ async def create_supplier(
     empresa_id: str,
     payload: CreateSupplierRequest,
     use_case: CreateSupplierUseCase = Depends(get_create_supplier_use_case),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "create")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(PermissionModule.INVENTORY, "create", PermissionModule.ADMIN, "create")
+    ),
 ) -> SupplierDocument:
     """Crea un nuevo proveedor en la empresa.
 
@@ -100,7 +105,9 @@ async def list_suppliers(
     empresa_id: str,
     search: str | None = Query(None, description="Búsqueda por nombre o RIF"),
     use_case: ListSuppliersUseCase = Depends(get_list_suppliers_use_case),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(PermissionModule.INVENTORY, "view", PermissionModule.ADMIN, "view")
+    ),
 ) -> SupplierListDocument:
     """Lista los proveedores de la empresa.
 
@@ -117,7 +124,9 @@ async def get_supplier(
     empresa_id: str,
     supplier_id: UUID,
     use_case: GetSupplierUseCase = Depends(get_get_supplier_use_case),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "view")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(PermissionModule.INVENTORY, "view", PermissionModule.ADMIN, "view")
+    ),
 ) -> SupplierDocument:
     """Obtiene el detalle de un proveedor por ID."""
     supplier = await use_case.execute(empresa_id, supplier_id)
@@ -130,7 +139,9 @@ async def update_supplier(
     supplier_id: UUID,
     payload: UpdateSupplierRequest,
     use_case: UpdateSupplierUseCase = Depends(get_update_supplier_use_case),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "edit")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(PermissionModule.INVENTORY, "edit", PermissionModule.ADMIN, "edit")
+    ),
 ) -> SupplierDocument:
     """Actualiza los datos de un proveedor.
 
@@ -154,7 +165,9 @@ async def delete_supplier(
     empresa_id: str,
     supplier_id: UUID,
     use_case: DeleteSupplierUseCase = Depends(get_delete_supplier_use_case),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.ADMIN, "delete")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(PermissionModule.INVENTORY, "delete", PermissionModule.ADMIN, "delete")
+    ),
 ) -> None:
     """Elimina un proveedor si no tiene repuestos de inventario asociados."""
     await use_case.execute(empresa_id, supplier_id)

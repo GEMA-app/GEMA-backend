@@ -314,8 +314,8 @@ class TestWorkOrderGenerateCode:
         assert parts[1].isdigit()  # año
         assert len(parts[2]) == 4  # hash padding
 
-    def test_same_company_generates_same_code(self) -> None:
+    def test_generate_code_returns_valid_format(self) -> None:
         company_id = _make_company_id()
         code1 = WorkOrder.generate_code(company_id)
-        code2 = WorkOrder.generate_code(company_id)
-        assert code1 == code2  # hash es determinista
+        assert code1.startswith("OT-")
+        assert len(code1.split("-")[2]) == 4

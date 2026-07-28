@@ -22,6 +22,7 @@ def mock_uow() -> Any:
     uow.roles.delete = AsyncMock()
     uow.roles.revoke_from_user = AsyncMock()
     uow.roles.count_admin_users = AsyncMock()
+    uow.roles.count_admin_users_excluding_role = AsyncMock()
     uow.roles.get_user_roles = AsyncMock()
     uow.roles.assign_to_user = AsyncMock()
     uow.roles.save = AsyncMock()
@@ -67,14 +68,16 @@ class TestDeleteRoleUseCase:
             permisos=[perm]
         )
         mock_uow.roles.get_by_id.return_value = role
-        # Simular que queda 1 o menos administradores
-        mock_uow.roles.count_admin_users.return_value = 1
+        # Simular que no quedan otros administradores
+        mock_uow.roles.count_admin_users_excluding_role.return_value = 0
 
         use_case = DeleteRoleUseCase(uow=mock_uow)
         with pytest.raises(LastAdminRevocationError):
             await use_case.execute(str(company_id.value), str(role_id.value))
 
-        mock_uow.roles.count_admin_users.assert_called_once_with(empresa_id=company_id)
+        mock_uow.roles.count_admin_users_excluding_role.assert_called_once_with(
+            empresa_id=company_id, exclude_role_id=role_id
+        )
         mock_uow.roles.delete.assert_not_called()
 
 

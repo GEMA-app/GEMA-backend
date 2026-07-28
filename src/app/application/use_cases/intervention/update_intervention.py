@@ -1,4 +1,4 @@
-"""Caso de uso para actualizar una intervención técnica."""
+﻿"""Caso de uso para actualizar una intervención técnica."""
 
 from app.application.dtos.intervention_dtos import (
     InterventionResponse,
@@ -48,8 +48,9 @@ class UpdateInterventionUseCase:
 
             updated_intervention = replace(
                 intervention,
-                tareas_realizadas=request.tareas_realizadas or intervention.tareas_realizadas,
-                horas_hombre=request.horas_hombre or intervention.horas_hombre,
+                tareas_realizadas=request.tareas_realizadas if request.tareas_realizadas is not None else intervention.tareas_realizadas,
+                horas_hombre=request.horas_hombre if request.horas_hombre is not None else intervention.horas_hombre,
+                fecha_fin=request.fecha_fin if request.fecha_fin is not None else intervention.fecha_fin,
             )
 
             await self._uow.interventions.save(updated_intervention)

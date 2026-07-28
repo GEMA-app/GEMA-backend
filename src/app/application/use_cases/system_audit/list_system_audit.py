@@ -36,6 +36,8 @@ class ListSystemAuditsUseCase:
             filters["usuario_id"] = request.usuario_id
         if request.accion:
             filters["accion"] = request.accion
+        if request.modulo:
+            filters["modulo"] = request.modulo
         if request.fecha_inicio:
             filters["fecha_inicio"] = request.fecha_inicio
         if request.fecha_fin:

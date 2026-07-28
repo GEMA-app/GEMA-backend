@@ -55,6 +55,7 @@ from app.domain.exceptions import (
     InventoryPartNotFoundError,
     LastAdminRevocationError,
     LocationCircularReferenceError,
+    LocationHasChildrenError,
     LocationInvalidTypeHierarchyError,
     LocationNotFoundError,
     MaintenancePlanDueDateError,
@@ -140,6 +141,11 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
         status.HTTP_422_UNPROCESSABLE_ENTITY,
         "ERR_LOCATION_INVALID_TYPE_HIERARCHY",
     ),
+    LocationHasChildrenError: (
+        status.HTTP_409_CONFLICT,
+        "ERR_LOCATION_HAS_CHILDREN",
+    ),
+
     InterventionNotFoundError: (status.HTTP_404_NOT_FOUND, "ERR_INTERVENTION_NOT_FOUND"),
     InterventionInvalidTransitionError: (
         status.HTTP_422_UNPROCESSABLE_ENTITY,

@@ -41,7 +41,20 @@ class UpdateUsedPartUseCase:
             if part is None:
                 raise UsedPartNotFoundError(str(used_part_id))
 
-            if request.cantidad_usada is not None:
+            if request.cantidad_usada is not None and request.cantidad_usada != part.cantidad_usada:
+                delta = request.cantidad_usada - part.cantidad_usada
+                if delta > 0:
+                    await self.uow.inventory_parts.validate_and_decrement_stock(
+                        repuesto_id=part.repuesto_id,
+                        cantidad=delta,
+                        empresa_id=company_id,
+                    )
+                else:
+                    await self.uow.inventory_parts.restore_stock(
+                        repuesto_id=part.repuesto_id,
+                        cantidad=abs(delta),
+                        empresa_id=company_id,
+                    )
                 part = part.change_quantity(request.cantidad_usada)
                 await self.uow.used_parts.save(part)
                 await self.uow.commit()
@@ -56,9 +69,5 @@ class UpdateUsedPartUseCase:
             moneda=part.moneda,
             created_at=part.created_at or datetime.now(),
             updated_at=part.updated_at or datetime.now(),
-            precio_total=(
-                part.cantidad_usada * part.precio_unitario
-                if part.precio_unitario is not None
-                else None
-            ),
+            precio_total=part.precio_total,
         )

@@ -161,14 +161,15 @@ class WorkOrder:
         """Genera un código de orden de trabajo con formato OT-año-XXXX.
 
         Args:
-            company_id: Identificador de la empresa, usado para derivar
-                un código único por tenant.
+            company_id: Identificador de la empresa.
 
         Returns:
             str: Código de orden de trabajo en formato OT-año-XXXX.
         """
+        import random
         year = datetime.now(UTC).year
-        return f"OT-{year}-{hash(company_id.value) % 10000:04d}"
+        val = random.randint(1000, 9999)
+        return f"OT-{year}-{val:04d}"
 
     def update_details(
         self,

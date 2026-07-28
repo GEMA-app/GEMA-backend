@@ -243,3 +243,42 @@ class SqlAlchemyRoleRepository(
         result = await self.session.execute(stmt)
         rows = result.fetchall()
         return len(set(row[0] for row in rows))
+
+    async def count_admin_users_excluding_role(
+        self, empresa_id: CompanyId, exclude_role_id: RoleId
+    ) -> int:
+        """Cuenta usuarios administradores con permisos en la empresa excluyendo un rol."""
+        from sqlalchemy import select
+
+        from app.domain.enums import PermissionModule
+        from app.infrastructure.db.models.role import PermissionModel, RoleUserModel
+
+        stmt = (
+            select(RoleUserModel.usuario_id)
+            .join(PermissionModel, RoleUserModel.rol_id == PermissionModel.rol_id)
+            .where(
+                PermissionModel.empresa_id == empresa_id.value,
+                PermissionModel.modulo == PermissionModule.ADMIN,
+                PermissionModel.puede_eliminar,
+                RoleUserModel.rol_id != exclude_role_id.value,
+            )
+        )
+        result = await self.session.execute(stmt)
+        rows = result.fetchall()
+        return len(set(row[0] for row in rows))
+
+    async def count_role_users(self, role_id: RoleId, empresa_id: CompanyId) -> int:
+        """Cuenta usuarios asignados a un rol específico dentro de una empresa.
+
+        Args:
+            role_id: Identificador del rol.
+            empresa_id: Identificador de la empresa.
+
+        Returns:
+            La cantidad de usuarios asignados a ese rol.
+        """
+        stmt = select(RoleUserModel.usuario_id).where(
+            RoleUserModel.rol_id == role_id.value,
+        )
+        result = await self.session.execute(stmt)
+        return len(result.fetchall())

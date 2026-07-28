@@ -25,6 +25,7 @@ async def list_system_audits(
     empresa_id: str,
     usuario_id: str | None = Query(None, description="Filtrar por ID de usuario"),
     accion: str | None = Query(None, description="Filtrar por acción ejecutada"),
+    modulo: str | None = Query(None, description="Filtrar por módulo"),
     fecha_inicio: datetime | None = Query(None, description="Filtrar desde fecha"),
     fecha_fin: datetime | None = Query(None, description="Filtrar hasta fecha"),
     offset: int = Query(0, ge=0, description="Número de registros a saltar"),
@@ -38,6 +39,7 @@ async def list_system_audits(
         empresa_id: UUID de la empresa/tenant.
         usuario_id: Filtro opcional por ID de usuario.
         accion: Filtro opcional por acción ejecutada.
+        modulo: Filtro opcional por módulo.
         fecha_inicio: Filtro opcional desde fecha.
         fecha_fin: Filtro opcional hasta fecha.
         offset: Número de registros a saltar.
@@ -51,6 +53,7 @@ async def list_system_audits(
     request_dto = ListSystemAuditsRequest(
         usuario_id=usuario_id,
         accion=accion,
+        modulo=modulo,
         fecha_inicio=fecha_inicio,
         fecha_fin=fecha_fin,
     )

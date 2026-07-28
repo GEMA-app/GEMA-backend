@@ -39,6 +39,8 @@ class Settings(BaseSettings):
 
     SUPER_ADMIN_IDS: list[str] = []
 
+    CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
     @field_validator("JWT_SECRET_KEY")
     @classmethod
     def validate_secret_key(cls, v: str, info: ValidationInfo) -> str:

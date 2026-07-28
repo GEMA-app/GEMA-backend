@@ -91,6 +91,7 @@ class UpdateWorkOrderAttributes(BaseModel):
     costo_estimado: float | None = None
     costo_real: float | None = None
     supervisor_id: str | None = None
+    version: int | None = Field(None, description="Versión para lock optimista")
 
 
 class UpdateWorkOrderResource(BaseModel):
@@ -112,6 +113,7 @@ class ChangeStatusAttributes(BaseModel):
     estado: str
     motivo: str | None = None
     usuario_id: str | None = None
+    version: int | None = Field(None, description="Versión para lock optimista")
 
 
 class ChangeStatusResource(BaseModel):

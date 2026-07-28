@@ -152,7 +152,7 @@ async def list_inventory_parts(
     use_case: ListInventoryPartsUseCase = Depends(get_list_inventory_parts_use_case),
 ) -> InventoryPartListDocument:
     """Retorna la colección paginada y controlada de repuestos de la empresa."""
-    parts = await use_case.execute(empresa_id, limit=limit, offset=offset)
+    parts, total = await use_case.execute(empresa_id, limit=limit, offset=offset)
     return InventoryPartListDocument(
         data=[
             InventoryPartResource(
@@ -170,7 +170,8 @@ async def list_inventory_parts(
                 ),
             )
             for p in parts
-        ]
+        ],
+        meta={"total": total},
     )
 
 

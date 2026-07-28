@@ -10,10 +10,10 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.domain.enums import MaintenanceType
 from app.infrastructure.db.base import Base
-from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin, VersionMixin
+from app.infrastructure.db.models.mixins import TenantMixin, TimestampMixin
 
 
-class MaintenancePlanModel(TenantMixin, VersionMixin, TimestampMixin, Base):
+class MaintenancePlanModel(TenantMixin, TimestampMixin, Base):
     """Modelo ORM para la tabla ``planes_mantenimiento``."""
 
     __tablename__ = "planes_mantenimiento"
@@ -42,3 +42,4 @@ class MaintenancePlanModel(TenantMixin, VersionMixin, TimestampMixin, Base):
     proxima_ejecucion: Mapped[date] = mapped_column(Date, nullable=False)
     descripcion_tareas: Mapped[str | None] = mapped_column(Text, nullable=True)
     activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    version: Mapped[int] = mapped_column(default=1, nullable=False)

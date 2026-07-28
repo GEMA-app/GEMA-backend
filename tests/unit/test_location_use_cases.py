@@ -69,3 +69,43 @@ class TestUpdateLocationUseCaseDescendants:
 
         assert "invalida la ubicación hija" in str(exc_info.value)
         mock_uow.locations.save.assert_not_called()
+
+
+class TestDeleteLocationUseCaseCascade:
+
+    async def test_delete_location_deletes_children_in_cascade(self, mock_uow: Any) -> None:
+        from app.application.use_cases.location.delete_location import DeleteLocationUseCase
+
+        company_id = CompanyId(uuid4())
+        parent_id = LocationId(uuid4())
+        child_id = LocationId(uuid4())
+
+        parent_loc = Location(
+            id=parent_id,
+            empresa_id=company_id,
+            parent_id=None,
+            nombre="Sede Principal",
+            tipo=LocationType.HEADQUARTERS,
+        )
+        child_loc = Location(
+            id=child_id,
+            empresa_id=company_id,
+            parent_id=parent_id,
+            nombre="Planta 1",
+            tipo=LocationType.PLANT,
+        )
+
+        mock_uow.locations.get_by_id.return_value = parent_loc
+        mock_uow.locations.get_children.side_effect = lambda lid, cid: (
+            [child_loc] if lid == parent_id else []
+        )
+        mock_uow.locations.delete = AsyncMock()
+
+        use_case = DeleteLocationUseCase(uow=mock_uow)
+        await use_case.execute(str(company_id.value), str(parent_id.value))
+
+        # Verifica borrado de la hija primero y luego de la padre
+        assert mock_uow.locations.delete.call_count == 2
+        mock_uow.locations.delete.assert_any_call(child_id, company_id)
+        mock_uow.locations.delete.assert_any_call(parent_id, company_id)
+

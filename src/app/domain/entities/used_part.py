@@ -23,6 +23,7 @@ class UsedPart:
     cantidad_usada: int
     precio_unitario: Decimal | None
     moneda: str = "USD"
+    version: int = 1
     created_at: datetime | None = None
     updated_at: datetime | None = None
 
@@ -37,6 +38,15 @@ class UsedPart:
             raise UsedPartInvalidQuantityError(self.cantidad_usada)
         if self.precio_unitario is not None and self.precio_unitario <= Decimal("0"):
             raise UsedPartInvalidPriceError(self.precio_unitario)
+
+    @property
+    def precio_total(self) -> Decimal | None:
+        """Calcula el costo total del repuesto utilizado."""
+        return (
+            self.cantidad_usada * self.precio_unitario
+            if self.precio_unitario is not None
+            else None
+        )
 
     @classmethod
     def create(
@@ -95,6 +105,7 @@ class UsedPart:
             cantidad_usada=new_quantity,
             precio_unitario=self.precio_unitario,
             moneda=self.moneda,
+            version=self.version + 1,
             created_at=self.created_at,
             updated_at=datetime.now(),
         )

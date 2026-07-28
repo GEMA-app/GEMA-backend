@@ -30,5 +30,11 @@ class DeleteUsedPartUseCase:
             if part is None:
                 raise UsedPartNotFoundError(str(used_part_id))
 
+            await self.uow.inventory_parts.restore_stock(
+                repuesto_id=part.repuesto_id,
+                cantidad=part.cantidad_usada,
+                empresa_id=company_id,
+            )
+
             await self.uow.used_parts.delete(used_part_id, company_id)
             await self.uow.commit()

@@ -2,7 +2,6 @@
 y documentos individuales.
 """
 
-from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -19,7 +18,7 @@ class FailureReportAttributes(BaseModel):
     priority: str
     reported_by: str
     status: str
-    created_at: datetime
+    created_at: str
     activo_id: str | None = None
     version: int
     orden_trabajo_id: str | None = None

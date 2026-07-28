@@ -24,8 +24,8 @@ class InventoryPartRepositoryPort(Protocol):
 
     async def get_all_by_company(
         self, empresa_id: CompanyId, limit: int = 20, offset: int = 0
-    ) -> list[InventoryPart]:
-        """Lista los repuestos de una empresa con paginación.
+    ) -> tuple[list[InventoryPart], int]:
+        """Lista los repuestos de una empresa con paginación y conteo total.
 
         Args:
             empresa_id: Identificador de la empresa.
@@ -33,7 +33,7 @@ class InventoryPartRepositoryPort(Protocol):
             offset: Desplazamiento para paginación.
 
         Returns:
-            Lista de entidades InventoryPart.
+            Una tupla con la lista de entidades InventoryPart y el conteo total.
         """
         ...
 
@@ -45,4 +45,10 @@ class InventoryPartRepositoryPort(Protocol):
         self, repuesto_id: UUID, cantidad: int, empresa_id: CompanyId
     ) -> None:
         """Valida que exista stock suficiente para el consumo de repuestos y lo decrementa."""
+        ...
+
+    async def restore_stock(
+        self, repuesto_id: UUID, cantidad: int, empresa_id: CompanyId
+    ) -> None:
+        """Incrementa el stock del repuesto en inventario tras eliminar o reducir consumo."""
         ...
