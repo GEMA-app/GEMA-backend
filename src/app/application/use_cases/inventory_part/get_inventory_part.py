@@ -35,4 +35,6 @@ class GetInventoryPartUseCase:
                 precio_unitario=inventory_part.precio_unitario,
                 moneda=inventory_part.moneda,
                 version=inventory_part.version,
+                articulo_nombre=getattr(inventory_part, "articulo_nombre", None),
+                proveedor_nombre=getattr(inventory_part, "proveedor_nombre", None),
             )

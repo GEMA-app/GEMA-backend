@@ -47,6 +47,7 @@ from app.domain.exceptions import (
     InvalidEmailError,
     InvalidMovementTypeError,
     InvalidPriceError,
+    InvalidRifError,
     InvalidSlugError,
     InvalidStockError,
     InvalidTokenError,
@@ -78,6 +79,7 @@ from app.domain.exceptions import (
     SubscriptionPlanNotFoundError,
     SubscriptionPlanPaymentFailedError,
     SupplierHasInventoryPartsError,
+    SupplierInactiveError,
     SupplierNotFoundError,
     SupplierRifExistsError,
     SystemAuditNotFoundError,
@@ -340,6 +342,14 @@ _EXCEPTION_MAP: dict[type[DomainException], tuple[int, str]] = {
     SupplierHasInventoryPartsError: (
         status.HTTP_409_CONFLICT,
         "ERR_SUPPLIER_HAS_INVENTORY_PARTS",
+    ),
+    InvalidRifError: (
+        status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "ERR_INVALID_RIF",
+    ),
+    SupplierInactiveError: (
+        status.HTTP_403_FORBIDDEN,
+        "ERR_SUPPLIER_INACTIVE",
     ),
     SystemAuditNotFoundError: (
         status.HTTP_404_NOT_FOUND,

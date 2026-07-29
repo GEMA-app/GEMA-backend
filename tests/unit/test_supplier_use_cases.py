@@ -147,7 +147,7 @@ class TestListSuppliersUseCase:
         result = await use_case.execute(str(empresa_id), search="Test")
 
         assert len(result) == 1
-        mock_uow.suppliers.get_all_by_company.assert_awaited_once_with(empresa_id, search="Test")
+        mock_uow.suppliers.get_all_by_company.assert_awaited_once_with(empresa_id, search="Test", include_inactive=False)
 
 
 class TestUpdateSupplierUseCase:

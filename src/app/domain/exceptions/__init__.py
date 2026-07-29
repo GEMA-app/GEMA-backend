@@ -124,8 +124,10 @@ from app.domain.exceptions.subscription_plan import (
     SubscriptionPlanPaymentFailedError,
 )
 from app.domain.exceptions.supplier import (
+    InvalidRifError,
     SupplierException,
     SupplierHasInventoryPartsError,
+    SupplierInactiveError,
     SupplierNotFoundError,
     SupplierRifExistsError,
 )
@@ -249,6 +251,8 @@ __all__ = [
     "SupplierNotFoundError",
     "SupplierRifExistsError",
     "SupplierHasInventoryPartsError",
+    "InvalidRifError",
+    "SupplierInactiveError",
     "SystemAuditException",
     "SystemAuditNotFoundError",
     "EmptyActionError",

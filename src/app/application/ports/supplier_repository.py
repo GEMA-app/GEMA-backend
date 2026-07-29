@@ -21,8 +21,15 @@ class SupplierRepositoryPort(Protocol):
         self,
         empresa_id: UUID,
         search: str | None = None,
+        include_inactive: bool = False,
     ) -> list[Supplier]:
-        """Retorna todos los proveedores de un tenant, filtro opcional por nombre o RIF."""
+        """Retorna todos los proveedores de un tenant, filtro opcional por nombre o RIF.
+
+        Args:
+            empresa_id: UUID de la empresa.
+            search: Término de búsqueda por nombre o RIF.
+            include_inactive: Si es True, incluye proveedores inactivos.
+        """
         ...
 
     async def save(self, supplier: Supplier) -> None:

@@ -12,20 +12,23 @@ class ListSuppliersUseCase:
         self.uow = uow
 
     async def execute(
-        self, empresa_id_str: str, search: str | None = None
+        self, empresa_id_str: str, search: str | None = None, include_inactive: bool = False
     ) -> list[SupplierResponse]:
         """Ejecuta la obtención de todos los proveedores de la empresa.
 
         Args:
             empresa_id_str: UUID de la empresa como string.
             search: Término opcional de búsqueda por nombre o RIF.
+            include_inactive: Si es True, incluye proveedores inactivos.
 
         Returns:
             Lista de DTOs con los datos de los proveedores encontrados.
         """
         company_id = CompanyId.from_string(empresa_id_str)
         async with self.uow:
-            suppliers = await self.uow.suppliers.get_all_by_company(company_id.value, search=search)
+            suppliers = await self.uow.suppliers.get_all_by_company(
+                company_id.value, search=search, include_inactive=include_inactive
+            )
             return [
                 SupplierResponse(
                     id=s.id,
@@ -35,6 +38,8 @@ class ListSuppliersUseCase:
                     phone=s.phone,
                     email=s.email,
                     contact=s.contact,
+                    is_active=s.is_active,
+                    direccion=s.direccion,
                     version=s.version,
                     created_at=s.created_at,
                     updated_at=s.updated_at,

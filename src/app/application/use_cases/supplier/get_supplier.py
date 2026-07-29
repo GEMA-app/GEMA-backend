@@ -40,6 +40,8 @@ class GetSupplierUseCase:
                 phone=supplier.phone,
                 email=supplier.email,
                 contact=supplier.contact,
+                is_active=supplier.is_active,
+                direccion=supplier.direccion,
                 version=supplier.version,
                 created_at=supplier.created_at,
                 updated_at=supplier.updated_at,

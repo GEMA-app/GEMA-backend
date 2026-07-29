@@ -29,6 +29,8 @@ class InventoryPart:
     version: int = 1
     created_at: datetime | None = None
     updated_at: datetime | None = None
+    articulo_nombre: str | None = None
+    proveedor_nombre: str | None = None
 
     @classmethod
     def create(

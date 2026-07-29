@@ -35,6 +35,8 @@ class SqlAlchemySupplierRepository(
             telefono=entity.phone,
             email=entity.email,
             contacto=entity.contact,
+            is_active=entity.is_active,
+            direccion=entity.direccion,
             version=entity.version,
         )
 
@@ -47,6 +49,8 @@ class SqlAlchemySupplierRepository(
             phone=model.telefono,
             email=model.email,
             contact=model.contacto,
+            is_active=getattr(model, "is_active", True),
+            direccion=getattr(model, "direccion", None),
             version=model.version,
             created_at=model.created_at,
             updated_at=model.updated_at,
@@ -84,9 +88,12 @@ class SqlAlchemySupplierRepository(
         self,
         empresa_id: UUID,
         search: str | None = None,
+        include_inactive: bool = False,
     ) -> list[Supplier]:
         """Retorna todos los proveedores de un tenant, con filtro opcional."""
         stmt = select(SupplierModel).where(SupplierModel.empresa_id == empresa_id)
+        if not include_inactive:
+            stmt = stmt.where(SupplierModel.is_active)
         if search:
             pattern = f"%{search}%"
             stmt = stmt.where(

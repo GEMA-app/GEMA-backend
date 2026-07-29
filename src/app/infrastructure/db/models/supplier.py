@@ -31,6 +31,8 @@ class SupplierModel(Base, TenantMixin, TimestampMixin, VersionMixin):
     telefono: Mapped[str | None] = mapped_column(String(30), nullable=True)
     email: Mapped[str | None] = mapped_column(String(100), nullable=True)
     contacto: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
+    direccion: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     inventory_parts: Mapped[list[InventoryPartModel]] = relationship(
         "InventoryPartModel",

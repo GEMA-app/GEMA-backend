@@ -45,6 +45,7 @@ from app.composition.container.inventory_part import (
 )
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
+    require_dual_permission,
     require_permission,
 )
 from app.presentation.api.v1.schemas.inventory_part import (
@@ -103,6 +104,8 @@ async def create_inventory_part(
                 precio_unitario=res.precio_unitario,
                 moneda=res.moneda,
                 version=res.version,
+                articulo_nombre=res.articulo_nombre,
+                proveedor_nombre=res.proveedor_nombre,
             ),
         )
     )
@@ -116,7 +119,9 @@ async def create_inventory_part(
 async def get_inventory_part(
     empresa_id: str,
     repuesto_id: str,
-    current_user: UserResponse = Depends(require_permission(PermissionModule.INVENTORY, "view")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(PermissionModule.INVENTORY, "view", PermissionModule.ADMIN, "view")
+    ),
     use_case: GetInventoryPartUseCase = Depends(get_inventory_part_use_case),
 ) -> InventoryPartDocument:
     """Obtiene los detalles informativos de un repuesto bajo aislamiento multi-tenant."""
@@ -134,6 +139,8 @@ async def get_inventory_part(
                 precio_unitario=res.precio_unitario,
                 moneda=res.moneda,
                 version=res.version,
+                articulo_nombre=res.articulo_nombre,
+                proveedor_nombre=res.proveedor_nombre,
             ),
         )
     )
@@ -149,12 +156,15 @@ async def list_inventory_parts(
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
     bajo_minimo: bool = Query(False, description="Filtrar por stock bajo mínimo"),
-    current_user: UserResponse = Depends(require_permission(PermissionModule.INVENTORY, "view")),
+    proveedor_id: str | None = Query(None, description="Filtrar por ID de proveedor"),
+    current_user: UserResponse = Depends(
+        require_dual_permission(PermissionModule.INVENTORY, "view", PermissionModule.ADMIN, "view")
+    ),
     use_case: ListInventoryPartsUseCase = Depends(get_list_inventory_parts_use_case),
 ) -> InventoryPartListDocument:
     """Retorna la colección paginada y controlada de repuestos de la empresa."""
     parts, total = await use_case.execute(
-        empresa_id, limit=limit, offset=offset, bajo_minimo=bajo_minimo
+        empresa_id, limit=limit, offset=offset, bajo_minimo=bajo_minimo, proveedor_id=proveedor_id
     )
     return InventoryPartListDocument(
         data=[
@@ -170,6 +180,8 @@ async def list_inventory_parts(
                     precio_unitario=p.precio_unitario,
                     moneda=p.moneda,
                     version=p.version,
+                    articulo_nombre=p.articulo_nombre,
+                    proveedor_nombre=p.proveedor_nombre,
                 ),
             )
             for p in parts
@@ -217,6 +229,8 @@ async def update_inventory_part(
                 precio_unitario=res.precio_unitario,
                 moneda=res.moneda,
                 version=res.version,
+                articulo_nombre=res.articulo_nombre,
+                proveedor_nombre=res.proveedor_nombre,
             ),
         )
     )

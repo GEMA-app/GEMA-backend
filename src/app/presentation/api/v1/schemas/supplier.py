@@ -25,6 +25,8 @@ class SupplierAttributes(BaseModel):
     phone: str | None
     email: str | None
     contact: str | None
+    activo: bool = True
+    direccion: str | None = None
     version: int
     created_at: datetime | None = None
     updated_at: datetime | None = None
@@ -52,15 +54,18 @@ class SupplierListDocument(BaseModel):
     meta: dict[str, Any] | None = None
 
 
-# Solicitudes (Requests)
+_RIF_PATTERN_STR = r"^[JGVEPjgivep]-\d{8}-\d$"
+
+
 class CreateSupplierAttributes(BaseModel):
     """Atributos para crear un proveedor."""
 
     name: str = Field(..., min_length=1, max_length=150)
-    rif: str | None = Field(None, max_length=20)
+    rif: str | None = Field(None, max_length=20, pattern=_RIF_PATTERN_STR)
     phone: str | None = Field(None, max_length=30)
     email: str | None = Field(None, max_length=100)
     contact: str | None = Field(None, max_length=100)
+    direccion: str | None = Field(None, max_length=255)
 
 
 class CreateSupplierResource(BaseModel):
@@ -80,10 +85,12 @@ class UpdateSupplierAttributes(BaseModel):
     """Atributos para actualizar un proveedor."""
 
     name: str | None = Field(None, min_length=1, max_length=150)
-    rif: str | None = Field(None, max_length=20)
+    rif: str | None = Field(None, max_length=20, pattern=_RIF_PATTERN_STR)
     phone: str | None = Field(None, max_length=30)
     email: str | None = Field(None, max_length=100)
     contact: str | None = Field(None, max_length=100)
+    activo: bool | None = Field(None)
+    direccion: str | None = Field(None, max_length=255)
     version: int | None = Field(None, description="Versión para locking optimista")
 
 

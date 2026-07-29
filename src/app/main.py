@@ -33,15 +33,6 @@ app = FastAPI(
     title=settings.APP_TITLE, version=settings.APP_VERSION, lifespan=lifespan, root_path="/api"
 )
 
-# --- Registro de CORS ---
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # --- Registro de Manejadores de Excepciones ---
 register_exception_handlers(app)
 
@@ -51,6 +42,15 @@ app.add_middleware(AcceptMiddleware)
 app.add_middleware(ContentTypeMiddleware, strict_jsonapi=settings.STRICT_JSONAPI)
 app.add_middleware(RequestIdMiddleware)
 app.add_middleware(AuditContextMiddleware)
+
+# --- Registro de CORS (debe añadirse de último para ser el middleware más externo) ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Registro de Enrutadores ---
 app.include_router(health_router)

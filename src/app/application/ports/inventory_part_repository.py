@@ -23,7 +23,12 @@ class InventoryPartRepositoryPort(Protocol):
         ...
 
     async def get_all_by_company(
-        self, empresa_id: CompanyId, limit: int = 20, offset: int = 0, bajo_minimo: bool = False
+        self,
+        empresa_id: CompanyId,
+        limit: int = 20,
+        offset: int = 0,
+        bajo_minimo: bool = False,
+        proveedor_id: UUID | None = None,
     ) -> tuple[list[InventoryPart], int]:
         """Lista los repuestos de una empresa con paginación y conteo total.
 
@@ -32,6 +37,7 @@ class InventoryPartRepositoryPort(Protocol):
             limit: Máximo de resultados.
             offset: Desplazamiento para paginación.
             bajo_minimo: Filtra las piezas que están por debajo del nivel mínimo.
+            proveedor_id: Identificador opcional del proveedor.
 
         Returns:
             Una tupla con la lista de entidades InventoryPart y el conteo total.

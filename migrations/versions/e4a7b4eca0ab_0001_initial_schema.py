@@ -246,6 +246,8 @@ def upgrade() -> None:
         sa.Column("telefono", sa.String(50), nullable=True),
         sa.Column("email", sa.String(255), nullable=True),
         sa.Column("contacto", sa.String(255), nullable=True),
+        sa.Column("is_active", sa.Boolean(), nullable=False, server_default="true"),
+        sa.Column("direccion", sa.String(255), nullable=True),
         sa.Column("version", sa.Integer(), nullable=False, server_default="1"),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
