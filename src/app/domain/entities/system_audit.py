@@ -29,7 +29,6 @@ class SystemAudit:
     usuario_nombre: str | None = None
     usuario_email: str | None = None
 
-
     @classmethod
     def create(
         cls,

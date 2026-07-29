@@ -94,7 +94,9 @@ async def create_category(
 async def list_categories(
     empresa_id: str,
     use_case: ListArticleCategoriesUseCase = Depends(get_list_article_categories_use_case),
-    current_user: UserResponse = Depends(require_dual_permission(PermissionModule.ASSETS, "view", PermissionModule.INVENTORY, "view")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(PermissionModule.ASSETS, "view", PermissionModule.INVENTORY, "view")
+    ),
 ) -> ArticleCategoryListDocument:
     """Lista todas las categorías de artículo de la empresa.
 
@@ -129,7 +131,9 @@ async def get_category_by_id(
     empresa_id: str,
     categoria_id: UUID,
     use_case: GetArticleCategoryByIdUseCase = Depends(get_article_category_by_id_use_case),
-    current_user: UserResponse = Depends(require_dual_permission(PermissionModule.ASSETS, "view", PermissionModule.INVENTORY, "view")),
+    current_user: UserResponse = Depends(
+        require_dual_permission(PermissionModule.ASSETS, "view", PermissionModule.INVENTORY, "view")
+    ),
 ) -> ArticleCategoryDocument:
     """Obtiene una categoría de artículo por su ID.
 

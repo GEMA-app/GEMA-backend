@@ -25,11 +25,11 @@ class TestExtractConstraintName:
     def test_extract_constraint_name_string_fallback(self) -> None:
         orig = Exception(
             'duplicate key value violates unique constraint '
-            '"uq_activos_empresa_serial_interno"'
+            '"uq_activos_empresa_serial_interno_lower"'
         )
         exc = IntegrityError("stmt", {"param": 1}, orig)
         result = _extract_constraint_name(exc)
-        assert result == "uq_activos_empresa_serial_interno"
+        assert result == "uq_activos_empresa_serial_interno_lower"
 
     def test_extract_constraint_name_no_cause_and_no_match(self) -> None:
         orig = Exception("some other database error")

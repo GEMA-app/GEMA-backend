@@ -265,3 +265,300 @@ class CompanyProfileUpdated(DomainEvent):
     """Evento emitido cuando se actualiza el perfil de una empresa."""
 
     company_id: str
+
+
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# Activos â€” faltantes
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class AssetDeleted(DomainEvent):
+    """Evento emitido cuando un activo es eliminado."""
+
+    asset_id: str
+    codigo_activo: str
+    empresa_id: str
+
+
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# Ubicaciones â€” faltantes
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class LocationUpdated(DomainEvent):
+    """Evento emitido cuando se actualiza una ubicación."""
+
+    location_id: str
+    nombre: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class LocationDeleted(DomainEvent):
+    """Evento emitido cuando se elimina una ubicación."""
+
+    location_id: str
+    nombre: str
+    empresa_id: str
+
+
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# Roles â€” faltantes
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class RoleCreated(DomainEvent):
+    """Evento emitido cuando se crea un nuevo rol."""
+
+    role_id: str
+    nombre: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class RoleUpdated(DomainEvent):
+    """Evento emitido cuando se actualiza un rol."""
+
+    role_id: str
+    nombre: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class RoleDeleted(DomainEvent):
+    """Evento emitido cuando se elimina un rol."""
+
+    role_id: str
+    nombre: str
+    empresa_id: str
+
+
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# Mantenimiento â€” faltantes
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class FailureReportUpdated(DomainEvent):
+    """Evento emitido cuando se actualiza un reporte de falla."""
+
+    failure_report_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class FailureReportDeleted(DomainEvent):
+    """Evento emitido cuando se elimina un reporte de falla."""
+
+    failure_report_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class WorkOrderCreated(DomainEvent):
+    """Evento emitido cuando se crea una orden de trabajo."""
+
+    work_order_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class WorkOrderUpdated(DomainEvent):
+    """Evento emitido cuando se actualiza una orden de trabajo."""
+
+    work_order_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class WorkOrderDeleted(DomainEvent):
+    """Evento emitido cuando se elimina una orden de trabajo."""
+
+    work_order_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class MaintenancePlanCreated(DomainEvent):
+    """Evento emitido cuando se crea un plan de mantenimiento."""
+
+    maintenance_plan_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class MaintenancePlanUpdated(DomainEvent):
+    """Evento emitido cuando se actualiza un plan de mantenimiento."""
+
+    maintenance_plan_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class MaintenancePlanDeleted(DomainEvent):
+    """Evento emitido cuando se elimina un plan de mantenimiento."""
+
+    maintenance_plan_id: str
+    empresa_id: str
+
+
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# Inventario â€” faltantes
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class InventoryPartCreated(DomainEvent):
+    """Evento emitido cuando se crea un repuesto en inventario."""
+
+    part_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class InventoryPartUpdated(DomainEvent):
+    """Evento emitido cuando se actualiza un repuesto en inventario."""
+
+    part_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class InventoryPartDeleted(DomainEvent):
+    """Evento emitido cuando se elimina un repuesto en inventario."""
+
+    part_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class InventoryEntryCreated(DomainEvent):
+    """Evento emitido cuando se crea un movimiento de inventario (entrada/salida)."""
+
+    entry_id: str
+    empresa_id: str
+
+
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# Proveedores â€” faltantes
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class SupplierCreated(DomainEvent):
+    """Evento emitido cuando se crea un proveedor."""
+
+    supplier_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class SupplierUpdated(DomainEvent):
+    """Evento emitido cuando se actualiza un proveedor."""
+
+    supplier_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class SupplierDeleted(DomainEvent):
+    """Evento emitido cuando se elimina un proveedor."""
+
+    supplier_id: str
+    empresa_id: str
+
+
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# Preferencias â€” faltantes
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class PreferenceUpdated(DomainEvent):
+    """Evento emitido cuando se actualizan las preferencias de un usuario."""
+
+    user_id: str
+    empresa_id: str
+
+
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# Intervenciones â€” faltantes
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class InterventionCreated(DomainEvent):
+    """Evento emitido cuando se crea una intervención técnica."""
+
+    intervention_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class InterventionUpdated(DomainEvent):
+    """Evento emitido cuando se actualiza una intervención técnica."""
+
+    intervention_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class InterventionDeleted(DomainEvent):
+    """Evento emitido cuando se elimina una intervención técnica."""
+
+    intervention_id: str
+    empresa_id: str
+
+
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# PlanExecution â€” faltantes
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class PlanExecutionCreated(DomainEvent):
+    """Evento emitido cuando se crea una ejecución de plan."""
+
+    plan_execution_id: str
+    empresa_id: str
+
+
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# UsedPart â€” faltantes
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class UsedPartCreated(DomainEvent):
+    """Evento emitido cuando se registra un repuesto usado."""
+
+    used_part_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class UsedPartUpdated(DomainEvent):
+    """Evento emitido cuando se actualiza un repuesto usado."""
+
+    used_part_id: str
+    empresa_id: str
+
+
+@auto_register
+@dataclass(frozen=True, kw_only=True)
+class UsedPartDeleted(DomainEvent):
+    """Evento emitido cuando se elimina un repuesto usado."""
+
+    used_part_id: str
+    empresa_id: str

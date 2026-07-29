@@ -1,4 +1,4 @@
-"""Caso de uso para cambiar el estado de una orden de trabajo."""
+﻿"""Caso de uso para cambiar el estado de una orden de trabajo."""
 
 from app.application.dtos.work_order_dtos import (
     ChangeWorkOrderStatusRequest,
@@ -6,6 +6,7 @@ from app.application.dtos.work_order_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import WorkOrderStatus
+from app.domain.events import WorkOrderUpdated
 from app.domain.exceptions import WorkOrderNotFoundError
 from app.domain.value_objects import CompanyId, UserId, WorkOrderId
 
@@ -73,6 +74,13 @@ class ChangeWorkOrderStatusUseCase:
                 usuario_id=UserId.from_string(request.usuario_id) if request.usuario_id else None,
                 motivo=request.motivo or "Cambio de estado de orden de trabajo",
                 empresa_id=company,
+            )
+
+            self.uow.add_event(
+                WorkOrderUpdated(
+                    work_order_id=str(wo.id),
+                    empresa_id=str(company),
+                )
             )
             await self.uow.commit()
 

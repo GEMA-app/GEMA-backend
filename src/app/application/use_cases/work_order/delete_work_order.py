@@ -1,6 +1,7 @@
-"""Caso de uso para eliminar una orden de trabajo."""
+﻿"""Caso de uso para eliminar una orden de trabajo."""
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import WorkOrderDeleted
 from app.domain.exceptions import WorkOrderNotFoundError
 from app.domain.value_objects import CompanyId, WorkOrderId
 
@@ -31,4 +32,11 @@ class DeleteWorkOrderUseCase:
                     f"Orden de trabajo con ID '{work_order_id}' no encontrada."
                 )
             await self.uow.work_orders.delete(wo_id, company)
+
+            self.uow.add_event(
+                WorkOrderDeleted(
+                    work_order_id=work_order_id,
+                    empresa_id=str(company),
+                )
+            )
             await self.uow.commit()

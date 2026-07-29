@@ -25,6 +25,7 @@ from app.application.ports.supplier_repository import SupplierRepositoryPort
 from app.application.ports.system_audit_repository import SystemAuditRepositoryPort
 from app.application.ports.used_part_repository import UsedPartRepositoryPort
 from app.application.ports.work_order_repository import WorkOrderRepositoryPort
+from app.domain.events import DomainEvent
 
 
 class UnitOfWorkPort(Protocol):
@@ -51,6 +52,10 @@ class UnitOfWorkPort(Protocol):
     subscription_plans: SubscriptionPlanRepositoryPort
     maintenance_plans: MaintenancePlanRepositoryPort
     interventions: InterventionRepositoryPort
+
+    def add_event(self, event: DomainEvent) -> None:
+        """Añade un evento de dominio para publicar después del commit."""
+        ...
 
     async def __aenter__(self) -> Self:
         """Inicia el contexto transaccional asíncrono."""

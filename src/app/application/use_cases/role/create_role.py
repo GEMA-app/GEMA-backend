@@ -1,9 +1,10 @@
-"""Caso de uso para create role."""
+﻿"""Caso de uso para create role."""
 
 from app.application.dtos.role_dtos import CreateRoleRequest, PermissionDTO, RoleResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Permission, Role
 from app.domain.enums import PermissionModule
+from app.domain.events import RoleCreated
 from app.domain.exceptions import RoleNameExistsError
 from app.domain.value_objects import CompanyId
 
@@ -44,6 +45,13 @@ class CreateRoleUseCase:
             )
 
             await self.uow.roles.save(role)
+            self.uow.add_event(
+                RoleCreated(
+                    role_id=str(role.id),
+                    nombre=role.nombre,
+                    empresa_id=company_id_str,
+                )
+            )
             await self.uow.commit()
 
             return RoleResponse(

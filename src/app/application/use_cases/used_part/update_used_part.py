@@ -1,4 +1,4 @@
-"""Caso de uso: actualizar un UsedPart."""
+﻿"""Caso de uso: actualizar un UsedPart."""
 
 from datetime import datetime
 from uuid import UUID
@@ -8,6 +8,7 @@ from app.application.dtos.used_part_dtos import (
     UsedPartResponse,
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import UsedPartUpdated
 from app.domain.exceptions.used_part import UsedPartNotFoundError
 from app.domain.value_objects import CompanyId
 
@@ -57,6 +58,14 @@ class UpdateUsedPartUseCase:
                     )
                 part = part.change_quantity(request.cantidad_usada)
                 await self.uow.used_parts.save(part)
+
+                self.uow.add_event(
+                    UsedPartUpdated(
+                        used_part_id=str(part.id),
+                        empresa_id=company_id_str,
+                    )
+                )
+
                 await self.uow.commit()
 
         return UsedPartResponse(

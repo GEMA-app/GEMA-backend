@@ -1,4 +1,4 @@
-"""Caso de uso: Crear un plan de mantenimiento."""
+﻿"""Caso de uso: Crear un plan de mantenimiento."""
 
 from datetime import date
 
@@ -9,8 +9,9 @@ from app.application.dtos.maintenance_plan_dtos import (
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.maintenance_plan import MaintenancePlan
 from app.domain.enums import MaintenanceType
-from app.domain.value_objects import AssetId, CompanyId, UserId
+from app.domain.events import MaintenancePlanCreated
 from app.domain.exceptions.asset import AssetNotFoundError
+from app.domain.value_objects import AssetId, CompanyId, UserId
 
 
 class CreateMaintenancePlanUseCase:
@@ -56,6 +57,13 @@ class CreateMaintenancePlanUseCase:
 
         async with self.uow:
             saved = await self.uow.maintenance_plans.save(plan)
+
+            self.uow.add_event(
+                MaintenancePlanCreated(
+                    maintenance_plan_id=str(saved.id),
+                    empresa_id=str(company_id),
+                )
+            )
             await self.uow.commit()
 
         return MaintenancePlanResponse(

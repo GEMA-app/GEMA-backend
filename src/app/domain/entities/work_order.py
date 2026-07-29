@@ -167,6 +167,7 @@ class WorkOrder:
             str: Código de orden de trabajo en formato OT-año-XXXX.
         """
         import random
+
         year = datetime.now(UTC).year
         val = random.randint(1000, 9999)
         return f"OT-{year}-{val:04d}"

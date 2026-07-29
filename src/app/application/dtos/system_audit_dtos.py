@@ -18,7 +18,8 @@ class SystemAuditResponse:
     ocurrido_en: datetime
     usuario_nombre: str | None = None
     usuario_email: str | None = None
-
+    modulo: str | None = None
+    descripcion: str | None = None
 
 
 @dataclass(frozen=True)

@@ -12,6 +12,7 @@ from app.presentation.api.v1.endpoints.health import router as health_router
 from app.presentation.api.v1.router import v1_router
 from app.presentation.exception_handlers import register_exception_handlers
 from app.presentation.middlewares.accept import AcceptMiddleware
+from app.presentation.middlewares.audit_context import AuditContextMiddleware
 from app.presentation.middlewares.content_type import ContentTypeMiddleware
 from app.presentation.middlewares.rate_limit import RateLimitMiddleware
 from app.presentation.middlewares.request_id import RequestIdMiddleware
@@ -49,6 +50,7 @@ app.add_middleware(RateLimitMiddleware, redis_client=redis_client)  # type: igno
 app.add_middleware(AcceptMiddleware)
 app.add_middleware(ContentTypeMiddleware, strict_jsonapi=settings.STRICT_JSONAPI)
 app.add_middleware(RequestIdMiddleware)
+app.add_middleware(AuditContextMiddleware)
 
 # --- Registro de Enrutadores ---
 app.include_router(health_router)

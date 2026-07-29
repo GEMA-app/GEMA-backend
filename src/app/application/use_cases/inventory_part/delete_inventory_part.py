@@ -1,6 +1,7 @@
-"""Caso de Uso para eliminar un repuesto del inventario."""
+﻿"""Caso de Uso para eliminar un repuesto del inventario."""
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import InventoryPartDeleted
 from app.domain.exceptions import InvalidStockError, InventoryPartNotFoundError
 from app.domain.value_objects import CompanyId, SparePartId
 
@@ -41,4 +42,11 @@ class DeleteInventoryPartUseCase:
                 )
 
             await self.uow.inventory_parts.delete(part_id, company_id)
+
+            self.uow.add_event(
+                InventoryPartDeleted(
+                    part_id=part_id_str,
+                    empresa_id=company_id_str,
+                )
+            )
             await self.uow.commit()

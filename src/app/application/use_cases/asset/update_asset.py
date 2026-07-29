@@ -3,6 +3,7 @@
 import uuid
 from datetime import UTC, datetime
 from decimal import Decimal
+from typing import Any
 
 from app.application.dtos.asset_dtos import AssetResponse, UpdateAssetRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
@@ -61,13 +62,14 @@ class UpdateAssetUseCase:
                 else:
                     asset.transfer_location(None)
 
+            update_kwargs: dict[str, Any] = {}
             if "codigo_activo" in request._fields_set:
                 if request.codigo_activo is None:
                     raise ValidationException("El código del activo no puede ser nulo.")
                 new_code = request.codigo_activo.lower().strip()
                 if not new_code:
                     raise ValidationException("El código del activo no puede estar vacío.")
-                asset.codigo_activo = new_code
+                update_kwargs["codigo_activo"] = new_code
 
             if "serial_interno" in request._fields_set:
                 if request.serial_interno is None:
@@ -75,7 +77,7 @@ class UpdateAssetUseCase:
                 new_serial = request.serial_interno.lower().strip()
                 if not new_serial:
                     raise ValidationException("El serial interno no puede estar vacío.")
-                asset.serial_interno = new_serial
+                update_kwargs["serial_interno"] = new_serial
 
             state_changed = False
             old_status = asset.estado
@@ -95,10 +97,10 @@ class UpdateAssetUseCase:
                         asset.take_out_of_service()
 
             if "fecha_adquisicion" in request._fields_set:
-                asset.fecha_adquisicion = request.fecha_adquisicion
+                update_kwargs["fecha_adquisicion"] = request.fecha_adquisicion
 
             if "valor_monetario" in request._fields_set:
-                asset.valor_monetario = (
+                update_kwargs["valor_monetario"] = (
                     Decimal(request.valor_monetario)
                     if request.valor_monetario is not None
                     else None
@@ -107,7 +109,10 @@ class UpdateAssetUseCase:
             if "moneda" in request._fields_set:
                 if request.moneda is None:
                     raise ValidationException("La moneda no puede ser nula.")
-                asset.moneda = request.moneda
+                update_kwargs["moneda"] = request.moneda
+
+            if update_kwargs:
+                asset.update_attributes(**update_kwargs)
 
             await self.uow.assets.save(asset)
 

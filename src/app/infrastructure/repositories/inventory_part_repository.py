@@ -100,9 +100,7 @@ class SqlAlchemyInventoryPartRepository(
                 )
             inv_part.stock_actual -= cantidad
 
-    async def restore_stock(
-        self, repuesto_id: UUID, cantidad: int, empresa_id: CompanyId
-    ) -> None:
+    async def restore_stock(self, repuesto_id: UUID, cantidad: int, empresa_id: CompanyId) -> None:
         """Busca el repuesto en inventario e incrementa su stock actual."""
         stmt = select(InventoryPartModel).where(
             InventoryPartModel.id == repuesto_id,

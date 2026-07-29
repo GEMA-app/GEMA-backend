@@ -70,6 +70,10 @@ class SqlAlchemyUnitOfWork(UnitOfWorkPort):
             self.event_bus = event_bus
         self._pending_events: list[DomainEvent] = []
 
+    def add_event(self, event: DomainEvent) -> None:
+        """Añade un evento de dominio para publicar después del commit."""
+        self._pending_events.append(event)
+
     async def __aenter__(self) -> Self:
         """Inicia la sesión asíncrona y construye los repositorios asociados a ella.
 

@@ -103,7 +103,9 @@ class Role(EventProducer):
         Returns:
             Lista de roles por defecto creados.
         """
-        default_roles: list[tuple[str, str, dict[PermissionModule, tuple[bool, bool, bool, bool]]]] = [
+        default_roles: list[
+            tuple[str, str, dict[PermissionModule, tuple[bool, bool, bool, bool]]]
+        ] = [
             (
                 "Supervisor de Activos",
                 "Gestiona activos y supervisa su ciclo de vida",
@@ -172,13 +174,15 @@ class Role(EventProducer):
                 Permission(module=mod, can_view=v, can_create=c, can_edit=e, can_delete=d)
                 for mod, (v, c, e, d) in permisos_config.items()
             ]
-            roles.append(cls(
-                id=RoleId(uuid.uuid4()),
-                empresa_id=empresa_id,
-                nombre=nombre,
-                descripcion=desc,
-                permisos=permisos,
-            ))
+            roles.append(
+                cls(
+                    id=RoleId(uuid.uuid4()),
+                    empresa_id=empresa_id,
+                    nombre=nombre,
+                    descripcion=desc,
+                    permisos=permisos,
+                )
+            )
         return roles
 
     def has_permission(self, module: PermissionModule, action: str) -> bool:

@@ -1,9 +1,10 @@
-"""Caso de uso para actualizar un proveedor existente."""
+﻿"""Caso de uso para actualizar un proveedor existente."""
 
 from uuid import UUID
 
 from app.application.dtos.supplier_dtos import SupplierResponse, UpdateSupplierRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import SupplierUpdated
 from app.domain.exceptions import SupplierNotFoundError, SupplierRifExistsError
 from app.domain.value_objects import CompanyId
 
@@ -58,6 +59,13 @@ class UpdateSupplierUseCase:
             )
 
             await self.uow.suppliers.save(supplier)
+
+            self.uow.add_event(
+                SupplierUpdated(
+                    supplier_id=str(supplier.id),
+                    empresa_id=empresa_id_str,
+                )
+            )
             await self.uow.commit()
             supplier.version += 1
             return SupplierResponse(

@@ -17,7 +17,6 @@ if TYPE_CHECKING:
     from app.infrastructure.db.models.user import UserModel
 
 
-
 class SystemAuditModel(TimestampMixin, TenantMixin, Base):
     """Modelo ORM para la tabla de auditorías de sistema (`auditorias_sistema`)."""
 
@@ -37,4 +36,3 @@ class SystemAuditModel(TimestampMixin, TenantMixin, Base):
     ocurrido_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
     usuario: Mapped[UserModel | None] = relationship("UserModel", lazy="selectin")
-

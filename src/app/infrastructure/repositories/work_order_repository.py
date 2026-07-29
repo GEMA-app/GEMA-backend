@@ -135,6 +135,7 @@ class SqlAlchemyWorkOrderRepository(
             count_stmt = count_stmt.where(WorkOrderModel.supervisor_id == uuid.UUID(supervisor_id))
         if tecnico_id:
             from app.infrastructure.db.models.work_order import WorkOrderTechnicianModel
+
             stmt = stmt.join(
                 WorkOrderTechnicianModel,
                 WorkOrderModel.id == WorkOrderTechnicianModel.ordenes_trabajo_id,

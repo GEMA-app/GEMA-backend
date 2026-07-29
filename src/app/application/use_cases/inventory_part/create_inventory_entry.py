@@ -8,6 +8,7 @@ from app.application.dtos.inventory_part_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.inventory_entry import InventoryEntry
+from app.domain.events import InventoryEntryCreated
 from app.domain.exceptions import InventoryPartNotFoundError, ValidationException
 from app.domain.value_objects import CompanyId, SparePartId
 
@@ -39,7 +40,8 @@ class CreateInventoryEntryUseCase:
             elif request.movement_type == "salida":
                 inventory_part.record_outgoing_stock(request.quantity)
             else:
-                raise ValidationException(f"Tipo de movimiento inválido: {request.movement_type}")
+                msg = f"Tipo de movimiento inválido: {request.movement_type}"
+                raise ValidationException(msg)
 
             # 3. Guardar los cambios del repuesto mediante el Unit of Work.
             await self.uow.inventory_parts.save(inventory_part)
@@ -61,6 +63,13 @@ class CreateInventoryEntryUseCase:
             )
 
             await self.uow.inventory_entries.save(entry)
+
+            self.uow.add_event(
+                InventoryEntryCreated(
+                    entry_id=str(entry.id),
+                    empresa_id=company_id_str,
+                )
+            )
             await self.uow.commit()
 
             return InventoryEntryResponse(

@@ -55,7 +55,6 @@ class SqlAlchemySystemAuditRepository(
             usuario_email=usuario_email,
         )
 
-
     async def get_by_id(  # type: ignore[override]
         self, company_id: CompanyId, audit_id: uuid.UUID
     ) -> SystemAuditEntity | None:
@@ -101,7 +100,7 @@ class SqlAlchemySystemAuditRepository(
         if filters.get("accion"):
             stmt = stmt.where(SystemAuditModel.accion.ilike(f"%{filters['accion']}%"))
         if filters.get("modulo"):
-            stmt = stmt.where(SystemAuditModel.accion.ilike(f"%{filters['modulo']}%"))
+            stmt = stmt.where(SystemAuditModel.detalles["modulo"].astext == filters["modulo"])
         if filters.get("fecha_inicio"):
             stmt = stmt.where(SystemAuditModel.ocurrido_en >= filters["fecha_inicio"])
         if filters.get("fecha_fin"):

@@ -10,6 +10,7 @@ from app.domain.enums import AssetStatus
 from app.domain.events import (
     AssetCreated,
     AssetDecommissioned,
+    AssetDeleted,
     AssetLocationChanged,
     AssetMaintenanceStarted,
     AssetOutOfService,
@@ -243,5 +244,15 @@ class Asset(EventProducer):
                 asset_id=str(self.id),
                 empresa_id=str(self.empresa_id),
                 codigo_activo=self.codigo_activo,
+            )
+        )
+
+    def delete(self) -> None:
+        """Marca el activo como eliminado y emite AssetDeleted."""
+        self._events.append(
+            AssetDeleted(
+                asset_id=str(self.id),
+                codigo_activo=self.codigo_activo,
+                empresa_id=str(self.empresa_id),
             )
         )

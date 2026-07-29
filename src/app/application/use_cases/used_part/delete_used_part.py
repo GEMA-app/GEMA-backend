@@ -1,8 +1,9 @@
-"""Caso de uso: eliminar un UsedPart."""
+﻿"""Caso de uso: eliminar un UsedPart."""
 
 from uuid import UUID
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import UsedPartDeleted
 from app.domain.exceptions.used_part import UsedPartNotFoundError
 from app.domain.value_objects import CompanyId
 
@@ -37,4 +38,12 @@ class DeleteUsedPartUseCase:
             )
 
             await self.uow.used_parts.delete(used_part_id, company_id)
+
+            self.uow.add_event(
+                UsedPartDeleted(
+                    used_part_id=str(used_part_id),
+                    empresa_id=company_id_str,
+                )
+            )
+
             await self.uow.commit()

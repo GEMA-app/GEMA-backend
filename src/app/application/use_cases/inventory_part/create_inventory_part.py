@@ -1,4 +1,4 @@
-"""Caso de Uso para registrar un repuesto en el inventario."""
+﻿"""Caso de Uso para registrar un repuesto en el inventario."""
 
 from app.application.dtos.inventory_part_dtos import (
     CreateInventoryPartRequest,
@@ -6,6 +6,7 @@ from app.application.dtos.inventory_part_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.inventory_part import InventoryPart
+from app.domain.events import InventoryPartCreated
 from app.domain.value_objects import ArticleId, CompanyId, ProviderId
 
 
@@ -37,6 +38,13 @@ class CreateInventoryPartUseCase:
             )
 
             await self.uow.inventory_parts.save(inventory_part)
+
+            self.uow.add_event(
+                InventoryPartCreated(
+                    part_id=str(inventory_part.id),
+                    empresa_id=company_id_str,
+                )
+            )
             await self.uow.commit()
 
             return InventoryPartResponse(
