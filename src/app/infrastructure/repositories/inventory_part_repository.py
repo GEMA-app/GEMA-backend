@@ -61,19 +61,19 @@ class SqlAlchemyInventoryPartRepository(
         )
 
     async def get_all_by_company(
-        self, empresa_id: CompanyId, limit: int = 20, offset: int = 0
+        self, empresa_id: CompanyId, limit: int = 20, offset: int = 0, bajo_minimo: bool = False
     ) -> tuple[list[InventoryPart], int]:
         """Lista los repuestos de una empresa con paginación y conteo total."""
-        stmt = (
-            select(InventoryPartModel)
-            .where(InventoryPartModel.empresa_id == empresa_id.value)
-            .offset(offset)
-            .limit(limit)
-            .order_by(InventoryPartModel.id)
-        )
+        stmt = select(InventoryPartModel).where(InventoryPartModel.empresa_id == empresa_id.value)
         count_stmt = select(func.count(InventoryPartModel.id)).where(
             InventoryPartModel.empresa_id == empresa_id.value
         )
+        if bajo_minimo:
+            filter_cond = InventoryPartModel.stock_actual <= InventoryPartModel.stock_minimo
+            stmt = stmt.where(filter_cond)
+            count_stmt = count_stmt.where(filter_cond)
+
+        stmt = stmt.offset(offset).limit(limit).order_by(InventoryPartModel.id)
         count_res = await self.session.execute(count_stmt)
         total = count_res.scalar_one()
 

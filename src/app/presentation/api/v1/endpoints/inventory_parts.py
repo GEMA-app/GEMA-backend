@@ -148,11 +148,12 @@ async def list_inventory_parts(
     empresa_id: str,
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
+    bajo_minimo: bool = Query(False, description="Filtrar por stock bajo mínimo"),
     current_user: UserResponse = Depends(require_permission(PermissionModule.INVENTORY, "view")),
     use_case: ListInventoryPartsUseCase = Depends(get_list_inventory_parts_use_case),
 ) -> InventoryPartListDocument:
     """Retorna la colección paginada y controlada de repuestos de la empresa."""
-    parts, total = await use_case.execute(empresa_id, limit=limit, offset=offset)
+    parts, total = await use_case.execute(empresa_id, limit=limit, offset=offset, bajo_minimo=bajo_minimo)
     return InventoryPartListDocument(
         data=[
             InventoryPartResource(

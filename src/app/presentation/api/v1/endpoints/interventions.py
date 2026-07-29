@@ -53,6 +53,7 @@ router = APIRouter(
 async def list_interventions(
     empresa_id: Annotated[str, Path(description="ID de la empresa")],
     ot_id: Annotated[str, Path(description="ID de la orden de trabajo")],
+    tecnico_id: Annotated[str | None, Query(description="Filtrar por ID del técnico")] = None,
     offset: Annotated[int, Query(ge=0, description="Número de registros a saltar")] = 0,
     limit: Annotated[int, Query(ge=1, le=100, description="Cantidad de registros a obtener")] = 20,
     use_case: ListInterventionsUseCase = Depends(get_list_interventions_use_case),
@@ -63,6 +64,7 @@ async def list_interventions(
     Args:
         empresa_id: Company UUID.
         ot_id: Work order UUID.
+        tecnico_id: Filter by technician ID.
         offset: Number of records to skip (pagination).
         limit: Maximum number of records to return.
         use_case: Injected use case for listing interventions.
@@ -71,7 +73,7 @@ async def list_interventions(
     Returns:
         InterventionListDocument with paginated interventions.
     """
-    interventions, total = await use_case.execute(empresa_id, ot_id, offset, limit)
+    interventions, total = await use_case.execute(empresa_id, ot_id, offset, limit, tecnico_id)
 
     return InterventionListDocument(
         data=[

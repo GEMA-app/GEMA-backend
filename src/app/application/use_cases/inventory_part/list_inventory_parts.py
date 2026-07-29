@@ -12,7 +12,7 @@ class ListInventoryPartsUseCase:
         self.uow = uow
 
     async def execute(
-        self, company_id_str: str, limit: int = 20, offset: int = 0
+        self, company_id_str: str, limit: int = 20, offset: int = 0, bajo_minimo: bool = False
     ) -> tuple[list[InventoryPartResponse], int]:
         """Obtiene las entidades del repositorio y las transforma en DTOs de salida."""
         company_id = CompanyId.from_string(company_id_str)
@@ -20,7 +20,7 @@ class ListInventoryPartsUseCase:
         async with self.uow:
             # Invocamos el método de listado que definimos en el puerto del repositorio
             parts, total = await self.uow.inventory_parts.get_all_by_company(
-                empresa_id=company_id, limit=limit, offset=offset
+                empresa_id=company_id, limit=limit, offset=offset, bajo_minimo=bajo_minimo
             )
 
             dtos = [

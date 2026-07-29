@@ -8,6 +8,8 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 
+from app.infrastructure.config.logger import logger
+
 from app.domain.exceptions import (
     AssetCodeExistsError,
     AssetSerialExistsError,
@@ -18,8 +20,8 @@ from app.presentation.exception_handlers.base import jsonapi_response
 from app.presentation.exception_handlers.domain import domain_exception_handler
 
 CONSTRAINT_MAP: dict[str, tuple[int, str]] = {
-    "uq_activos_empresa_codigo_activo": (409, "Ya existe un activo con ese código en la empresa."),
-    "uq_activos_empresa_serial_interno": (
+    "uq_activos_empresa_codigo_activo_lower": (409, "Ya existe un activo con ese código en la empresa."),
+    "uq_activos_empresa_serial_interno_lower": (
         409,
         "Ya existe un activo con ese número de serie en la empresa.",
     ),
@@ -28,7 +30,10 @@ CONSTRAINT_MAP: dict[str, tuple[int, str]] = {
 
 SQLSTATE_MAP: dict[str, tuple[int, str]] = {
     "23505": (409, "El registro ya existe."),
-    "23503": (409, "Referencia inválida: el recurso relacionado no existe."),
+    "23503": (
+        409,
+        "No se puede eliminar este registro porque está en uso en otros módulos. Debes desvincular o eliminar los elementos asociados primero.",
+    ),
     "23502": (422, "Campo obligatorio sin valor."),
 }
 
@@ -71,6 +76,14 @@ def _extract_constraint_name(exc: IntegrityError) -> str | None:
 
 async def integrity_error_handler(request: Request, exc: IntegrityError) -> JSONResponse:
     """Manejador de excepciones de tipo IntegrityError para retornar JSON:API."""
+    logger.error(
+        "integrity_error",
+        method=request.method,
+        path=str(request.url.path),
+        constraint=_extract_constraint_name(exc),
+        orig=str(exc.orig)[:500],
+    )
+
     result = _map_integrity_error(exc)
 
     if result:
@@ -97,6 +110,15 @@ async def integrity_error_handler(request: Request, exc: IntegrityError) -> JSON
             detail=detail,
         )
         return jsonapi_response(status_code, [error])
+
+    if request.method == "GET":
+        error = ErrorObject(
+            status=str(status.HTTP_500_INTERNAL_SERVER_ERROR),
+            code="ERR_DATA_CORRUPTION",
+            title="Error de integridad en lectura de datos",
+            detail="Se detectó una inconsistencia en los datos. Contacte al administrador.",
+        )
+        return jsonapi_response(status.HTTP_500_INTERNAL_SERVER_ERROR, [error])
 
     error = ErrorObject(
         status=str(status.HTTP_409_CONFLICT),

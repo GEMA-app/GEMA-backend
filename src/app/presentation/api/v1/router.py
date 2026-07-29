@@ -10,6 +10,7 @@ from app.presentation.api.v1.endpoints.assets import router as assets_router
 from app.presentation.api.v1.endpoints.auth import router as auth_router
 from app.presentation.api.v1.endpoints.catalog_articles import router as catalog_articles_router
 from app.presentation.api.v1.endpoints.companies import router as companies_router
+from app.presentation.api.v1.endpoints.dashboard import router as dashboard_router
 from app.presentation.api.v1.endpoints.failure_reports import router as failure_reports_router
 from app.presentation.api.v1.endpoints.interventions import router as interventions_router
 from app.presentation.api.v1.endpoints.inventory_parts import router as inventory_parts_router
@@ -129,4 +130,10 @@ v1_router.include_router(
     inventory_parts_router,
     prefix="/empresas/{empresa_id}/inventario",
     tags=["inventario"],
+)
+
+v1_router.include_router(
+    dashboard_router,
+    prefix="/empresas/{empresa_id}/dashboard",
+    tags=["dashboard"],
 )

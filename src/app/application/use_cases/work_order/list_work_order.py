@@ -18,6 +18,7 @@ class ListWorkOrdersUseCase:
         activo_id: str | None = None,
         tipo: str | None = None,
         supervisor_id: str | None = None,
+        tecnico_id: str | None = None,
         offset: int = 0,
         limit: int = 20,
     ) -> tuple[list[WorkOrderResponse], int]:
@@ -29,6 +30,7 @@ class ListWorkOrdersUseCase:
             activo_id: Filtrar por activo (opcional).
             tipo: Filtrar por tipo (opcional).
             supervisor_id: Filtrar por supervisor (opcional).
+            tecnico_id: Filtrar por técnico asignado (opcional).
             offset: Desplazamiento.
             limit: Límite.
 
@@ -45,6 +47,7 @@ class ListWorkOrdersUseCase:
                 activo_id=asset_id,
                 tipo=tipo,
                 supervisor_id=supervisor_id,
+                tecnico_id=tecnico_id,
                 offset=offset,
                 limit=limit,
             )

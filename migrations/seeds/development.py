@@ -57,7 +57,7 @@ ROLES_CONFIG: dict[str, dict] = {
     "Supervisor de Activos": {
         "desc": "Gestiona activos y supervisa su ciclo de vida",
         "permisos": {
-            PermissionModule.ASSETS: (True, True, True, True),
+            PermissionModule.ASSETS: (True, True, True, False),
             PermissionModule.MAINTENANCE: (True, False, False, False),
             PermissionModule.INVENTORY: (True, False, False, False),
             PermissionModule.REPORTS: (True, False, False, False),
