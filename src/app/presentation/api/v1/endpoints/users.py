@@ -130,7 +130,6 @@ async def list_basic_users(
     )
 
 
-
 @router.post(
     "",
     response_model=UserDocument,

@@ -44,5 +44,6 @@ class GetSystemAuditUseCase:
                 ocurrido_en=audit.ocurrido_en,
                 usuario_nombre=audit.usuario_nombre,
                 usuario_email=audit.usuario_email,
+                modulo=audit.detalles.get("modulo"),
+                descripcion=audit.detalles.get("descripcion"),
             )
-

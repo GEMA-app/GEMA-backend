@@ -1,10 +1,11 @@
-"""Caso de uso para crear un proveedor."""
+﻿"""Caso de uso para crear un proveedor."""
 
 import uuid
 
 from app.application.dtos.supplier_dtos import CreateSupplierRequest, SupplierResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.supplier import Supplier
+from app.domain.events import SupplierCreated
 from app.domain.exceptions import SupplierRifExistsError
 from app.domain.value_objects import CompanyId
 
@@ -47,6 +48,13 @@ class CreateSupplierUseCase:
                 contact=request.contact,
             )
             await self.uow.suppliers.save(supplier)
+
+            self.uow.add_event(
+                SupplierCreated(
+                    supplier_id=str(supplier.id),
+                    empresa_id=empresa_id_str,
+                )
+            )
             await self.uow.commit()
             return SupplierResponse(
                 id=supplier.id,

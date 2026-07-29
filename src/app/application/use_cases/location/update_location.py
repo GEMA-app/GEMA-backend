@@ -1,9 +1,10 @@
-"""Caso de uso para update location."""
+﻿"""Caso de uso para update location."""
 
 from app.application.dtos.location_dtos import LocationResponse, UpdateLocationRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Location
 from app.domain.enums import LocationType
+from app.domain.events import LocationUpdated
 from app.domain.exceptions import (
     LocationCircularReferenceError,
     LocationNotFoundError,
@@ -119,6 +120,13 @@ class UpdateLocationUseCase:
                 location.move(new_parent_id, parent_type, new_tipo=new_tipo_enum)
 
             await self.uow.locations.save(location)
+            self.uow.add_event(
+                LocationUpdated(
+                    location_id=str(location.id),
+                    nombre=location.nombre,
+                    empresa_id=str(company_id),
+                )
+            )
             await self.uow.commit()
 
             return LocationResponse(

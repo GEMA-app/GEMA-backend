@@ -1,8 +1,9 @@
-"""Caso de uso para remover un técnico de una orden de trabajo."""
+﻿"""Caso de uso para remover un técnico de una orden de trabajo."""
 
 import uuid
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import WorkOrderUpdated
 from app.domain.exceptions import WorkOrderNotFoundError
 from app.domain.value_objects import CompanyId, UserId, WorkOrderId
 
@@ -33,4 +34,11 @@ class RemoveTechnicianUseCase:
                 )
 
             await self.uow.work_orders.remove_technician(wo_id, UserId(tech_uuid), company)
+
+            self.uow.add_event(
+                WorkOrderUpdated(
+                    work_order_id=work_order_id,
+                    empresa_id=str(company),
+                )
+            )
             await self.uow.commit()

@@ -1,6 +1,7 @@
 """Caso de uso para eliminar una intervención técnica."""
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import InterventionDeleted
 from app.domain.exceptions.intervention import InterventionNotFoundError
 from app.domain.value_objects.identifier import CompanyId, InterventionId
 
@@ -33,4 +34,12 @@ class DeleteInterventionUseCase:
                 raise InterventionNotFoundError(f"Intervención {intervention_id} no encontrada")
 
             await self._uow.interventions.delete(intervention_id_internal, company_id)
+
+            self._uow.add_event(
+                InterventionDeleted(
+                    intervention_id=intervention_id,
+                    empresa_id=empresa_id,
+                )
+            )
+
             await self._uow.commit()

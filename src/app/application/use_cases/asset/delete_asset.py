@@ -1,6 +1,7 @@
-"""Caso de uso para delete asset."""
+﻿"""Caso de uso para delete asset."""
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import AssetDeleted
 from app.domain.exceptions import AssetNotFoundError
 from app.domain.value_objects import AssetId, CompanyId
 
@@ -24,4 +25,11 @@ class DeleteAssetUseCase:
                 )
 
             await self.uow.assets.delete(asset_id, company_id)
+            self.uow.add_event(
+                AssetDeleted(
+                    asset_id=asset_id_str,
+                    codigo_activo=asset.codigo_activo,
+                    empresa_id=company_id_str,
+                )
+            )
             await self.uow.commit()

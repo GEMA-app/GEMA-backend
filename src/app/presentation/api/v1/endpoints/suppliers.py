@@ -32,7 +32,6 @@ from app.composition.container.supplier import (
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
     require_dual_permission,
-    require_permission,
 )
 from app.presentation.api.v1.schemas.supplier import (
     CreateSupplierRequest,
@@ -82,7 +81,9 @@ async def create_supplier(
     payload: CreateSupplierRequest,
     use_case: CreateSupplierUseCase = Depends(get_create_supplier_use_case),
     current_user: UserResponse = Depends(
-        require_dual_permission(PermissionModule.INVENTORY, "create", PermissionModule.ADMIN, "create")
+        require_dual_permission(
+            PermissionModule.INVENTORY, "create", PermissionModule.ADMIN, "create"
+        )
     ),
 ) -> SupplierDocument:
     """Crea un nuevo proveedor en la empresa.
@@ -166,7 +167,9 @@ async def delete_supplier(
     supplier_id: UUID,
     use_case: DeleteSupplierUseCase = Depends(get_delete_supplier_use_case),
     current_user: UserResponse = Depends(
-        require_dual_permission(PermissionModule.INVENTORY, "delete", PermissionModule.ADMIN, "delete")
+        require_dual_permission(
+            PermissionModule.INVENTORY, "delete", PermissionModule.ADMIN, "delete"
+        )
     ),
 ) -> None:
     """Elimina un proveedor si no tiene repuestos de inventario asociados."""

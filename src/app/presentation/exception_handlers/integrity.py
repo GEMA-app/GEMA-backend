@@ -8,19 +8,21 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 
-from app.infrastructure.config.logger import logger
-
 from app.domain.exceptions import (
     AssetCodeExistsError,
     AssetSerialExistsError,
     CompanySlugExistsError,
 )
+from app.infrastructure.config.logger import logger
 from app.presentation.api.v1.schemas.jsonapi_base import ErrorObject
 from app.presentation.exception_handlers.base import jsonapi_response
 from app.presentation.exception_handlers.domain import domain_exception_handler
 
 CONSTRAINT_MAP: dict[str, tuple[int, str]] = {
-    "uq_activos_empresa_codigo_activo_lower": (409, "Ya existe un activo con ese código en la empresa."),
+    "uq_activos_empresa_codigo_activo_lower": (
+        409,
+        "Ya existe un activo con ese código en la empresa.",
+    ),
     "uq_activos_empresa_serial_interno_lower": (
         409,
         "Ya existe un activo con ese número de serie en la empresa.",
@@ -32,7 +34,8 @@ SQLSTATE_MAP: dict[str, tuple[int, str]] = {
     "23505": (409, "El registro ya existe."),
     "23503": (
         409,
-        "No se puede eliminar este registro porque está en uso en otros módulos. Debes desvincular o eliminar los elementos asociados primero.",
+        "No se puede eliminar este registro porque está en uso en otros "
+        "módulos. Debes desvincular o eliminar los elementos asociados primero.",
     ),
     "23502": (422, "Campo obligatorio sin valor."),
 }

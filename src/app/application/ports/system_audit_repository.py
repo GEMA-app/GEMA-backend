@@ -27,4 +27,3 @@ class SystemAuditRepositoryPort(Protocol):
     async def save(self, entity: SystemAudit) -> None:
         """Guarda o actualiza una entidad de auditoría."""
         ...
-

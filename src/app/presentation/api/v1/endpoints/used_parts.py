@@ -30,7 +30,6 @@ from app.composition.container.used_part import (
 from app.domain.enums import PermissionModule
 from app.presentation.api.v1.endpoints.dependencies import (
     require_dual_permission,
-    require_permission,
 )
 from app.presentation.api.v1.schemas.used_part import (
     CreateUsedPartRequest,

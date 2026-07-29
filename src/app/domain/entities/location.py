@@ -47,21 +47,13 @@ class Location(EventProducer):
             LocationInvalidTypeHierarchyError: Si la combinación de tipos no es válida.
         """
         if tipo == LocationType.HEADQUARTERS and parent_type is not None:
-            raise LocationInvalidTypeHierarchyError(
-                "Una sede no puede tener una ubicación padre."
-            )
+            raise LocationInvalidTypeHierarchyError("Una sede no puede tener una ubicación padre.")
         elif tipo == LocationType.PLANT and parent_type != LocationType.HEADQUARTERS:
-            raise LocationInvalidTypeHierarchyError(
-                "Una planta debe tener una sede como padre."
-            )
+            raise LocationInvalidTypeHierarchyError("Una planta debe tener una sede como padre.")
         elif tipo == LocationType.AREA and parent_type != LocationType.PLANT:
-            raise LocationInvalidTypeHierarchyError(
-                "Un área debe tener una planta como padre."
-            )
+            raise LocationInvalidTypeHierarchyError("Un área debe tener una planta como padre.")
         elif tipo == LocationType.SECTION and parent_type != LocationType.AREA:
-            raise LocationInvalidTypeHierarchyError(
-                "Una sección debe tener un área como padre."
-            )
+            raise LocationInvalidTypeHierarchyError("Una sección debe tener un área como padre.")
 
     def pull_events(self) -> list[DomainEvent]:
         """Extrae y limpia la lista de eventos acumulados.

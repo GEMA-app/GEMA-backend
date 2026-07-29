@@ -13,7 +13,11 @@ class ListInterventionsUseCase:
         self._uow = uow
 
     async def execute(
-        self, empresa_id: str, ot_id: str, offset: int = 0, limit: int = 100,
+        self,
+        empresa_id: str,
+        ot_id: str,
+        offset: int = 0,
+        limit: int = 100,
         tecnico_id: str | None = None,
     ) -> tuple[list[InterventionResponse], int]:
         """Ejecuta el caso de uso para listar intervenciones de una orden de trabajo.

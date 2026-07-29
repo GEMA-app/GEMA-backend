@@ -1,8 +1,9 @@
-"""Caso de uso para eliminar un proveedor."""
+﻿"""Caso de uso para eliminar un proveedor."""
 
 from uuid import UUID
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import SupplierDeleted
 from app.domain.exceptions import SupplierHasInventoryPartsError, SupplierNotFoundError
 from app.domain.value_objects import CompanyId
 
@@ -38,4 +39,11 @@ class DeleteSupplierUseCase:
                 )
 
             await self.uow.suppliers.delete(supplier.id, company_id.value)
+
+            self.uow.add_event(
+                SupplierDeleted(
+                    supplier_id=str(supplier.id),
+                    empresa_id=empresa_id_str,
+                )
+            )
             await self.uow.commit()

@@ -1,6 +1,7 @@
-"""Caso de uso para delete role."""
+﻿"""Caso de uso para delete role."""
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import RoleDeleted
 from app.domain.exceptions import RoleNotFoundError
 from app.domain.value_objects import CompanyId, RoleId
 
@@ -37,4 +38,11 @@ class DeleteRoleUseCase:
                     raise LastAdminRevocationError()
 
             await self.uow.roles.delete(role_id, company_id)
+            self.uow.add_event(
+                RoleDeleted(
+                    role_id=role_id_str,
+                    nombre=role.nombre,
+                    empresa_id=company_id_str,
+                )
+            )
             await self.uow.commit()

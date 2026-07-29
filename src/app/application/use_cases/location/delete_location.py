@@ -1,6 +1,7 @@
-"""Caso de uso para delete location."""
+﻿"""Caso de uso para delete location."""
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import LocationDeleted
 from app.domain.exceptions import LocationNotFoundError
 from app.domain.value_objects import CompanyId, LocationId
 
@@ -17,6 +18,13 @@ class DeleteLocationUseCase:
         for child in children:
             await self._delete_cascade(child.id, company_id)
         await self.uow.locations.delete(location_id, company_id)
+        self.uow.add_event(
+            LocationDeleted(
+                location_id=str(location_id),
+                nombre="",
+                empresa_id=str(company_id),
+            )
+        )
 
     async def execute(self, company_id_str: str, location_id_str: str) -> None:
         """Elimina una ubicación y todas sus sububicaciones en cascada por su ID."""
@@ -32,5 +40,3 @@ class DeleteLocationUseCase:
 
             await self._delete_cascade(location_id, company_id)
             await self.uow.commit()
-
-

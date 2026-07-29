@@ -1,4 +1,4 @@
-"""Caso de uso: CreatePlanExecution — registrar una ejecución de plan de mantenimiento."""
+﻿"""Caso de uso: CreatePlanExecution Ã¢â‚¬â€ registrar una ejecución de plan de mantenimiento."""
 
 from app.application.dtos.plan_execution_dtos import (
     PlanExecutionCreateRequest,
@@ -6,6 +6,7 @@ from app.application.dtos.plan_execution_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.plan_execution import PlanExecution
+from app.domain.events import PlanExecutionCreated
 from app.domain.value_objects import CompanyId
 
 
@@ -39,6 +40,14 @@ class CreatePlanExecutionUseCase:
 
         async with self.uow:
             saved = await self.uow.plan_executions.save(execution)
+
+            self.uow.add_event(
+                PlanExecutionCreated(
+                    plan_execution_id=str(execution.id),
+                    empresa_id=company_id_str,
+                )
+            )
+
             await self.uow.commit()
 
         return self._to_response(saved)

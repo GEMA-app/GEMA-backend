@@ -1,9 +1,10 @@
-"""Caso de uso para update role."""
+﻿"""Caso de uso para update role."""
 
 from app.application.dtos.role_dtos import PermissionDTO, RoleResponse, UpdateRoleRequest
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import Permission
 from app.domain.enums import PermissionModule
+from app.domain.events import RoleUpdated
 from app.domain.exceptions import (
     RoleNameExistsError,
     RoleNotFoundError,
@@ -77,6 +78,13 @@ class UpdateRoleUseCase:
                 role.permisos = list(permissions_map.values())
 
             await self.uow.roles.save(role)
+            self.uow.add_event(
+                RoleUpdated(
+                    role_id=str(role.id),
+                    nombre=role.nombre,
+                    empresa_id=company_id_str,
+                )
+            )
             await self.uow.commit()
             role.version += 1
 

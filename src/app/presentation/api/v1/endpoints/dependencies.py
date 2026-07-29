@@ -25,6 +25,7 @@ from app.domain.enums import PermissionModule
 from app.domain.exceptions import InsufficientPermissionsError, InvalidUUIDError
 from app.domain.value_objects import CompanyId, UserId
 from app.infrastructure.config.settings import settings
+from app.infrastructure.context import current_user_id
 from app.presentation.api.v1.schemas.auth import RateLimitEmailBody
 
 security = HTTPBearer()
@@ -62,6 +63,7 @@ def require_platform_permission(
     ) -> UserResponse:
         dto = GetCurrentUserRequest(access_token=token.credentials)
         user_resp = await auth_use_case.execute(dto)
+        current_user_id.set(user_resp.id)
         if _is_super_admin(user_resp.id):
             return user_resp
         user_id = UserId.from_string(user_resp.id)
@@ -85,6 +87,7 @@ def require_permission(
     ) -> UserResponse:
         dto = GetCurrentUserRequest(access_token=token.credentials)
         user_resp = await auth_use_case.execute(dto)
+        current_user_id.set(user_resp.id)
         # 1. Tenant validation (UUID normalization)
         validate_tenant_access(empresa_id, user_resp.empresa_id)
         # 2. RBAC check
@@ -112,6 +115,7 @@ def require_dual_permission(
     ) -> UserResponse:
         dto = GetCurrentUserRequest(access_token=token.credentials)
         user_resp = await auth_use_case.execute(dto)
+        current_user_id.set(user_resp.id)
         # 1. Tenant validation (UUID normalization)
         validate_tenant_access(empresa_id, user_resp.empresa_id)
         # 2. RBAC check
@@ -136,7 +140,9 @@ async def get_current_active_user(
 ) -> UserResponse:
     """Dependencia para obtener el usuario autenticado activo."""
     dto = GetCurrentUserRequest(access_token=token.credentials)
-    return await auth_use_case.execute(dto)
+    user_resp = await auth_use_case.execute(dto)
+    current_user_id.set(user_resp.id)
+    return user_resp
 
 
 async def require_tenant_read(

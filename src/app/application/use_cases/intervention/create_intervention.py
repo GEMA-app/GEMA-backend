@@ -3,6 +3,7 @@
 from app.application.dtos.intervention_dtos import CreateInterventionRequest, InterventionResponse
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.intervention import TechnicalIntervention
+from app.domain.events import InterventionCreated
 from app.domain.value_objects.identifier import CompanyId, UserId, WorkOrderId
 
 
@@ -38,6 +39,14 @@ class CreateInterventionUseCase:
 
         async with self._uow:
             await self._uow.interventions.save(intervention)
+
+            self._uow.add_event(
+                InterventionCreated(
+                    intervention_id=str(intervention.id),
+                    empresa_id=empresa_id,
+                )
+            )
+
             await self._uow.commit()
 
         return InterventionResponse(

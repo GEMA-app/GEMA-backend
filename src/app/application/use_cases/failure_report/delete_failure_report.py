@@ -1,6 +1,7 @@
-"""Caso de uso para eliminar un reporte de falla."""
+﻿"""Caso de uso para eliminar un reporte de falla."""
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import FailureReportDeleted
 from app.domain.exceptions.failure_report import FailureReportNotFoundError
 from app.domain.value_objects import CompanyId, FailureReportId
 
@@ -32,4 +33,10 @@ class DeleteFailureReportUseCase:
                 )
 
             await self.uow.failure_reports.delete(report_id, company_id)
+            self.uow.add_event(
+                FailureReportDeleted(
+                    failure_report_id=report_id_str,
+                    empresa_id=company_id_str,
+                )
+            )
             await self.uow.commit()

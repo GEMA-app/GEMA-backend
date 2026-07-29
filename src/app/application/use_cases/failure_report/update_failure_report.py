@@ -1,4 +1,4 @@
-"""Caso de uso para actualizar un reporte de falla."""
+﻿"""Caso de uso para actualizar un reporte de falla."""
 
 from app.application.dtos.failure_report_dtos import (
     FailureReportResponse,
@@ -6,6 +6,7 @@ from app.application.dtos.failure_report_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import PriorityLevel, ReportStatus
+from app.domain.events import FailureReportUpdated
 from app.domain.exceptions import FailureReportNotFoundError, StaleDataError
 from app.domain.value_objects import AssetId, CompanyId, FailureReportId
 
@@ -75,6 +76,12 @@ class UpdateFailureReportUseCase:
                 )
 
             await self.uow.failure_reports.save(report)
+            self.uow.add_event(
+                FailureReportUpdated(
+                    failure_report_id=str(report.id),
+                    empresa_id=company_id_str,
+                )
+            )
             await self.uow.commit()
 
             # Sincronizar version: SQLAlchemy incrementa version_id_col en el commit,

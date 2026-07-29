@@ -43,9 +43,7 @@ class UsedPart:
     def precio_total(self) -> Decimal | None:
         """Calcula el costo total del repuesto utilizado."""
         return (
-            self.cantidad_usada * self.precio_unitario
-            if self.precio_unitario is not None
-            else None
+            self.cantidad_usada * self.precio_unitario if self.precio_unitario is not None else None
         )
 
     @classmethod

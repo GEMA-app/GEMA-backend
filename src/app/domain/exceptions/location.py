@@ -37,4 +37,3 @@ class LocationHasChildrenError(LocationException):
     """Lanzada cuando se intenta eliminar una ubicación que tiene sububicaciones hijas."""
 
     pass
-

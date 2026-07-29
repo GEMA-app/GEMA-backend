@@ -31,6 +31,7 @@ class InventoryPartRepositoryPort(Protocol):
             empresa_id: Identificador de la empresa.
             limit: Máximo de resultados.
             offset: Desplazamiento para paginación.
+            bajo_minimo: Filtra las piezas que están por debajo del nivel mínimo.
 
         Returns:
             Una tupla con la lista de entidades InventoryPart y el conteo total.
@@ -47,8 +48,6 @@ class InventoryPartRepositoryPort(Protocol):
         """Valida que exista stock suficiente para el consumo de repuestos y lo decrementa."""
         ...
 
-    async def restore_stock(
-        self, repuesto_id: UUID, cantidad: int, empresa_id: CompanyId
-    ) -> None:
+    async def restore_stock(self, repuesto_id: UUID, cantidad: int, empresa_id: CompanyId) -> None:
         """Incrementa el stock del repuesto en inventario tras eliminar o reducir consumo."""
         ...

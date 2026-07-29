@@ -1,4 +1,4 @@
-"""Caso de uso: crear un UsedPart (repuesto utilizado)."""
+﻿"""Caso de uso: crear un UsedPart (repuesto utilizado)."""
 
 from datetime import datetime
 
@@ -8,6 +8,7 @@ from app.application.dtos.used_part_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities.used_part import UsedPart
+from app.domain.events import UsedPartCreated
 from app.domain.value_objects import CompanyId
 
 
@@ -56,6 +57,14 @@ class CreateUsedPartUseCase:
             )
 
             await self.uow.used_parts.save(new_part)
+
+            self.uow.add_event(
+                UsedPartCreated(
+                    used_part_id=str(new_part.id),
+                    empresa_id=company_id_str,
+                )
+            )
+
             await self.uow.commit()
 
         return UsedPartResponse(

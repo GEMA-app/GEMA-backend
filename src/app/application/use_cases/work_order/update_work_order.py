@@ -1,10 +1,11 @@
-"""Caso de uso para actualizar una orden de trabajo existente."""
+﻿"""Caso de uso para actualizar una orden de trabajo existente."""
 
 from app.application.dtos.work_order_dtos import (
     UpdateWorkOrderRequest,
     WorkOrderResponse,
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import WorkOrderUpdated
 from app.domain.exceptions import WorkOrderNotFoundError
 from app.domain.value_objects import CompanyId, UserId, WorkOrderId
 
@@ -55,6 +56,12 @@ class UpdateWorkOrderUseCase:
             )
 
             await self.uow.work_orders.save(wo)
+            self.uow.add_event(
+                WorkOrderUpdated(
+                    work_order_id=str(wo.id),
+                    empresa_id=str(company),
+                )
+            )
             await self.uow.commit()
 
         return WorkOrderResponse.from_entity(wo)

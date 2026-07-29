@@ -4,10 +4,9 @@ Proporciona el endpoint de agregación de métricas y KPIs para los dashboards.
 """
 
 import uuid
-from typing import Any
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from sqlalchemy import func, select
 
 from app.application.dtos.auth_dtos import UserResponse
@@ -21,6 +20,8 @@ router = APIRouter()
 
 
 class DashboardResumenAttributes(BaseModel):
+    """Atributos de resumen de KPIs del dashboard."""
+
     total_activos: int = 0
     activos_operativos: int = 0
     activos_en_mantenimiento: int = 0
@@ -35,12 +36,16 @@ class DashboardResumenAttributes(BaseModel):
 
 
 class DashboardResumenResource(BaseModel):
+    """Recurso del resumen de KPIs."""
+
     id: str = "resumen"
     type: str = "dashboard-resumen"
     attributes: DashboardResumenAttributes
 
 
 class DashboardResumenDocument(BaseModel):
+    """Documento de respuesta para el resumen de KPIs."""
+
     data: DashboardResumenResource
 
 
@@ -53,16 +58,19 @@ async def get_dashboard_resumen(
     empresa_id: str,
     current_user: UserResponse = Depends(require_tenant_read),
 ) -> DashboardResumenDocument:
-    """Retorna métricas consolidadas de activos, órdenes de trabajo e inventario en una sola consulta."""
+    """Retorna métricas consolidadas de activos, órdenes de trabajo e inventario.
+
+    Se obtienen en una sola consulta.
+    """
     empresa_uuid = uuid.UUID(empresa_id)
 
     async with async_session_factory() as session:
         # 1. Métricas de activos por estado
-        asset_stmt = select(
-            AssetModel.estado, func.count(AssetModel.id)
-        ).where(
-            AssetModel.empresa_id == empresa_uuid
-        ).group_by(AssetModel.estado)
+        asset_stmt = (
+            select(AssetModel.estado, func.count(AssetModel.id))
+            .where(AssetModel.empresa_id == empresa_uuid)
+            .group_by(AssetModel.estado)
+        )
 
         asset_res = await session.execute(asset_stmt)
         asset_counts: dict[str, int] = {}
@@ -73,13 +81,15 @@ async def get_dashboard_resumen(
             total_activos += count
 
         # 2. Métricas de órdenes de trabajo por estado y costo acumulado
-        ot_stmt = select(
-            WorkOrderModel.estado,
-            func.count(WorkOrderModel.id),
-            func.coalesce(func.sum(WorkOrderModel.costo_real), 0),
-        ).where(
-            WorkOrderModel.empresa_id == empresa_uuid
-        ).group_by(WorkOrderModel.estado)
+        ot_stmt = (
+            select(
+                WorkOrderModel.estado,
+                func.count(WorkOrderModel.id),
+                func.coalesce(func.sum(WorkOrderModel.costo_real), 0),
+            )
+            .where(WorkOrderModel.empresa_id == empresa_uuid)
+            .group_by(WorkOrderModel.estado)
+        )
 
         ot_res = await session.execute(ot_stmt)
         ot_counts: dict[str, int] = {}

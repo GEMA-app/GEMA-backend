@@ -9,6 +9,7 @@ from app.application.dtos.work_order_dtos import (
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.entities import WorkOrder
 from app.domain.enums import MaintenanceType
+from app.domain.events import WorkOrderCreated
 from app.domain.exceptions import AssetNotFoundError, WorkOrderCodeExistsError
 from app.domain.value_objects import AssetId, CompanyId, UserId, WorkOrderId
 
@@ -49,9 +50,8 @@ class CreateWorkOrderUseCase:
                 codigo_ot = request.codigo_ot
                 existing = await self.uow.work_orders.get_by_code(codigo_ot, company)
                 if existing:
-                    raise WorkOrderCodeExistsError(
-                        f"Ya existe una orden de trabajo con código '{codigo_ot}' en esta empresa."
-                    )
+                    msg = f"Ya existe una orden de trabajo con codigo '{codigo_ot}'."
+                    raise WorkOrderCodeExistsError(msg)
             else:
                 for _ in range(10):
                     codigo_ot = WorkOrder.generate_code(company)
@@ -78,6 +78,13 @@ class CreateWorkOrderUseCase:
             )
 
             await self.uow.work_orders.save(work_order)
+
+            self.uow.add_event(
+                WorkOrderCreated(
+                    work_order_id=str(work_order.id),
+                    empresa_id=str(company),
+                )
+            )
             await self.uow.commit()
 
             return WorkOrderResponse.from_entity(work_order)

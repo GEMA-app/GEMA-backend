@@ -1,6 +1,7 @@
-"""Caso de uso: Eliminar un plan de mantenimiento."""
+﻿"""Caso de uso: Eliminar un plan de mantenimiento."""
 
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import MaintenancePlanDeleted
 from app.domain.exceptions.maintenance_plan import MaintenancePlanNotFoundError
 from app.domain.value_objects import CompanyId, MaintenancePlanId
 
@@ -29,4 +30,11 @@ class DeleteMaintenancePlanUseCase:
             if not plan:
                 raise MaintenancePlanNotFoundError(plan_id_str, company_id_str)
             await self.uow.maintenance_plans.delete(plan_id, company_id)
+
+            self.uow.add_event(
+                MaintenancePlanDeleted(
+                    maintenance_plan_id=plan_id_str,
+                    empresa_id=str(company_id),
+                )
+            )
             await self.uow.commit()

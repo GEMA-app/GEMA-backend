@@ -1,10 +1,11 @@
-"""Caso de Uso para actualizar un repuesto en el inventario."""
+﻿"""Caso de Uso para actualizar un repuesto en el inventario."""
 
 from app.application.dtos.inventory_part_dtos import (
     InventoryPartResponse,
     UpdateInventoryPartRequest,
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
+from app.domain.events import InventoryPartUpdated
 from app.domain.exceptions import InventoryPartNotFoundError, StaleDataError
 from app.domain.value_objects import CompanyId, ProviderId, SparePartId
 
@@ -71,6 +72,13 @@ class UpdateInventoryPartUseCase:
 
             # 5. Persistir y confirmar
             await self.uow.inventory_parts.save(inventory_part)
+
+            self.uow.add_event(
+                InventoryPartUpdated(
+                    part_id=str(inventory_part.id),
+                    empresa_id=company_id_str,
+                )
+            )
             await self.uow.commit()
 
             # 6. Recargar para obtener version incrementada y timestamps frescos de la BD

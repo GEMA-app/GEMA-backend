@@ -1,4 +1,4 @@
-"""Caso de uso: Actualizar un plan de mantenimiento."""
+﻿"""Caso de uso: Actualizar un plan de mantenimiento."""
 
 from datetime import date
 
@@ -8,6 +8,7 @@ from app.application.dtos.maintenance_plan_dtos import (
 )
 from app.application.ports.unit_of_work import UnitOfWorkPort
 from app.domain.enums import MaintenanceType
+from app.domain.events import MaintenancePlanUpdated
 from app.domain.exceptions.maintenance_plan import (
     MaintenancePlanIntervalError,
     MaintenancePlanNotFoundError,
@@ -70,6 +71,13 @@ class UpdateMaintenancePlanUseCase:
                     plan.deactivate()
 
             updated = await self.uow.maintenance_plans.update(plan)
+
+            self.uow.add_event(
+                MaintenancePlanUpdated(
+                    maintenance_plan_id=str(updated.id),
+                    empresa_id=str(company_id),
+                )
+            )
             await self.uow.commit()
 
         return MaintenancePlanResponse(

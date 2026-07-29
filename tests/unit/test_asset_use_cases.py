@@ -153,6 +153,10 @@ class TestUpdateAssetNormalizes:
         mock_asset.fecha_adquisicion = None
         mock_asset.valor_monetario = None
         mock_asset.moneda = None
+        def _apply_updates(**kwargs: Any) -> None:
+            for k, v in kwargs.items():
+                setattr(mock_asset, k, v)
+        mock_asset.update_attributes.side_effect = _apply_updates
         mock_uow.assets.get_by_id.return_value = mock_asset
 
         use_case = UpdateAssetUseCase(uow=mock_uow)

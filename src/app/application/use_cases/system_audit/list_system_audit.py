@@ -59,9 +59,10 @@ class ListSystemAuditsUseCase:
                     ocurrido_en=e.ocurrido_en,
                     usuario_nombre=e.usuario_nombre,
                     usuario_email=e.usuario_email,
+                    modulo=e.detalles.get("modulo"),
+                    descripcion=e.detalles.get("descripcion"),
                 )
                 for e in entities
             ]
-
 
             return dtos, total
