@@ -1,4 +1,4 @@
-﻿"""Caso de uso para actualizar un proveedor existente."""
+"""Caso de uso para actualizar un proveedor existente."""
 
 from uuid import UUID
 
@@ -56,6 +56,8 @@ class UpdateSupplierUseCase:
                 phone=request.phone,
                 email=request.email,
                 contact=request.contact,
+                is_active=request.is_active,
+                direccion=request.direccion,
             )
 
             await self.uow.suppliers.save(supplier)
@@ -76,6 +78,8 @@ class UpdateSupplierUseCase:
                 phone=supplier.phone,
                 email=supplier.email,
                 contact=supplier.contact,
+                is_active=supplier.is_active,
+                direccion=supplier.direccion,
                 version=supplier.version,
                 created_at=supplier.created_at,
                 updated_at=supplier.updated_at,

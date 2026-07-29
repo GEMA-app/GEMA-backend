@@ -14,6 +14,8 @@ class CreateSupplierRequest:
     phone: str | None = None
     email: str | None = None
     contact: str | None = None
+    is_active: bool = True
+    direccion: str | None = None
 
 
 @dataclass(frozen=True)
@@ -25,6 +27,8 @@ class UpdateSupplierRequest:
     phone: str | None = None
     email: str | None = None
     contact: str | None = None
+    is_active: bool | None = None
+    direccion: str | None = None
     version: int | None = None
     _fields_set: frozenset[str] = field(default_factory=frozenset, repr=False, compare=False)
 
@@ -51,5 +55,7 @@ class SupplierResponse:
     email: str | None
     contact: str | None
     version: int
+    is_active: bool = True
+    direccion: str | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None

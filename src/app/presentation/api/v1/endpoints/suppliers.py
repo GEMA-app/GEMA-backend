@@ -46,14 +46,7 @@ router = APIRouter()
 
 
 def _build_resource(supplier: "SupplierResponse") -> SupplierResource:
-    """Construye un recurso JSON:API a partir de un DTO de proveedor.
-
-    Args:
-        supplier: DTO con los datos del proveedor.
-
-    Returns:
-        Recurso JSON:API formateado.
-    """
+    """Construye un recurso JSON:API a partir de un DTO de proveedor."""
     return SupplierResource(
         id=str(supplier.id),
         attributes=SupplierAttributes(
@@ -63,6 +56,8 @@ def _build_resource(supplier: "SupplierResponse") -> SupplierResource:
             phone=supplier.phone,
             email=supplier.email,
             contact=supplier.contact,
+            activo=supplier.is_active,
+            direccion=supplier.direccion,
             version=supplier.version,
             created_at=supplier.created_at,
             updated_at=supplier.updated_at,
@@ -96,6 +91,7 @@ async def create_supplier(
         phone=payload.data.attributes.phone,
         email=payload.data.attributes.email,
         contact=payload.data.attributes.contact,
+        direccion=payload.data.attributes.direccion,
     )
     supplier = await use_case.execute(empresa_id, dto)
     return _build_document(supplier)
@@ -105,6 +101,7 @@ async def create_supplier(
 async def list_suppliers(
     empresa_id: str,
     search: str | None = Query(None, description="Búsqueda por nombre o RIF"),
+    incluir_inactivos: bool = Query(False, description="Incluir proveedores inactivos"),
     use_case: ListSuppliersUseCase = Depends(get_list_suppliers_use_case),
     current_user: UserResponse = Depends(
         require_dual_permission(PermissionModule.INVENTORY, "view", PermissionModule.ADMIN, "view")
@@ -113,8 +110,11 @@ async def list_suppliers(
     """Lista los proveedores de la empresa.
 
     Soporta búsqueda opcional por nombre o RIF.
+    Por defecto excluye proveedores inactivos.
     """
-    suppliers = await use_case.execute(empresa_id, search=search)
+    suppliers = await use_case.execute(
+        empresa_id, search=search, include_inactive=incluir_inactivos
+    )
     return SupplierListDocument(
         data=[_build_resource(s) for s in suppliers],
     )
@@ -155,6 +155,8 @@ async def update_supplier(
         phone=attrs.phone,
         email=attrs.email,
         contact=attrs.contact,
+        is_active=attrs.activo,
+        direccion=attrs.direccion,
         version=attrs.version,
     )
     supplier = await use_case.execute(empresa_id, supplier_id, dto)

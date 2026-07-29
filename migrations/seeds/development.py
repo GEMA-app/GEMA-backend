@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # migrations/seeds/development.py
 """Seed de desarrollo: 2 empresas demo con datos realistas para desarrollo, testing y staging.
 

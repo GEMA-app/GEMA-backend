@@ -1,4 +1,4 @@
-﻿"""Caso de uso para crear un proveedor."""
+"""Caso de uso para crear un proveedor."""
 
 import uuid
 
@@ -46,6 +46,8 @@ class CreateSupplierUseCase:
                 phone=request.phone,
                 email=request.email,
                 contact=request.contact,
+                is_active=request.is_active,
+                direccion=request.direccion,
             )
             await self.uow.suppliers.save(supplier)
 
@@ -64,6 +66,8 @@ class CreateSupplierUseCase:
                 phone=supplier.phone,
                 email=supplier.email,
                 contact=supplier.contact,
+                is_active=supplier.is_active,
+                direccion=supplier.direccion,
                 version=supplier.version,
                 created_at=supplier.created_at,
                 updated_at=supplier.updated_at,

@@ -25,3 +25,17 @@ class SupplierHasInventoryPartsError(SupplierException):
     """Lanzada cuando se intenta eliminar un proveedor con repuestos asociados."""
 
     pass
+
+
+class InvalidRifError(SupplierException):
+    """Lanzada cuando el formato del RIF no cumple con el estándar venezolano."""
+
+    pass
+
+
+class SupplierInactiveError(SupplierException):
+    """Lanzada cuando se intenta realizar una operación sobre un proveedor inactivo."""
+
+    pass
+
+
