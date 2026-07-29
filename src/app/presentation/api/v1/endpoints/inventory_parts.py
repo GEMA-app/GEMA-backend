@@ -104,6 +104,8 @@ async def create_inventory_part(
                 precio_unitario=res.precio_unitario,
                 moneda=res.moneda,
                 version=res.version,
+                articulo_nombre=res.articulo_nombre,
+                proveedor_nombre=res.proveedor_nombre,
             ),
         )
     )
@@ -137,6 +139,8 @@ async def get_inventory_part(
                 precio_unitario=res.precio_unitario,
                 moneda=res.moneda,
                 version=res.version,
+                articulo_nombre=res.articulo_nombre,
+                proveedor_nombre=res.proveedor_nombre,
             ),
         )
     )
@@ -176,6 +180,8 @@ async def list_inventory_parts(
                     precio_unitario=p.precio_unitario,
                     moneda=p.moneda,
                     version=p.version,
+                    articulo_nombre=p.articulo_nombre,
+                    proveedor_nombre=p.proveedor_nombre,
                 ),
             )
             for p in parts
@@ -223,6 +229,8 @@ async def update_inventory_part(
                 precio_unitario=res.precio_unitario,
                 moneda=res.moneda,
                 version=res.version,
+                articulo_nombre=res.articulo_nombre,
+                proveedor_nombre=res.proveedor_nombre,
             ),
         )
     )

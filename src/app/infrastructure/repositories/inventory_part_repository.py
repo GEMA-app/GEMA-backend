@@ -5,6 +5,7 @@ from uuid import UUID
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.application.ports.inventory_part_repository import InventoryPartRepositoryPort
 from app.domain.entities.inventory_part import InventoryPart
@@ -43,6 +44,15 @@ class SqlAlchemyInventoryPartRepository(
     def _to_entity(self, model: InventoryPartModel) -> InventoryPart:
         from app.domain.value_objects import ArticleId, ProviderId
 
+        art_model = model.__dict__.get("articulo")
+        prov_model = model.__dict__.get("proveedor")
+        articulo_name: str | None = art_model.name if art_model is not None else None
+        proveedor_name: str | None = (
+            getattr(prov_model, "nombre", getattr(prov_model, "name", None))
+            if prov_model is not None
+            else None
+        )
+
         return InventoryPart(
             id=SparePartId(model.id),
             empresa_id=CompanyId(model.empresa_id),
@@ -58,7 +68,28 @@ class SqlAlchemyInventoryPartRepository(
             version=model.version,
             created_at=model.created_at,
             updated_at=model.updated_at,
+            articulo_nombre=articulo_name,
+            proveedor_nombre=proveedor_name,
         )
+
+    async def get_by_id(  # type: ignore[override]
+        self, entity_id: SparePartId, empresa_id: CompanyId
+    ) -> InventoryPart | None:
+        """Obtiene un repuesto por ID haciendo eager load de articulo y proveedor."""
+        stmt = (
+            select(InventoryPartModel)
+            .options(
+                selectinload(InventoryPartModel.articulo),
+                selectinload(InventoryPartModel.proveedor),
+            )
+            .where(
+                InventoryPartModel.id == entity_id.value,
+                InventoryPartModel.empresa_id == empresa_id.value,
+            )
+        )
+        result = await self.session.execute(stmt)
+        model = result.scalar_one_or_none()
+        return self._to_entity(model) if model else None
 
     async def get_all_by_company(
         self,
@@ -69,7 +100,14 @@ class SqlAlchemyInventoryPartRepository(
         proveedor_id: UUID | None = None,
     ) -> tuple[list[InventoryPart], int]:
         """Lista los repuestos de una empresa con paginación y conteo total."""
-        stmt = select(InventoryPartModel).where(InventoryPartModel.empresa_id == empresa_id.value)
+        stmt = (
+            select(InventoryPartModel)
+            .options(
+                selectinload(InventoryPartModel.articulo),
+                selectinload(InventoryPartModel.proveedor),
+            )
+            .where(InventoryPartModel.empresa_id == empresa_id.value)
+        )
         count_stmt = select(func.count(InventoryPartModel.id)).where(
             InventoryPartModel.empresa_id == empresa_id.value
         )

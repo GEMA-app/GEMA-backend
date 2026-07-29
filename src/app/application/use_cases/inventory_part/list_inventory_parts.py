@@ -48,6 +48,8 @@ class ListInventoryPartsUseCase:
                     precio_unitario=part.precio_unitario,
                     moneda=part.moneda,
                     version=part.version,
+                    articulo_nombre=getattr(part, "articulo_nombre", None),
+                    proveedor_nombre=getattr(part, "proveedor_nombre", None),
                 )
                 for part in parts
             ]

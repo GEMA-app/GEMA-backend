@@ -58,6 +58,8 @@ class InventoryPartResponse:
     precio_unitario: Decimal
     moneda: str
     version: int
+    articulo_nombre: str | None = None
+    proveedor_nombre: str | None = None
 
 
 @dataclass(frozen=True)
