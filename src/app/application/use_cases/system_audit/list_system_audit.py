@@ -54,7 +54,11 @@ class ListSystemAuditsUseCase:
                     empresa_id=str(e.empresa_id),
                     usuario_id=str(e.usuario_id) if e.usuario_id else None,
                     accion=e.accion,
-                    detalles=e.detalles,
+                    detalles={
+                        k: v
+                        for k, v in e.detalles.items()
+                        if k not in ("modulo", "descripcion")
+                    },
                     ip_address=e.ip_address,
                     ocurrido_en=e.ocurrido_en,
                     usuario_nombre=e.usuario_nombre,

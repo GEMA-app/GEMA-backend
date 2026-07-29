@@ -34,12 +34,19 @@ class GetSystemAuditUseCase:
             if not audit:
                 raise SystemAuditNotFoundError(audit_id, company_id_str)
 
+            EXCLUDED_KEYS = frozenset({"modulo", "descripcion"})
+            detalles_limpios = {
+                k: v
+                for k, v in audit.detalles.items()
+                if k not in EXCLUDED_KEYS
+            }
+
             return SystemAuditResponse(
                 id=str(audit.id) if audit.id is not None else "",
                 empresa_id=str(audit.empresa_id),
                 usuario_id=str(audit.usuario_id) if audit.usuario_id else None,
                 accion=audit.accion,
-                detalles=audit.detalles,
+                detalles=detalles_limpios,
                 ip_address=audit.ip_address,
                 ocurrido_en=audit.ocurrido_en,
                 usuario_nombre=audit.usuario_nombre,
